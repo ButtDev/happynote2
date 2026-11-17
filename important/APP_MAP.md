@@ -34,7 +34,7 @@
 | :--- | :--- | :--- |
 | `src/types/transcript.ts` | 자막 큐, 병합 문장 세그먼트, 3단계 언락 상태, 음운 함정 태그, 리스닝 세션 데이터 모델 | `ListeningTrapType`, `UnlockStep`, `RawTranscriptCue`, `SegmentPhoneticAnalysis`, `SegmentTutorNote`, `TranscriptSegment`, `ListeningSessionData` |
 | `src/types/agy.ts` | `agy` CLI 배치 분석 요청/응답(JSON Schema 대응) 및 실시간 1:1 사운드 닥터 스트리밍 인터페이스 | `AgyBatchAnalysisRequest`, `AgyBatchAnalysisItem`, `AgyBatchAnalysisResponse`, `AgySoundDoctorRequest`, `AgyStreamCallbacks` |
-| `src/types/settings.ts` | 플러그인 환경설정 인터페이스 및 기본값 정의 (`tutorPanelHeightPx` 사운드 닥터 높이 영구 저장 필드 포함) | `EarCoachSettings`, `DEFAULT_EAR_COACH_SETTINGS` |
+| `src/types/settings.ts` | 플러그인 환경설정 인터페이스 및 기본값 정의 (`tutorPanelHeightPx` 사운드 닥터 높이, `mobileListHeightPercent` 모바일 하단 스크롤 영역 비율 영구 저장 필드 포함) | `EarCoachSettings`, `DEFAULT_EAR_COACH_SETTINGS` |
 
 ### 2.3 유틸리티 및 고성능 탐색 레이어 (`src/utils/`)
 | 파일 경로 | 역할 설명 | 핵심 함수 / 클래스 |
@@ -46,7 +46,7 @@
 ### 2.4 워커 레이어 (`src/workers/`)
 | 파일 경로 | 역할 설명 | 핵심 함수 / 인터페이스 |
 | :--- | :--- | :--- |
-| `src/workers/transcriptProcessor.ts` | 파편화된 자막 큐(`RawTranscriptCue[]`)를 자연스러운 문장 단위로 병합하고, 문장별 WPM 및 과속 여부 계산, 기본 뼈대/빈칸 인덱스 자동 추출 | `mergeCuesIntoSegments(cues, options): TranscriptSegment[]`, `computeFallbackAnalysis(segment): SegmentPhoneticAnalysis` |
+| `src/workers/transcriptProcessor.ts` | 큐 내부 문장 경계 분할(`splitCueIntoSentenceFragments`, 약어 보호 + 시간 보간) 후 구두점/무구두점(ASR) 자막을 판별해 자연스러운 문장 단위로 병합하고 WPM·기본 뼈대/빈칸 추출 | `mergeCuesIntoSegments(cues, options): TranscriptSegment[]`, `computeFallbackAnalysis(segment): SegmentPhoneticAnalysis` |
 | `src/workers/transcript.worker.ts` | 브라우저/Electron 환경에서 대용량 자막 전처리 및 세션 JSON 백그라운드 파싱(`PARSE_SESSION`)을 메인 스레드 블로킹 없이 수행하는 Web Worker 엔트리 | `onmessage` 핸들러 (`PROCESS_TRANSCRIPT`, `PARSE_SESSION` 액션 처리) |
 | `src/workers/WorkerPoolManager.ts` | 인라인 번들된 Web Worker 풀을 관리하고 대용량 자막 병합 및 세션 JSON 비동기 파싱을 워커 스레드로 분산 처리하는 매니저 | `TranscriptWorkerManager` (`processCuesAsync(cues, options)`, `parseSessionAsync(markdown)`) |
 
@@ -55,13 +55,13 @@
 | :--- | :--- | :--- |
 | `src/services/TranscriptService.ts` | 유튜브 영상 메타데이터 및 자막 추출 (1순위: PC/모바일 공통 내장 YouTube Innertube/Watch 페이지 파서, 2순위: 데스크톱 전용 동적 로드 `yt-dlp` 폴백) | `TranscriptService` (`fetchTranscript(videoId, lang): Promise<FetchedVideoTranscript>`, `parseTrackPayload(rawText): RawTranscriptCue[]`) |
 | `src/services/AgyCliService.ts` | 데스크톱 전용 로컬 `agy` CLI 프로세스 연동 (`requireDesktopModule` 지연 로드로 모바일 로드 크래시 차단, 모바일 호출 시 안전 가드 반환) | `AgyCliService` (`analyzeSegmentsBatch(req): Promise<AgyBatchAnalysisResponse>`, `streamSoundDoctor(req, callbacks): ChildProcessWithoutNullStreams`, `checkAgyAvailable(): Promise<boolean>`) |
-| `src/services/NoteGenerator.ts` | 대용량 세션 데이터를 압축 JSON 사이드카(`.obsidian/plugins/obsidian-ear-coach/sessions/<videoId>.json`)로 분리 저장해 마크다운 노트를 30줄 내외로 초경량화, 메모리 캐시(`0.00ms` 반환) 및 기존 인라인 대용량 노트 자동 백그라운드 마이그레이션 지원 | `NoteGenerator` (`saveSessionToNote`, `loadSessionFromNote`, `getCachedSession`, `appendTutorCalloutToNote`) |
+| `src/services/NoteGenerator.ts` | 대용량 세션 데이터를 Vault 내부 우선 사이드카(`${notesFolder}/.ear-coach-sessions/<videoId>.json`) 및 기존 플러그인 사이드카 이중 저장으로 분리해 앱 재시작·동기화·업데이트에도 세션 유실을 방지하고, 마크다운 노트를 30줄 내외로 초경량화 | `NoteGenerator` (`saveSessionToNote`, `loadSessionFromNote`, `getCachedSession`, `appendTutorCalloutToNote`) |
 | `src/services/WeaknessTracker.ts` | 유저가 안 들림 핀을 꽂거나 질문한 음운 현상(`LINKING`, `FLAP_T` 등)을 집계하여 `My_Listening_Weakness.md` 대시보드를 자동 갱신 | `WeaknessTracker` (`recordWeakSegment(params): Promise<void>`) |
 
 ### 2.6 인터랙티브 UI 레이어 (`src/ui/`)
 | 파일 경로 | 역할 설명 | 핵심 클래스 / 컴포넌트 |
 | :--- | :--- | :--- |
-| `src/ui/EarCoachView.ts` | Obsidian `ItemView` 기반 전용 리스닝 코치 워크스페이스 뷰 (`renderDesktopWorkspace` 2단 분할 + `AgyTutorPanel` vs `renderMobileWorkspace` 상단 고정 100% 폭 YouTube + 중단 툴바 + 하단 독립 스크롤 리스트로 완전 분리) | `EarCoachView`, `VIEW_TYPE_EAR_COACH` (`renderDesktopWorkspace`, `renderMobileWorkspace`, `renderDesktopToolbar`, `renderMobileToolbar`) |
+| `src/ui/EarCoachView.ts` | Obsidian `ItemView` 기반 전용 리스닝 코치 워크스페이스 뷰 (`getState`/`setState` 앱 재시작 자동 복원, `renderDesktopWorkspace` 2단 분할 + `AgyTutorPanel` vs `renderMobileWorkspace` 상단 고정 팬 + `setupMobileTouchResizer` 터치 드래그 크기 조절(기본 하단 50%, 로컬 저장) + 하단 독립 스크롤 리스트) | `EarCoachView`, `VIEW_TYPE_EAR_COACH` (`getState`, `setState`, `renderDesktopWorkspace`, `renderMobileWorkspace`, `setupMobileTouchResizer`) |
 | `src/ui/UrlInputModal.ts` | 유튜브 URL 및 집중 분석 타임스탬프를 수동 입력하거나 클립보드에서 즉시 불러오는 모달 | `UrlInputModal` |
 | `src/ui/SettingsTab.ts` | 플러그인 설정 탭 (공통 설정 `displayCommonSettings`, 데스크톱 전용 `displayDesktopBookmarkletSection` / `displayDesktopAgyCliSettings`, 모바일 안내 `displayMobileGuideBanner` 함수 분리) | `EarCoachSettingTab` |
 | `src/ui/components/PlayerBar.ts` | YouTube IFrame/API 임베드 플레이어 (고화질 썸네일 즉시 표시 + 300ms 지연 마운트 및 클릭 시 즉시 재생으로 초반 UI 프레임 블로킹 제로화, 노트 전환 시 IFrame 파괴 없이 `loadVideo`/`cueVideoById` 재활용, 하이브리드 시간 추적, A-B 무한 루프, $O(1)$ 루프 버튼 갱신) | `PlayerBar` (`playSegment`, `loadVideo`, `setSegmentLoop`, `clearSegmentLoop`, `isSegmentLooping`) |
@@ -73,7 +73,7 @@
 ### 2.7 엔트리 포인트 및 테스트/문서 레이어
 | 파일 경로 | 역할 설명 | 핵심 클래스 / 산출물 |
 | :--- | :--- | :--- |
-| `src/main.ts` | 플러그인 라이프사이클 관리, `WorkspaceLeaf.prototype.openFile` 선제 인터셉터로 CodeMirror 6 에디터 파싱을 0ms 스킵하고 곧바로 단일 `EarCoachView` 탭으로 전환, `obsidian://ear-coach` URI 및 클립보드 트리거 등록, 모바일 `agy` 배치 분석 자동 차단 | `EarCoachPlugin` (`isEarCoachNoteFast`) |
+| `src/main.ts` | 플러그인 라이프사이클 관리, `WorkspaceLeaf.prototype.openFile` 선제 인터셉터 + Cold Start `onLayoutReady`/`metadataCache.resolved` 전체 마크다운 리프 스윕 + 사이드카 유실 시 `loadOrRecoverSession` 자동 유튜브 복구, `ear-coach-resegment-current-note` 커맨드 등록 | `EarCoachPlugin` (`isEarCoachNoteFast`, `loadOrRecoverSession`, `restoreSessionForView`) |
 | `tests/runTests.ts` | URL/타임스탬프 파서, 자막 병합 및 음성학 함정 태깅, 5,000개 대용량 세그먼트 이진 탐색($O(\log N)$) 성능 벤치마크, 모바일 호환성 및 `main.js` 정적 Node require 차단 감사, 900줄 제한 및 Zero-Blur 감사 스크립트 | `runAllTests()` |
 | `docs/implementation_plan.md` | 상세 구현 계획서 (7일 경과 시 `docs/history/`로 이동 대상) | 마크다운 계획서 |
 | `docs/test_result.txt` | 단위 테스트, 대용량 성능 벤치마크 및 코드 품질 감사 결과 리포트 | 테스트 결과 로그 |

@@ -156,6 +156,158 @@ export function computeFallbackAnalysis(segment: TranscriptSegment): SegmentPhon
   };
 }
 
+const ABBREVIATIONS = new Set([
+  "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "st", "vs", "etc",
+  "eg", "ie", "us", "uk", "am", "pm", "inc", "ltd", "co", "no", "vol", "fig",
+]);
+
+function isSentenceEnding(text: string): boolean {
+  const trimmed = text.trim();
+  if (!/[.?!]["')\]»”’]*$/.test(trimmed)) return false;
+
+  // Check if ending with period is actually a known abbreviation or single-letter initial (e.g., "Dr.", "J.")
+  if (/\.\s*["')\]»”’]*$/.test(trimmed)) {
+    const match = trimmed.match(/([a-zA-Z]+)\.\s*["')\]»”’]*$/);
+    if (match) {
+      const token = match[1].toLowerCase();
+      if (ABBREVIATIONS.has(token)) return false;
+      if (token.length === 1 && /^[A-Z]$/.test(match[1])) return false;
+    }
+    if (/(?:[A-Za-z]\.){2,}\s*["')\]»”’]*$/.test(trimmed)) {
+      return false; // e.g., U.S., e.g., i.e.
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Splits a single caption cue if it contains internal sentence boundaries
+ * (e.g., "it was great. Next week we will") and interpolates timestamps proportionally.
+ */
+function splitCueIntoSentenceFragments(cue: RawTranscriptCue): RawTranscriptCue[] {
+  const text = cleanCaptionText(cue.text);
+  if (!text || /^\[.*\]$/.test(text)) return [];
+
+  const cueStart = Math.max(0, cue.start);
+  const cueDuration = Math.max(0.5, cue.duration || 2.0);
+
+  // Split at sentence-ending punctuation followed by whitespace and likely new sentence start
+  const boundaries: number[] = [];
+  const boundaryRegex = /([.?!]["')\]»”’]*)\s+(?=[A-Z0-9"'(\[“‘])/g;
+  let m: RegExpExecArray | null;
+  while ((m = boundaryRegex.exec(text)) !== null) {
+    const splitPos = m.index + m[1].length;
+    const candidatePrefix = text.slice(0, splitPos);
+    if (isSentenceEnding(candidatePrefix)) {
+      boundaries.push(splitPos);
+    }
+  }
+
+  if (boundaries.length === 0) {
+    return [{ start: cueStart, duration: cueDuration, text }];
+  }
+
+  const parts: string[] = [];
+  let prev = 0;
+  for (const pos of boundaries) {
+    const part = text.slice(prev, pos).trim();
+    if (part) parts.push(part);
+    prev = pos;
+  }
+  const tail = text.slice(prev).trim();
+  if (tail) parts.push(tail);
+
+  if (parts.length <= 1) {
+    return [{ start: cueStart, duration: cueDuration, text }];
+  }
+
+  const totalChars = Math.max(1, parts.reduce((acc, p) => acc + p.length, 0));
+  const result: RawTranscriptCue[] = [];
+  let cursor = cueStart;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const ratio = part.length / totalChars;
+    const dur =
+      i === parts.length - 1
+        ? Math.max(0.4, Number((cueStart + cueDuration - cursor).toFixed(3)))
+        : Math.max(0.4, Number((cueDuration * ratio).toFixed(3)));
+    result.push({
+      start: Number(cursor.toFixed(3)),
+      duration: dur,
+      text: part,
+    });
+    cursor += dur;
+  }
+
+  return result;
+}
+
+/**
+ * Normalizes raw YouTube caption cues before sentence splitting:
+ * 1. Strips non-speech markers and sorts chronologically.
+ * 2. Deduplicates rolling-caption word overlaps between consecutive cues.
+ * 3. Clamps overlapping display durations against the next cue's start time so
+ *    sentence interpolation & loop end-times stay aligned with actual speech.
+ */
+function normalizeRawCues(cues: RawTranscriptCue[]): RawTranscriptCue[] {
+  const cleaned: RawTranscriptCue[] = [];
+  for (let i = 0; i < cues.length; i++) {
+    const raw = cues[i];
+    const text = cleanCaptionText(raw.text);
+    if (!text || /^\[.*\]$/.test(text) || /^\(.*\)$/.test(text)) continue;
+    cleaned.push({
+      start: Math.max(0, raw.start),
+      duration: Math.max(0.35, raw.duration || 2.0),
+      text,
+    });
+  }
+
+  if (cleaned.length <= 1) return cleaned;
+
+  // Sort by start time cleanly (stable for same start)
+  cleaned.sort((a, b) => a.start - b.start);
+
+  // Deduplicate rolling caption overlap (e.g. prev ends with "how are you", next starts with "how are you doing")
+  for (let i = 1; i < cleaned.length; i++) {
+    const prevWords = cleaned[i - 1].text.split(/\s+/);
+    const currWords = cleaned[i].text.split(/\s+/);
+    const maxOverlap = Math.min(prevWords.length, currWords.length, 6);
+    let overlapLen = 0;
+    for (let k = maxOverlap; k >= 2; k--) {
+      const prevTail = prevWords.slice(-k).join(" ").toLowerCase();
+      const currHead = currWords.slice(0, k).join(" ").toLowerCase();
+      if (prevTail === currHead) {
+        overlapLen = k;
+        break;
+      }
+    }
+    if (overlapLen > 0) {
+      const trimmedText = currWords.slice(overlapLen).join(" ").trim();
+      cleaned[i].text = trimmedText;
+    }
+  }
+
+  const nonEmpty = cleaned.filter((c) => c.text.length > 0);
+
+  // Normalize overlapping / artificially truncated cue durations using next cue's start
+  for (let i = 0; i < nonEmpty.length - 1; i++) {
+    const curr = nonEmpty[i];
+    const next = nonEmpty[i + 1];
+    const gapToNext = next.start - curr.start;
+    if (gapToNext > 0.25) {
+      if (curr.start + curr.duration > next.start) {
+        curr.duration = Number(gapToNext.toFixed(3));
+      } else if (gapToNext <= 1.2 && curr.duration < gapToNext - 0.15) {
+        curr.duration = Number(gapToNext.toFixed(3));
+      }
+    }
+  }
+
+  return nonEmpty;
+}
+
 /**
  * Merges fragmented raw caption cues into natural sentence-level segments and calculates WPM.
  */
@@ -163,8 +315,31 @@ export function mergeCuesIntoSegments(
   cues: RawTranscriptCue[],
   options: TranscriptProcessOptions
 ): TranscriptSegment[] {
-  const maxWords = options.maxWordsPerSegment ?? 20;
-  const maxDuration = options.maxDurationPerSegment ?? 9.5;
+  const normalizedCues = normalizeRawCues(cues);
+
+  // 1. Pre-split cues that contain mid-cue sentence boundaries
+  const fragments: RawTranscriptCue[] = [];
+  let punctuatedFragmentsCount = 0;
+  for (let i = 0; i < normalizedCues.length; i++) {
+    const split = splitCueIntoSentenceFragments(normalizedCues[i]);
+    for (const frag of split) {
+      fragments.push(frag);
+      if (isSentenceEnding(frag.text)) {
+        punctuatedFragmentsCount++;
+      }
+    }
+  }
+
+  // Detect whether this transcript carries real sentence punctuation vs punctuation-free auto-captions (ASR)
+  const hasSentencePunctuation =
+    punctuatedFragmentsCount >= 2 ||
+    (fragments.length > 0 && punctuatedFragmentsCount / fragments.length >= 0.1);
+
+  const maxWords =
+    options.maxWordsPerSegment ?? (hasSentencePunctuation ? 55 : 26);
+  const maxDuration =
+    options.maxDurationPerSegment ?? (hasSentencePunctuation ? 28.0 : 12.0);
+  const maxGap = hasSentencePunctuation ? 2.5 : 1.2;
   const pinnedList = options.pinnedTimestamps ?? [];
 
   const merged: TranscriptSegment[] = [];
@@ -172,26 +347,35 @@ export function mergeCuesIntoSegments(
   let bufferStart = 0;
   let bufferEnd = 0;
 
-  const flushBuffer = () => {
+  const flushBuffer = (nextFragStart?: number) => {
     const fullText = bufferText.join(" ").replace(/\s+/g, " ").trim();
     bufferText = [];
     if (!fullText) return;
 
-    const duration = Math.max(0.6, Number((bufferEnd - bufferStart).toFixed(2)));
+    // Give a small tail cushion up to next fragment start so final syllables are never clipped
+    let effectiveEnd = bufferEnd;
+    if (typeof nextFragStart === "number" && nextFragStart > effectiveEnd) {
+      const slack = nextFragStart - effectiveEnd;
+      if (slack <= 0.6) {
+        effectiveEnd = Math.min(nextFragStart - 0.02, effectiveEnd + 0.15);
+      }
+    }
+
+    const duration = Math.max(0.6, Number((effectiveEnd - bufferStart).toFixed(2)));
     const words = fullText.split(/\s+/).filter(Boolean);
     const wpm = Math.round((words.length / duration) * 60);
     const isSpeedSpike = wpm >= options.speedSpikeWpmThreshold;
     const index = merged.length;
 
     const isPinned = pinnedList.some(
-      (pinSec) => pinSec >= bufferStart - 1.5 && pinSec <= bufferEnd + 1.5
+      (pinSec) => pinSec >= bufferStart - 1.5 && pinSec <= effectiveEnd + 1.5
     );
 
     const segment: TranscriptSegment = {
       id: `seg-${index}-${Math.round(bufferStart * 10)}`,
       index,
       start: Number(bufferStart.toFixed(2)),
-      end: Number(bufferEnd.toFixed(2)),
+      end: Number(effectiveEnd.toFixed(2)),
       duration,
       text: fullText,
       words,
@@ -205,13 +389,12 @@ export function mergeCuesIntoSegments(
     merged.push(segment);
   };
 
-  for (let i = 0; i < cues.length; i++) {
-    const cue = cues[i];
-    const text = cleanCaptionText(cue.text);
-    if (!text || /^\[.*\]$/.test(text)) continue;
-
-    const cueStart = Math.max(0, cue.start);
-    const cueEnd = Math.max(cueStart + 0.5, cueStart + (cue.duration || 2.0));
+  for (let i = 0; i < fragments.length; i++) {
+    const frag = fragments[i];
+    const nextFragStart = i + 1 < fragments.length ? fragments[i + 1].start : undefined;
+    const text = frag.text;
+    const cueStart = Math.max(0, frag.start);
+    const cueEnd = Math.max(cueStart + 0.4, cueStart + (frag.duration || 2.0));
 
     if (bufferText.length === 0) {
       bufferStart = cueStart;
@@ -224,8 +407,19 @@ export function mergeCuesIntoSegments(
       const wouldExceedDuration = cueEnd - bufferStart > maxDuration;
       const wouldExceedWords = currentWords + nextWords > maxWords;
 
-      if (gap > 1.25 || wouldExceedDuration || wouldExceedWords) {
-        flushBuffer();
+      // In punctuation-free ASR mode, only break at conjunctions when sentence is already substantial (>= 16 words)
+      const shouldBreakBeforeConjunction =
+        !hasSentencePunctuation &&
+        currentWords >= 16 &&
+        /^(and|but|so|because|when|while|although|though|however|if)\b/i.test(text);
+
+      if (
+        gap > maxGap ||
+        wouldExceedDuration ||
+        wouldExceedWords ||
+        shouldBreakBeforeConjunction
+      ) {
+        flushBuffer(cueStart);
         bufferStart = cueStart;
         bufferEnd = cueEnd;
         bufferText.push(text);
@@ -235,10 +429,13 @@ export function mergeCuesIntoSegments(
       }
     }
 
-    const endsWithPunctuation = /[.?!]["']?$/.test(text);
     const currentWordCount = bufferText.join(" ").split(/\s+/).length;
-    if (endsWithPunctuation && currentWordCount >= 4) {
-      flushBuffer();
+    if (isSentenceEnding(text)) {
+      if (currentWordCount >= 2 || hasSentencePunctuation) {
+        flushBuffer(nextFragStart);
+      }
+    } else if (!hasSentencePunctuation && /[,;]["']?$/.test(text) && currentWordCount >= 14) {
+      flushBuffer(nextFragStart);
     }
   }
 

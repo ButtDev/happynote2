@@ -11,6 +11,7 @@ import { SegmentTimeIndex } from "../src/utils/binarySearch.ts";
 import { mergeCuesIntoSegments } from "../src/workers/transcriptProcessor.ts";
 import { TranscriptWorkerManager } from "../src/workers/WorkerPoolManager.ts";
 import { AgyCliService } from "../src/services/AgyCliService.ts";
+import { DEFAULT_EAR_COACH_SETTINGS } from "../src/types/settings.ts";
 import {
   isDesktopApp,
   isMobileApp,
@@ -75,6 +76,48 @@ async function runAllTests() {
   assert.ok(segments[0].analysis.traps.includes("FLAP_T"));
   assert.ok(segments[1].analysis?.traps.includes("LINKING"));
   log(`  -> PASS: Merged ${sampleCues.length} cues into ${segments.length} sentences with accurate phonetic traps (${segments[0].analysis.traps.join(", ")}).\n`);
+
+  // 2-B. Sentence-Boundary Splitting (Mid-cue periods, abbreviations, long & short sentences)
+  log("[Test 2-B] Sentence-Level Segmentation Quality");
+  const mixedSentenceCues: RawTranscriptCue[] = [
+    { start: 0.0, duration: 4.0, text: "It was great. Next week Dr. Kim and I" },
+    { start: 4.0, duration: 2.5, text: "will visit the U.S. office together." },
+    { start: 7.0, duration: 1.5, text: "Yes, we will!" },
+    {
+      start: 9.0,
+      duration: 6.0,
+      text: "Even when a single punctuated sentence becomes quite long with twenty-five words or more it should stay together as one coherent sentence card.",
+    },
+  ];
+  const sentenceSegs = mergeCuesIntoSegments(mixedSentenceCues, {
+    speedSpikeWpmThreshold: 175,
+    defaultUnlockStep: 0,
+  });
+  assert.equal(sentenceSegs.length, 4, `Expected 4 exact sentences, got ${sentenceSegs.length}`);
+  assert.equal(sentenceSegs[0].text, "It was great.");
+  assert.equal(sentenceSegs[1].text, "Next week Dr. Kim and I will visit the U.S. office together.");
+  assert.equal(sentenceSegs[2].text, "Yes, we will!");
+  assert.ok(sentenceSegs[3].words.length >= 23, "Long punctuated sentence must stay intact");
+  log("  -> PASS: Mid-cue sentence split, abbreviation protection (Dr., U.S.), short sentences, and long sentences verified.\n");
+
+  // 2-C. Punctuation-Free ASR Timeline Overlap, Rolling Deduplication & Non-Clipped Conjunctions
+  log("[Test 2-C] Punctuation-Free ASR Timeline Normalization & Rolling Deduplication");
+  const asrCues: RawTranscriptCue[] = [
+    { start: 0.0, duration: 5.0, text: "I went to the store yesterday" },
+    { start: 2.1, duration: 4.5, text: "store yesterday and bought some fresh apples for my family" },
+    { start: 6.0, duration: 2.2, text: "then we came back home" },
+  ];
+  const asrSegs = mergeCuesIntoSegments(asrCues, {
+    speedSpikeWpmThreshold: 175,
+    defaultUnlockStep: 0,
+  });
+  assert.equal(asrSegs.length, 1, "16-word ASR utterance with overlapping cues must stay as 1 natural sentence");
+  assert.equal(
+    asrSegs[0].text,
+    "I went to the store yesterday and bought some fresh apples for my family then we came back home"
+  );
+  assert.ok(asrSegs[0].end >= 8.0, "Normalized end time must cover final cue");
+  log("  -> PASS: Rolling overlap deduplication, overlapping cue clamping, and smooth ASR merging verified.\n");
 
   // 3. Large Dataset Performance & Binary Search Memoization Benchmark
   log("[Test 3] High-Volume Dataset Performance & Memoized Binary Search (5,000 cues)");
@@ -168,6 +211,7 @@ async function runAllTests() {
   log("[Test 6] Mobile Compatibility & Desktop/Mobile Separation Audit");
   const manifest = JSON.parse(fs.readFileSync(path.resolve("manifest.json"), "utf8"));
   assert.equal(manifest.isDesktopOnly, false, "manifest.json must allow mobile installation");
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.mobileListHeightPercent, 50, "Mobile list height must default to 50%");
 
   try {
     setPlatformMobileOverrideForTest(true);

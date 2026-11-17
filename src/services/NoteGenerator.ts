@@ -31,18 +31,31 @@ export class NoteGenerator {
     private getNotesFolder: () => string
   ) {}
 
-  private getSidecarDir(): string {
+  private getPrimarySidecarDir(): string {
+    const folder = this.getNotesFolder() || "YouTube Listening";
+    return normalizePath(`${folder}/.ear-coach-sessions`);
+  }
+
+  private getPrimarySidecarPath(videoId: string): string {
+    return normalizePath(`${this.getPrimarySidecarDir()}/${videoId}.json`);
+  }
+
+  private getLegacyPluginSidecarDir(): string {
     return normalizePath(`${this.app.vault.configDir}/plugins/obsidian-ear-coach/sessions`);
   }
 
-  private getSidecarPath(videoId: string): string {
-    return normalizePath(`${this.getSidecarDir()}/${videoId}.json`);
+  private getLegacyPluginSidecarPath(videoId: string): string {
+    return normalizePath(`${this.getLegacyPluginSidecarDir()}/${videoId}.json`);
   }
 
-  private async ensureSidecarDirExists(): Promise<void> {
-    const dir = this.getSidecarDir();
-    if (!(await this.app.vault.adapter.exists(dir))) {
-      await this.app.vault.adapter.mkdir(dir);
+  private async ensureAdapterDirRecursive(dirPath: string): Promise<void> {
+    const parts = normalizePath(dirPath).split("/").filter(Boolean);
+    let current = "";
+    for (const part of parts) {
+      current = current ? `${current}/${part}` : part;
+      if (!(await this.app.vault.adapter.exists(current))) {
+        await this.app.vault.adapter.mkdir(current);
+      }
     }
   }
 
@@ -53,9 +66,18 @@ export class NoteGenerator {
   public async ensureFolderExists(folderPath: string): Promise<void> {
     const normalized = normalizePath(folderPath);
     if (!normalized) return;
-    const exists = this.app.vault.getAbstractFileByPath(normalized);
-    if (!exists) {
-      await this.app.vault.createFolder(normalized);
+    const parts = normalized.split("/").filter(Boolean);
+    let current = "";
+    for (const part of parts) {
+      current = current ? `${current}/${part}` : part;
+      const exists = this.app.vault.getAbstractFileByPath(current);
+      if (!exists) {
+        try {
+          await this.app.vault.createFolder(current);
+        } catch {
+          // Ignore if folder was created concurrently
+        }
+      }
     }
   }
 
@@ -104,12 +126,25 @@ export class NoteGenerator {
     session.updatedAt = new Date().toISOString();
     this.sessionMemoryCache.set(session.videoId, session);
 
-    // 1. Save full payload to sidecar JSON (minified 1-line for minimal size & maximum speed)
-    await this.ensureSidecarDirExists();
+    // 1. Save full payload to primary Vault sidecar (survives plugin updates & syncs) AND legacy plugin sidecar
+    const payload = JSON.stringify(session);
+    const primaryDir = this.getPrimarySidecarDir();
+    await this.ensureAdapterDirRecursive(primaryDir);
     await this.app.vault.adapter.write(
-      this.getSidecarPath(session.videoId),
-      JSON.stringify(session)
+      this.getPrimarySidecarPath(session.videoId),
+      payload
     );
+
+    try {
+      const legacyDir = this.getLegacyPluginSidecarDir();
+      await this.ensureAdapterDirRecursive(legacyDir);
+      await this.app.vault.adapter.write(
+        this.getLegacyPluginSidecarPath(session.videoId),
+        payload
+      );
+    } catch {
+      // Legacy plugin directory mirror is best-effort
+    }
 
     const targetFile = existingFile ?? this.findExistingNoteByVideoId(session.videoId);
     if (sidecarOnly && targetFile) {
@@ -151,18 +186,30 @@ export class NoteGenerator {
       const memHit = this.sessionMemoryCache.get(videoId);
       if (memHit) return memHit;
 
-      const sidecarPath = this.getSidecarPath(videoId);
-      try {
-        if (await this.app.vault.adapter.exists(sidecarPath)) {
-          const rawJson = await this.app.vault.adapter.read(sidecarPath);
-          const session = JSON.parse(rawJson) as ListeningSessionData;
-          if (session && Array.isArray(session.segments)) {
-            this.sessionMemoryCache.set(videoId, session);
-            return session;
+      const candidatePaths = [
+        this.getPrimarySidecarPath(videoId),
+        this.getLegacyPluginSidecarPath(videoId),
+      ];
+
+      for (const sidecarPath of candidatePaths) {
+        try {
+          if (await this.app.vault.adapter.exists(sidecarPath)) {
+            const rawJson = await this.app.vault.adapter.read(sidecarPath);
+            const session = JSON.parse(rawJson) as ListeningSessionData;
+            if (session && Array.isArray(session.segments)) {
+              this.sessionMemoryCache.set(videoId, session);
+              // Migrate legacy plugin-dir-only session into primary Vault sidecar silently
+              if (sidecarPath !== candidatePaths[0]) {
+                void this.ensureAdapterDirRecursive(this.getPrimarySidecarDir())
+                  .then(() => this.app.vault.adapter.write(candidatePaths[0], rawJson))
+                  .catch(() => {});
+              }
+              return session;
+            }
           }
+        } catch {
+          // Try next candidate path
         }
-      } catch {
-        // Fallback to Markdown if sidecar read fails
       }
     }
 

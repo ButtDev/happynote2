@@ -1,4 +1,4 @@
-import { UnlockStep } from "./transcript";
+import type { UnlockStep } from "./transcript";
 
 /**
  * User-configurable settings for the Obsidian Ear-Coach plugin.
@@ -17,6 +17,7 @@ export interface EarCoachSettings {
   defaultUnlockStep: UnlockStep;
   preferredCaptionLang: string;
   tutorPanelHeightPx: number;
+  mobileListHeightPercent: number;
 }
 
 export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
@@ -33,4 +34,5 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   defaultUnlockStep: 0,
   preferredCaptionLang: "en",
   tutorPanelHeightPx: 380,
+  mobileListHeightPercent: 50,
 };

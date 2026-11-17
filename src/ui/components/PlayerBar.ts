@@ -1,4 +1,5 @@
 import { TranscriptSegment } from "../../types/transcript";
+import { isMobileApp } from "../../utils/platform.ts";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 
 export interface PlayerBarCallbacks {
@@ -99,18 +100,19 @@ export class PlayerBar {
     this.playerMountEl = videoBox.createDiv({ attr: { id: this.containerId } });
 
     const controlsBar = this.containerEl.createDiv({ cls: "ear-coach-player-controls" });
+    const mobile = isMobileApp();
 
     // Play / Pause button
     const playPauseBtn = controlsBar.createEl("button", {
       cls: "ear-coach-btn ear-coach-btn-primary",
-      text: "⏯ 재생/일시정지",
+      text: mobile ? "⏯ 재생" : "⏯ 재생/일시정지",
     });
     playPauseBtn.addEventListener("click", () => this.togglePlayPause());
 
     // Loop toggle button
     this.loopBtnEl = controlsBar.createEl("button", {
       cls: "ear-coach-btn",
-      text: "🔁 문장 무한루프: OFF",
+      text: mobile ? "🔁 루프 OFF" : "🔁 문장 무한루프: OFF",
     });
     this.loopBtnEl.addEventListener("click", () => {
       this.clearSegmentLoop();
@@ -118,7 +120,9 @@ export class PlayerBar {
 
     // Playback speed buttons
     const speedGroup = controlsBar.createDiv({ cls: "ear-coach-speed-group" });
-    speedGroup.createSpan({ cls: "ear-coach-speed-label", text: "배속:" });
+    if (!mobile) {
+      speedGroup.createSpan({ cls: "ear-coach-speed-label", text: "배속:" });
+    }
 
     const speeds = [0.7, 0.85, 1.0, 1.15];
     const speedButtons: HTMLButtonElement[] = [];
@@ -138,7 +142,7 @@ export class PlayerBar {
 
     this.statusLabelEl = controlsBar.createDiv({
       cls: "ear-coach-player-status",
-      text: "⏱ 00:00",
+      text: mobile ? "00:00" : "⏱ 00:00",
     });
 
     this.startLoopEnforcementTimer();
@@ -257,7 +261,7 @@ export class PlayerBar {
       return;
     }
 
-    const startSec = Math.max(0, segment.start);
+    const startSec = Math.max(0, segment.start - 0.12);
     if (!this.isEmbedLoaded) {
       this.pendingStartSec = startSec;
       if (this.mountTimeoutId !== null) {
@@ -287,7 +291,9 @@ export class PlayerBar {
     if (this.loopBtnEl) {
       this.loopBtnEl.addClass("is-loop-active");
       this.loopBtnEl.setText(
-        `🔁 루프 중: [${formatSecondsToTimestamp(segment.start)} ~ ${formatSecondsToTimestamp(segment.end)}] (해제 클릭)`
+        isMobileApp()
+          ? `🔁 [${formatSecondsToTimestamp(segment.start)}~${formatSecondsToTimestamp(segment.end)}]`
+          : `🔁 루프 중: [${formatSecondsToTimestamp(segment.start)} ~ ${formatSecondsToTimestamp(segment.end)}] (해제 클릭)`
       );
     }
     this.callbacks.onLoopToggle(true, segment, prev);
@@ -299,7 +305,7 @@ export class PlayerBar {
     this.activeLoopSegment = null;
     if (this.loopBtnEl) {
       this.loopBtnEl.removeClass("is-loop-active");
-      this.loopBtnEl.setText("🔁 문장 무한루프: OFF");
+      this.loopBtnEl.setText(isMobileApp() ? "🔁 루프 OFF" : "🔁 문장 무한루프: OFF");
     }
     this.callbacks.onLoopToggle(false, null, prev);
   }
@@ -452,9 +458,10 @@ export class PlayerBar {
       this.onTimeTick(current);
 
       if (this.activeLoopSegment && this.isPlaying) {
-        const endLimit = this.activeLoopSegment.end + this.loopPaddingSec;
+        const effectivePad = Math.max(this.loopPaddingSec, 0.35);
+        const endLimit = this.activeLoopSegment.end + effectivePad;
         if (current >= endLimit) {
-          const loopStart = Math.max(0, this.activeLoopSegment.start);
+          const loopStart = Math.max(0, this.activeLoopSegment.start - 0.12);
           this.seekTo(loopStart);
           this.play();
         }

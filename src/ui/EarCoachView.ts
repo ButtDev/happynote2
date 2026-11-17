@@ -1,4 +1,4 @@
-import { ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from "obsidian";
 import {
   ListeningSessionData,
   TranscriptSegment,
@@ -71,6 +71,24 @@ export class EarCoachView extends ItemView {
     return "headphones";
   }
 
+  public getState(): Record<string, unknown> {
+    return {
+      filePath: this.activeNoteFile?.path ?? null,
+      videoId: this.session?.videoId ?? null,
+    };
+  }
+
+  public async setState(state: unknown, result: ViewStateResult): Promise<void> {
+    await super.setState(state, result);
+    const s = state as { filePath?: string | null; videoId?: string | null } | null;
+    if (s && (s.filePath || s.videoId)) {
+      if (this.session && s.videoId && this.session.videoId === s.videoId) {
+        return;
+      }
+      await this.plugin.restoreSessionForView(this, s.filePath, s.videoId);
+    }
+  }
+
   public async onOpen(): Promise<void> {
     this.containerEl.addEventListener("keydown", this.boundKeyHandler, { capture: true });
     this.renderWorkspace();
@@ -102,6 +120,7 @@ export class EarCoachView extends ItemView {
 
     try {
       (this.leaf as any).updateHeader?.();
+      this.app.workspace.requestSaveLayout();
     } catch {
       // Ignore leaf header update errors
     }
@@ -257,9 +276,9 @@ export class EarCoachView extends ItemView {
 
   /**
    * Mobile-only vertical layout:
-   * - Top fixed YouTube player (100% parent width)
-   * - Middle compact toolbar (without agy CLI actions)
-   * - Bottom independently scrollable virtualized segment list (no Sound Doctor drawer)
+   * - Top fixed pane: YouTube player (100% width) + controls + compact toolbar
+   * - Middle touch-draggable resizer handle (persisted locally)
+   * - Bottom independently scrollable virtualized segment list (default 50% height, no Sound Doctor drawer)
    */
   private renderMobileWorkspace(root: HTMLElement): void {
     if (!this.session) return;
@@ -267,8 +286,12 @@ export class EarCoachView extends ItemView {
       cls: "ear-coach-mobile-container",
     });
 
-    // 1. Fixed Top Player (parent width 100%)
-    const topPlayerWrapper = mobileContainer.createDiv({
+    // 1. Top Fixed Pane (YouTube Player + Player Controls + Compact Toolbar)
+    const topPaneEl = mobileContainer.createDiv({
+      cls: "ear-coach-mobile-top-pane",
+    });
+
+    const topPlayerWrapper = topPaneEl.createDiv({
       cls: "ear-coach-mobile-top-player",
     });
     const playerSection = topPlayerWrapper.createDiv({
@@ -276,19 +299,27 @@ export class EarCoachView extends ItemView {
     });
     this.mountPlayerBar(playerSection);
 
-    // 2. Fixed Middle Toolbar (no agy batch button)
-    this.toolbarEl = mobileContainer.createDiv({
+    this.toolbarEl = topPaneEl.createDiv({
       cls: "ear-coach-toolbar ear-coach-mobile-toolbar",
     });
     this.renderToolbar(this.toolbarEl);
 
-    // 3. Independently Scrollable Bottom Segment List
+    // 2. Touch Drag Resizer Bar (user-adjustable split ratio, persisted locally)
+    const resizerEl = mobileContainer.createDiv({
+      cls: "ear-coach-mobile-resizer",
+      attr: { "aria-label": "상하 영역 크기 조절 핸들 (위아래로 드래그)" },
+    });
+    resizerEl.createDiv({ cls: "ear-coach-mobile-resizer-pill" });
+
+    // 3. Bottom Independently Scrollable Segment List (default 50% height)
     const listWrapper = mobileContainer.createDiv({
       cls: "ear-coach-transcript-list-wrapper ear-coach-mobile-list-wrapper",
     });
     this.listContainerEl = listWrapper.createDiv({
       cls: "ear-coach-segment-list",
     });
+
+    this.setupMobileTouchResizer(resizerEl, listWrapper, mobileContainer);
 
     this.virtualList = this.createVirtualSegmentList(
       listWrapper,
@@ -303,6 +334,94 @@ export class EarCoachView extends ItemView {
     this.isShellMounted = true;
     this.updateVirtualListSegments();
     this.playerBar?.render(this.session.videoId);
+  }
+
+  private setupMobileTouchResizer(
+    resizerEl: HTMLElement,
+    listWrapper: HTMLElement,
+    mobileContainer: HTMLElement
+  ): void {
+    const clampPercent = (pct: number): number =>
+      Math.max(25, Math.min(72, Math.round(pct)));
+
+    let currentPercent = clampPercent(
+      this.plugin.settings.mobileListHeightPercent ?? 50
+    );
+
+    const applyListHeight = (pct: number) => {
+      const clamped = clampPercent(pct);
+      currentPercent = clamped;
+      listWrapper.style.flex = `0 0 ${clamped}%`;
+      listWrapper.style.height = `${clamped}%`;
+    };
+
+    applyListHeight(currentPercent);
+
+    let isDragging = false;
+    let startY = 0;
+    let startListH = 0;
+    let containerH = 0;
+    let pendingRaf: number | null = null;
+    let latestClientY = 0;
+
+    const commitResize = async () => {
+      if (!isDragging) return;
+      isDragging = false;
+      resizerEl.removeClass("is-dragging");
+      if (pendingRaf !== null) {
+        window.cancelAnimationFrame(pendingRaf);
+        pendingRaf = null;
+      }
+      this.plugin.settings.mobileListHeightPercent = currentPercent;
+      await this.plugin.saveSettings();
+    };
+
+    const scheduleUpdate = (clientY: number) => {
+      latestClientY = clientY;
+      if (pendingRaf !== null) return;
+      pendingRaf = window.requestAnimationFrame(() => {
+        pendingRaf = null;
+        const deltaY = startY - latestClientY;
+        const nextListH = startListH + deltaY;
+        const rawPct = (nextListH / Math.max(200, containerH)) * 100;
+        applyListHeight(rawPct);
+      });
+    };
+
+    resizerEl.addEventListener("pointerdown", (ev: PointerEvent) => {
+      ev.preventDefault();
+      isDragging = true;
+      startY = ev.clientY;
+      startListH = listWrapper.getBoundingClientRect().height;
+      containerH =
+        mobileContainer.getBoundingClientRect().height || window.innerHeight;
+      resizerEl.addClass("is-dragging");
+      try {
+        resizerEl.setPointerCapture(ev.pointerId);
+      } catch {
+        // Ignore if pointer capture is unsupported
+      }
+    });
+
+    resizerEl.addEventListener("pointermove", (ev: PointerEvent) => {
+      if (!isDragging) return;
+      ev.preventDefault();
+      scheduleUpdate(ev.clientY);
+    });
+
+    resizerEl.addEventListener("pointerup", () => {
+      void commitResize();
+    });
+    resizerEl.addEventListener("pointercancel", () => {
+      void commitResize();
+    });
+
+    // Double-tap / double-click resets cleanly to 50%
+    resizerEl.addEventListener("dblclick", async () => {
+      applyListHeight(50);
+      this.plugin.settings.mobileListHeightPercent = 50;
+      await this.plugin.saveSettings();
+    });
   }
 
   private mountPlayerBar(playerSection: HTMLElement): void {
@@ -463,10 +582,13 @@ export class EarCoachView extends ItemView {
   }
 
   private renderMobileToolbar(toolbar: HTMLElement): void {
-    this.renderCommonToolbar(toolbar);
+    this.renderCommonToolbar(toolbar, true);
   }
 
-  private renderCommonToolbar(toolbar: HTMLElement): HTMLElement | null {
+  private renderCommonToolbar(
+    toolbar: HTMLElement,
+    compact = false
+  ): HTMLElement | null {
     if (!this.session) return null;
 
     const filterGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
@@ -474,11 +596,15 @@ export class EarCoachView extends ItemView {
       { mode: "ALL", label: `전체 (${this.session.segments.length})` },
       {
         mode: "PINNED",
-        label: `📌 안 들림 핀 (${this.session.segments.filter((s) => s.isPinned).length})`,
+        label: compact
+          ? `📌 핀 (${this.session.segments.filter((s) => s.isPinned).length})`
+          : `📌 안 들림 핀 (${this.session.segments.filter((s) => s.isPinned).length})`,
       },
       {
         mode: "SPEED_SPIKE",
-        label: `🚀 과속 구간 (${this.session.segments.filter((s) => s.isSpeedSpike).length})`,
+        label: compact
+          ? `🚀 과속 (${this.session.segments.filter((s) => s.isSpeedSpike).length})`
+          : `🚀 과속 구간 (${this.session.segments.filter((s) => s.isSpeedSpike).length})`,
       },
     ];
 
@@ -499,13 +625,13 @@ export class EarCoachView extends ItemView {
 
     const blindAllBtn = actionGroup.createEl("button", {
       cls: "ear-coach-btn",
-      text: "🙈 전체 블라인드",
+      text: compact ? "🙈 블라인드" : "🙈 전체 블라인드",
     });
     blindAllBtn.addEventListener("click", () => this.setAllUnlockSteps(0));
 
     const revealAllBtn = actionGroup.createEl("button", {
       cls: "ear-coach-btn",
-      text: "📖 전체 공개",
+      text: compact ? "📖 공개" : "📖 전체 공개",
     });
     revealAllBtn.addEventListener("click", () => this.setAllUnlockSteps(3));
 

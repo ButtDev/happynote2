@@ -112,7 +112,20 @@ export default class EarCoachPlugin extends Plugin {
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) return false;
         if (!checking) {
-          this.openEarCoachForNoteFile(activeFile);
+          void this.openEarCoachForNoteFile(activeFile);
+        }
+        return true;
+      },
+    });
+
+    this.addCommand({
+      id: "ear-coach-resegment-current-note",
+      name: "현재 노트의 자막을 최신 문장 단위로 다시 추출·정렬 (Re-segment)",
+      checkCallback: (checking: boolean) => {
+        const activeFile = this.getActiveEarCoachFile();
+        if (!activeFile) return false;
+        if (!checking) {
+          void this.resegmentNoteFile(activeFile);
         }
         return true;
       },
@@ -152,10 +165,12 @@ export default class EarCoachPlugin extends Plugin {
             const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
             if (file instanceof TFile) {
               const fullSession = isSidecar
-                ? await this.noteGenerator.loadSessionFromNote(file, this.workerManager)
+                ? await this.loadOrRecoverSession(file)
                 : (parsed as ListeningSessionData);
               if (fullSession) {
                 await this.activateWorkspaceView(fullSession, file);
+              } else {
+                new Notice("⚠️ 리스닝 세션을 불러오거나 복구하지 못했습니다.");
               }
             } else if (!isSidecar) {
               await this.activateWorkspaceView(parsed as ListeningSessionData, null);
@@ -184,10 +199,7 @@ export default class EarCoachPlugin extends Plugin {
         !plugin.bypassOpenInterceptor &&
         plugin.isEarCoachNoteFast(file)
       ) {
-        const session = await plugin.noteGenerator.loadSessionFromNote(
-          file,
-          plugin.workerManager
-        );
+        const session = await plugin.loadOrRecoverSession(file);
         if (session) {
           const coachLeaves = plugin.app.workspace.getLeavesOfType(VIEW_TYPE_EAR_COACH);
           if (coachLeaves.length > 0) {
@@ -228,34 +240,77 @@ export default class EarCoachPlugin extends Plugin {
     );
 
     this.app.workspace.onLayoutReady(async () => {
-      const activeFile = this.app.workspace.getActiveFile();
-      if (activeFile && activeFile.path.endsWith(".md")) {
-        await this.tryAutoOpenEarCoachForFile(activeFile);
-      }
+      await this.sweepOpenMarkdownLeavesForEarCoach();
+      // Mobile cold-start safety: metadataCache & leaf restoration may settle slightly after layout ready
+      window.setTimeout(() => {
+        void this.sweepOpenMarkdownLeavesForEarCoach();
+      }, 450);
     });
+
+    this.registerEvent(
+      this.app.metadataCache.on("resolved", () => {
+        void this.sweepOpenMarkdownLeavesForEarCoach();
+      })
+    );
   }
 
   public isEarCoachNoteFast(file: TFile): boolean {
     const cache = this.app.metadataCache.getFileCache(file);
     const tags = cache?.frontmatter?.tags;
-    return Boolean(
+    if (
       cache?.frontmatter?.video_id ||
-        (Array.isArray(tags) &&
-          (tags.includes("ear-coach") || tags.includes("english-listening"))) ||
-        tags === "ear-coach"
-    );
+      (Array.isArray(tags) &&
+        (tags.includes("ear-coach") || tags.includes("english-listening"))) ||
+      tags === "ear-coach"
+    ) {
+      return true;
+    }
+
+    // Cold-start fallback before metadataCache is populated
+    const notesFolder = (this.settings.notesFolder || "YouTube Listening").replace(/\/+$/, "");
+    if (
+      file.path.startsWith(`${notesFolder}/`) &&
+      /\[[a-zA-Z0-9_-]{6,15}\]\.md$/.test(file.name)
+    ) {
+      return true;
+    }
+    return false;
   }
 
-  private isAutoSwitching = false;
+  private switchingPaths = new Set<string>();
+  private pendingRecoveryByVideoId = new Map<string, Promise<ListeningSessionData | null>>();
+
+  private async sweepOpenMarkdownLeavesForEarCoach(): Promise<void> {
+    if (this.bypassOpenInterceptor) return;
+    const filesToCheck: TFile[] = [];
+    const activeFile = this.app.workspace.getActiveFile();
+    if (activeFile && activeFile.extension === "md") {
+      filesToCheck.push(activeFile);
+    }
+
+    this.app.workspace.iterateAllLeaves((leaf) => {
+      if (leaf.view.getViewType() === "markdown") {
+        const mdFile = (leaf.view as any).file;
+        if (mdFile instanceof TFile && !filesToCheck.some((f) => f.path === mdFile.path)) {
+          filesToCheck.push(mdFile);
+        }
+      }
+    });
+
+    for (const file of filesToCheck) {
+      await this.tryAutoOpenEarCoachForFile(file);
+    }
+  }
 
   private async tryAutoOpenEarCoachForFile(file: TFile): Promise<void> {
-    if (this.isAutoSwitching) return;
+    if (this.switchingPaths.has(file.path)) return;
     const cache = this.app.metadataCache.getFileCache(file);
     const tags = cache?.frontmatter?.tags;
-    let isEarCoach =
+    let isEarCoach = Boolean(
       cache?.frontmatter?.video_id ||
-      (Array.isArray(tags) && (tags.includes("ear-coach") || tags.includes("english-listening"))) ||
-      tags === "ear-coach";
+        (Array.isArray(tags) && (tags.includes("ear-coach") || tags.includes("english-listening"))) ||
+        tags === "ear-coach"
+    );
 
     let prefetchedContent: string | undefined;
     if (!isEarCoach) {
@@ -271,21 +326,106 @@ export default class EarCoachPlugin extends Plugin {
     }
 
     if (isEarCoach) {
+      this.switchingPaths.add(file.path);
       try {
-        this.isAutoSwitching = true;
-        const session = await this.noteGenerator.loadSessionFromNote(
-          file,
-          this.workerManager,
-          prefetchedContent
-        );
+        const session = await this.loadOrRecoverSession(file, prefetchedContent);
         if (session) {
           await this.activateWorkspaceView(session, file, undefined, true);
         }
       } finally {
-        setTimeout(() => {
-          this.isAutoSwitching = false;
-        }, 150);
+        window.setTimeout(() => {
+          this.switchingPaths.delete(file.path);
+        }, 250);
       }
+    }
+  }
+
+  /**
+   * Loads session from memory/sidecar/markdown, and if the sidecar JSON was missing
+   * (e.g. after mobile sync or app reinstall), automatically recovers it from YouTube!
+   */
+  public async loadOrRecoverSession(
+    file: TFile,
+    prefetchedContent?: string
+  ): Promise<ListeningSessionData | null> {
+    const loaded = await this.noteGenerator.loadSessionFromNote(
+      file,
+      this.workerManager,
+      prefetchedContent
+    );
+    if (loaded) return loaded;
+
+    let content = prefetchedContent;
+    if (!content) {
+      try {
+        content = await this.app.vault.read(file);
+      } catch {
+        return null;
+      }
+    }
+
+    const frontmatterMatch = content.match(/video_id:\s*["']?([a-zA-Z0-9_-]{6,15})["']?/);
+    const videoId =
+      frontmatterMatch?.[1] || this.noteGenerator.extractVideoIdFromFile(file);
+    if (!videoId) return null;
+
+    const existingPromise = this.pendingRecoveryByVideoId.get(videoId);
+    if (existingPromise) return existingPromise;
+
+    const recoveryPromise = (async (): Promise<ListeningSessionData | null> => {
+      try {
+        const fetched = await this.transcriptService.fetchTranscript(
+          videoId,
+          this.settings.preferredCaptionLang
+        );
+        const segments = await this.workerManager.processCuesAsync(fetched.cues, {
+          speedSpikeWpmThreshold: this.settings.speedSpikeWpmThreshold,
+          defaultUnlockStep: this.settings.defaultUnlockStep,
+        });
+        const now = new Date().toISOString();
+        const recovered: ListeningSessionData = {
+          videoId,
+          videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+          title: fetched.title,
+          channelName: fetched.channelName,
+          createdAt: now,
+          updatedAt: now,
+          pinnedTimestamps: [],
+          segments,
+        };
+        await this.noteGenerator.saveSessionToNote(recovered, file, true);
+        return recovered;
+      } catch {
+        return null;
+      } finally {
+        this.pendingRecoveryByVideoId.delete(videoId);
+      }
+    })();
+
+    this.pendingRecoveryByVideoId.set(videoId, recoveryPromise);
+    return recoveryPromise;
+  }
+
+  public async restoreSessionForView(
+    view: EarCoachView,
+    filePath?: string | null,
+    videoId?: string | null
+  ): Promise<void> {
+    let targetFile: TFile | null = null;
+    if (filePath) {
+      const abstract = this.app.vault.getAbstractFileByPath(filePath);
+      if (abstract instanceof TFile) {
+        targetFile = abstract;
+      }
+    }
+    if (!targetFile && videoId) {
+      targetFile = this.noteGenerator.findExistingNoteByVideoId(videoId);
+    }
+    if (!targetFile) return;
+
+    const session = await this.loadOrRecoverSession(targetFile);
+    if (session) {
+      await view.loadSession(session, targetFile);
     }
   }
 
@@ -320,11 +460,7 @@ export default class EarCoachPlugin extends Plugin {
     );
 
     if (existingFile) {
-      const existingSession =
-        await this.noteGenerator.loadSessionFromNote(
-          existingFile,
-          this.workerManager
-        );
+      const existingSession = await this.loadOrRecoverSession(existingFile);
       if (existingSession) {
         if (effectivePin !== undefined) {
           if (!existingSession.pinnedTimestamps.includes(effectivePin)) {
@@ -444,11 +580,63 @@ export default class EarCoachPlugin extends Plugin {
     }
   }
 
+  private getActiveEarCoachFile(): TFile | null {
+    const activeView = this.app.workspace.getActiveViewOfType(EarCoachView);
+    if (activeView) {
+      const state = activeView.getState() as { filePath?: string | null };
+      if (state.filePath) {
+        const f = this.app.vault.getAbstractFileByPath(state.filePath);
+        if (f instanceof TFile) return f;
+      }
+    }
+    const activeFile = this.app.workspace.getActiveFile();
+    return activeFile ?? null;
+  }
+
+  private async resegmentNoteFile(file: TFile): Promise<void> {
+    const existing = await this.loadOrRecoverSession(file);
+    const videoId = existing?.videoId || this.noteGenerator.extractVideoIdFromFile(file);
+    if (!videoId) {
+      new Notice("유튜브 Video ID를 찾을 수 없습니다.");
+      return;
+    }
+
+    new Notice("⏳ 자막을 최신 문장 단위로 다시 추출·정렬하고 있습니다...");
+    try {
+      const fetched = await this.transcriptService.fetchTranscript(
+        videoId,
+        this.settings.preferredCaptionLang
+      );
+      const pinnedTimestamps = existing?.pinnedTimestamps ?? [];
+      const segments = await this.workerManager.processCuesAsync(fetched.cues, {
+        speedSpikeWpmThreshold: this.settings.speedSpikeWpmThreshold,
+        defaultUnlockStep: this.settings.defaultUnlockStep,
+        pinnedTimestamps,
+      });
+
+      const updated: ListeningSessionData = {
+        videoId,
+        videoUrl: existing?.videoUrl || `https://www.youtube.com/watch?v=${videoId}`,
+        title: existing?.title || fetched.title,
+        channelName: existing?.channelName || fetched.channelName,
+        createdAt: existing?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        pinnedTimestamps,
+        segments,
+        agyConversationId: existing?.agyConversationId,
+      };
+      await this.noteGenerator.saveSessionToNote(updated, file, false);
+      await this.activateWorkspaceView(updated, file);
+      new Notice(`✅ 문장 단위 재정렬 완료 (${segments.length}문장)`);
+    } catch (err) {
+      new Notice(
+        `❌ 재정렬 실패: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
   private async openEarCoachForNoteFile(file: TFile): Promise<void> {
-    const session = await this.noteGenerator.loadSessionFromNote(
-      file,
-      this.workerManager
-    );
+    const session = await this.loadOrRecoverSession(file);
     if (!session) {
       new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없습니다.");
       return;
