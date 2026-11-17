@@ -1,12 +1,6 @@
 import { requestUrl } from "obsidian";
-import { execFile } from "child_process";
-import { promisify } from "util";
-import * as fs from "fs/promises";
-import * as path from "path";
-import * as os from "os";
 import { RawTranscriptCue } from "../types/transcript";
-
-const execFileAsync = promisify(execFile);
+import { isMobileApp, requireDesktopModule } from "../utils/platform.ts";
 
 export interface FetchedVideoTranscript {
   videoId: string;
@@ -31,6 +25,9 @@ export class TranscriptService {
     try {
       return await this.fetchViaBuiltInExtractor(videoId, preferredLang);
     } catch (primaryErr) {
+      if (isMobileApp()) {
+        throw primaryErr;
+      }
       try {
         return await this.fetchViaYtDlpFallback(videoId, preferredLang);
       } catch {
@@ -361,9 +358,22 @@ export class TranscriptService {
     videoId: string,
     preferredLang: string
   ): Promise<FetchedVideoTranscript> {
+    if (isMobileApp()) {
+      throw new Error("yt-dlp fallback is only available on desktop.");
+    }
+
+    const cp = requireDesktopModule<typeof import("child_process")>("child_process");
+    const util = requireDesktopModule<typeof import("util")>("util");
+    const fs = requireDesktopModule<typeof import("fs/promises")>("fs/promises");
+    const path = requireDesktopModule<typeof import("path")>("path");
+    const os = requireDesktopModule<typeof import("os")>("os");
+    const execFileAsync = util.promisify(cp.execFile);
+
     const rawBin = (this.getYtDlpPath() || "yt-dlp").trim();
     const ytDlpBin =
-      process.platform === "win32" && !/\.(exe|cmd|bat)$/i.test(rawBin)
+      typeof process !== "undefined" &&
+      process.platform === "win32" &&
+      !/\.(exe|cmd|bat)$/i.test(rawBin)
         ? `${rawBin}.exe`
         : rawBin;
     const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "ear-coach-"));

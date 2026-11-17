@@ -11,6 +11,12 @@ import { SegmentTimeIndex } from "../src/utils/binarySearch.ts";
 import { mergeCuesIntoSegments } from "../src/workers/transcriptProcessor.ts";
 import { TranscriptWorkerManager } from "../src/workers/WorkerPoolManager.ts";
 import { AgyCliService } from "../src/services/AgyCliService.ts";
+import {
+  isDesktopApp,
+  isMobileApp,
+  requireDesktopModule,
+  setPlatformMobileOverrideForTest,
+} from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 
 const logs: string[] = [];
@@ -156,7 +162,49 @@ async function runAllTests() {
   // Ensure no CSS property uses blur() or backdrop-filter
   const cssCodeWithoutComments = cssContent.replace(/\/\*[\s\S]*?\*\//g, "");
   assert.equal(/backdrop-filter|filter:\s*blur/i.test(cssCodeWithoutComments), false);
-  log("  -> PASS: All source files are compact (< 360 lines) and styles.css has 0 blur effects.\n");
+  log("  -> PASS: All source files are under 900 lines and styles.css has 0 blur effects.\n");
+
+  // 6. Mobile Compatibility & Platform Isolation Verification
+  log("[Test 6] Mobile Compatibility & Desktop/Mobile Separation Audit");
+  const manifest = JSON.parse(fs.readFileSync(path.resolve("manifest.json"), "utf8"));
+  assert.equal(manifest.isDesktopOnly, false, "manifest.json must allow mobile installation");
+
+  try {
+    setPlatformMobileOverrideForTest(true);
+    assert.equal(isMobileApp(), true);
+    assert.equal(isDesktopApp(), false);
+    const mobileAgyAvailable = await agyService.checkAgyAvailable();
+    assert.equal(mobileAgyAvailable, false, "agy CLI must be disabled on mobile");
+    assert.throws(
+      () => requireDesktopModule("child_process"),
+      /not available on mobile/,
+      "requireDesktopModule must block Node built-ins on mobile"
+    );
+  } finally {
+    setPlatformMobileOverrideForTest(null);
+  }
+  assert.equal(isDesktopApp(), true, "Platform override must restore desktop mode cleanly");
+
+  const bundlePath = path.resolve("main.js");
+  if (fs.existsSync(bundlePath)) {
+    const bundleCode = fs.readFileSync(bundlePath, "utf8");
+    const forbiddenStaticRequires = [
+      /require\(["']child_process["']\)/,
+      /require\(["']fs\/promises["']\)/,
+      /require\(["']path["']\)/,
+      /require\(["']os["']\)/,
+      /require\(["']util["']\)/,
+    ];
+    for (const pattern of forbiddenStaticRequires) {
+      assert.equal(
+        pattern.test(bundleCode),
+        false,
+        `main.js must not contain static ${pattern} that crashes mobile WebView`
+      );
+    }
+    log("  -> PASS: main.js contains zero static Node.js built-in require() calls.");
+  }
+  log("  -> PASS: Mobile guard, manifest.json (isDesktopOnly: false), and platform isolation verified.\n");
 
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");

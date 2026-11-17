@@ -5,6 +5,7 @@ import {
   UnlockStep,
 } from "../types/transcript";
 import { SegmentTimeIndex } from "../utils/binarySearch";
+import { isMobileApp } from "../utils/platform";
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
@@ -148,6 +149,19 @@ export class EarCoachView extends ItemView {
     }
 
     root.empty();
+
+    if (isMobileApp()) {
+      this.renderMobileWorkspace(root);
+    } else {
+      this.renderDesktopWorkspace(root);
+    }
+  }
+
+  /**
+   * Desktop-only two-column Side-by-Side workspace layout (Left: Transcript + Resizable Tutor Drawer, Right: Video Player).
+   */
+  private renderDesktopWorkspace(root: HTMLElement): void {
+    if (!this.session) return;
     const sideBySideContainer = root.createDiv({
       cls: "ear-coach-side-by-side-container",
     });
@@ -167,39 +181,11 @@ export class EarCoachView extends ItemView {
       cls: "ear-coach-segment-list",
     });
 
-    this.virtualList = new VirtualSegmentList(listWrapper, this.listContainerEl, {
-      onPlaySegment: (s, loop) => {
-        this.manualLockSegmentIdx = s.index;
-        this.manualLockUntil = performance.now() + 1000;
-        this.timeIndex.setLastHitIndex(s.index);
-        this.setActiveHighlightSegment(s.index, true);
-        this.playerBar?.playSegment(s, loop);
-      },
-      isLooping: (s) => {
-        return this.playerBar?.isSegmentLooping(s) ?? false;
-      },
-      onTogglePin: async (s) => {
-        await this.persistCurrentSession(false);
-        if (s.isPinned && this.activeNoteFile && this.session) {
-          await this.plugin.weaknessTracker.recordWeakSegment({
-            videoId: this.session.videoId,
-            videoTitle: this.session.title,
-            notePath: this.activeNoteFile.path,
-            segment: s,
-          });
-        }
-      },
-      onUnlockStepChange: async () => {
-        await this.persistCurrentSession(true);
-      },
-      onOpenTutor: (s, heardText) => {
-        if (heardText) {
-          this.tutorPanel?.openForSegment(s, heardText);
-        } else {
-          this.tutorPanel?.toggleForSegment(s);
-        }
-      },
-    });
+    this.virtualList = this.createVirtualSegmentList(
+      listWrapper,
+      this.listContainerEl,
+      true
+    );
 
     const resizerEl = leftColumn.createDiv({
       cls: "ear-coach-tutor-resizer is-hidden",
@@ -262,6 +248,64 @@ export class EarCoachView extends ItemView {
     const playerSection = rightColumn.createDiv({
       cls: "ear-coach-player-section",
     });
+    this.mountPlayerBar(playerSection);
+
+    this.isShellMounted = true;
+    this.updateVirtualListSegments();
+    this.playerBar?.render(this.session.videoId);
+  }
+
+  /**
+   * Mobile-only vertical layout:
+   * - Top fixed YouTube player (100% parent width)
+   * - Middle compact toolbar (without agy CLI actions)
+   * - Bottom independently scrollable virtualized segment list (no Sound Doctor drawer)
+   */
+  private renderMobileWorkspace(root: HTMLElement): void {
+    if (!this.session) return;
+    const mobileContainer = root.createDiv({
+      cls: "ear-coach-mobile-container",
+    });
+
+    // 1. Fixed Top Player (parent width 100%)
+    const topPlayerWrapper = mobileContainer.createDiv({
+      cls: "ear-coach-mobile-top-player",
+    });
+    const playerSection = topPlayerWrapper.createDiv({
+      cls: "ear-coach-player-section",
+    });
+    this.mountPlayerBar(playerSection);
+
+    // 2. Fixed Middle Toolbar (no agy batch button)
+    this.toolbarEl = mobileContainer.createDiv({
+      cls: "ear-coach-toolbar ear-coach-mobile-toolbar",
+    });
+    this.renderToolbar(this.toolbarEl);
+
+    // 3. Independently Scrollable Bottom Segment List
+    const listWrapper = mobileContainer.createDiv({
+      cls: "ear-coach-transcript-list-wrapper ear-coach-mobile-list-wrapper",
+    });
+    this.listContainerEl = listWrapper.createDiv({
+      cls: "ear-coach-segment-list",
+    });
+
+    this.virtualList = this.createVirtualSegmentList(
+      listWrapper,
+      this.listContainerEl,
+      false
+    );
+
+    this.tutorPanel?.stopActiveStream();
+    this.tutorPanel = null;
+    this.tutorContainerEl = null;
+
+    this.isShellMounted = true;
+    this.updateVirtualListSegments();
+    this.playerBar?.render(this.session.videoId);
+  }
+
+  private mountPlayerBar(playerSection: HTMLElement): void {
     this.playerBar?.destroy();
     this.playerBar = new PlayerBar(
       playerSection,
@@ -279,10 +323,47 @@ export class EarCoachView extends ItemView {
       this.plugin.settings.defaultPlaybackRate,
       this.plugin.settings.loopPaddingSeconds
     );
+  }
 
-    this.isShellMounted = true;
-    this.updateVirtualListSegments();
-    this.playerBar.render(this.session.videoId);
+  private createVirtualSegmentList(
+    listWrapper: HTMLElement,
+    listContainerEl: HTMLElement,
+    enableTutor: boolean
+  ): VirtualSegmentList {
+    return new VirtualSegmentList(listWrapper, listContainerEl, {
+      onPlaySegment: (s, loop) => {
+        this.manualLockSegmentIdx = s.index;
+        this.manualLockUntil = performance.now() + 1000;
+        this.timeIndex.setLastHitIndex(s.index);
+        this.setActiveHighlightSegment(s.index, true);
+        this.playerBar?.playSegment(s, loop);
+      },
+      isLooping: (s) => {
+        return this.playerBar?.isSegmentLooping(s) ?? false;
+      },
+      onTogglePin: async (s) => {
+        await this.persistCurrentSession(false);
+        if (s.isPinned && this.activeNoteFile && this.session) {
+          await this.plugin.weaknessTracker.recordWeakSegment({
+            videoId: this.session.videoId,
+            videoTitle: this.session.title,
+            notePath: this.activeNoteFile.path,
+            segment: s,
+          });
+        }
+      },
+      onUnlockStepChange: async () => {
+        await this.persistCurrentSession(true);
+      },
+      onOpenTutor: (s, heardText) => {
+        if (!enableTutor || !this.tutorPanel) return;
+        if (heardText) {
+          this.tutorPanel.openForSegment(s, heardText);
+        } else {
+          this.tutorPanel.toggleForSegment(s);
+        }
+      },
+    });
   }
 
   private destroyShell(): void {
@@ -347,6 +428,46 @@ export class EarCoachView extends ItemView {
 
   private renderToolbar(toolbar: HTMLElement): void {
     if (!this.session) return;
+    if (isMobileApp()) {
+      this.renderMobileToolbar(toolbar);
+    } else {
+      this.renderDesktopToolbar(toolbar);
+    }
+  }
+
+  private renderDesktopToolbar(toolbar: HTMLElement): void {
+    const actionGroup = this.renderCommonToolbar(toolbar);
+    if (!actionGroup) return;
+
+    const batchAiBtn = actionGroup.createEl("button", {
+      cls: "ear-coach-btn ear-coach-btn-accent",
+      text: "🤖 agy AI 연음·함정 정밀 분석",
+    });
+    batchAiBtn.addEventListener("click", async () => {
+      if (!this.session) return;
+      batchAiBtn.disabled = true;
+      batchAiBtn.setText("⏳ agy 분석 중...");
+      try {
+        await this.plugin.runAgyBatchEnrichment(this.session, this.activeNoteFile);
+        this.updateVirtualListSegments();
+        new Notice("agy CLI 정밀 연음·약화 분석이 완료되었습니다!");
+      } catch (err) {
+        new Notice(
+          `agy 배치 분석 실패: ${err instanceof Error ? err.message : String(err)}`
+        );
+      } finally {
+        batchAiBtn.disabled = false;
+        batchAiBtn.setText("🤖 agy AI 연음·함정 정밀 분석");
+      }
+    });
+  }
+
+  private renderMobileToolbar(toolbar: HTMLElement): void {
+    this.renderCommonToolbar(toolbar);
+  }
+
+  private renderCommonToolbar(toolbar: HTMLElement): HTMLElement | null {
+    if (!this.session) return null;
 
     const filterGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
     const filters: Array<{ mode: FilterMode; label: string }> = [
@@ -388,27 +509,7 @@ export class EarCoachView extends ItemView {
     });
     revealAllBtn.addEventListener("click", () => this.setAllUnlockSteps(3));
 
-    const batchAiBtn = actionGroup.createEl("button", {
-      cls: "ear-coach-btn ear-coach-btn-accent",
-      text: "🤖 agy AI 연음·함정 정밀 분석",
-    });
-    batchAiBtn.addEventListener("click", async () => {
-      if (!this.session) return;
-      batchAiBtn.disabled = true;
-      batchAiBtn.setText("⏳ agy 분석 중...");
-      try {
-        await this.plugin.runAgyBatchEnrichment(this.session, this.activeNoteFile);
-        this.updateVirtualListSegments();
-        new Notice("agy CLI 정밀 연음·약화 분석이 완료되었습니다!");
-      } catch (err) {
-        new Notice(
-          `agy 배치 분석 실패: ${err instanceof Error ? err.message : String(err)}`
-        );
-      } finally {
-        batchAiBtn.disabled = false;
-        batchAiBtn.setText("🤖 agy AI 연음·함정 정밀 분석");
-      }
-    });
+    return actionGroup;
   }
 
   private updateVirtualListSegments(): void {

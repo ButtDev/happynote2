@@ -1,5 +1,4 @@
-import { spawn, execFile, type ChildProcessWithoutNullStreams } from "child_process";
-import { promisify } from "util";
+import type { ChildProcessWithoutNullStreams } from "child_process";
 import type {
   AgyBatchAnalysisRequest,
   AgyBatchAnalysisResponse,
@@ -7,8 +6,16 @@ import type {
   AgyStreamCallbacks,
 } from "../types/agy";
 import type { ListeningTrapType } from "../types/transcript";
+import { isMobileApp, requireDesktopModule } from "../utils/platform.ts";
 
-const execFileAsync = promisify(execFile);
+function getDesktopExecAndSpawn() {
+  const cp = requireDesktopModule<typeof import("child_process")>("child_process");
+  const util = requireDesktopModule<typeof import("util")>("util");
+  return {
+    spawn: cp.spawn,
+    execFileAsync: util.promisify(cp.execFile),
+  };
+}
 
 const BATCH_ANALYSIS_JSON_SCHEMA = JSON.stringify({
   type: "object",
@@ -85,7 +92,11 @@ export class AgyCliService {
 
   private resolveBinary(): string {
     const raw = (this.getAgyPath() || "agy").trim();
-    if (process.platform === "win32" && !/\.(exe|cmd|bat)$/i.test(raw)) {
+    if (
+      typeof process !== "undefined" &&
+      process.platform === "win32" &&
+      !/\.(exe|cmd|bat)$/i.test(raw)
+    ) {
       return `${raw}.exe`;
     }
     return raw;
@@ -95,7 +106,9 @@ export class AgyCliService {
    * Verifies that `agy` CLI is reachable on the system.
    */
   public async checkAgyAvailable(): Promise<boolean> {
+    if (isMobileApp()) return false;
     try {
+      const { execFileAsync } = getDesktopExecAndSpawn();
       const bin = this.resolveBinary();
       await execFileAsync(bin, ["--help"], { timeout: 5000, windowsHide: true });
       return true;
@@ -110,6 +123,10 @@ export class AgyCliService {
   public async analyzeSegmentsBatch(
     request: AgyBatchAnalysisRequest
   ): Promise<AgyBatchAnalysisResponse> {
+    if (isMobileApp()) {
+      throw new Error("agy CLI batch analysis is only supported on desktop.");
+    }
+    const { execFileAsync } = getDesktopExecAndSpawn();
     const bin = this.resolveBinary();
     const model = this.getAgyModel() || "gemini-3.8-flash";
 
@@ -179,6 +196,10 @@ export class AgyCliService {
     request: AgySoundDoctorRequest,
     callbacks: AgyStreamCallbacks
   ): ChildProcessWithoutNullStreams {
+    if (isMobileApp()) {
+      throw new Error("agy CLI Sound Doctor is only supported on desktop.");
+    }
+    const { spawn } = getDesktopExecAndSpawn();
     const bin = this.resolveBinary();
     const model = this.getAgyModel() || "gemini-3.8-flash";
 
@@ -216,7 +237,7 @@ export class AgyCliService {
       stdio: ["pipe", "pipe", "pipe"],
       windowsHide: true,
       env: {
-        ...process.env,
+        ...(typeof process !== "undefined" ? process.env : {}),
         PYTHONIOENCODING: "utf-8",
       },
     });

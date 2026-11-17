@@ -1,4 +1,5 @@
 import { TranscriptSegment, UnlockStep } from "../../types/transcript";
+import { isDesktopApp } from "../../utils/platform";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
 
@@ -129,15 +130,21 @@ export class SegmentCard {
       });
     }
 
+    if (isDesktopApp()) {
+      this.renderDesktopTutorTrigger(stepBar);
+    }
+
+    // 3. Body Content based on current UnlockStep
+    const bodyEl = this.cardEl.createDiv({ cls: "ear-coach-card-body" });
+    this.renderStepContent(bodyEl, this.segment.unlockStep);
+  }
+
+  private renderDesktopTutorTrigger(stepBar: HTMLElement): void {
     const askBtn = stepBar.createEl("button", {
       cls: "ear-coach-step-btn ear-coach-tutor-trigger-btn",
       text: "🎙️ 1:1 사운드 해부",
     });
     askBtn.addEventListener("click", () => this.callbacks.onOpenTutor(this.segment));
-
-    // 3. Body Content based on current UnlockStep
-    const bodyEl = this.cardEl.createDiv({ cls: "ear-coach-card-body" });
-    this.renderStepContent(bodyEl, this.segment.unlockStep);
   }
 
   private renderStepContent(bodyEl: HTMLElement, step: UnlockStep): void {

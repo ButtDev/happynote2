@@ -1,4 +1,5 @@
 import { TranscriptSegment } from "../../types/transcript";
+import { isMobileApp } from "../../utils/platform";
 
 export interface MicroDictationCallbacks {
   onDictationSolved: (segment: TranscriptSegment) => void;
@@ -69,6 +70,14 @@ export class MicroDictationBox {
       }
     });
 
+    if (isMobileApp()) {
+      this.renderMobileHeardRow();
+    } else {
+      this.renderDesktopHeardRow();
+    }
+  }
+
+  private renderDesktopHeardRow(): void {
     // "What did it sound like to you?" phonetic memo + instant tutor ask
     const heardRow = this.containerEl.createDiv({ cls: "ear-coach-heard-row" });
     const heardInput = heardRow.createEl("input", {
@@ -85,6 +94,17 @@ export class MicroDictationBox {
     });
     askWhyBtn.addEventListener("click", () => {
       this.callbacks.onAskTutorWithHeardText(this.segment, heardInput.value.trim());
+    });
+  }
+
+  private renderMobileHeardRow(): void {
+    const heardRow = this.containerEl.createDiv({ cls: "ear-coach-heard-row" });
+    heardRow.createEl("input", {
+      cls: "ear-coach-heard-input",
+      type: "text",
+      attr: {
+        placeholder: "👂 내 귀에 들린 대로 메모해 보세요 (예: 아마나 고 / 바러 카)",
+      },
     });
   }
 

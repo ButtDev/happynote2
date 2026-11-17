@@ -9,6 +9,7 @@ import {
   parseYouTubeUrl,
 } from "./utils/youtubeUrlParser";
 import { SegmentTimeIndex } from "./utils/binarySearch";
+import { isDesktopApp, isMobileApp } from "./utils/platform";
 import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
 import { AgyCliService } from "./services/AgyCliService";
@@ -143,7 +144,9 @@ export default class EarCoachPlugin extends Plugin {
           });
           const openBtn = card.createEl("button", {
             cls: "ear-coach-btn ear-coach-btn-primary",
-            text: "🚀 인터랙티브 리스닝 워크스페이스 열기 (구간반복 + 3단계 블라인드 + agy 튜터)",
+            text: isMobileApp()
+              ? "🚀 인터랙티브 리스닝 워크스페이스 열기 (구간반복 + 3단계 블라인드)"
+              : "🚀 인터랙티브 리스닝 워크스페이스 열기 (구간반복 + 3단계 블라인드 + agy 튜터)",
           });
           openBtn.addEventListener("click", async () => {
             const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
@@ -384,7 +387,7 @@ export default class EarCoachPlugin extends Plugin {
 
       await this.activateWorkspaceView(session, noteFile, effectivePin);
 
-      if (this.settings.autoRunAgyBatchOnCreate) {
+      if (isDesktopApp() && this.settings.autoRunAgyBatchOnCreate) {
         this.runAgyBatchEnrichment(session, noteFile).catch(() => {
           // Fallback heuristics are already active; non-blocking background enrichment
         });
@@ -403,6 +406,7 @@ export default class EarCoachPlugin extends Plugin {
     session: ListeningSessionData,
     noteFile: TFile | null
   ): Promise<void> {
+    if (isMobileApp()) return;
     const prioritized = [...session.segments]
       .sort((a, b) => {
         if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;

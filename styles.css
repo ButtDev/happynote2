@@ -560,3 +560,68 @@
   background-color: var(--background-secondary);
   margin-bottom: 12px;
 }
+
+/* ==========================================================================
+   Mobile-Only Isolated Layout (Android / iOS)
+   Top fixed full-width YouTube player + independently scrollable segment list
+   ========================================================================== */
+.ear-coach-mobile-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--background-primary);
+}
+
+.ear-coach-mobile-top-player {
+  flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px 6px 10px;
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.ear-coach-mobile-top-player .ear-coach-player-section {
+  width: 100%;
+  gap: 6px;
+}
+
+.ear-coach-mobile-top-player .ear-coach-video-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.ear-coach-mobile-top-player .ear-coach-player-controls {
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.ear-coach-mobile-toolbar {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  gap: 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background-color: var(--background-primary);
+}
+
+.ear-coach-mobile-list-wrapper {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ear-coach-mobile-list-wrapper .ear-coach-segment-list {
+  padding: 8px 10px 28px 10px;
+}
+
+.ear-coach-mobile-container .ear-coach-btn,
+.ear-coach-mobile-container .ear-coach-step-btn,
+.ear-coach-mobile-container .ear-coach-mini-btn,
+.ear-coach-mobile-container .ear-coach-time-btn {
+  min-height: 32px;
+}

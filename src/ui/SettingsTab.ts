@@ -1,4 +1,5 @@
 import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { isMobileApp } from "../utils/platform";
 import { generateBookmarkletCode } from "../utils/youtubeUrlParser";
 import { UnlockStep } from "../types/transcript";
 import type EarCoachPlugin from "../main";
@@ -18,10 +19,35 @@ export class EarCoachSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", {
-      text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
-    });
+    if (isMobileApp()) {
+      containerEl.createEl("h2", {
+        text: "🎧 Obsidian Ear-Coach (모바일) 설정",
+      });
+      this.displayMobileGuideBanner(containerEl);
+      this.displayCommonSettings(containerEl);
+    } else {
+      containerEl.createEl("h2", {
+        text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
+      });
+      this.displayDesktopBookmarkletSection(containerEl);
+      this.displayCommonSettings(containerEl);
+      this.displayDesktopAgyCliSettings(containerEl);
+    }
+  }
 
+  private displayMobileGuideBanner(containerEl: HTMLElement): void {
+    const mobileBox = containerEl.createDiv({
+      cls: "ear-coach-bookmarklet-box",
+    });
+    mobileBox.createEl("h4", {
+      text: "📱 안드로이드/모바일 리스닝 모드 안내",
+    });
+    mobileBox.createEl("p", {
+      text: "모바일 환경에서는 상단 고정 YouTube 플레이어와 A-B 문장 무한루프, 3단계 블라인드, 마이크로 딕테이션이 지원됩니다. (로컬 agy CLI / 사운드 닥터는 데스크톱 전용이며, PC에서 이미 분석해 둔 노트의 힌트와 기록은 모바일에서도 그대로 확인할 수 있습니다.)",
+    });
+  }
+
+  private displayDesktopBookmarkletSection(containerEl: HTMLElement): void {
     // 1. Zero-Friction Browser Bookmarklet Section
     const bookmarkletBox = containerEl.createDiv({
       cls: "ear-coach-bookmarklet-box",
@@ -45,7 +71,9 @@ export class EarCoachSettingTab extends PluginSettingTab {
             new Notice("북마클릿 코드가 복사되었습니다! 브라우저 북마크 URL란에 붙여넣으세요.");
           })
       );
+  }
 
+  private displayCommonSettings(containerEl: HTMLElement): void {
     // 2. Folder & Dashboard paths
     new Setting(containerEl)
       .setName("리스닝 노트 저장 폴더")
@@ -74,7 +102,40 @@ export class EarCoachSettingTab extends PluginSettingTab {
           })
       );
 
-    // 3. agy CLI settings
+    // 4. Listening Training Preferences
+    new Setting(containerEl)
+      .setName("기본 블라인드 단계 (Default Unlock Step)")
+      .setDesc("노트를 처음 열었을 때 문장 카드의 기본 표시 단계를 선택합니다.")
+      .addDropdown((drop) =>
+        drop
+          .addOption("0", "Step 0: 🙈 완전 블라인드 (소리에만 집중)")
+          .addOption("1", "Step 1: 🦴 뼈대 단어 + 빈칸 받아쓰기")
+          .addOption("2", "Step 2: 💡 한글 소리/연음 힌트")
+          .addOption("3", "Step 3: 📖 전체 자막 공개")
+          .setValue(String(this.plugin.settings.defaultUnlockStep))
+          .onChange(async (value) => {
+            this.plugin.settings.defaultUnlockStep = Number(value) as UnlockStep;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("🚀 과속 발화(Speed Spike) 기준 WPM")
+      .setDesc("분당 단어 수(WPM)가 이 값을 넘으면 과속 주의 배지를 표시합니다.")
+      .addSlider((slider) =>
+        slider
+          .setLimits(130, 240, 5)
+          .setValue(this.plugin.settings.speedSpikeWpmThreshold)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.speedSpikeWpmThreshold = value;
+            await this.plugin.saveSettings();
+          })
+      );
+  }
+
+  private displayDesktopAgyCliSettings(containerEl: HTMLElement): void {
+    // 3. agy CLI settings (Desktop Only)
     new Setting(containerEl)
       .setName("agy CLI 실행 파일 경로")
       .setDesc("기본값은 'agy'입니다. 연결 확인 버튼으로 정상 작동 여부를 테스트하세요.")
@@ -121,37 +182,6 @@ export class EarCoachSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.autoRunAgyBatchOnCreate)
           .onChange(async (value) => {
             this.plugin.settings.autoRunAgyBatchOnCreate = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    // 4. Listening Training Preferences
-    new Setting(containerEl)
-      .setName("기본 블라인드 단계 (Default Unlock Step)")
-      .setDesc("노트를 처음 열었을 때 문장 카드의 기본 표시 단계를 선택합니다.")
-      .addDropdown((drop) =>
-        drop
-          .addOption("0", "Step 0: 🙈 완전 블라인드 (소리에만 집중)")
-          .addOption("1", "Step 1: 🦴 뼈대 단어 + 빈칸 받아쓰기")
-          .addOption("2", "Step 2: 💡 한글 소리/연음 힌트")
-          .addOption("3", "Step 3: 📖 전체 자막 공개")
-          .setValue(String(this.plugin.settings.defaultUnlockStep))
-          .onChange(async (value) => {
-            this.plugin.settings.defaultUnlockStep = Number(value) as UnlockStep;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("🚀 과속 발화(Speed Spike) 기준 WPM")
-      .setDesc("분당 단어 수(WPM)가 이 값을 넘으면 과속 주의 배지를 표시합니다.")
-      .addSlider((slider) =>
-        slider
-          .setLimits(130, 240, 5)
-          .setValue(this.plugin.settings.speedSpikeWpmThreshold)
-          .setDynamicTooltip()
-          .onChange(async (value) => {
-            this.plugin.settings.speedSpikeWpmThreshold = value;
             await this.plugin.saveSettings();
           })
       );
