@@ -1,7 +1,7 @@
 ---
 id: SPEC_001
 title: 업스트림 Ear-Coach 가져오기 + 빌드·시험·모바일 화면 검사 기반
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -81,3 +81,4 @@ depends_on: []
   - 가결정: 화면 검사 브라우저는 설치된 Chrome(`channel: "chrome"`) 우선, 없으면 Playwright Chromium · 이유: 프로젝트 밖 브라우저 다운로드를 피함 · 대안: `npx playwright install chromium`.
   - 가결정: 업스트림 merge 커밋(`d578f50`)은 조건 1이 merge 커밋을 요구해 SPEC IN_PROGRESS 중에 먼저 만듦(SPEC 파일 변경은 포함 안 함).
   - 주의: `npm test`가 `docs/test_result.txt`를 매번 덮어써 작업 트리가 더러워짐(업스트림 동작) — 커밋하지 않음.
+- 2026-11-20 사람확인: DONE — 10 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_001 10 OK]」(BRAT 릴리스 1.0.1 설치 기준). 1~9는 회차 1 근거 그대로. 회차 세지 않음.
