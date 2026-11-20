@@ -1,1 +1,2 @@
 {"ts":"2026-11-20T11:24:49.279Z","cmd":"/spec-run","spec":"SPEC_001","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok (harness,build,test,ui); ui baseline landscape video 899x105; mutation A/B exit 1; 10 ⏳ 실기기"}
+{"ts":"2026-11-20T12:27:52.500Z","id":"build-artifact","kind":"simple","what":"main.js 빌드 산출물을 git add -f로 커밋(기기에서 저장소 루트 3파일 바로 받게)","evidence":"verify --set regression ok (build/test/ui)","decision":"고른 것: .gitignore는 두고 -f로 추적 · 이유: 최소 변경 · 대안: GitHub Release/BRAT"}
