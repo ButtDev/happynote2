@@ -4,11 +4,11 @@
 
 ## 지금 하는 일
 - SPEC_001 DONE (기기 확인 OK, BRAT 릴리스 1.0.1).
-- SPEC_002 IMPLEMENTED(가로 좌우 배치, CSS만) — 9 실기기 ⏳. 기기 확인엔 BRAT 새 릴리스(1.0.2) 필요 → push·태그는 사람 지시 후.
+- SPEC_002 IMPLEMENTED(가로 좌우 배치, CSS만) — 9 실기기 ⏳. BRAT 1.0.2 배포함.
 - 다음: SPEC_006 iframe 안 유튜브 overlay 줄이기(parent SPEC_002, embed 파라미터·자체 컨트롤), SPEC_003~005는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- 1.0.2 BRAT 배포 여부, SPEC_002 9 확인.
+- SPEC_002 9 실기기 확인(BRAT 1.0.2).
 
 ## 주의
 - push 대상은 remote `buttdev`(SSH `git@github.com:ButtDev/happynote2.git`, 공개 fork). push는 사람이 지시할 때만. `main.js`는 저장소에 없음. 배포는 BRAT: manifest·package version 올리고 같은 이름 태그 push → `.github/workflows/release.yml`이 Release(3파일) 생성.
