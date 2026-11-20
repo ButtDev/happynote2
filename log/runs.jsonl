@@ -2,3 +2,4 @@
 {"ts":"2026-11-20T12:27:52.500Z","id":"build-artifact","kind":"simple","what":"main.js 빌드 산출물을 git add -f로 커밋(기기에서 저장소 루트 3파일 바로 받게)","evidence":"verify --set regression ok (build/test/ui)","decision":"고른 것: .gitignore는 두고 -f로 추적 · 이유: 최소 변경 · 대안: GitHub Release/BRAT"}
 {"ts":"2026-11-20T12:30:23.611Z","id":"brat-release","kind":"simple","what":"BRAT 배포: 태그 push 시 Actions가 main.js·manifest.json·styles.css로 Release 생성, version 1.0.1, main.js 추적 해제","evidence":"verify --set regression ok","decision":"고른 것: BRAT(Release) · 이유: 원작자 방식, 사람 지시 · 대안: 저장소에 main.js 커밋(되돌림)"}
 {"ts":"2026-11-20T12:42:00.289Z","cmd":"/spec-run","spec":"SPEC_001","iteration":1,"status":"DONE","evidence":"10 사람확인 OK (BRAT 1.0.1)"}
+{"ts":"2026-11-20T12:44:40.934Z","cmd":"/spec-new","spec":"SPEC_002","result":"READY","questions":0}
