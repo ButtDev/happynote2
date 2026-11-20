@@ -1,0 +1,1 @@
+{"ts":"2026-11-20T11:24:49.279Z","cmd":"/spec-run","spec":"SPEC_001","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok (harness,build,test,ui); ui baseline landscape video 899x105; mutation A/B exit 1; 10 ⏳ 실기기"}

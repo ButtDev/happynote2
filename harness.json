@@ -1,12 +1,37 @@
 {
   "verify": [
-    { "name": "harness", "cmd": "node .claude/harness/status.mjs --json > /dev/null", "timeoutSec": 60 },
-    { "name": "build", "cmd": "npm run build", "timeoutSec": 300 },
-    { "name": "test", "cmd": "npm test", "timeoutSec": 300 },
-    { "name": "ui", "cmd": "node tests/ui/runUiCheck.mjs", "timeoutSec": 300 }
+    {
+      "name": "harness",
+      "cmd": "node .claude/harness/status.mjs --json > /dev/null",
+      "timeoutSec": 60
+    },
+    {
+      "name": "build",
+      "cmd": "npm run build",
+      "timeoutSec": 300
+    },
+    {
+      "name": "test",
+      "cmd": "PATH=\"$PWD/tests/fixtures/bin:$PATH\" npm test",
+      "timeoutSec": 300
+    },
+    {
+      "name": "ui",
+      "cmd": "node tests/ui/runUiCheck.mjs",
+      "timeoutSec": 300
+    }
   ],
-  "regression": ["harness"],
+  "regression": [
+    "harness",
+    "build",
+    "test",
+    "ui"
+  ],
   "detachAfterSec": 120,
   "memoryMaxKB": 20,
-  "night": { "enabled": false, "improve": true, "maxNightBranches": 2 }
+  "night": {
+    "enabled": false,
+    "improve": true,
+    "maxNightBranches": 2
+  }
 }

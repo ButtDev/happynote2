@@ -1,8 +1,8 @@
 ---
 id: SPEC_001
 title: 업스트림 Ear-Coach 가져오기 + 빌드·시험·모바일 화면 검사 기반
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -73,3 +73,11 @@ depends_on: []
 - 이번 SPEC은 겹침을 실패로 보지 않음 · 현재 레이아웃 기준선을 먼저 얻어야 SPEC_002의 개선을 수치로 판정 가능 · 대안: 바로 0 강제(SPEC_001이 범위 밖 수정을 하게 됨).
 
 ## 실행 기록
+- 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ `git remote -v`에 upstream, `d578f50 merge: upstream sindng-ui/happynote2 4347294`(업스트림 커밋 4개 포함) · 2 ✅ `ls` 4파일 존재, `manifest.json:2 "id": "obsidian-ear-coach"` · 3 ✅ `npm ci` 후 verify build exit 0 (1600ms) · 4 ✅ verify test exit 0, tail `ALL TESTS PASSED SUCCESSFULLY!` · 5 ✅ verify ui exit 0, report.json portrait video 396×357 controls 412×70 / landscape video 899×105 controls 915×70 · 6 ✅ portrait.png·landscape.png 직접 열어 봄: 상단 검은 자리표시 영상, 그 아래 재생·루프·배속 줄, 필터 툴바, 자막 카드(00:03, 00:06…) 보임 · 7 ✅ 변이: ItemView 뺀 스텁 → esbuild 「Build failed」 exit 1, video 셀렉터를 틀리게 바꾼 cases → 「selector not found」 exit 1 · 8 ✅ regression=[harness,build,test,ui] → `verify: ok` · 9 ✅ 기준선 아래 · 10 ⏳ 실기기 확인
+  - 기준선(세로 412×915): overlapVideoControlsPx2=0, overlayOnVideoPx2=0, 영상 396×357(16:9보다 세로로 김), 자막 카드 3장 보임
+  - 기준선(가로 915×412): overlapVideoControlsPx2=0, overlayOnVideoPx2=0, **영상 899×105로 납작함**(화면 높이 412 중 영상 105, 컨트롤 70, 목록 206) → SPEC_002의 핵심 개선 대상
+  - 참고: 플러그인 DOM 안의 overlay는 0. 사람이 말한 「YouTube 화면 overlay」는 iframe 안 유튜브 자체 UI(제목·추천·컨트롤)일 가능성이 높아 이 측정으로는 안 잡힌다 → SPEC_002에서 embed 파라미터(controls·modestbranding 등)·자체 컨트롤로 다룰 것. overlay 검출 자체는 제외 목록을 비운 사본에서 썸네일 배지를 잡는 것(282744px²)으로 확인.
+  - 가결정: `npm test`(업스트림 Test 4)는 실제 `agy` CLI가 PATH에 있어야 통과 → 시험용 가짜 `tests/fixtures/bin/agy`(--help에만 0)를 추가하고 verify `test` cmd를 `npm test` → `PATH="$PWD/tests/fixtures/bin:$PATH" npm test`로 바꿈 · 이유: 업스트림 시험·코드를 고치지 않고 기기 의존만 제거, 단언은 그대로 · 대안: Test 4를 agy 없으면 건너뛰게 수정(시험 약화), agy 설치(외부 설치).
+  - 가결정: 화면 검사 브라우저는 설치된 Chrome(`channel: "chrome"`) 우선, 없으면 Playwright Chromium · 이유: 프로젝트 밖 브라우저 다운로드를 피함 · 대안: `npx playwright install chromium`.
+  - 가결정: 업스트림 merge 커밋(`d578f50`)은 조건 1이 merge 커밋을 요구해 SPEC IN_PROGRESS 중에 먼저 만듦(SPEC 파일 변경은 포함 안 함).
+  - 주의: `npm test`가 `docs/test_result.txt`를 매번 덮어써 작업 트리가 더러워짐(업스트림 동작) — 커밋하지 않음.

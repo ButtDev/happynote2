@@ -1,0 +1,109 @@
+{
+  "videoId": "uiCheck0001",
+  "title": "UI check sample (fixed transcript)",
+  "pinnedTimestamps": [
+    10.57
+  ],
+  "cues": [
+    {
+      "start": 3,
+      "duration": 3.3,
+      "text": "So I was going to tell you about the trip."
+    },
+    {
+      "start": 6.7,
+      "duration": 2.97,
+      "text": "We got up early and went to the station."
+    },
+    {
+      "start": 10.07,
+      "duration": 3.3,
+      "text": "Did you ever try to catch a train at six?"
+    },
+    {
+      "start": 13.77,
+      "duration": 3.63,
+      "text": "It was a lot harder than I thought it would be."
+    },
+    {
+      "start": 17.8,
+      "duration": 2.64,
+      "text": "My friend bought a coffee and spilled it."
+    },
+    {
+      "start": 20.84,
+      "duration": 2.64,
+      "text": "We had to wait for about twenty minutes."
+    },
+    {
+      "start": 23.88,
+      "duration": 1.98,
+      "text": "Then the train finally showed up."
+    },
+    {
+      "start": 26.26,
+      "duration": 2.31,
+      "text": "I gotta say, the view was amazing."
+    },
+    {
+      "start": 28.97,
+      "duration": 2.31,
+      "text": "We saw mountains, lakes, and little towns."
+    },
+    {
+      "start": 31.68,
+      "duration": 3.3,
+      "text": "What do you want to do when we get there?"
+    },
+    {
+      "start": 35.38,
+      "duration": 2.97,
+      "text": "That is what she asked me on the way."
+    },
+    {
+      "start": 38.75,
+      "duration": 2.64,
+      "text": "I said I wanted to eat something first."
+    },
+    {
+      "start": 41.79,
+      "duration": 2.97,
+      "text": "We found a little place next to the river."
+    },
+    {
+      "start": 45.16,
+      "duration": 2.31,
+      "text": "The food was better than I expected."
+    },
+    {
+      "start": 47.87,
+      "duration": 2.64,
+      "text": "After lunch we walked around the old town."
+    },
+    {
+      "start": 50.91,
+      "duration": 3.3,
+      "text": "It started to rain, so we went into a museum."
+    },
+    {
+      "start": 54.61,
+      "duration": 2.31,
+      "text": "I could have stayed there all day."
+    },
+    {
+      "start": 57.32,
+      "duration": 2.31,
+      "text": "We took the last train back home."
+    },
+    {
+      "start": 60.03,
+      "duration": 2.97,
+      "text": "Honestly, it was one of the best days ever."
+    },
+    {
+      "start": 63.4,
+      "duration": 2.64,
+      "text": "I would totally do it again next year."
+    }
+  ]
+}

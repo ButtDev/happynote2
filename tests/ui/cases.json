@@ -1,0 +1,14 @@
+{
+  "viewports": [
+    { "name": "portrait", "width": 412, "height": 915 },
+    { "name": "landscape", "width": 915, "height": 412 }
+  ],
+  "selectors": {
+    "root": ".ear-coach-mobile-container",
+    "video": ".ear-coach-video-box",
+    "controls": [".ear-coach-player-controls", ".ear-coach-mobile-toolbar"],
+    "list": ".ear-coach-mobile-list-wrapper",
+    "segmentCard": ".ear-coach-segment-list > *"
+  },
+  "overlayExclude": [".ear-coach-video-thumbnail", "iframe", "[id^='ear-coach-player-']"]
+}
