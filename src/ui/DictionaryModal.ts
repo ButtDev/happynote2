@@ -1,12 +1,14 @@
 import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
-import type { AnkiInvoker, AnkiSettingsLike } from "../services/anki";
-import { ANKI_MESSAGES, addNoteIfNew, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
+import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
+import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
 
 /** SPEC_015: 사전 창에서 Anki 카드를 만들 때 필요한 자막·영상 정보와 클라이언트 */
 export interface DictionaryAnkiContext {
   client: AnkiInvoker;
+  /** 발음 파일을 받아 data로 넣는다(AnkiConnect Android가 외부 url을 못 받음) */
+  fetchBytes: FetchBytes;
   settings: () => AnkiSettingsLike;
   sentence: string;
   videoId: string | null;
@@ -145,7 +147,7 @@ export class DictionaryModal extends Modal {
         settings
       );
       try {
-        const r = await addNoteIfNew(ctx.client, note);
+        const r = await addNoteIfNew(ctx.client, note, (n) => inlineAudio(n, ctx.fetchBytes));
         show(ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
       } catch (e) {
         show(ankiStatusMessage(e), "is-error");

@@ -51,6 +51,12 @@ export default class EarCoachPlugin extends Plugin {
     }
     return { status: r.status, json };
   });
+  /** SPEC_015: 발음 파일 바이트(Anki addNote data용) */
+  public fetchBytes = async (url: string): Promise<ArrayBuffer> => {
+    const r = await requestUrl({ url, throw: false });
+    if (r.status < 200 || r.status >= 300) throw new Error(`HTTP ${r.status}`);
+    return r.arrayBuffer;
+  };
   public noteGenerator!: NoteGenerator;
   public weaknessTracker!: WeaknessTracker;
   public bypassOpenInterceptor = false;

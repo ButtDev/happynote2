@@ -1,0 +1,73 @@
+{
+  "comment": "inlineAudio(note, fetchBytes) — SPEC_015 회차 2: 발음 url을 받아 data(base64)로. fetch: bytes 배열 | \"throw\" | []",
+  "cases": [
+    {
+      "audio": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/En-au-look_forward_to.ogg",
+          "filename": "ear-coach-look-forward-to.ogg",
+          "fields": [
+            "Back"
+          ]
+        }
+      ],
+      "fetch": [
+        1,
+        2,
+        3
+      ],
+      "expect": [
+        {
+          "data": "AQID",
+          "filename": "ear-coach-look-forward-to.ogg",
+          "fields": [
+            "Back"
+          ]
+        }
+      ]
+    },
+    {
+      "audio": [
+        {
+          "url": "https://upload.wikimedia.org/x.ogg",
+          "filename": "ear-coach-x.ogg",
+          "fields": [
+            "Back"
+          ]
+        }
+      ],
+      "fetch": "throw",
+      "expect": null
+    },
+    {
+      "audio": [
+        {
+          "url": "https://upload.wikimedia.org/x.ogg",
+          "filename": "ear-coach-x.ogg",
+          "fields": [
+            "Back"
+          ]
+        }
+      ],
+      "fetch": [],
+      "expect": null
+    },
+    {
+      "audio": null,
+      "fetch": [
+        9
+      ],
+      "expect": null
+    }
+  ],
+  "messages": [
+    [
+      "https://upload.wikimedia.org/wikipedia/commons/a/a1/En-au-look_forward_to.oggjava.io.FileNotFoundException: https://upload.wikimedia.org/wikipedia/commons/a/a1/En-au-look_forward_to.ogg at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getInputStream(HttpURLConnectionImpl.java:255)\n\tat com.kamwithk.ankiconnectandroid.ankidroid_api.MediaAPI.downloadFile",
+      "Anki 저장 실패: https://upload.wikimedia.org/wikipedia/commons/a/a1/En-au-look_forward_to.oggjava.io.FileNotFoundException: https://u…"
+    ],
+    [
+      "model was not found: Basic",
+      "Anki 저장 실패: model was not found: Basic"
+    ]
+  ]
+}

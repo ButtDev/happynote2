@@ -2,7 +2,7 @@
 id: SPEC_015
 title: 사전 창 → AnkiDroid 카드 저장 (AnkiConnect Android)
 status: IMPLEMENTED
-iterations: 1
+iterations: 2
 max_iterations: 3
 depends_on: [SPEC_013, SPEC_014]
 ---
@@ -65,3 +65,5 @@ depends_on: [SPEC_013, SPEC_014]
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ Test 12 「16 cloze cases」 PASS · 2 ✅ Test 12 「2 note fixtures」(Basic 기본·B 방식 필드, audio[0].url, tags, allowDuplicate=false) · 3 ✅ Test 12 「7 client cases」(error→api throw, 네트워크 throw·status 0→connection) + 2 save cases · 4 ✅ ui 세로·가로 `anki` ok: 구 칸·단어 칸 `➕ Anki`, calls [canAddNotes, addNote] + 「Anki에 저장했습니다」, 중복 calls [canAddNotes] + 「이미 Anki에 있는 카드입니다」 · 5 ✅ `.scratch/mut/anki-noboundary.ts`(낱말 경계 제거)로 Test 12 실패 `clozeSentence(["The cat sat on the category mat.","cat"])` · 6 ✅ verify regression harness/build/test/ui 모두 ok, Test 10 「26 src files clean」 · 7 ✅ `anki-portrait.png`: 구 칸·단어 칸에 `➕ Anki`, 단어 칸 아래 「Anki에 저장했습니다」, 누른 버튼은 흐려짐 · 8 ⏳ 실기기
   - 가결정: 영어 뜻 = 품사별 첫 뜻(최대 3) `<i>품사</i> 뜻`을 `<br>`로 · 카드 앞면에 뜻이 너무 길지 않게 · 대안: 첫 뜻 하나만. 발음 파일 이름 `ear-coach-<단어>.<확장자>`. 저장 성공 뒤 버튼은 눌리지 않게(두 번 저장 방지), 실패면 다시 누를 수 있음.
+- 2026-11-21 회차 2: IMPLEMENTED — 8 NG(사진 `.scratch/inbox/20261121-080142-406.jpg`: 구 칸 저장 시 AnkiConnect Android가 upload.wikimedia.org .ogg를 못 받아 `FileNotFoundException` + 스택 전체 표시. 같은 주소는 컴퓨터 curl로 200·16489바이트) 대응: 발음은 `requestUrl`로 받아 `audio[{data(base64)}]`로(받지 못하면 발음 없이 저장), 오류 문구는 첫 줄·120자. 근거 — 1~3 ✅ Test 12 PASS(+4 audio cases, 2 message cases, prepare → addNote data) · 4 ✅ ui 세로·가로 `anki` ok, addNote audio `[{"data":"AQID",…}]`(url 없음) · 5 ✅ 변이 2개: 낱말 경계 제거 → `clozeSentence(...)` 실패, inlineAudio가 url 유지 → `inlineAudio [1,2,3]` 실패 · 6 ✅ verify regression harness/build/test/ui ok · 7 ✅ 회차 1 스크린샷과 화면 변경 없음(ui ok) · 8 ⏳ 실기기 재확인
+  - 가결정: 발음 받기 실패면 카드는 발음 없이 저장 · 카드 저장이 발음보다 중요 · 대안: 저장 실패로 알림.

@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.19** (SPEC_015 Anki 저장 + SPEC_014 꼬리표 제거). 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
+- 최신 배포 BRAT **1.0.20** (SPEC_015 회차 2: 발음 data로 저장). 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
 - 사전+AnkiDroid: SPEC_013·014 DONE · **SPEC_015 Anki 저장 IMPLEMENTED — ⏳ 8 실기기 카드 확인 대기** → 다음 SPEC_016 영상 스냅샷(`picture` 역할, 기본 대응 Front). 그 뒤 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
@@ -20,4 +20,4 @@
 - 사전: `src/services/dictionary.ts`(obsidian import 없음, fetcher 주입, 발음은 Commons curid → ogg로 교체, 시험 데이터 `tests/fixtures/dictionary/commons/`), 창 `src/ui/DictionaryModal.ts`, 플러그인 `plugin.dictionary`. 시험 Test 11 + `tests/fixtures/dictionary/`(실제 응답, `_phrases.json` 구동사 후보). 구동사: `lemmaVariants`·`phraseCandidates`(누른 낱말부터만), 창 맨 위 `.ear-coach-dict-phrase`, 화면 검사 `expect.phrase`(going → go to). 화면 검사 `expect.dictionary`는 기본 스크린샷 뒤에 첫 카드를 3단계로 바꿔 누름, `dictionary-<뷰>.png`.
 - Playwright 직접 스크립트는 `chromium.launch({ channel: "chrome" })`로(번들 Chromium 미설치).
 - AnkiConnect Android: `createDeck`·`createModel` 없음(지원: version·deckNames·modelNames·modelFieldNames·findNotes·canAddNotes·addNote(audio/picture url·data)·storeMediaFile·notesInfo·updateNoteFields·guiBrowse·multi). CORS 헤더 없음 → `requestUrl`로.
-- Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.
+- Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). AnkiConnect Android는 외부 오디오 url(upload.wikimedia.org)을 못 받음 → `inlineAudio`로 requestUrl 받아 data(base64). 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.

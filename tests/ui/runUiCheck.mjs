@@ -126,7 +126,7 @@ function evaluateExpect(vp, m, nums) {
   if (e.anki) {
     const a = m.anki?.added;
     const d = m.anki?.dup;
-    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.options?.allowDuplicate === false;
+    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]);
     const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
     add("anki", okAdded && okDup, JSON.stringify(m.anki));
   }

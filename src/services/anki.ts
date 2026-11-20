@@ -48,7 +48,52 @@ export interface AnkiNote {
   fields: Record<string, string>;
   tags: string[];
   options: { allowDuplicate: boolean; duplicateScope: "deck" };
-  audio?: { url: string; filename: string; fields: string[] }[];
+  audio?: AnkiMedia[];
+}
+
+/** addNote audio — url(앱이 내려받음) 또는 data(base64, 우리가 받아 넣음) */
+export interface AnkiMedia {
+  url?: string;
+  data?: string;
+  filename: string;
+  fields: string[];
+}
+
+/** 주소의 바이트를 받는다(실패는 throw). */
+export type FetchBytes = (url: string) => Promise<ArrayBuffer>;
+
+export function bytesToBase64(buf: ArrayBuffer | Uint8Array): string {
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(bin);
+}
+
+/**
+ * SPEC_015 회차 2: AnkiConnect Android는 upload.wikimedia.org 주소를 못 받는다(FileNotFoundException).
+ * 발음 url을 우리가 받아 data(base64)로 바꾼다. 받지 못하거나 비어 있으면 발음 없이(audio 뺌).
+ */
+export async function inlineAudio(note: AnkiNote, fetchBytes: FetchBytes): Promise<AnkiNote> {
+  if (!note.audio || note.audio.length === 0) return note;
+  const out: AnkiMedia[] = [];
+  for (const a of note.audio) {
+    if (a.data || !a.url) {
+      out.push(a);
+      continue;
+    }
+    try {
+      const buf = await fetchBytes(a.url);
+      if (buf && buf.byteLength > 0) out.push({ data: bytesToBase64(buf), filename: a.filename, fields: a.fields });
+    } catch {
+      // 발음 없이 저장
+    }
+  }
+  const next: AnkiNote = { ...note };
+  if (out.length > 0) next.audio = out;
+  else delete next.audio;
+  return next;
 }
 
 export const CLOZE_BLANK = "____";
@@ -222,11 +267,16 @@ export class AnkiConnectClient implements AnkiInvoker {
 
 export type AnkiSaveResult = "added" | "duplicate";
 
-/** canAddNotes로 중복을 먼저 보고, 새 카드일 때만 addNote. */
-export async function addNoteIfNew(client: AnkiInvoker, note: AnkiNote): Promise<AnkiSaveResult> {
+/** canAddNotes로 중복을 먼저 보고, 새 카드일 때만 (prepare 뒤) addNote. */
+export async function addNoteIfNew(
+  client: AnkiInvoker,
+  note: AnkiNote,
+  prepare?: (note: AnkiNote) => Promise<AnkiNote>
+): Promise<AnkiSaveResult> {
   const can = await client.invoke("canAddNotes", { notes: [note] });
   if (!Array.isArray(can) || can[0] !== true) return "duplicate";
-  await client.invoke("addNote", { note });
+  const ready = prepare ? await prepare(note) : note;
+  await client.invoke("addNote", { note: ready });
   return "added";
 }
 
@@ -235,7 +285,8 @@ export function ankiStatusMessage(r: AnkiSaveResult | unknown): string {
   if (r === "added") return ANKI_MESSAGES.added;
   if (r === "duplicate") return ANKI_MESSAGES.duplicate;
   if (r instanceof AnkiConnectError && r.kind === "connection") return ANKI_MESSAGES.connection;
-  return `Anki 저장 실패: ${r instanceof Error ? r.message : String(r)}`;
+  const msg = (r instanceof Error ? r.message : String(r)).split(/\r?\n|\s+at\s/)[0].trim();
+  return `Anki 저장 실패: ${msg.length > 120 ? `${msg.slice(0, 117)}…` : msg}`;
 }
 
 export function ankiSettingsReady(s: AnkiSettingsLike): boolean {

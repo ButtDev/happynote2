@@ -48,3 +48,4 @@
 {"ts":"2026-11-20T22:16:41.769Z","cmd":"/spec-new","spec":"SPEC_015","result":"DRAFT","questions":1}
 {"ts":"2026-11-20T22:26:02.223Z","cmd":"/spec-run","spec":"SPEC_015","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression all ok; Test 12 PASS(16 cloze,2 notes,5 remap,7 client,2 save); ui anki ok 세로·가로; 변이(낱말 경계) Test 12 실패; 8 ⏳ 실기기"}
 {"ts":"2026-11-20T22:26:59.784Z","cmd":"release","spec":"SPEC_015","status":"deployed","evidence":"BRAT 1.0.19 push buttdev main + tag; release assets main.js/manifest.json/styles.css 확인"}
+{"ts":"2026-11-20T23:03:32.666Z","cmd":"/spec-run","spec":"SPEC_015","iteration":2,"status":"IMPLEMENTED","evidence":"8 NG(audio url FileNotFoundException) → requestUrl로 받아 data(base64); Test 12 PASS +audio/message; ui anki audio data ok; 변이 2개 실패 확인; regression ok"}

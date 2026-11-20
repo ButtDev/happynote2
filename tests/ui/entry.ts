@@ -40,6 +40,8 @@ async function main(): Promise<void> {
     noteGenerator: { saveSessionToNote: async () => {}, appendTutorCalloutToNote: async () => {} },
     weaknessTracker: { recordWeakSegment: async () => {} },
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
+    // SPEC_015 회차 2: 발음 바이트(가짜, 3바이트)
+    fetchBytes: async () => new Uint8Array([1, 2, 3]).buffer,
     // SPEC_015: 가짜 AnkiConnect — 호출 기록, window.__ankiDuplicate면 canAddNotes가 false
     anki: {
       invoke: async (action: string, params?: any) => {

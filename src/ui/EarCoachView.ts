@@ -515,6 +515,7 @@ export class EarCoachView extends ItemView {
         const anki = this.plugin.anki
           ? {
               client: this.plugin.anki,
+              fetchBytes: this.plugin.fetchBytes,
               settings: () => this.plugin.settings,
               sentence: segment?.text ?? "",
               videoId: this.session?.videoId ?? null,
