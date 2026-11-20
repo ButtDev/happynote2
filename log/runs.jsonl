@@ -25,3 +25,4 @@
 {"ts":"2026-11-20T18:13:00.156Z","cmd":"/spec-run","spec":"SPEC_007","status":"DONE","evidence":"사람확인 8 OK (1.0.13)"}
 {"ts":"2026-11-20T18:15:45.994Z","cmd":"/spec-new","spec":"SPEC_011","result":"READY","questions":0}
 {"ts":"2026-11-20T18:19:43.610Z","cmd":"/spec-run","spec":"SPEC_011","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok, landscapeResizer 목록 362→505 저장 42, 변이 2건 실패 확인"}
+{"ts":"2026-11-20T18:25:32.019Z","cmd":"/spec-run","spec":"SPEC_011","status":"DONE","evidence":"사람확인 6 OK (1.0.14)"}

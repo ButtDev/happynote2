@@ -1,7 +1,7 @@
 ---
 id: SPEC_011
 title: 가로 화면 좌우 비율 조절 바
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -38,7 +38,7 @@ parent: SPEC_004
 3. [x] 변이: ① 자르기 범위를 바꾼 사본 → Test 9 실패 ② 가로 막대 `display:none` 사본 → `landscapeResizer` 실패 [자동]
 4. [x] `landscape.png`에서 영상과 목록 사이 막대가 보이고 기본 배치(목록 폭 ≥ 330, 툴바 넘침 없음) 유지 [자동]
 5. [x] `verify.mjs --set regression` → `verify: ok` [자동]
-6. [ ] Android 실기기 가로에서 가운데 막대를 좌우로 끌어 비율이 바뀌고, 다시 열어도 유지되는지 보고 버튼 [수동]
+6. [x] Android 실기기 가로에서 가운데 막대를 좌우로 끌어 비율이 바뀌고, 다시 열어도 유지되는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1·3①. `npm test` Test 9, 변이 사본은 `.scratch/mut/s011` · 2·3②. `ui` + `.scratch/ui/report.json` · 4. 스크린샷 Read · 5. `verify.mjs --set regression`
@@ -54,3 +54,4 @@ parent: SPEC_004
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ Test 9 `PASS: 11 landscape-split cases` · 2 ✅ ui 가로 `landscapeResizer` before 막대 {x517,w12,h369} 목록 362 → 왼쪽 150px 끌기 after 목록 505(+143)·영상 357×201·저장 42 = CSS 변수 42·컨트롤 넘침 0 → 두 번 눌러 reset 58·목록 362, 세로 포함 나머지 규칙 ok · 3 ✅ ① MIN 30→20 사본 → `AssertionError clamp 10` exit 1 ② 가로 막대 `display:none` 사본 → `landscapeResizer failed` exit 1 · 4 ✅ landscape.png: 영상·목록 사이 세로 막대와 알약 보임, 기본 배치 그대로(목록 362 ≥ 330, 툴바·단계·컨트롤 넘침 0); landscape-resized.png: 영상 작아지고 목록 넓어짐, 재생 줄은 두 줄로 · 5 ✅ `verify --set regression` harness/build/test/ui ok · 6 ⏳ 실기기
   - 가결정: 막대는 12px 그리드 열(목록 374→362) · 이유: 영상 위에 겹치면 overlay 규칙·터치 충돌 · 대안: 영상 열 오른쪽 여백에 겹쳐 두기. `maxVideoSideGap` 오른쪽은 툴바 대신 막대 왼쪽까지 잼(막대는 의도된 칸, 기준 12 그대로). 좁을 때 재생 줄 `flex-wrap: wrap`(기본 폭에선 한 줄, 높이 34). 화면 검사 드래그는 합성 PointerEvent(모바일 컨텍스트에서 `page.mouse`가 막대에 안 닿음), `tests/ui/entry.ts`에 설정 노출 한 줄 추가(파일 목록 밖).
+- 2026-11-21 사람확인(회차 셈 없음): DONE — 6 OK(1.0.14, `[Button pressed: SPEC_011 6 OK]`).
