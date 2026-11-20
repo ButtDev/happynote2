@@ -37,3 +37,4 @@
 {"ts":"2026-11-20T20:02:26.899Z","id":"NIGHT-mobile-imports","kind":"간이","night":true,"date":"2026-11-21","what":"Test 10: src·main.js에서 Node 내장 모듈 31종 정적 import/require 금지(데이터 tests/fixtures/mobile-imports/rules.json, 탐지기 사례 10개)","evidence":"verify regression ok (harness/build/test/ui ✅); 변이: src에 import child_process 추가 → Test 10 AssertionError, main.js에 require(\"fs\") 추가 → AssertionError","decision":"고른 것: 금지 목록을 fixture에 명시 · 이유: 시험은 데이터로 · 대안: node:module builtinModules 전체"}
 {"ts":"2026-11-20T21:15:58.792Z","cmd":"/spec-new","spec":"SPEC_013","result":"READY","questions":0}
 {"ts":"2026-11-20T21:20:17.374Z","cmd":"/spec-run","spec":"SPEC_013","iteration":1,"status":"IMPLEMENTED","evidence":"Test 11 pass + 변이 2개 fail, ui dictionary ok 세로·가로, verify regression ok"}
+{"ts":"2026-11-20T21:21:17.678Z","cmd":"release","spec":"SPEC_013","version":"1.0.16","evidence":"buttdev main+tag push, release assets main.js,manifest.json,styles.css"}
