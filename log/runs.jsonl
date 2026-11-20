@@ -28,3 +28,5 @@
 {"ts":"2026-11-20T18:25:32.019Z","cmd":"/spec-run","spec":"SPEC_011","status":"DONE","evidence":"사람확인 6 OK (1.0.14)"}
 {"ts":"2026-11-20T18:27:00.484Z","cmd":"/spec-run","spec":"SPEC_004","iteration":2,"status":"DONE","evidence":"사람확인 8 OK + verify regression ok"}
 {"ts":"2026-11-20T18:27:56.692Z","cmd":"/spec-run","spec":"SPEC_003","iteration":1,"status":"DONE","evidence":"사람확인 7 OK + verify regression ok"}
+{"ts":"2026-11-20T18:28:57.691Z","cmd":"/spec-run","spec":"SPEC_002","iteration":1,"status":"DONE","evidence":"사람확인 OK + verify regression ok"}
+{"ts":"2026-11-20T18:28:57.734Z","cmd":"/spec-run","spec":"SPEC_005","iteration":1,"status":"DONE","evidence":"사람확인 OK + verify regression ok"}

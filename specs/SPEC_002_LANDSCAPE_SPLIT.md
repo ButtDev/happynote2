@@ -1,7 +1,7 @@
 ---
 id: SPEC_002
 title: 모바일 가로모드 좌우 배치 (왼쪽 영상, 오른쪽 필터·자막 목록)
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_001]
@@ -68,3 +68,4 @@ Android 가로 화면(사람 스크린샷 `.scratch/inbox/20261120-214321-314.jp
   - 참고: 실기기처럼 높이가 낮은 915×320에서도 영상 452×254(16:9 유지, 컨트롤 몫 확보), 목록 282 — 컨테이너 쿼리 상한이 동작.
   - 가결정: 뷰포트 안 판정에 1px 허용 · 이유: rect가 Math.round 값이라 세로 목록 458+458=916로 1px 넘침(SPEC_001 기준선부터 있던 반올림) · 대안: 반올림 전 소수값으로 판정.
   - 가결정: 영상 높이 상한 `calc((100cqh - 56px) * 16 / 9)`(container query) · 이유: Obsidian 헤더·하단 바로 실제 높이가 412보다 낮아도 16:9와 컨트롤이 열 안에 들어감 · 대안: 고정 max-height.
+- 2026-11-21 사람확인(회차 셈 없음): DONE — 9 ✅ 「[Button pressed: SPEC_002 9 OK]」(1.0.14 기준) · 1~8 ✅ 이번 `verify --set regression` → ok(harness·build·test·ui, landscape 891×411 video 500×281 x8 · list x529 362×326, portrait video 396×273, `ui-check: ok`)
