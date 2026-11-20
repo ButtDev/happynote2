@@ -51,3 +51,4 @@
 {"ts":"2026-11-20T23:03:32.666Z","cmd":"/spec-run","spec":"SPEC_015","iteration":2,"status":"IMPLEMENTED","evidence":"8 NG(audio url FileNotFoundException) → requestUrl로 받아 data(base64); Test 12 PASS +audio/message; ui anki audio data ok; 변이 2개 실패 확인; regression ok"}
 {"ts":"2026-11-20T23:04:20.129Z","cmd":"release","spec":"SPEC_015","status":"deployed","evidence":"BRAT 1.0.20 push + tag; release 3 main.js:127702, manifest.json:361, styles.css:31346"}
 {"ts":"2026-11-20T23:12:36.280Z","cmd":"/spec-run","spec":"SPEC_015","iteration":3,"status":"IMPLEMENTED","evidence":"8 NG(Couldn't get deck ID) → resolveAnkiTarget 저장 전 덱·노트 타입 확인+필드 맞춤; Test 12 +4 target PASS; ui anki(덱 없음 포함) ok; 변이 3개 실패; regression ok"}
+{"ts":"2026-11-20T23:13:08.711Z","cmd":"release","spec":"SPEC_015","status":"deployed","evidence":"BRAT 1.0.21 push + tag; release 3 main.js:128520, manifest.json:361, styles.css:31346"}
