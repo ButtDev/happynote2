@@ -45,3 +45,4 @@
 {"ts":"2026-11-20T22:05:17.035Z","cmd":"/spec-run","spec":"SPEC_014","iteration":1,"status":"IMPLEMENTED","evidence":"Test 11 16 lemma+9 phrase PASS, ui phrase ok(go to 위·going 아래), 변이 exit1, regression ok, 실제 조회 look forward to·show up·get up·give up·run into"}
 {"ts":"2026-11-20T22:06:05.091Z","cmd":"release","spec":"SPEC_014","status":"IMPLEMENTED","evidence":"BRAT 1.0.18 push buttdev main+tag, 릴리스 자산 확인"}
 {"ts":"2026-11-20T22:14:35.913Z","cmd":"/spec-run","spec":"SPEC_014","iteration":2,"status":"DONE","evidence":"7 메모 기능 만족 + 구동사 꼬리표 제거; ui phrase ok(tagText false), 변이 exit1, regression ok"}
+{"ts":"2026-11-20T22:16:41.769Z","cmd":"/spec-new","spec":"SPEC_015","result":"DRAFT","questions":1}

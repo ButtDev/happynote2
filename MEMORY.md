@@ -7,7 +7,7 @@
 - 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 DONE(1.0.17) → SPEC_014 구(구동사·숙어) 칸 DONE(꼬리표 뗀 버전은 아직 미배포 — 1.0.18엔 「구동사」 꼬리표 있음) → 다음 SPEC_015 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_016 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
 
 ## 열린 질문 (사람에게)
-- 물음 보냄: 꼬리표 제거 지금 배포(1.0.19) vs 다음 배포에 같이. 그다음 SPEC_015 Anki `/spec-new`.
+- 꼬리표 제거는 다음 BRAT 배포(SPEC_015)에 같이 나감(사람 선택). SPEC_015 Anki DRAFT — 질문 1(노트 타입 A 기본 Basic(and reversed) / B 직접 만든 Fluent Forever 타입) 답 대기. AnkiConnect Android엔 createDeck·createModel 없음.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
