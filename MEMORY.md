@@ -8,7 +8,7 @@
 
 ## 열린 질문 (사람에게)
 - SPEC_004 8 실기기 확인(SPEC_003 1.0.3 사진: 위 ≈75px 빈칸·툴바 잘림 → SPEC_004로 대응). SPEC_002 9·SPEC_003 7은 SPEC_004 결과로 함께 판정 가능.
-- SPEC_004가 또 NG면(같은 시그니처 2회째 → STOPPED): 실기기 DOM 정보가 필요 — 조상 체인의 rect·padding·transform을 덤프하는 진단 명령(TS, 새 SPEC)을 제안. z-index(5)·드로어 충돌도 의심.
+- SPEC_004 STOPPED(1.0.5: 좌우·아래 OK, 위 ≈84css 빈칸 남음 — 같은 시그니처 2회). 사람에게 다음 길 질문 중: 진단 명령 SPEC_005(env()·조상 rect·elementsFromPoint 덤프) 추천. 의심: env(safe-area-inset-top)가 실제보다 큼(아래는 0), 또는 덮는 요소.
 
 ## 주의
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → Actions 릴리스 확인) 후 ⏳ 요청(CLAUDE.md 6장). 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.
