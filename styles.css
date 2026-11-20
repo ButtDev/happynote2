@@ -797,8 +797,8 @@
 @media (orientation: landscape) {
   /* 모바일 탭 스와이프용 transform 등 조상의 containing block을 풀어
      fixed가 조상 안에 갇히지 않게 한다(회차 2: 1.0.4 실기기에서 갇힘). */
-  body.is-mobile .workspace-leaf.mod-active:has(> .workspace-leaf-content[data-type="ear-coach-listening-view"] .ear-coach-mobile-container),
-  body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container)
+  body.is-mobile:not(.ear-coach-drawer-open) .workspace-leaf.mod-active:has(> .workspace-leaf-content[data-type="ear-coach-listening-view"] .ear-coach-mobile-container),
+  body.is-mobile:not(.ear-coach-drawer-open):has(.workspace-leaf.mod-active .ear-coach-mobile-container)
     :has(.workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] .ear-coach-mobile-container) {
     transform: none !important;
     translate: none !important;
@@ -809,7 +809,7 @@
     will-change: auto !important;
   }
 
-  .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
+  body:not(.ear-coach-drawer-open) .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
     position: fixed;
     inset: 0;
     z-index: var(--layer-cover, 5);
@@ -820,11 +820,11 @@
 
   /* SPEC_006: 1.0.6 진단 — leaf-content 안쪽 위 82px(상태 표시줄+헤더 자리)이 빈칸.
      view-content를 leaf-content 패딩 상자에 깔아 그 여백을 무시한다. */
-  .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
+  body:not(.ear-coach-drawer-open) .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
     padding: 0 !important;
   }
 
-  .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] > .view-content {
+  body:not(.ear-coach-drawer-open) .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] > .view-content {
     position: absolute;
     inset: 0;
     margin: 0 !important;
@@ -1110,10 +1110,7 @@
   color: var(--background-primary);
 }
 
-/* SPEC_010: 가로에서 카드 스와이프로 옵시디언 옆 메뉴를 열면, 열려 있는 동안 전체화면 덮개를 숨겨
-   메뉴가 덮개 아래에 깔리지 않게 한다(세로는 영향 없음). */
-@media (orientation: landscape) {
-  body.is-mobile.ear-coach-drawer-open .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
-    visibility: hidden;
-  }
-}
+/* SPEC_010 회차 2: 옵시디언 모바일 옆 메뉴는 화면(작업 영역)을 옆으로 밀어 그 아래 메뉴를 드러낸다
+   (1.0.11 실기기 사진). 메뉴가 열린 동안(body.ear-coach-drawer-open)은 위 SPEC_004 전체화면 덮개와
+   조상 transform 풀기를 모두 끄고(:not 조건) 옵시디언 기본 배치로 돌려 밀림이 그대로 먹게 한다.
+   덮개를 숨기기만 하면(회차 1) 밀리지 않는 작업 영역이 메뉴를 계속 덮었다. */

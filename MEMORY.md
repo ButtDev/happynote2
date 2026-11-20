@@ -3,9 +3,9 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 가로모드 다듬기, 최신 배포 BRAT **1.0.11**(릴리스 3파일 확인됨). SPEC_010(가로 카드 좌우 스와이프 → `app.workspace.leftSplit/rightSplit.expand()`, 메뉴 열린 동안 `body.ear-coach-drawer-open`으로 덮개 `visibility:hidden`) IMPLEMENTED, ⏳ 6 버튼 보냄.
+- 가로모드 다듬기, 최신 배포 BRAT **1.0.12**. SPEC_010 회차 2(1.0.11은 6 NG: 옵시디언 옆 메뉴는 작업 영역을 옆으로 밀어 아래 메뉴를 드러내는 방식 — 사진 확인). 이제 메뉴 열린 동안(`body.ear-coach-drawer-open`) SPEC_004 전체화면 규칙 전체를 `:not`으로 꺼서 옵시디언 기본 배치로 돌림. IMPLEMENTED, ⏳ 6 버튼 보냄.
 - 다음: SPEC_010 6 답 처리. 같은 답에 SPEC_007 8 남은 판정(①카드 밀림 ②버튼 룩)도 포함 → OK면 SPEC_007·SPEC_010 DONE → SPEC_004 마무리·SPEC_002 9·003 7 함께 판정 → 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅) 제거(backlog).
-- NG(메뉴가 안 보임 등)면: 옵시디언 drawer DOM·z-index를 실기기 진단으로 확인해야 함(가로 덮개는 leaf-content `position:fixed` z 5).
+- 또 NG면(정지 조건 1에 가까움): 진단 명령으로 메뉴 열린 순간 drawer·작업 영역 DOM·transform·z-index를 실기기에서 찍어 확인할 것. 추측 수정 반복 금지.
 - 그 뒤 후보: `memory/backlog.md` (자막 품질, 모바일 AI 번역, 사전+AnkiDroid).
 
 ## 열린 질문 (사람에게)

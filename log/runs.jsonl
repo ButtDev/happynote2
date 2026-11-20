@@ -20,3 +20,4 @@
 {"ts":"2026-11-20T14:19:55.665Z","cmd":"/spec-run","spec":"SPEC_006","iteration":1,"status":"DONE","evidence":"6 OK 사람확인"}
 {"ts":"2026-11-20T14:23:38.399Z","cmd":"/spec-run","spec":"SPEC_007","status":"BLOCKED","evidence":"8 NG, 좌우 드래그 의미 질문"}
 {"ts":"2026-11-20T14:27:05.526Z","cmd":"/spec-run","spec":"SPEC_010","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok; Test9 8건; ui swipeDrawer 가로/세로 ok; 변이 2종 실패"}
+{"ts":"2026-11-20T17:59:55.765Z","cmd":"/spec-run","spec":"SPEC_010","iteration":2,"status":"IMPLEMENTED","evidence":"6 NG 사진 → 메뉴 열린 동안 가로 전체화면 규칙 해제(:not drawer-open); regression ok, 변이 ui FAIL 확인"}

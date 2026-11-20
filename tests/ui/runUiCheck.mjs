@@ -158,8 +158,10 @@ function evaluateExpect(vp, m, nums) {
     let ok;
     if (e.swipeDrawer) {
       ok = sw && !sw.error &&
-        JSON.stringify(sw.afterRight.calls) === '["left"]' && sw.afterRight.bodyOpen === true && sw.afterRight.leafVisibility === "hidden" &&
+        JSON.stringify(sw.afterRight.calls) === '["left"]' && sw.afterRight.bodyOpen === true && sw.afterRight.leafVisibility === "visible" &&
+        sw.afterRight.leafPosition !== "fixed" && sw.afterRight.ancestorTransform !== "none" &&
         sw.afterClose.bodyOpen === false && sw.afterClose.leafVisibility === "visible" &&
+        sw.afterClose.leafPosition === "fixed" && sw.afterClose.ancestorTransform === "none" &&
         JSON.stringify(sw.afterLeft.calls) === '["right"]' && sw.shortSwipe.calls.length === 0;
     } else {
       ok = sw && !sw.error && sw.afterRight.calls.length === 0 && sw.afterLeft.calls.length === 0 && sw.afterRight.bodyOpen === false;
@@ -353,15 +355,18 @@ for (const vp of cases.viewports) {
         card.dispatchEvent(new TouchEvent("touchend", { bubbles: true, touches: [], changedTouches: [t1] }));
       };
       const leaf = document.querySelector('.workspace-leaf-content[data-type]');
+      // 회차 2: 메뉴가 열린 동안 덮개(fixed)·조상 transform 풀기를 끄고 옵시디언 기본 배치로(작업 영역이 밀려야 메뉴가 드러남)
       const vis = () => getComputedStyle(leaf).visibility;
+      const pos = () => getComputedStyle(leaf).position;
+      const anc = () => getComputedStyle(leaf.closest(".workspace-leaf")).transform;
       window.__drawerCalls = [];
       await fire(r.x + 40, r.x + 200);
-      const afterRight = { calls: [...window.__drawerCalls], bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis() };
+      const afterRight = { calls: [...window.__drawerCalls], bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis(), leafPosition: pos(), ancestorTransform: anc() };
       // 메뉴 닫기 흉내 → 감시가 덮개를 되돌리는지
       const ws = window.__earCoachApp?.workspace;
       ws?.leftSplit?.collapse?.();
       await new Promise((res) => setTimeout(res, 700));
-      const afterClose = { bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis() };
+      const afterClose = { bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis(), leafPosition: pos(), ancestorTransform: anc() };
       window.__drawerCalls = [];
       await fire(r.x + 200, r.x + 40);
       const afterLeft = { calls: [...window.__drawerCalls] };

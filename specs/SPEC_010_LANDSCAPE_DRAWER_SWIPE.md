@@ -2,7 +2,7 @@
 id: SPEC_010
 title: 가로 화면 카드 좌우 스와이프로 옵시디언 옆 메뉴 열기
 status: IMPLEMENTED
-iterations: 1
+iterations: 2
 max_iterations: 3
 depends_on: []
 parent: SPEC_007
@@ -49,3 +49,4 @@ SPEC_007 8 NG(사람 원문 「Yt 상관없이 가로모드에서 카드 좌우 
 
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ Test 9 `PASS: 8 swipe cases` · 2 ✅ ui 가로 `swipeDrawer` afterRight calls ["left"]·bodyOpen·leaf hidden, afterClose visible, afterLeft ["right"], 30px 호출 없음 / 세로 호출 없음, 나머지 규칙 ok · 3 ✅ ① 방향 뒤집은 사본 → `AssertionError swipe dx=160 dy=10 dt=250` exit 1 ② 설치 뺀 사본 → `ui-check: FAIL landscape swipeDrawer` exit 1 · 4 ✅ landscape.png 1.0.10과 같은 배치 · 5 ✅ `verify --set regression` → `verify: ok` · 6 ⏳ 실기기
+- 2026-11-21 회차 2: IMPLEMENTED — 6 NG(1.0.11, 사진: 옵시디언 옆 메뉴는 작업 영역을 옆으로 밀어 아래 메뉴를 드러냄 → 덮개만 숨기면 밀리지 않는 조상이 메뉴를 덮음). 가결정: 메뉴 열린 동안 덮개 숨김(visibility) 대신 SPEC_004 전체화면 규칙(leaf-content fixed·조상 transform 풀기)을 `body:not(.ear-coach-drawer-open)`로 꺼 옵시디언 기본 배치로 · 이유: 옵시디언 밀림이 그대로 먹음 · 대안: 덮개에 같은 translate 흉내(옵시디언 내부 값 의존). §3 「덮개 hidden」은 「덮개 해제(position≠fixed, 조상 transform 유지)」로 바뀜. 근거: 2 ✅ ui 가로 afterRight `calls ["left"], leafPosition static, ancestorTransform matrix(1,0,0,1,0,0)`, afterClose `fixed`·`none`, afterLeft ["right"], 세로 호출 없음 · 3 ✅ 변이 ③ `:not` 조건 뺀 사본 → `ui-check: FAIL` · 4 ✅ landscape.png 배치 같음 · 1·5 ✅ `verify --set regression` harness/build/test/ui 모두 ok · 6 ⏳ 실기기
