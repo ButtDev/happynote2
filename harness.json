@@ -30,7 +30,7 @@
   "detachAfterSec": 120,
   "memoryMaxKB": 20,
   "night": {
-    "enabled": false,
+    "enabled": true,
     "improve": true,
     "maxNightBranches": 2
   }
