@@ -1,7 +1,7 @@
 ---
 id: SPEC_009
 title: 모바일 유튜브 오버레이 켜기·끄기(YT) 버튼 — CC 버튼 대체
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -34,7 +34,7 @@ SPEC_008 CC 버튼이 실기기에서 동작하지 않았다(사람 원문 「Cc
 3. [x] 변이: ① `ytOverlay`를 무시한 사본 → Test 8 실패 ② 다시 만들기를 건너뛴 사본 → `overlayToggle` 실패 [자동]
 4. [x] `landscape.png` 재생 줄에 `YT` 알약이 잘림 없이 보임 [자동]
 5. [x] `verify.mjs --set regression` → `verify: ok` [자동]
-6. [ ] Android 실기기 가로에서 `YT`를 눌러 유튜브 컨트롤(자막·언어 메뉴)이 나오고 재생 위치가 이어지는지, 다시 눌러 깔끔한 화면으로 돌아오는지 보고 버튼 [수동]
+6. [x] Android 실기기 가로에서 `YT`를 눌러 유튜브 컨트롤(자막·언어 메뉴)이 나오고 재생 위치가 이어지는지, 다시 눌러 깔끔한 화면으로 돌아오는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1·3①. `npm test` Test 8, `.scratch/mut/s009` · 2·3②. `ui` + `.scratch/ui/report.json` · 4. 스크린샷 Read · 5. `verify.mjs --set regression`
@@ -50,3 +50,4 @@ SPEC_008 CC 버튼이 실기기에서 동작하지 않았다(사람 원문 「Cc
 
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ Test 8 `PASS: params.json mobile=true` / `mobile=true ytOverlay` / `mobile=false` · 2 ✅ ui 세로·가로 `visible:.ear-coach-overlay-btn`, `overlayToggle` 켜짐 player y54 h281 = box(가로)·주소에 controls=0 없음, 꺼짐 player y-2 h393(자르기 56)·controls=0, 가로 controls 34 ≤ 44, `noOverflowX` 500 ≤ 500 · 3 ✅ ① `if (mobile)`로 바꾼 사본 → `AssertionError params.json mobile=true ytOverlay: param controls must be absent` exit 1 ② 다시 만들기 앞 `return` 사본 → `ui-check: FAIL overlayToggle`(세로·가로) · 4 ✅ landscape.png: [재생][루프 OFF][배속][YT 테두리 알약] ··· 00:00 한 줄 · 5 ✅ `verify --set regression` → `verify: ok` · 6 ⏳ 실기기
+- 2026-11-20 사람확인(회차 셈 없음): DONE — 6 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_009 6 OK]」, 1~5는 회차 1 근거 그대로.
