@@ -15,7 +15,11 @@
         ],
         "minCards": 3,
         "layout": "stacked",
-        "minVideoWidth": 380
+        "minVideoWidth": 380,
+        "visible": [
+          ".view-header",
+          ".mobile-navbar"
+        ]
       }
     },
     {
@@ -36,7 +40,12 @@
         "videoAspect": 1.7777777777777777,
         "videoAspectTolerance": 0.03,
         "minVideoHeight": 240,
-        "minListHeight": 280
+        "minListHeight": 280,
+        "hidden": [
+          ".view-header",
+          ".mobile-navbar"
+        ],
+        "maxVideoTop": 60
       }
     }
   ],
@@ -54,6 +63,7 @@
   "overlayExclude": [
     ".ear-coach-video-thumbnail",
     "iframe",
-    "[id^='ear-coach-player-']"
+    "[id^='ear-coach-player-']",
+    ".mobile-navbar"
   ]
 }

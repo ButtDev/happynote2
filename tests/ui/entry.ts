@@ -38,7 +38,12 @@ async function main(): Promise<void> {
 
   const view = new EarCoachView({} as any, fakePlugin as any);
   const host = document.getElementById("app")!;
-  host.appendChild(view.containerEl);
+  // 실제 Obsidian처럼 활성 leaf로 감싸고 뷰 타입을 단다(가로 전체화면 CSS가 이걸 본다).
+  view.containerEl.dataset.type = view.getViewType();
+  const leaf = document.createElement("div");
+  leaf.className = "workspace-leaf mod-active";
+  leaf.appendChild(view.containerEl);
+  host.appendChild(leaf);
   await view.onOpen();
   const now = new Date().toISOString();
   await view.loadSession(

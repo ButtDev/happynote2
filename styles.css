@@ -767,3 +767,22 @@
     min-height: 0;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Mobile landscape fullscreen (SPEC_003)
+   Ear-Coach가 활성이고 가로일 때만 뷰 헤더와 하단 내비게이션 바를 숨겨
+   위아래 공간을 영상·자막에 돌려준다. 다른 뷰로 가면 자동 복귀.
+   -------------------------------------------------------------------------- */
+@media (orientation: landscape) {
+  .workspace-leaf-content[data-type="ear-coach-listening-view"] > .view-header {
+    display: none;
+  }
+
+  .workspace-leaf-content[data-type="ear-coach-listening-view"] > .view-content {
+    padding-top: var(--safe-area-inset-top, 0px);
+  }
+
+  body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container) .mobile-navbar {
+    display: none !important;
+  }
+}

@@ -44,11 +44,13 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
 #app{position:fixed;inset:0;display:flex;flex-direction:column}
-#app>.workspace-leaf-content{flex:1;display:flex;flex-direction:column;min-height:0}
-#app .view-header{display:none}
-#app .view-content{flex:1;min-height:0;overflow:hidden}</style>
+#app>.workspace-leaf{flex:1;display:flex;flex-direction:column;min-height:0}
+#app .workspace-leaf-content{flex:1;display:flex;flex-direction:column;min-height:0}
+#app .view-header{flex:0 0 48px;height:48px;background:#111}
+#app .view-content{flex:1;min-height:0;overflow:hidden;box-sizing:border-box}
+.mobile-navbar{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);width:340px;height:56px;border-radius:28px;background:#333;z-index:10}</style>
 <style>${css}</style></head>
-<body><div id="app"></div><script>${bundle.outputFiles[0].text}</script></body></html>`;
+<body><div id="app"></div><div class="mobile-navbar"></div><script>${bundle.outputFiles[0].text}</script></body></html>`;
 const htmlPath = path.join(outDir, "index.html");
 fs.writeFileSync(htmlPath, html);
 
@@ -92,6 +94,15 @@ function evaluateExpect(vp, m, nums) {
   if (e.minVideoWidth !== undefined) add("minVideoWidth", v && v.w >= e.minVideoWidth, `${v && v.w} >= ${e.minVideoWidth}`);
   if (e.minVideoHeight !== undefined) add("minVideoHeight", v && v.h >= e.minVideoHeight, `${v && v.h} >= ${e.minVideoHeight}`);
   if (e.minListHeight !== undefined) add("minListHeight", l && l.h >= e.minListHeight, `${l && l.h} >= ${e.minListHeight}`);
+  for (const sel of e.hidden ?? []) {
+    const vis = m.visibility?.[sel];
+    add(`hidden:${sel}`, vis === false, vis === null ? "element missing" : `visible=${vis}`);
+  }
+  for (const sel of e.visible ?? []) {
+    const vis = m.visibility?.[sel];
+    add(`visible:${sel}`, vis === true, vis === null ? "element missing" : `visible=${vis}`);
+  }
+  if (e.maxVideoTop !== undefined) add("maxVideoTop", v && v.y <= e.maxVideoTop, `${v && v.y} <= ${e.maxVideoTop}`);
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
     const tol = e.videoAspectTolerance ?? 0.03;
@@ -190,8 +201,16 @@ for (const vp of cases.viewports) {
         });
       }
     }
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing };
-  }, cases.selectors ? { selectors: cases.selectors, overlayExclude: cases.overlayExclude ?? [] } : {});
+    const visibility = {};
+    for (const sel of [...(selectors.__hidden ?? []), ...(selectors.__visible ?? [])]) {
+      const el = document.querySelector(sel);
+      if (!el) { visibility[sel] = null; continue; }
+      const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      visibility[sel] = cs.display !== "none" && cs.visibility !== "hidden" && r.width > 0 && r.height > 0;
+    }
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility };
+  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   const inter = (a, b) => {
     if (!a || !b) return 0;

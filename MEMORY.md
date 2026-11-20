@@ -5,10 +5,10 @@
 ## 지금 하는 일
 - SPEC_001 DONE (기기 확인 OK, BRAT 릴리스 1.0.1).
 - SPEC_002 IMPLEMENTED(가로 좌우 배치, CSS만) — 9 실기기 ⏳. BRAT 1.0.2 배포함.
-- SPEC_003 가로 전체화면(헤더·내비바 숨김) 진행. 다음 후보는 `memory/backlog.md`.
+- SPEC_003 IMPLEMENTED(가로 전체화면) — 7 실기기 ⏳, BRAT 1.0.3. 다음 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- SPEC_002 9 실기기 확인(BRAT 1.0.2).
+- SPEC_002 9·SPEC_003 7 실기기 확인(BRAT 1.0.3).
 
 ## 주의
 - push 대상은 remote `buttdev`(SSH `git@github.com:ButtDev/happynote2.git`, 공개 fork). push는 사람 지시 때만, 단 실기기 ⏳ 필요한 커밋은 BRAT 배포를 묻지 않고 한 뒤 묻는다(CLAUDE.md 6장). `main.js`는 저장소에 없음. 배포는 BRAT: manifest·package version 올리고 같은 이름 태그 push → `.github/workflows/release.yml`이 Release(3파일) 생성.

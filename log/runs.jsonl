@@ -6,3 +6,4 @@
 {"ts":"2026-11-20T12:46:24.283Z","cmd":"/spec-run","spec":"SPEC_002","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, landscape video 487x274 sideBySide, mut exit 1, 9 ⏳"}
 {"ts":"2026-11-20T12:48:25.766Z","id":"release-1.0.2","kind":"simple","what":"BRAT 1.0.2 배포 (SPEC_002 가로 배치)","evidence":"verify --set regression ok"}
 {"ts":"2026-11-20T12:57:09.221Z","cmd":"/spec-new","spec":"SPEC_003","result":"READY","questions":0}
+{"ts":"2026-11-20T12:58:04.642Z","cmd":"/spec-run","spec":"SPEC_003","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, landscape header/navbar hidden, mut exit 1, 7 ⏳"}

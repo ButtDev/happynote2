@@ -1,8 +1,8 @@
 ---
 id: SPEC_003
 title: 가로모드 전체화면 — Obsidian 헤더·하단 내비게이션 바 숨김
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 parent: SPEC_002
@@ -58,3 +58,5 @@ SPEC_002 실기기 확인 메모 「상하단공간활용이 떨어짐」(스크
 - 화면 검사에 헤더 48px·내비게이션 바 56px 가짜 요소 · 실기기 DOM 이름(`.view-header`, `.mobile-navbar`)과 대략 크기를 재현 · 대안: 실기기 DOM 덤프(불가).
 
 ## 실행 기록
+- 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ ui landscape checks `hidden:.view-header`·`hidden:.mobile-navbar` visible=false · 2 ✅ maxVideoTop 53 ≤ 60, video 487×274 sideBySide·videoAspect·minVideoHeight·minListHeight(374) ok · 3 ✅ portrait `visible:` 둘 다 true, stacked·minVideoWidth(396)·overlap 0 ok · 4 ✅ 변이: 전체화면 블록 뺀 css → hidden 2개·maxVideoTop(77) 실패 exit 1 · 5 ✅ landscape.png: 헤더·내비바 없이 왼쪽 영상+컨트롤, 오른쪽 필터+카드가 위 끝부터; portrait.png: 위 검은 헤더 띠, 아래 둥근 내비바 보임 · 6 ✅ `verify --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 · 7 ⏳ 실기기
+  - 가결정: 화면 검사 HTML에 헤더 48px·`.mobile-navbar` 56px 가짜 요소를 넣고, 내비바는 overlay 측정 제외(앱 UI) · 이유: 실기기 크롬 재현 · 대안: 없음.
