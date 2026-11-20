@@ -1,6 +1,9 @@
 {
   "verify": [
-    { "name": "harness", "cmd": "node .claude/harness/status.mjs --json > /dev/null", "timeoutSec": 60 }
+    { "name": "harness", "cmd": "node .claude/harness/status.mjs --json > /dev/null", "timeoutSec": 60 },
+    { "name": "build", "cmd": "npm run build", "timeoutSec": 300 },
+    { "name": "test", "cmd": "npm test", "timeoutSec": 300 },
+    { "name": "ui", "cmd": "node tests/ui/runUiCheck.mjs", "timeoutSec": 300 }
   ],
   "regression": ["harness"],
   "detachAfterSec": 120,

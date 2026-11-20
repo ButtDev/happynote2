@@ -1,0 +1,5 @@
+{"ts":"2026-11-20T09:41:50.658Z","source":"button","question":"이 부분은 SPEC에서 따로 검증하겠습니다.","answer":"추천대로","messageId":294}
+{"ts":"2026-11-20T09:42:47.866Z","source":"button","question":"실제 기기에서 AnkiDroid로 카드를 보내는 확인은 ⏳(사람 확인)로 돌립니다.","answer":"추천대로","messageId":295}
+{"ts":"2026-11-20T09:49:12.549Z","source":"button","question":"추천안은 **끔**입니다. 핵심 확인(실기기 화면, AnkiDroid 카드)이 모두 ⏳ 사람 확인이라 밤에 진척되는 부분이 적습니다. 그리고 업스트림 코드를 처음 가져오는 단계는 낮에 지켜보는 편이 안전합니다.","answer":"야간 끔","messageId":300}
+{"ts":"2026-11-20T11:19:58.988Z","source":"button","question":"`node .claude/harness/verify.mjs --set regression` 결과: `✅ harness exit=0` / `verify: ok`","answer":"인터뷰 확정","messageId":301}
+{"ts":"2026-11-20T11:20:06.258Z","answer":"인터뷰 확정","raw":"[Button pressed: 인터뷰 확정]"}

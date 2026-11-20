@@ -6,11 +6,11 @@ github.com/sindng-ui/happynote2 포크, 기능개선
 
 ## 0. 프로젝트 절 (인터뷰로 채움)
 
-- 기술 스택: `[채울 것]`
-- 실행 방법: `[채울 것]`
+- 기술 스택: TypeScript + Obsidian 플러그인 API + esbuild(업스트림 Ear-Coach 그대로), 시험은 `node --experimental-strip-types tests/runTests.ts`, 화면 검사는 Playwright(Chromium 모바일 뷰포트). 외부 연동: AnkiConnect Android(`127.0.0.1:8765`), dictionaryapi.dev, Gemini API. 업스트림: `https://github.com/sindng-ui/happynote2`
+- 실행 방법: `npm install` → `npm run build` → `main.js`·`manifest.json`·`styles.css`를 Android 볼트 `.obsidian/plugins/obsidian-ear-coach/`에 복사 → Obsidian에서 플러그인 켜기
 - 검증 명령: `harness.json`의 `verify` (예: 단위 시험, 문법 검사, 화면 검사)
-- 기술 제약·금지 패턴: `[채울 것]`
-- 사람만 판정할 수 있는 것(⏳): `[채울 것]` (예: 화면 감각, 소리, 문장 결)
+- 기술 제약·금지 패턴: 대상은 Android(Obsidian 모바일). 모바일 경로에서 Node 내장 모듈(`child_process`·`fs` 등)을 최상위 import하지 않는다(`src/utils/platform.ts`의 지연 로딩만). 네트워크는 Obsidian `requestUrl`로. 데스크톱 동작을 깨지 않는다. 과금이 생기는 API를 쓰지 않는다. API 키는 플러그인 설정에만 두고 저장소·시험 데이터에 넣지 않는다. 유튜브 iframe은 교차 출처라 픽셀 캡처를 가정하지 않는다
+- 사람만 판정할 수 있는 것(⏳): Android 실기기 세로·가로 화면 감각, AnkiDroid 카드 모양·학습감(Fluent Forever 방식), 사전 뜻·스냅샷·AI 번역의 학습 품질
 
 ## 1. 폴더 경계
 
