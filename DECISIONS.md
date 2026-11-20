@@ -4,3 +4,4 @@
 
 - 2026-11-20 | 「github.com/sindng-ui/happynote2 포크, 기능개선」 | 프로젝트 시작 (인큐베이터 템플릿)
 - 2026-11-20 | 「인터뷰 확정」 | OVERVIEW·0장·harness.json·SPEC_001 확정
+- 2026-11-20 | 「앞으론 배포하고 물어보도록」 | 실기기 ⏳가 필요한 커밋은 BRAT 릴리스(buttdev main push + 버전 태그)를 묻지 않고 배포한 뒤 ⏳ 확인을 요청한다 (CLAUDE.md 1장 예외·6장)
