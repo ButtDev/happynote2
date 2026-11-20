@@ -42,8 +42,11 @@ const bundle = await esbuild.build({
 const css = fs.readFileSync(cssPath, "utf8");
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
-#app{position:fixed;inset:0;display:flex;flex-direction:column}
+<!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기에서 원인 모를 바깥 여백(SPEC_004) 흉내 -->
+<style>:root{--background-primary:#1e1e1e;--background-primary-alt:#242424;--background-secondary:#262626;--background-modifier-border:#363636;--background-modifier-form-field:#2a2a2a;--background-modifier-hover:rgba(255,255,255,.075);--interactive-accent:#8a5cf5;--text-on-accent:#fff;--text-normal:#dadada;--text-muted:#a0a0a0;--color-orange:#e9973f;--font-monospace:monospace;--input-height:40px}
+button{height:var(--input-height);font:inherit;cursor:pointer}
+html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;box-sizing:border-box;padding:40px 0 24px 0}
 #app>.workspace-leaf{flex:1;display:flex;flex-direction:column;min-height:0}
 #app .workspace-leaf-content{flex:1;display:flex;flex-direction:column;min-height:0}
 #app .view-header{flex:0 0 48px;height:48px;background:#111}
@@ -102,6 +105,23 @@ function evaluateExpect(vp, m, nums) {
     const vis = m.visibility?.[sel];
     add(`visible:${sel}`, vis === true, vis === null ? "element missing" : `visible=${vis}`);
   }
+  const r0 = m.root;
+  if (e.rootFillsViewport)
+    add("rootFillsViewport", r0 && r0.x <= 1 && r0.y <= 1 && right(r0) >= vp.width - 1 && bottom(r0) >= vp.height - 1, JSON.stringify(r0));
+  for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
+    const r = m.extraRects?.[sel];
+    add(`maxHeight:${sel}`, r && r.h > 0 && r.h <= max, r ? `${r.h} <= ${max}` : "element missing");
+  }
+  if (e.maxVideoSideGap !== undefined) {
+    const gl = v && r0 ? v.x - r0.x : Infinity;
+    const gr = v && t ? t.x - right(v) : Infinity;
+    add("maxVideoSideGap", gl <= e.maxVideoSideGap && gr <= e.maxVideoSideGap, `left=${gl} right=${gr} <= ${e.maxVideoSideGap}`);
+  }
+  for (const sel of e.noOverflowX ?? []) {
+    const o = m.overflowX?.[sel];
+    add(`noOverflowX:${sel}`, o && o.scrollWidth <= o.clientWidth + 1, o ? `${o.scrollWidth} <= ${o.clientWidth}` : "element missing");
+  }
+  if (e.minListWidth !== undefined) add("minListWidth", l && l.w >= e.minListWidth, `${l && l.w} >= ${e.minListWidth}`);
   if (e.maxVideoTop !== undefined) add("maxVideoTop", v && v.y <= e.maxVideoTop, `${v && v.y} <= ${e.maxVideoTop}`);
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
@@ -209,8 +229,15 @@ for (const vp of cases.viewports) {
       const cs = getComputedStyle(el);
       visibility[sel] = cs.display !== "none" && cs.visibility !== "hidden" && r.width > 0 && r.height > 0;
     }
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility };
-  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
+    const extraRects = {};
+    for (const sel of selectors.__extra ?? []) extraRects[sel] = one(sel);
+    const overflowX = {};
+    for (const sel of selectors.__noOverflowX ?? []) {
+      const el = document.querySelector(sel);
+      overflowX[sel] = el ? { scrollWidth: el.scrollWidth, clientWidth: el.clientWidth } : null;
+    }
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX };
+  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   const inter = (a, b) => {
     if (!a || !b) return 0;

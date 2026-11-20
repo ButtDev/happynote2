@@ -45,7 +45,18 @@
           ".view-header",
           ".mobile-navbar"
         ],
-        "maxVideoTop": 60
+        "maxVideoTop": 60,
+        "rootFillsViewport": true,
+        "maxHeight": {
+          ".ear-coach-mobile-toolbar": 44,
+          ".ear-coach-player-controls": 44
+        },
+        "maxVideoSideGap": 12,
+        "minListWidth": 330,
+        "noOverflowX": [
+          ".ear-coach-mobile-toolbar",
+          ".ear-coach-player-controls"
+        ]
       }
     }
   ],

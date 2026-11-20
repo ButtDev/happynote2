@@ -1,8 +1,8 @@
 ---
 id: SPEC_004
 title: 가로모드 다듬기 — 화면 끝까지 쓰기 + 버튼 정리
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 parent: SPEC_003
@@ -21,7 +21,7 @@ parent: SPEC_003
 
 ## 3. 정의 — 공개 이름·데이터 구조·문구·수치를 글자 그대로
 - 전체화면: `@media (orientation: landscape)` 안에서 `.workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"]`를 `position: fixed; inset: 0; z-index: var(--layer-cover, 5)`로, `.view-content`는 안전 영역(`--safe-area-inset-*` → `env(safe-area-inset-*)` → 0) 패딩 + `container-type: size`.
-- 왼쪽 열 폭 = `min(62cqw, (100cqh − 컨트롤 몫) × 16/9 + 좌우 패딩)` — 영상이 열 폭을 꽉 채움.
+- 왼쪽 열 폭 = `min(58cqw, (100cqh − 컨트롤 몫) × 16/9 + 좌우 패딩)` — 영상이 열 폭을 꽉 채움.
 - 재생 컨트롤: 한 줄, 높이 32px 버튼, 재생은 둥근 강조 버튼, 배속 4개는 하나의 세그먼트(알약 안에 붙은 버튼, 선택만 채움), 시간은 오른쪽 고정폭 숫자.
 - 툴바: 한 줄(줄바꿈 없음, 넘치면 가로 스크롤), 필터 3개는 세그먼트, 블라인드·공개는 테두리만 있는 알약으로 오른쪽 끝.
 - `cases.json` landscape 규칙: `rootFillsViewport: true`, `maxHeight: {".ear-coach-mobile-toolbar": 44, ".ear-coach-player-controls": 44}`, `maxVideoSideGap: 12`(영상 왼쪽 끝–열 왼쪽, 영상 오른쪽 끝–툴바 왼쪽), `minListWidth: 330`. SPEC_002·003 규칙 유지.
@@ -52,7 +52,9 @@ parent: SPEC_003
 
 ## 8. 가결정 — 고른 것 · 이유 · 대안 (있으면)
 - 빈칸 원인을 모르는 채(실기기 DOM 덤프 불가) 뷰를 `position: fixed; inset: 0`으로 띄움 · 조상 여백·패딩과 무관하게 화면을 씀 · 대안: 원인 요소를 추정해 하나씩 숨김(실기기 왕복 필요).
-- 왼쪽 열 상한 62% · 915×412에서 영상 ≈ 300px 높이, 목록 ≥ 330px 폭 · 대안: 55%(영상 작음), 70%(목록 좁음).
+- 왼쪽 열 상한 58% · 915×412에서 영상 ≈ 290px 높이, 목록이 툴바 한 줄을 담을 폭(≥ 380) · 대안: 55%(영상 작음), 62%(툴바 넘침 — 회차 1에서 확인).
 - 배속·필터를 세그먼트로 · 「하나만 고르는 묶음」이 한눈에 보임 · 대안: 개별 버튼 유지.
 
 ## 실행 기록
+- 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ landscape `rootFillsViewport` {x0,y0,w915,h412}(바깥 여백 40/24 있음) · 2 ✅ `maxHeight` toolbar 44, controls 32, `noOverflowX` 둘 다 ok · 3 ✅ `maxVideoSideGap` left 8·right 9, `minListWidth` 384 · 4 ✅ sideBySide·videoAspect 1.777·minVideoHeight 289·minListHeight 369·hidden 2·maxVideoTop 42, portrait stacked·visible 2·minVideoWidth 396 ok · 5 ✅ 변이(SPEC_004 블록 뺀 css) exit 1: rootFillsViewport(y40 h348)·maxHeight toolbar 51 실패 · 6 ✅ landscape.png: 위아래 빈칸 없음, 영상이 왼쪽 열을 채움(둥근 모서리), 아래 [재생 강조알약][루프][0.7 0.85 1x 1.15 세그먼트] ··· 00:00 한 줄, 오른쪽 위 [전체·핀·과속 세그먼트] [블라인드][공개] 한 줄·잘림 없음 · 7 ✅ `verify --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 · 8 ⏳ 실기기
+  - 가결정: 화면 검사 HTML에 Obsidian 모바일 테마 근사(:root 색 변수, `button{height:var(--input-height)=40px}`)와 `noOverflowX` 규칙 추가 · 이유: 테마 변수 없이는 알약·세그먼트 모양을 볼 수 없고, 실기기처럼 버튼이 커야 툴바 넘침을 잡음 · 대안: 없음. 열 상한 62%→58%(62%면 툴바 386>348 넘침).
