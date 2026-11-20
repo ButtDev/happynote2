@@ -3,12 +3,12 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.18**. 가로모드(SPEC_002~012) 전부 DONE/DROPPED — 다시 열지 않음(SPEC_010 옆 메뉴 스와이프는 DROPPED, 세로로 돌려서 연다).
-- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 DONE(1.0.17) → SPEC_014 구(구동사·숙어) 칸 DONE(꼬리표 뗀 버전은 아직 미배포 — 1.0.18엔 「구동사」 꼬리표 있음) → 다음 SPEC_015 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_016 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
+- 최신 배포 BRAT **1.0.18**. 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
+- 사전+AnkiDroid: SPEC_013 사전 창 DONE · SPEC_014 구(구동사·숙어) 칸 DONE — 「구동사」 꼬리표 뗀 버전은 미배포(사람 선택: SPEC_015 배포에 같이) · **SPEC_015 Anki 저장 DRAFT** → SPEC_016 영상 스냅샷. 그 뒤 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- 꼬리표 제거는 다음 BRAT 배포(SPEC_015)에 같이 나감(사람 선택). SPEC_015 Anki DRAFT — 질문 1(노트 타입 A 기본 Basic(and reversed) / B 직접 만든 Fluent Forever 타입) 답 대기. AnkiConnect Android엔 createDeck·createModel 없음.
-- 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
+- SPEC_015 노트 타입: A 기본 「Basic (and reversed card)」(추천) / B 사람이 만든 Fluent Forever 노트 타입 — 버튼 `A 기본 Basic으로 | B 직접 만든 노트 타입` 보냄, 답 대기. 답 오면 SPEC 반영·READY → `/spec-run SPEC_015`.
+- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → 릴리스 확인은 `curl` GitHub API, `gh` 없음) 후 ⏳ 요청. 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.
@@ -19,3 +19,4 @@
 - `styles.css`에 `backdrop-filter`·`filter: blur` 글자 금지(npm test). `docs/test_result.txt`는 `npm test`가 덮어씀 — 커밋하지 않음.
 - 사전: `src/services/dictionary.ts`(obsidian import 없음, fetcher 주입, 발음은 Commons curid → ogg로 교체, 시험 데이터 `tests/fixtures/dictionary/commons/`), 창 `src/ui/DictionaryModal.ts`, 플러그인 `plugin.dictionary`. 시험 Test 11 + `tests/fixtures/dictionary/`(실제 응답, `_phrases.json` 구동사 후보). 구동사: `lemmaVariants`·`phraseCandidates`(누른 낱말부터만), 창 맨 위 `.ear-coach-dict-phrase`, 화면 검사 `expect.phrase`(going → go to). 화면 검사 `expect.dictionary`는 기본 스크린샷 뒤에 첫 카드를 3단계로 바꿔 누름, `dictionary-<뷰>.png`.
 - Playwright 직접 스크립트는 `chromium.launch({ channel: "chrome" })`로(번들 Chromium 미설치).
+- AnkiConnect Android: `createDeck`·`createModel` 없음(지원: version·deckNames·modelNames·modelFieldNames·findNotes·canAddNotes·addNote(audio/picture url·data)·storeMediaFile·notesInfo·updateNoteFields·guiBrowse·multi). CORS 헤더 없음 → `requestUrl`로.
