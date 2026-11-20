@@ -17,3 +17,4 @@
 {"ts":"2026-11-20T14:03:22.381Z","spec":"SPEC_008","iteration":1,"status":"IMPLEMENTED","evidence":"Test8 captions/params pass; ui cc-btn visible, controls one row; mutation exit1; verify regression ok"}
 {"ts":"2026-11-20T14:13:03.469Z","spec":"SPEC_009","result":"IMPLEMENTED","evidence":"verify regression ok; Test8 3 cases; ui overlayToggle ok portrait/landscape; mutants fail","note":"SPEC_008 DROPPED (CC NG)"}
 {"ts":"2026-11-20T14:19:08.478Z","cmd":"/spec-run","spec":"SPEC_009","iteration":1,"status":"DONE","evidence":"6 OK 사람확인"}
+{"ts":"2026-11-20T14:19:55.665Z","cmd":"/spec-run","spec":"SPEC_006","iteration":1,"status":"DONE","evidence":"6 OK 사람확인"}

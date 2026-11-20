@@ -1,7 +1,7 @@
 ---
 id: SPEC_006
 title: 가로 위 빈칸 제거 — leaf-content 안쪽 여백 무시
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -32,7 +32,7 @@ parent: SPEC_004
 3. [x] 변이: 이번 변경 전 `styles.css`(HEAD)로 `ui` exit 1 (`rootFillsViewport` y≈112 실패) [자동]
 4. [x] `landscape.png`에서 위 30px 띠 아래 바로 영상·툴바가 시작 [자동]
 5. [x] `verify.mjs --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 [자동]
-6. [ ] Android 실기기 가로에서 상태 표시줄 바로 밑부터 영상·목록이 시작하고 위 빈칸이 없는지 보고 버튼 [수동]
+6. [x] Android 실기기 가로에서 상태 표시줄 바로 밑부터 영상·목록이 시작하고 위 빈칸이 없는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1·2. `ui` + `.scratch/ui/report.json`
@@ -49,3 +49,4 @@ parent: SPEC_004
 
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ landscape `rootFillsViewport` {x0,y30,w915,h370} top=30 bottomSlack 12 · 2 ✅ ui ok(sideBySide, videoAspect 1.779, maxVideoTop 51, toolbar 43, controls 34, side gap 8/9, list 384, diag, portrait stacked) · 3 ✅ 변이 HEAD styles.css → exit 1: rootFillsViewport y82(실기기와 같은 값)·maxVideoTop 96·minListHeight 275·maxVideoSideGap 18/20 · 4 ✅ landscape.png: 위 30px 띠 바로 밑에 영상·툴바 시작, 빈칸 없음 · 5 ✅ `verify --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 · 6 ⏳ 실기기
+- 2026-11-20 사람확인(회차 셈 없음): DONE — 6 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_006 6 OK]」(1.0.10 실기기), 1~5는 회차 1 근거 그대로.
