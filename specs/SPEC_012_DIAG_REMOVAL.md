@@ -1,7 +1,7 @@
 ---
 id: SPEC_012
 title: 임시 가로 화면 진단 기능 제거
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_005]
@@ -52,3 +52,4 @@ SPEC_005의 진단(가로로 열면 20초 알림 + 노트 `Ear-Coach 화면 진�
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `grep -rn -i "layoutDiag\|layout-diag\|ear-coach-layout-diagnostics" src tests`(removed-features 제외) 0줄 · 2 ✅ `npm test` `[Test 7] … PASS: diag.json … 24 files clean`, `ALL TESTS PASSED` · 3 ✅ 변이: main.js 사본에 `// ear-coach-layout-diagnostics` 덧붙여 `EAR_COACH_ROOT=.scratch/mut/spec012 npm test` → `"ear-coach-layout-diagnostics" still in main.js` exit 1 · 4 ✅ `verify --set regression` → ok(harness·build·test·ui 전부 exit 0, report에 `diag` 규칙 0개, landscape video 500×281·list 362×326) · 5 ⏳ 실기기
   - 가결정: Test 7은 `main.js`와 `src/`를 모두 검사(빌드 전에도 의미 있음), 검사 루트는 `EAR_COACH_ROOT`로 바꿀 수 있게 함(변이 시험용) · 대안: main.js만.
   - 지운 파일 사본: `.scratch/trash/spec012-diag-<시각>/`(layoutDiagnostics.ts, layout-diag/).
+- 2026-11-21 사람확인(회차 셈 없음): DONE — 5 ✅ 「[Button pressed: SPEC_012 5 OK]」(1.0.15) · 1~4 ✅ 이번 `verify --set regression` → ok(harness·build·test·ui)
