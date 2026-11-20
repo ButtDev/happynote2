@@ -47,3 +47,4 @@
 {"ts":"2026-11-20T22:14:35.913Z","cmd":"/spec-run","spec":"SPEC_014","iteration":2,"status":"DONE","evidence":"7 메모 기능 만족 + 구동사 꼬리표 제거; ui phrase ok(tagText false), 변이 exit1, regression ok"}
 {"ts":"2026-11-20T22:16:41.769Z","cmd":"/spec-new","spec":"SPEC_015","result":"DRAFT","questions":1}
 {"ts":"2026-11-20T22:26:02.223Z","cmd":"/spec-run","spec":"SPEC_015","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression all ok; Test 12 PASS(16 cloze,2 notes,5 remap,7 client,2 save); ui anki ok 세로·가로; 변이(낱말 경계) Test 12 실패; 8 ⏳ 실기기"}
+{"ts":"2026-11-20T22:26:59.784Z","cmd":"release","spec":"SPEC_015","status":"deployed","evidence":"BRAT 1.0.19 push buttdev main + tag; release assets main.js/manifest.json/styles.css 확인"}
