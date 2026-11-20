@@ -4,10 +4,10 @@
 
 ## 지금 하는 일
 - 최신 배포 BRAT **1.0.17**. 가로모드(SPEC_002~012) 전부 DONE/DROPPED — 다시 열지 않음(SPEC_010 옆 메뉴 스와이프는 DROPPED, 세로로 돌려서 연다).
-- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 IMPLEMENTED(2/3회차, 7 ⏳ — 1.0.16 발음 NG → 1.0.17에서 Commons ogg로 고침) → 다음 SPEC_014 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_015 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
+- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 DONE(1.0.17) → 다음 SPEC_014 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_015 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
 
 ## 열린 질문 (사람에게)
-- ⏳ SPEC_013 7(1.0.17 실기기: 단어 눌러 뜻·🔊 발음 소리 나는지) 버튼 보냄, 답 대기. 또 NG면 3/3회차가 마지막. OK면 DONE 처리 후 SPEC_014 `/spec-new`.
+- 다음 순서 질문 보냄: 구동사 조회(backlog 첫 줄) 먼저 vs SPEC_014 Anki 먼저. 답 오면 그쪽 `/spec-new`.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
