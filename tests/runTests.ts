@@ -312,6 +312,55 @@ async function runAllTests() {
   log(`  -> PASS: ${splitCases.clamp.length + splitCases.pointer.length} landscape-split cases`);
   log("");
 
+  // 10. No static Node built-in imports on the mobile path — data in tests/fixtures/mobile-imports/
+  //     EAR_COACH_ROOT로 검사 대상 폴더를 바꿀 수 있다(변이 시험용).
+  log("[Test 10] Mobile path: no static Node built-in import/require (data-driven)");
+  const mi = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/mobile-imports/rules.json"), "utf8"));
+  const forbiddenMods = new Set<string>(mi.forbidden);
+  const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'])\/\/.*$/gm, "$1");
+  const staticNodeImports = (code: string): string[] => {
+    const text = stripComments(code);
+    const found: string[] = [];
+    const patterns = [
+      /(?:^|[\n;])\s*(?:import|export)\s+(?!type\s)[^;'"]*?\sfrom\s*["'](?:node:)?([\w/]+)["']/g,
+      /(?:^|[\n;])\s*import\s*["'](?:node:)?([\w/]+)["']/g,
+      /(?<![\w.$])require\(\s*["'](?:node:)?([\w/]+)["']\s*\)/g,
+    ];
+    for (const re of patterns) {
+      for (const m of text.matchAll(re)) if (forbiddenMods.has(m[1])) found.push(m[1]);
+    }
+    return found.sort();
+  };
+  for (const k of mi.detectorCases) {
+    assert.deepEqual(staticNodeImports(k.code), [...k.violations].sort(), `detector case: ${JSON.stringify(k.code)}`);
+  }
+  const miRoot = path.resolve(process.env.EAR_COACH_ROOT ?? ".");
+  const miSrc: string[] = [];
+  const walkTs = (dir: string) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walkTs(full);
+      else if (e.name.endsWith(".ts")) miSrc.push(full);
+    }
+  };
+  walkTs(path.join(miRoot, mi.srcDir));
+  assert.ok(miSrc.length > 0, `no .ts files under ${path.join(miRoot, mi.srcDir)}`);
+  for (const file of miSrc) {
+    const bad = staticNodeImports(fs.readFileSync(file, "utf8"));
+    assert.deepEqual(bad, [], `${path.relative(miRoot, file)}: static Node import ${bad.join(", ")} — use requireDesktopModule()`);
+  }
+  log(`  -> PASS: ${mi.detectorCases.length} detector cases, ${miSrc.length} src files clean`);
+  const miBundle = path.join(miRoot, mi.bundle);
+  if (fs.existsSync(miBundle)) {
+    const bundleCode = fs.readFileSync(miBundle, "utf8");
+    const bad = [...bundleCode.matchAll(/(?<![\w.$])require\(\s*["'](?:node:)?([\w/]+)["']\s*\)/g)]
+      .map((m) => m[1])
+      .filter((m) => forbiddenMods.has(m));
+    assert.deepEqual(bad, [], `${mi.bundle}: static require of Node built-ins ${bad.join(", ")}`);
+    log(`  -> PASS: ${mi.bundle} has no static require() of ${forbiddenMods.size} Node built-ins`);
+  }
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");
