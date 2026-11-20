@@ -5,7 +5,7 @@
 ## 지금 하는 일
 - SPEC_001 DONE (기기 확인 OK, BRAT 릴리스 1.0.1).
 - SPEC_002 IMPLEMENTED(가로 좌우 배치, CSS만) — 9 실기기 ⏳. BRAT 1.0.2 배포함.
-- 다음: SPEC_006 iframe 안 유튜브 overlay 줄이기(parent SPEC_002, embed 파라미터·자체 컨트롤), SPEC_003~005는 `memory/backlog.md`.
+- SPEC_003 가로 전체화면(헤더·내비바 숨김) 진행. 다음 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
 - SPEC_002 9 실기기 확인(BRAT 1.0.2).
