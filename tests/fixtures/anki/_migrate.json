@@ -1,0 +1,34 @@
+{
+  "comment": "migrateAnkiDeck(saved) — SPEC_016: 이전 기본값 Default·빈 값 → happynote2",
+  "defaultDeck": "happynote2",
+  "cases": [
+    [
+      "Default",
+      "happynote2"
+    ],
+    [
+      "",
+      "happynote2"
+    ],
+    [
+      null,
+      "happynote2"
+    ],
+    [
+      "  ",
+      "happynote2"
+    ],
+    [
+      "English",
+      "English"
+    ],
+    [
+      "happynote2",
+      "happynote2"
+    ],
+    [
+      "English::Listening",
+      "English::Listening"
+    ]
+  ]
+}

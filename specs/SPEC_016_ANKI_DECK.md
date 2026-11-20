@@ -1,8 +1,8 @@
 ---
 id: SPEC_016
 title: Anki 기본 덱 happynote2 고정 + 덱 없음 안내
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 parent: SPEC_015
@@ -49,3 +49,4 @@ SPEC_015 실기기 확인에서 기본 덱 `Default`가 AnkiDroid에 없어 저�
 - 저장된 `Default`를 `happynote2`로 옮김 · 실기기 AnkiDroid엔 `Default`가 없었고, 1.0.21에서 「불러오기」를 누르면 설정 전체가 저장돼 기본값만 바꿔선 반영이 안 됨 · 대안: 기본값만 변경.
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1·2 ✅ Test 12 「7 migrate cases」 PASS(기본값 happynote2 확인 포함) · 3 ✅ Test 12 「5 target cases」(happynote2 없음·Default만 있음 → 새 문구, calls [deckNames]) · 4 ✅ ui 세로·가로 `anki` ok: note.deckName happynote2 + 「Anki에 저장했습니다」, 덱 ["기본"] → 새 문구·calls [deckNames] · 5 ✅ `.scratch/mut/anki-nomigrate.ts` → `migrateAnkiDeck("Default")` 실패 · 6 ✅ verify regression harness/build/test/ui ok · 7 ⏳ 실기기(SPEC_015 8과 함께)

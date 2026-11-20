@@ -126,10 +126,10 @@ function evaluateExpect(vp, m, nums) {
   if (e.anki) {
     const a = m.anki?.added;
     const d = m.anki?.dup;
-    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]);
+    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.deckName === "happynote2" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]);
     const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
     const n = m.anki?.noDeck;
-    const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「Default」 덱이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
+    const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
     add("anki", okAdded && okDup && okNoDeck, JSON.stringify(m.anki));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
@@ -517,7 +517,7 @@ for (const vp of cases.viewports) {
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
     const dup = await run(true);
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
-    // 회차 3: AnkiDroid에 설정 덱(Default)이 없으면 addNote 없이 안내
+    // SPEC_015 회차 3·SPEC_016: AnkiDroid에 설정 덱(happynote2)이 없으면 addNote 없이 안내
     const noDeck = await run(false, ["기본"]);
     await page.screenshot({ path: path.join(outDir, `anki-nodeck-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));

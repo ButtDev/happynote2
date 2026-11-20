@@ -47,7 +47,7 @@ async function main(): Promise<void> {
       invoke: async (action: string, params?: any) => {
         const w = window as any;
         w.__ankiCalls = [...(w.__ankiCalls ?? []), action];
-        if (action === "deckNames") return w.__ankiDecks ?? ["Default"];
+        if (action === "deckNames") return w.__ankiDecks ?? ["happynote2"];
         if (action === "modelNames") return ["Basic (and reversed card)"];
         if (action === "modelFieldNames") return ["Front", "Back"];
         if (action === "canAddNotes") return [!w.__ankiDuplicate];

@@ -265,9 +265,19 @@ export class AnkiConnectClient implements AnkiInvoker {
   }
 }
 
-/** 덱·노트 타입이 없을 때 문구 (SPEC_015 회차 3) */
+/** SPEC_016: 기본 덱(사람 결정). AnkiConnect Android는 덱을 만들 수 없어 AnkiDroid에서 한 번 만든다. */
+export const ANKI_DEFAULT_DECK = "happynote2";
+
+/** SPEC_016: 저장된 덱 이름 옮기기 — 이전 기본값 "Default"·빈 값 → happynote2, 그 밖은 그대로. */
+export function migrateAnkiDeck(saved: string | undefined | null): string {
+  const d = (saved ?? "").trim();
+  return !d || d === "Default" ? ANKI_DEFAULT_DECK : d;
+}
+
+/** 덱·노트 타입이 없을 때 문구 (SPEC_015 회차 3, 덱 문구는 SPEC_016) */
 export function ankiMissingMessage(kind: "deck" | "model", name: string): string {
-  return `Anki에 「${name}」 ${kind === "deck" ? "덱" : "노트 타입"}이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
+  if (kind === "deck") return `Anki에 「${name}」 덱이 없습니다 — AnkiDroid에서 「${name}」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
+  return `Anki에 「${name}」 노트 타입이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
 }
 
 export type AnkiTarget = { ok: true; settings: AnkiSettingsLike } | { ok: false; message: string };

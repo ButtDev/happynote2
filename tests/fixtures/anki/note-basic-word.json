@@ -16,7 +16,7 @@
   },
   "settings": "default",
   "expect": {
-    "deckName": "Default",
+    "deckName": "happynote2",
     "modelName": "Basic (and reversed card)",
     "fields": {
       "Front": "____ everyone, welcome back to the channel.<br><i>noun</i> &quot;Hello!&quot; or an equivalent greeting.<br><i>verb</i> To greet with &quot;hello&quot;.",

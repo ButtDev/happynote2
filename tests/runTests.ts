@@ -531,11 +531,15 @@ async function runAllTests() {
     }
     assert.deepEqual(calls, tc.calls, `${tc.name}: calls`);
   }
+  // SPEC_016: 기본 덱 happynote2 + 저장된 Default 옮기기
+  const migData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_migrate.json"), "utf8"));
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.ankiDeck, migData.defaultDeck, "default ankiDeck");
+  for (const [saved, want] of migData.cases) assert.equal(ankiMod.migrateAnkiDeck(saved), want, `migrateAnkiDeck(${JSON.stringify(saved)})`);
   for (const [raw, want] of audioData.messages) {
     assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("api", raw)), want, `ankiStatusMessage(${JSON.stringify(raw.slice(0, 30))})`);
   }
   assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요", "connection message");
-  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases`);
+  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases`);
   log("");
 
   log("==============================================================");

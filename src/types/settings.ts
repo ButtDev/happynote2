@@ -44,7 +44,7 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   tutorPanelHeightPx: 380,
   mobileListHeightPercent: 50,
   mobileLandscapeLeftPercent: 58,
-  ankiDeck: "Default",
+  ankiDeck: "happynote2",
   ankiNoteType: "Basic (and reversed card)",
   ankiFieldMap: {
     sentence: "Front",

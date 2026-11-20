@@ -13,7 +13,7 @@ import { isDesktopApp, isMobileApp } from "./utils/platform";
 import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
 import { DictionaryApiDevProvider, DictionaryProvider } from "./services/dictionary";
-import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker } from "./services/anki";
+import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker, migrateAnkiDeck } from "./services/anki";
 import { AgyCliService } from "./services/AgyCliService";
 import { NoteGenerator } from "./services/NoteGenerator";
 import { WeaknessTracker } from "./services/WeaknessTracker";
@@ -746,6 +746,8 @@ export default class EarCoachPlugin extends Plugin {
     );
     // SPEC_015: 필드 대응은 객체라 얕은 병합으로 빠진 역할을 기본값으로 채운다
     this.settings.ankiFieldMap = { ...DEFAULT_EAR_COACH_SETTINGS.ankiFieldMap, ...(this.settings.ankiFieldMap ?? {}) };
+    // SPEC_016: 이전 기본 덱 Default → happynote2
+    this.settings.ankiDeck = migrateAnkiDeck(this.settings.ankiDeck);
   }
 
   public async saveSettings(): Promise<void> {
