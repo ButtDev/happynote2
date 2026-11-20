@@ -4,11 +4,11 @@
 
 ## 지금 하는 일
 - 가로모드 마무리 단계. 최신 배포 BRAT **1.0.14**. 끝난 것: SPEC_007·SPEC_011(가로 좌우 비율 막대) DONE, SPEC_010(가로 카드 스와이프로 옆 메뉴) DROPPED — 가로에서 옆 메뉴는 세로로 돌려서 연다(다시 시도하지 않음).
-- SPEC_004 DONE(2026-11-21 8 OK). 다음: SPEC_002 9·003 7 답 처리 → OK면 DONE → SPEC_005도 마무리하며 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅, Test 7, ui `diag` 규칙) 제거.
+- SPEC_003·004 DONE(2026-11-21 OK). 다음: SPEC_002 9 답 처리 → OK면 DONE → SPEC_005도 마무리하며 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅, Test 7, ui `diag` 규칙) 제거.
 - 그 뒤 후보: `memory/backlog.md` (자막 품질, 모바일 AI 번역, 사전+AnkiDroid).
 
 ## 열린 질문 (사람에게)
-- ⏳ SPEC_002 9(가로 좌우 배치)·SPEC_003 7(헤더·내비바 없는 전체화면) 버튼 보냄, 1.0.14 기준 답 대기.
+- ⏳ SPEC_002 9(가로 좌우 배치) 버튼 보냄, 1.0.14 기준 답 대기.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
