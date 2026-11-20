@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.23**(SPEC_017). 가로모드(SPEC_002~012)·사전(SPEC_013·014)·Anki 저장(SPEC_015·016) 모두 DONE — 다시 열지 않음.
+- 최신 배포 BRAT **1.0.23**(SPEC_017, 릴리스 3파일 확인). 가로모드(SPEC_002~012)·사전(SPEC_013·014)·Anki 저장(SPEC_015·016) 모두 DONE — 다시 열지 않음.
 - **SPEC_017 장면 그림 IMPLEMENTED** — ⏳ 9 실기기 카드 앞면 그림 확인 대기. 다음 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)

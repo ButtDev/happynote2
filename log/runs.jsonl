@@ -58,3 +58,4 @@
 {"ts":"2026-11-20T23:25:04.385Z","cmd":"/spec-run","spec":"SPEC_015,SPEC_016","status":"DONE","evidence":"사람확인 SPEC_016 7 OK (SPEC_015 8 같은 확인)"}
 {"ts":"2026-11-20T23:36:43.898Z","cmd":"/spec-new","spec":"SPEC_017","result":"READY","questions":0}
 {"ts":"2026-11-20T23:40:45.308Z","cmd":"/spec-run","spec":"SPEC_017","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok; Test 13 12 frame cases; ui anki picture 320x180 rgb ok; mutation swap fails; real L3 crop 320x180"}
+{"ts":"2026-11-20T23:42:20.829Z","cmd":"release","spec":"SPEC_017","version":"1.0.23","evidence":"push buttdev main+tag; release assets main.js,manifest.json,styles.css"}
