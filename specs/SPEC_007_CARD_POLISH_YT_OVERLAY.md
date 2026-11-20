@@ -1,7 +1,7 @@
 ---
 id: SPEC_007
 title: 자막 카드 다듬기(포커스 밀림·버튼 룩) + 유튜브 오버레이 줄이기
-status: IMPLEMENTED
+status: BLOCKED
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -56,3 +56,4 @@ parent: SPEC_004
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 8 `PASS: params.json mobile=true/false` · 2 ✅ `activeCardNoShift` shift=0(세로·가로) · 3 ✅ `sameHeight` time 30 = mini 30, 가로 step-bar 34 ≤ 36, `noOverflowX .ear-coach-step-bar` 330 ≤ 330 · 4 ✅ `videoCrop` 가로 player y-5 h393 / box y54 h281, 세로 player y38 h385 / box y94 h273, SPEC_002~006 규칙 ok · 5 ✅ 변이: HEAD styles.css → ui exit 1(activeCardNoShift shift=3 = 실기기 밀림, videoCrop, step-bar 84), `params.controls` 줄 뺀 사본 → `AssertionError mobile=true controls` · 6 ✅ landscape/portrait.png: 시간 알약(강조 옅은색), 루프·핀 테두리 알약, 배지 알약, 단계 4개 한 줄 세그먼트·잘림 없음 · 7 ✅ `verify --set regression` → `verify: ok` · 8 ⏳ 실기기
   - 가결정: 가로 검사 뷰포트를 915×412 → 891×411(1.0.6 실기기 진단 값) · 이유: 실기기 목록 폭이 10px 좁아 단계 세그먼트 넘침을 놓침 · 대안: 915 유지. 단계 버튼 글자 10.5px·좌우 5px(4개 한 줄). 검사 테마에 `--color-yellow`·`--color-red` 추가(핀 색).
 - 2026-11-20 사람확인(회차 셈 없음): 8 메모 「화면은 깔끔해졌다. 근대 cc 컨트롤이 안되는게 아쉬움」 → CC 버튼은 SPEC_008. ①②③ 판정은 SPEC_008 확인 때 함께.
+- 2026-11-20 사람확인(회차 셈 없음): BLOCKED — 8 NG 「Yt 상관없이 가로모드에서 카드 좌우 드래그 안됨, 원래그랬던거 같기도함. 세로에선 됨」. 검사 화면에선 세로·가로 모두 가로 스크롤 요소 없음, 가로에선 리사이저 `display:none`(styles.css:759). 「좌우 드래그」가 무엇인지(경계 폭 조절 / 옵시디언 스와이프) 사람 답 대기. ①②③ 자체 판정은 아직 없음.

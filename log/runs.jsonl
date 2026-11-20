@@ -18,3 +18,4 @@
 {"ts":"2026-11-20T14:13:03.469Z","spec":"SPEC_009","result":"IMPLEMENTED","evidence":"verify regression ok; Test8 3 cases; ui overlayToggle ok portrait/landscape; mutants fail","note":"SPEC_008 DROPPED (CC NG)"}
 {"ts":"2026-11-20T14:19:08.478Z","cmd":"/spec-run","spec":"SPEC_009","iteration":1,"status":"DONE","evidence":"6 OK 사람확인"}
 {"ts":"2026-11-20T14:19:55.665Z","cmd":"/spec-run","spec":"SPEC_006","iteration":1,"status":"DONE","evidence":"6 OK 사람확인"}
+{"ts":"2026-11-20T14:23:38.399Z","cmd":"/spec-run","spec":"SPEC_007","status":"BLOCKED","evidence":"8 NG, 좌우 드래그 의미 질문"}

@@ -4,13 +4,13 @@
 
 ## 지금 하는 일
 - 가로모드 다듬기, 최신 배포 BRAT **1.0.10**. SPEC_006(위 빈칸, 1.0.7) DONE. SPEC_007(카드 밀림·버튼 알약·모바일 유튜브 `controls=0`+위아래 56px 자르기, 1.0.8) IMPLEMENTED. SPEC_008(CC 버튼)은 실기기 NG로 DROPPED → SPEC_009(`YT` 버튼: 유튜브 기본 컨트롤 켜기·끄기, 켜면 자르기 풀고 플레이어를 현재 시각에서 다시 만듦, 1.0.10) DONE(실기기 OK).
-- 다음: 남은 ⏳ SPEC_007 8 OK 받기 → SPEC_004 마무리.
+- 다음: SPEC_007 BLOCKED — 8 NG 「가로에서 카드 좌우 드래그 안됨(세로는 됨)」. 뜻 질문 보냄: A 영상|목록 경계 좌우로 끌어 폭 조절(가로는 리사이저 `display:none`) / B 카드 위 좌우 스와이프(옵시디언 사이드바 등). 답 오면 새 SPEC → 그 뒤 SPEC_004 마무리.
 - ⏳ 모두 OK면 → SPEC_004 마무리·SPEC_002 9·003 7 함께 판정 → 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅) 제거(backlog).
 - 그 뒤 후보: `memory/backlog.md` (자막 품질, 모바일 AI 번역, 사전+AnkiDroid).
 
 ## 열린 질문 (사람에게)
 - 자막 언어 A/B 질문은 사람이 YT 오버레이 버튼을 고르면서 사실상 대체됨(유튜브 메뉴 사용).
-- ⏳ 대기: SPEC_007 8(메모 「화면은 깔끔, CC 아쉬움」만 옴). SPEC_005 7은 NG(진단 목적 달성). SPEC_002 9·003 7은 SPEC_004와 함께 판정.
+- ⏳ 대기: 없음(SPEC_007은 BLOCKED, 위). SPEC_005 7은 NG(진단 목적 달성). SPEC_002 9·003 7은 SPEC_004와 함께 판정.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함(SPEC_006 메모로 CC 질문이 옴) — 내용으로 판단해 기록.
 
 ## 주의
