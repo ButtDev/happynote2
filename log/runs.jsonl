@@ -56,3 +56,4 @@
 {"ts":"2026-11-20T23:18:48.162Z","cmd":"/spec-run","spec":"SPEC_016","iteration":1,"status":"IMPLEMENTED","evidence":"Test 12 +7 migrate,5 target PASS; ui anki deckName happynote2 ok; 변이 nomigrate 실패; regression ok"}
 {"ts":"2026-11-20T23:19:20.114Z","cmd":"release","spec":"SPEC_016","status":"deployed","evidence":"BRAT 1.0.22 push + tag; release 3 main.js:128929, manifest.json:361, styles.css:31346"}
 {"ts":"2026-11-20T23:25:04.385Z","cmd":"/spec-run","spec":"SPEC_015,SPEC_016","status":"DONE","evidence":"사람확인 SPEC_016 7 OK (SPEC_015 8 같은 확인)"}
+{"ts":"2026-11-20T23:36:43.898Z","cmd":"/spec-new","spec":"SPEC_017","result":"READY","questions":0}
