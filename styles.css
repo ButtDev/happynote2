@@ -1126,3 +1126,73 @@
   border-color: var(--text-normal);
   color: var(--background-primary);
 }
+
+/* SPEC_013: 자막 단어 탭 → 사전 창 */
+.ear-coach-word {
+  cursor: pointer;
+  border-radius: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+.ear-coach-word:hover,
+.ear-coach-word:active {
+  background-color: var(--background-modifier-hover);
+  text-decoration: underline dotted var(--interactive-accent);
+  text-underline-offset: 3px;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-word {
+  margin: 0;
+  font-size: 1.5em;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-ipa {
+  font-family: var(--font-monospace);
+  color: var(--text-muted);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-audio {
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 0 14px;
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-meaning {
+  margin-top: 10px;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-pos {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--interactive-accent);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-defs {
+  margin: 4px 0 0;
+  padding-left: 1.4em;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-def {
+  margin-bottom: 6px;
+  line-height: 1.45;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-example {
+  margin-top: 2px;
+  font-size: 0.92em;
+  color: var(--text-muted);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-status {
+  color: var(--text-muted);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-status.is-error {
+  color: var(--color-red);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-source {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+}

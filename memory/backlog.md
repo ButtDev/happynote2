@@ -1,7 +1,8 @@
 # 백로그
 
 ## 대기
-- 자막 품질 · 모바일 AI 번역(Gemini) · 사전+AnkiDroid (번호는 만들 때 붙임)
+- 자막 품질 · 모바일 AI 번역(Gemini) (번호는 만들 때 붙임)
+- SPEC_014 AnkiConnect Android 카드 저장 · SPEC_015 영상 스냅샷 (SPEC_013 뒤)
 
 ## 끝남
 - iframe 안 유튜브 overlay 줄이기(SPEC_007·009 DONE)

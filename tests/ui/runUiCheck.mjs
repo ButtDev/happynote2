@@ -42,7 +42,7 @@ const bundle = await esbuild.build({
 const css = fs.readFileSync(cssPath, "utf8");
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기 바깥 여백, .workspace-leaf transform = 모바일 탭 스와이프(fixed를 가둠) 흉내(SPEC_004), --safe-area-inset 30/15·가로 leaf-content 위 82px = 1.0.6 실기기 진단 값(SPEC_006) -->
+<!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기 바깥 여백, .workspace-leaf transform = 모바일 탭 스와이프(fixed를 가둠) 흉내(SPEC_004), --safe-area-inset 30/15·가로 leaf-content 위 82px = 1.0.6 실기기 진단 값(SPEC_006), .modal = Obsidian 폰 모달(아래 시트) 근사(SPEC_013) -->
 <style>:root{--background-primary:#1e1e1e;--background-primary-alt:#242424;--background-secondary:#262626;--background-modifier-border:#363636;--background-modifier-form-field:#2a2a2a;--background-modifier-hover:rgba(255,255,255,.075);--interactive-accent:#8a5cf5;--text-on-accent:#fff;--text-normal:#dadada;--text-muted:#a0a0a0;--color-orange:#e9973f;--color-yellow:#e0de71;--color-red:#fb464c;--font-monospace:monospace;--input-height:40px;--safe-area-inset-top:30px;--safe-area-inset-bottom:15px}
 @media (orientation:landscape){#app .workspace-leaf-content{padding-top:82px;box-sizing:border-box}}
 button{height:var(--input-height);font:inherit;cursor:pointer}
@@ -52,7 +52,9 @@ html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-fami
 #app .workspace-leaf-content{flex:1;display:flex;flex-direction:column;min-height:0}
 #app .view-header{flex:0 0 48px;height:48px;background:#111}
 #app .view-content{flex:1;min-height:0;overflow:hidden;box-sizing:border-box}
-.mobile-navbar{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);width:340px;height:56px;border-radius:28px;background:#333;z-index:10}</style>
+.mobile-navbar{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);width:340px;height:56px;border-radius:28px;background:#333;z-index:10}
+.modal-container{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55)}
+.modal{position:relative;box-sizing:border-box;width:100%;max-height:85vh;overflow:auto;padding:16px;border-radius:12px 12px 0 0;background:var(--background-primary);border:1px solid var(--background-modifier-border)}</style>
 <style>${css}</style></head>
 <body><div id="app"></div><div class="mobile-navbar"></div><script>${bundle.outputFiles[0].text}</script></body></html>`;
 const htmlPath = path.join(outDir, "index.html");
@@ -111,6 +113,11 @@ function evaluateExpect(vp, m, nums) {
     const slackB = typeof e.rootFillsViewport === "object" ? e.rootFillsViewport.bottomSlack ?? 0 : 0;
     const topY = typeof e.rootFillsViewport === "object" ? e.rootFillsViewport.top ?? 0 : 0;
     add("rootFillsViewport", r0 && r0.x <= 1 && Math.abs(r0.y - topY) <= 1 && right(r0) >= vp.width - 1 && bottom(r0) >= vp.height - 1 - slackB, `${JSON.stringify(r0)} top=${topY} bottomSlack=${slackB}`);
+  }
+  if (e.dictionary) {
+    const d = m.dictionary;
+    const want = d && d.tapped ? d.tapped.toLowerCase().replace(/[\u2018\u2019]/g, "'").replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, "").replace(/^'+|'+$/g, "").replace(/'s$/, "") : null;
+    add("dictionary", !!d && !d.error && d.words >= d.tokens && d.modal && d.title === want && d.defs >= e.dictionary.minDefs && !!d.ipa && d.audioBtn && d.pauseCalls === 1, JSON.stringify(d));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
@@ -385,6 +392,45 @@ for (const vp of cases.viewports) {
 
   const shot = path.join(outDir, `${vp.name}.png`);
   await page.screenshot({ path: shot });
+
+  // SPEC_013: 첫 카드를 3단계로 → 첫 단어 누름 → 사전 창(단어·뜻) + 영상 멈춤. 기본 스크린샷 뒤에 한다.
+  m.dictionary = null;
+  if (vp.expect?.dictionary) {
+    m.dictionary = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const card = document.querySelector(".ear-coach-segment-card");
+      if (!card) return { error: "card missing" };
+      const step3 = [...card.querySelectorAll(".ear-coach-step-btn")].find((b) => b.textContent.includes("3."));
+      if (!step3) return { error: "step3 button missing" };
+      step3.click();
+      await wait(200);
+      const c2 = document.querySelector(".ear-coach-segment-card");
+      const script = c2?.querySelector(".ear-coach-full-script");
+      if (!script) return { error: "full-script missing" };
+      const tokens = script.textContent.split(/\s+/).filter((t) => /[A-Za-z]/.test(t));
+      const words = [...script.querySelectorAll(".ear-coach-word")];
+      const before = window.__pauseCalls ?? 0;
+      const target = words[0];
+      if (!target) return { error: "no .ear-coach-word", tokens: tokens.length };
+      target.click();
+      await wait(300);
+      const modal = document.querySelector(".ear-coach-dictionary-modal");
+      return {
+        tokens: tokens.length,
+        words: words.length,
+        tapped: target.textContent,
+        modal: !!modal,
+        title: modal?.querySelector(".ear-coach-dict-word")?.textContent ?? null,
+        ipa: modal?.querySelector(".ear-coach-dict-ipa")?.textContent ?? null,
+        audioBtn: !!modal?.querySelector(".ear-coach-dict-audio"),
+        defs: modal ? modal.querySelectorAll(".ear-coach-dict-def").length : 0,
+        pauseCalls: (window.__pauseCalls ?? 0) - before,
+        lookups: window.__dictLookups ?? [],
+      };
+    });
+    await page.screenshot({ path: path.join(outDir, `dictionary-${vp.name}.png`) });
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+  }
 
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);
   for (const key of ["video", "controls"]) {

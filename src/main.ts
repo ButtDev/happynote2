@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import { Notice, Plugin, TFile, WorkspaceLeaf, requestUrl } from "obsidian";
 import {
   DEFAULT_EAR_COACH_SETTINGS,
   EarCoachSettings,
@@ -12,6 +12,7 @@ import { SegmentTimeIndex } from "./utils/binarySearch";
 import { isDesktopApp, isMobileApp } from "./utils/platform";
 import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
+import { DictionaryApiDevProvider, DictionaryProvider } from "./services/dictionary";
 import { AgyCliService } from "./services/AgyCliService";
 import { NoteGenerator } from "./services/NoteGenerator";
 import { WeaknessTracker } from "./services/WeaknessTracker";
@@ -27,6 +28,17 @@ export default class EarCoachPlugin extends Plugin {
   public workerManager!: TranscriptWorkerManager;
   public transcriptService!: TranscriptService;
   public agyService!: AgyCliService;
+  /** SPEC_013: 자막 단어 사전 */
+  public dictionary: DictionaryProvider = new DictionaryApiDevProvider(async (url) => {
+    const r = await requestUrl({ url, throw: false });
+    let json: unknown = null;
+    try {
+      json = r.json;
+    } catch {
+      json = null;
+    }
+    return { status: r.status, json };
+  });
   public noteGenerator!: NoteGenerator;
   public weaknessTracker!: WeaknessTracker;
   public bypassOpenInterceptor = false;

@@ -10,6 +10,7 @@ import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_L
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
+import { DictionaryModal } from "./DictionaryModal";
 import type EarCoachPlugin from "../main";
 
 export const VIEW_TYPE_EAR_COACH = "ear-coach-listening-view";
@@ -505,6 +506,12 @@ export class EarCoachView extends ItemView {
       },
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
+      },
+      onLookupWord: (word) => {
+        const provider = this.plugin.dictionary;
+        if (!provider) return;
+        this.playerBar?.pause();
+        new DictionaryModal(this.app, word, provider).open();
       },
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;

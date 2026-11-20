@@ -6,6 +6,9 @@ import { mergeCuesIntoSegments } from "../../src/workers/transcriptProcessor.ts"
 import { setPlatformMobileOverrideForTest } from "../../src/utils/platform.ts";
 import { DEFAULT_EAR_COACH_SETTINGS } from "../../src/types/settings.ts";
 import fixture from "./fixtures/transcript-sample.json";
+import { parseDictionaryApiDev } from "../../src/services/dictionary.ts";
+import { PlayerBar } from "../../src/ui/components/PlayerBar.ts";
+import helloDict from "../fixtures/dictionary/hello.json";
 
 declare global {
   interface Window {
@@ -35,6 +38,15 @@ async function main(): Promise<void> {
     agyService: {},
     noteGenerator: { saveSessionToNote: async () => {}, appendTutorCalloutToNote: async () => {} },
     weaknessTracker: { recordWeakSegment: async () => {} },
+    // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
+    dictionary: {
+      name: "dictionaryapi.dev",
+      lookup: async (w: string) => {
+        (window as any).__dictLookups = [...((window as any).__dictLookups ?? []), w];
+        const e = parseDictionaryApiDev(helloDict.response);
+        return e ? { ...e, word: w } : null;
+      },
+    },
   };
 
   const view = new EarCoachView({} as any, fakePlugin as any);
@@ -59,6 +71,12 @@ async function main(): Promise<void> {
     },
     null
   );
+  // SPEC_013: 사전 열 때 영상 멈춤 호출 수
+  const origPause = PlayerBar.prototype.pause;
+  PlayerBar.prototype.pause = function (this: PlayerBar) {
+    (window as any).__pauseCalls = ((window as any).__pauseCalls ?? 0) + 1;
+    return origPause.call(this);
+  };
   window.__uiReady = true;
 }
 

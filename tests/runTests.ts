@@ -22,6 +22,7 @@ import {
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
+import { DictionaryApiDevProvider, normalizeLookupWord, parseDictionaryApiDev } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -359,6 +360,49 @@ async function runAllTests() {
     assert.deepEqual(bad, [], `${mi.bundle}: static require of Node built-ins ${bad.join(", ")}`);
     log(`  -> PASS: ${mi.bundle} has no static require() of ${forbiddenMods.size} Node built-ins`);
   }
+  log("");
+
+  // 11. Dictionary (SPEC_013) — data in tests/fixtures/dictionary/ (실제 dictionaryapi.dev 응답)
+  //     EAR_COACH_DICT_MODULE로 대상 모듈을 바꿀 수 있다(변이 시험용).
+  log("[Test 11] Dictionary: normalize word & parse dictionaryapi.dev (data-driven, SPEC_013)");
+  const dictMod = process.env.EAR_COACH_DICT_MODULE
+    ? await import(path.resolve(process.env.EAR_COACH_DICT_MODULE))
+    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider };
+  const dictDir = path.resolve("tests/fixtures/dictionary");
+  const norm = JSON.parse(fs.readFileSync(path.join(dictDir, "_normalize.json"), "utf8"));
+  for (const [raw, want] of norm.cases) {
+    assert.equal(dictMod.normalizeLookupWord(raw), want, `normalizeLookupWord(${JSON.stringify(raw)})`);
+  }
+  let dictCount = 0;
+  for (const f of fs.readdirSync(dictDir).filter((n) => n.endsWith(".json") && !n.startsWith("_")).sort()) {
+    const c = JSON.parse(fs.readFileSync(path.join(dictDir, f), "utf8"));
+    const got = dictMod.parseDictionaryApiDev(c.response);
+    if (c.expect === null) {
+      assert.equal(got, null, `${f}: expected null`);
+    } else {
+      assert.ok(got, `${f}: parsed null`);
+      assert.equal(got.word, c.expect.word, `${f}: word`);
+      assert.equal(got.phonetic, c.expect.phonetic, `${f}: phonetic`);
+      assert.equal(got.audioUrl, c.expect.audioUrl, `${f}: audioUrl`);
+      assert.deepEqual(got.meanings.map((m: any) => m.partOfSpeech), c.expect.partsOfSpeech, `${f}: partsOfSpeech`);
+      assert.equal(got.meanings[0].definitions[0].definition, c.expect.firstDefinition, `${f}: firstDefinition`);
+      assert.ok(got.meanings.length <= 3, `${f}: at most 3 parts of speech`);
+      for (const m of got.meanings) assert.ok(m.definitions.length >= 1 && m.definitions.length <= 3, `${f}: ${m.partOfSpeech} 1~3 definitions`);
+    }
+    dictCount++;
+  }
+  // 제공자: 404 → null, 캐시(같은 단어 두 번이면 fetch 1회), 정리된 단어로 URL
+  const fetched: string[] = [];
+  const helloRaw = JSON.parse(fs.readFileSync(path.join(dictDir, "hello.json"), "utf8")).response;
+  const prov = new dictMod.DictionaryApiDevProvider(async (url: string) => {
+    fetched.push(url);
+    return url.endsWith("/hello") ? { status: 200, json: helloRaw } : { status: 404, json: {} };
+  });
+  assert.equal((await prov.lookup("Hello,"))?.word, "hello", "provider hello");
+  await prov.lookup("HELLO");
+  assert.equal(await prov.lookup("qwzxv"), null, "provider 404 → null");
+  assert.deepEqual(fetched, ["https://api.dictionaryapi.dev/api/v2/entries/en/hello", "https://api.dictionaryapi.dev/api/v2/entries/en/qwzxv"], "provider fetch once per word");
+  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404`);
   log("");
 
   log("==============================================================");

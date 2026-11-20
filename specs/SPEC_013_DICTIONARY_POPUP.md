@@ -1,8 +1,8 @@
 ---
 id: SPEC_013
 title: 자막 단어 탭 → 사전 창 (뜻·IPA·발음)
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -57,3 +57,5 @@ depends_on: []
 - 뜻은 영어 그대로 · Fluent Forever는 모국어 번역을 피함, 무료 사전이 영어 전용 · 대안: AI 번역(모바일 AI SPEC 뒤).
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` `[Test 11] … PASS: 10 normalize cases, 4 response fixtures, provider cache/404`(실제 응답 hello·run·back + 404 본문; run=`/ɹʊn/`·run-us.mp3·verb/noun/adjective·첫 뜻 「To move swiftly.」, back=품사 4→3) · 2 ✅ 같은 Test 11 normalize 10건 · 3 ✅ ui portrait·landscape `dictionary` ok: tokens 10·words 10, 「So」 누름 → 창 제목 `so`, IPA·🔊 발음 버튼, 뜻 5줄, pauseCalls 1 · 4 ✅ 변이: `MAX_PARTS_OF_SPEECH=9` 사본 → `back.json: partsOfSpeech` exit 1, `MAX_DEFINITIONS_PER_PART=30` 사본 → `back.json: noun 1~3 definitions` exit 1 · 5 ✅ `verify --set regression` → ok(ui portrait 17·landscape 31 규칙 전부 ok) · 6 ✅ `dictionary-portrait.png`: 아래 시트에 `so /həˈləʊ/` + 오른쪽 보라 「🔊 발음」, noun/verb/interjection 아래 번호 뜻·회색 예문, 오른쪽 아래 `dictionaryapi.dev`; `dictionary-landscape.png` 같은 구성, 화면 너비 시트 · 7 ⏳ 실기기
+  - 가결정: 시험 번호는 Test 11(Test 10은 이미 모바일 import 검사) · `dictionary.ts`는 obsidian을 import하지 않고 fetcher를 주입받음(`main.ts`가 `requestUrl`로 만듦) — Node 시험에서 바로 돌게 · 뜻이 「to <단어>」·「<단어>」뿐인 줄은 버림(run의 「To run.」) · 발음은 `-us.mp3` 우선 · 화면 검사 HTML에 Obsidian 폰 모달(아래 시트) 근사 CSS 추가 · 대안: 각각 Test 10 재번호, 파일 둘로 나눔, 그대로 보임, 첫 오디오.

@@ -1,0 +1,8 @@
+{
+ "name": "not-found",
+ "response": {
+  "title": "No Definitions Found",
+  "message": "Sorry pal, we could not find definitions for the word you were looking for."
+ },
+ "expect": null
+}

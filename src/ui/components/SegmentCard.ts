@@ -9,6 +9,8 @@ export interface SegmentCardCallbacks {
   onUnlockStepChange: (segment: TranscriptSegment, step: UnlockStep) => void;
   onOpenTutor: (segment: TranscriptSegment, userHeardText?: string) => void;
   isLooping?: (segment: TranscriptSegment) => boolean;
+  /** SPEC_013: 3단계 문장에서 단어를 누름 */
+  onLookupWord?: (word: string, segment: TranscriptSegment) => void;
 }
 
 /**
@@ -147,6 +149,27 @@ export class SegmentCard {
     askBtn.addEventListener("click", () => this.callbacks.onOpenTutor(this.segment));
   }
 
+  /** SPEC_013: 문장을 단어 span으로 — 누르면 사전. 공백은 글자 그대로 둔다. */
+  private renderTappableWords(el: HTMLElement, text: string): void {
+    const onLookup = this.callbacks.onLookupWord;
+    if (!onLookup) {
+      el.setText(text);
+      return;
+    }
+    for (const part of text.split(/(\s+)/)) {
+      if (!part) continue;
+      if (/^\s+$/.test(part) || !/[A-Za-z]/.test(part)) {
+        el.appendText(part);
+        continue;
+      }
+      const w = el.createSpan({ cls: "ear-coach-word", text: part });
+      w.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        onLookup(part, this.segment);
+      });
+    }
+  }
+
   private renderStepContent(bodyEl: HTMLElement, step: UnlockStep): void {
     const analysis = this.segment.analysis;
 
@@ -190,10 +213,8 @@ export class SegmentCard {
 
     // Step 3: Full Reveal + Translation + Shadowing Rhythm Guide
     const fullBox = bodyEl.createDiv({ cls: "ear-coach-full-reveal-box" });
-    fullBox.createDiv({
-      cls: "ear-coach-full-script",
-      text: this.segment.text,
-    });
+    const scriptEl = fullBox.createDiv({ cls: "ear-coach-full-script" });
+    this.renderTappableWords(scriptEl, this.segment.text);
 
     if (analysis) {
       fullBox.createDiv({

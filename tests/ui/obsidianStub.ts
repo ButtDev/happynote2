@@ -122,3 +122,34 @@ export async function requestUrl(): Promise<never> {
 }
 
 export function setIcon(): void {}
+
+proto.appendText = function (t: string) {
+  this.appendChild(document.createTextNode(t));
+};
+
+/** SPEC_013: 사전 창 검사용 Modal — 실제처럼 body에 .modal-container > .modal > .modal-content 를 만든다. */
+export class Modal {
+  public app: any;
+  public containerEl: HTMLElement;
+  public modalEl: HTMLElement;
+  public contentEl: HTMLElement;
+  constructor(app: any) {
+    this.app = app;
+    this.containerEl = document.createElement("div");
+    this.containerEl.className = "modal-container mod-dim";
+    this.modalEl = document.createElement("div");
+    this.modalEl.className = "modal";
+    this.contentEl = document.createElement("div");
+    this.contentEl.className = "modal-content";
+    this.modalEl.appendChild(this.contentEl);
+    this.containerEl.appendChild(this.modalEl);
+  }
+  open(): void {
+    document.body.appendChild(this.containerEl);
+    (this as any).onOpen?.();
+  }
+  close(): void {
+    (this as any).onClose?.();
+    this.containerEl.remove();
+  }
+}
