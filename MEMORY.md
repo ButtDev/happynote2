@@ -4,10 +4,10 @@
 
 ## 지금 하는 일
 - 최신 배포 BRAT **1.0.22** (SPEC_016 기본 덱 happynote2). 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
-- 사전+AnkiDroid: SPEC_013·014 DONE · **SPEC_015 Anki 저장·SPEC_016 기본 덱 happynote2 IMPLEMENTED — ⏳ SPEC_015 8 + SPEC_016 7 실기기 카드 확인 대기**(사람이 AnkiDroid에 happynote2 덱을 한 번 만들어야 함) → 다음 SPEC_017 영상 스냅샷(`picture` 역할, 기본 대응 Front). 그 뒤 후보는 `memory/backlog.md`.
+- 사전+AnkiDroid: SPEC_013·014 DONE · SPEC_015 Anki 저장·SPEC_016 기본 덱 happynote2 DONE(실기기 카드 OK) → 다음 **SPEC_017 영상 스냅샷**(`picture` 역할, 기본 대응 Front) 초안부터(`picture` 역할, 기본 대응 Front). 그 뒤 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- ⏳ 버튼 보냄: `SPEC_015 8`·`SPEC_016 7` (같은 확인). SPEC_015는 회차 3/3 소진 — 고칠 것이 나오면 SPEC_016(회차 1/3)이나 새 SPEC으로.
+- 없음.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
