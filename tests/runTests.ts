@@ -10,6 +10,7 @@ import {
   parseYouTubeUrl,
 } from "../src/utils/youtubeUrlParser.ts";
 import { SegmentTimeIndex } from "../src/utils/binarySearch.ts";
+import { classifySwipe } from "../src/utils/swipeGesture.ts";
 import { mergeCuesIntoSegments } from "../src/workers/transcriptProcessor.ts";
 import { TranscriptWorkerManager } from "../src/workers/WorkerPoolManager.ts";
 import { AgyCliService } from "../src/services/AgyCliService.ts";
@@ -294,6 +295,15 @@ async function runAllTests() {
       log(`  -> PASS: ${f} ${tag}`);
     }
   }
+  log("");
+
+  // 9. Landscape card swipe → Obsidian drawer (SPEC_010) — data in tests/fixtures/swipe/
+  log("[Test 9] Landscape card swipe classification (data-driven)");
+  const swipeCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/swipe/cases.json"), "utf8"));
+  for (const k of swipeCases.cases) {
+    assert.equal(classifySwipe(k.dx, k.dy, k.dt), k.expect, `swipe dx=${k.dx} dy=${k.dy} dt=${k.dt}`);
+  }
+  log(`  -> PASS: ${swipeCases.cases.length} swipe cases (${swipeCases.name})`);
   log("");
 
   log("==============================================================");

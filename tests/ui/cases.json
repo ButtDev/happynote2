@@ -27,7 +27,8 @@
           ".ear-coach-mini-btn"
         ],
         "videoCrop": 40,
-        "overlayToggle": ".ear-coach-overlay-btn"
+        "overlayToggle": ".ear-coach-overlay-btn",
+        "swipeDrawer": false
       }
     },
     {
@@ -84,7 +85,8 @@
         "visible": [
           ".ear-coach-overlay-btn"
         ],
-        "overlayToggle": ".ear-coach-overlay-btn"
+        "overlayToggle": ".ear-coach-overlay-btn",
+        "swipeDrawer": true
       }
     }
   ],

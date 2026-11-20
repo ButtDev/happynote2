@@ -1109,3 +1109,11 @@
   border-color: var(--text-normal);
   color: var(--background-primary);
 }
+
+/* SPEC_010: 가로에서 카드 스와이프로 옵시디언 옆 메뉴를 열면, 열려 있는 동안 전체화면 덮개를 숨겨
+   메뉴가 덮개 아래에 깔리지 않게 한다(세로는 영향 없음). */
+@media (orientation: landscape) {
+  body.is-mobile.ear-coach-drawer-open .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
+    visibility: hidden;
+  }
+}

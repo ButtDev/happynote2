@@ -153,6 +153,19 @@ function evaluateExpect(vp, m, nums) {
       t.off.active === false && crop(t.off) >= (e.videoCrop ?? 40) && String(t.off.src).includes("controls=0");
     add("overlayToggle", !!ok, JSON.stringify(t));
   }
+  if (e.swipeDrawer !== undefined) {
+    const sw = m.swipe;
+    let ok;
+    if (e.swipeDrawer) {
+      ok = sw && !sw.error &&
+        JSON.stringify(sw.afterRight.calls) === '["left"]' && sw.afterRight.bodyOpen === true && sw.afterRight.leafVisibility === "hidden" &&
+        sw.afterClose.bodyOpen === false && sw.afterClose.leafVisibility === "visible" &&
+        JSON.stringify(sw.afterLeft.calls) === '["right"]' && sw.shortSwipe.calls.length === 0;
+    } else {
+      ok = sw && !sw.error && sw.afterRight.calls.length === 0 && sw.afterLeft.calls.length === 0 && sw.afterRight.bodyOpen === false;
+    }
+    add("swipeDrawer", !!ok, JSON.stringify(sw));
+  }
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
     const tol = e.videoAspectTolerance ?? 0.03;
@@ -322,6 +335,43 @@ for (const vp of cases.viewports) {
       const off = await measure();
       m.overlayToggle = { on, off };
     }
+  }
+
+  // SPEC_010: 카드 위 좌우 스와이프(합성 터치) → 옆 메뉴 expand 호출·덮개 숨김, 메뉴 닫히면 복귀
+  m.swipe = null;
+  if (vp.expect?.swipeDrawer !== undefined) {
+    m.swipe = await page.evaluate(async () => {
+      const card = document.querySelector(".ear-coach-segment-card");
+      if (!card) return { error: "card missing" };
+      const r = card.getBoundingClientRect();
+      const y = r.y + 20;
+      const mk = (x) => new Touch({ identifier: 1, target: card, clientX: x, clientY: y });
+      const fire = async (x0, x1) => {
+        const t0 = mk(x0), t1 = mk(x1);
+        card.dispatchEvent(new TouchEvent("touchstart", { bubbles: true, touches: [t0], changedTouches: [t0] }));
+        await new Promise((res) => setTimeout(res, 120));
+        card.dispatchEvent(new TouchEvent("touchend", { bubbles: true, touches: [], changedTouches: [t1] }));
+      };
+      const leaf = document.querySelector('.workspace-leaf-content[data-type]');
+      const vis = () => getComputedStyle(leaf).visibility;
+      window.__drawerCalls = [];
+      await fire(r.x + 40, r.x + 200);
+      const afterRight = { calls: [...window.__drawerCalls], bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis() };
+      // 메뉴 닫기 흉내 → 감시가 덮개를 되돌리는지
+      const ws = window.__earCoachApp?.workspace;
+      ws?.leftSplit?.collapse?.();
+      await new Promise((res) => setTimeout(res, 700));
+      const afterClose = { bodyOpen: document.body.classList.contains("ear-coach-drawer-open"), leafVisibility: vis() };
+      window.__drawerCalls = [];
+      await fire(r.x + 200, r.x + 40);
+      const afterLeft = { calls: [...window.__drawerCalls] };
+      ws?.rightSplit?.collapse?.();
+      await new Promise((res) => setTimeout(res, 700));
+      window.__drawerCalls = [];
+      await fire(r.x + 40, r.x + 70);
+      const shortSwipe = { calls: [...window.__drawerCalls] };
+      return { afterRight, afterClose, afterLeft, shortSwipe };
+    });
   }
 
   m.diag = vp.expect?.diag
