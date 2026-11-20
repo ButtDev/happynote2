@@ -18,6 +18,12 @@ import { WeaknessTracker } from "./services/WeaknessTracker";
 import { EarCoachView, VIEW_TYPE_EAR_COACH } from "./ui/EarCoachView";
 import { UrlInputModal } from "./ui/UrlInputModal";
 import { EarCoachSettingTab } from "./ui/SettingsTab";
+import {
+  LAYOUT_DIAG_NOTE_PATH,
+  collectLayoutDiag,
+  formatLayoutDiagMarkdown,
+  summarizeLayoutDiag,
+} from "./utils/layoutDiagnostics";
 
 /**
  * Main Obsidian Plugin class for Ear-Coach (YouTube + Obsidian + agy CLI).
@@ -78,6 +84,14 @@ export default class EarCoachPlugin extends Plugin {
     );
 
     // 4. Register Commands
+    this.addCommand({
+      id: "ear-coach-layout-diagnostics",
+      name: "가로 화면 진단 노트 만들기 (Layout Diagnostics)",
+      callback: () => {
+        void this.runLayoutDiagnostics(null);
+      },
+    });
+
     this.addCommand({
       id: "ear-coach-create-from-url-modal",
       name: "유튜브 URL로 리스닝 노트 생성 및 열기 (Create Listening Note from URL)",
@@ -431,6 +445,20 @@ export default class EarCoachPlugin extends Plugin {
 
   public onunload(): void {
     this.workerManager?.destroy();
+  }
+
+  /** SPEC_005 임시 진단: 알림으로 요약을 띄우고 노트에 전체 값을 쓴다. */
+  public async runLayoutDiagnostics(el: HTMLElement | null): Promise<void> {
+    try {
+      const diag = collectLayoutDiag(el);
+      new Notice(summarizeLayoutDiag(diag), 20000);
+      const md = formatLayoutDiagMarkdown(diag, new Date().toISOString());
+      const existing = this.app.vault.getAbstractFileByPath(LAYOUT_DIAG_NOTE_PATH);
+      if (existing instanceof TFile) await this.app.vault.modify(existing, md);
+      else await this.app.vault.create(LAYOUT_DIAG_NOTE_PATH, md);
+    } catch (err) {
+      new Notice(`Ear-Coach 화면 진단 실패: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }
 
   public openUrlInputModal(): void {

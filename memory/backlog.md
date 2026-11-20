@@ -1,6 +1,7 @@
 # 백로그
 
 ## 대기
+- 원인 확정 뒤 SPEC_005 임시 진단(알림·노트·명령) 지우기, SPEC_004 마무리
 - iframe 안 유튜브 overlay 줄이기 (parent SPEC_002)
 - 자막 품질 · 모바일 AI 번역(Gemini) · 사전+AnkiDroid (번호는 만들 때 붙임)
 

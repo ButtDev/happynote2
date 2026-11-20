@@ -1,0 +1,39 @@
+{
+  "name": "가로 위 빈칸 (1.0.5 사진 비슷한 값)",
+  "generatedAt": "2026-11-20T22:30:00.000Z",
+  "diag": {
+    "viewport": { "w": 915, "h": 412, "dpr": 2.63, "vvW": 915, "vvH": 412, "vvTop": 0 },
+    "env": { "top": 36, "right": 0, "bottom": 0, "left": 0 },
+    "obsidianVars": { "top": "36px", "bottom": "-" },
+    "chain": [
+      { "name": "div.ear-coach-mobile-container", "rect": { "x": 0, "y": 84, "w": 915, "h": 316 }, "pos": "static", "padT": "0px", "padB": "0px", "marT": "0px", "transform": "none", "contain": "none", "containerType": "normal", "z": "auto" },
+      { "name": "div.view-content.ear-coach-workspace-root", "rect": { "x": 0, "y": 48, "w": 915, "h": 364 }, "pos": "static", "padT": "36px", "padB": "12px", "marT": "0px", "transform": "none", "contain": "none", "containerType": "size", "z": "auto" },
+      { "name": "div.workspace-leaf-content", "rect": { "x": 0, "y": 48, "w": 915, "h": 364 }, "pos": "fixed", "padT": "0px", "padB": "0px", "marT": "0px", "transform": "none", "contain": "none", "containerType": "normal", "z": "5" },
+      { "name": "div.workspace-leaf.mod-active", "rect": { "x": 0, "y": 48, "w": 915, "h": 364 }, "pos": "relative", "padT": "0px", "padB": "0px", "marT": "0px", "transform": "matrix(1, 0, 0, 1, 0, 0)", "contain": "none", "containerType": "normal", "z": "auto" },
+      { "name": "body.is-mobile", "rect": { "x": 0, "y": 0, "w": 915, "h": 412 }, "pos": "static", "padT": "0px", "padB": "0px", "marT": "0px", "transform": "none", "contain": "none", "containerType": "normal", "z": "auto" },
+      { "name": "html", "rect": { "x": 0, "y": 0, "w": 915, "h": 412 }, "pos": "static", "padT": "0px", "padB": "0px", "marT": "0px", "transform": "none", "contain": "none", "containerType": "normal", "z": "auto" }
+    ],
+    "topHits": [
+      { "y": 4, "name": "div.app-container" },
+      { "y": 20, "name": "div.app-container" },
+      { "y": 40, "name": "div.mobile-header" },
+      { "y": 60, "name": "div.view-content" },
+      { "y": 80, "name": "div.view-content" }
+    ]
+  },
+  "expectSummaryLines": [
+    "Ear-Coach 화면 진단",
+    "vp 915×412 dpr 2.63 vv 915×412@0",
+    "env t36 r0 b0 l0",
+    "obs t36px b-",
+    "root y84 h316",
+    ".view-content.ear-coach-work y48 pt36 | .workspace-leaf-content y48 pt0 F | .workspace-leaf.mod-active y48 pt0 T",
+    "y4:.app-container y20:.app-container y40:.mobile-header y60:.view-content y80:.view-content"
+  ],
+  "expectMarkdownIncludes": [
+    "# Ear-Coach 화면 진단",
+    "- 생성: 2026-11-20T22:30:00.000Z",
+    "| 3 | div.workspace-leaf.mod-active | 0,48,915,364 | relative | 0px | 0px | 0px | matrix(1, 0, 0, 1, 0, 0) | none | normal | auto |",
+    "- y=40: div.mobile-header"
+  ]
+}

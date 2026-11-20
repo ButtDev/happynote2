@@ -106,8 +106,14 @@ function evaluateExpect(vp, m, nums) {
     add(`visible:${sel}`, vis === true, vis === null ? "element missing" : `visible=${vis}`);
   }
   const r0 = m.root;
-  if (e.rootFillsViewport)
-    add("rootFillsViewport", r0 && r0.x <= 1 && r0.y <= 1 && right(r0) >= vp.width - 1 && bottom(r0) >= vp.height - 1, JSON.stringify(r0));
+  if (e.rootFillsViewport) {
+    const slackB = typeof e.rootFillsViewport === "object" ? e.rootFillsViewport.bottomSlack ?? 0 : 0;
+    add("rootFillsViewport", r0 && r0.x <= 1 && r0.y <= 1 && right(r0) >= vp.width - 1 && bottom(r0) >= vp.height - 1 - slackB, `${JSON.stringify(r0)} bottomSlack=${slackB}`);
+  }
+  if (e.diag) {
+    const dg = m.diag;
+    add("diag", dg && !dg.error && dg.summary.split("\n")[0] === e.diag.title && dg.chainLen >= e.diag.minChain && dg.topHits === e.diag.topHits, dg ? JSON.stringify({ ...dg, summary: dg.summary?.split("\n").slice(0, 3).join(" / ") }) : "missing");
+  }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
     add(`maxHeight:${sel}`, r && r.h > 0 && r.h <= max, r ? `${r.h} <= ${max}` : "element missing");
@@ -238,6 +244,16 @@ for (const vp of cases.viewports) {
     }
     return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX };
   }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
+
+  m.diag = vp.expect?.diag
+    ? await page.evaluate(() => {
+        try {
+          return window.__layoutDiag ? window.__layoutDiag() : null;
+        } catch (err) {
+          return { error: String(err) };
+        }
+      })
+    : null;
 
   const inter = (a, b) => {
     if (!a || !b) return 0;

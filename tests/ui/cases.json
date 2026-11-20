@@ -46,7 +46,9 @@
           ".mobile-navbar"
         ],
         "maxVideoTop": 60,
-        "rootFillsViewport": true,
+        "rootFillsViewport": {
+          "bottomSlack": 12
+        },
         "maxHeight": {
           ".ear-coach-mobile-toolbar": 44,
           ".ear-coach-player-controls": 44
@@ -56,7 +58,12 @@
         "noOverflowX": [
           ".ear-coach-mobile-toolbar",
           ".ear-coach-player-controls"
-        ]
+        ],
+        "diag": {
+          "title": "Ear-Coach 화면 진단",
+          "minChain": 4,
+          "topHits": 5
+        }
       }
     }
   ],

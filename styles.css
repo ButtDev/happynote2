@@ -823,10 +823,11 @@
     height: 100%;
     box-sizing: border-box;
     /* WebView 실제 안전 영역만(Obsidian 변수는 앱 크롬 몫까지 커질 수 있음) */
+    /* SPEC_005 시험 수정: 위는 상한 28px(1.0.5에서 위 빈칸), 아래는 제스처 바 몫 최소 12px */
     padding:
-      env(safe-area-inset-top, 0px)
+      min(env(safe-area-inset-top, 0px), 28px)
       env(safe-area-inset-right, 0px)
-      env(safe-area-inset-bottom, 0px)
+      max(env(safe-area-inset-bottom, 0px), 12px)
       env(safe-area-inset-left, 0px);
     container-type: size;
   }

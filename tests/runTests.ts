@@ -19,6 +19,10 @@ import {
   setPlatformMobileOverrideForTest,
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
+import {
+  formatLayoutDiagMarkdown,
+  summarizeLayoutDiag,
+} from "../src/utils/layoutDiagnostics.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -249,6 +253,23 @@ async function runAllTests() {
     log("  -> PASS: main.js contains zero static Node.js built-in require() calls.");
   }
   log("  -> PASS: Mobile guard, manifest.json (isDesktopOnly: false), and platform isolation verified.\n");
+
+  // 7. Layout diagnostics text (SPEC_005) — data in tests/fixtures/layout-diag/
+  log("[Test 7] Layout Diagnostics Summary & Markdown (data-driven)");
+  const diagDir = path.resolve("tests/fixtures/layout-diag");
+  for (const f of fs.readdirSync(diagDir).filter((n) => n.endsWith(".json")).sort()) {
+    const c = JSON.parse(fs.readFileSync(path.join(diagDir, f), "utf8"));
+    const summaryLines = summarizeLayoutDiag(c.diag).split("\n");
+    for (const line of c.expectSummaryLines) {
+      assert.ok(summaryLines.includes(line), `${f}: summary missing line "${line}"\n--- got ---\n${summaryLines.join("\n")}`);
+    }
+    const md = formatLayoutDiagMarkdown(c.diag, c.generatedAt);
+    for (const part of c.expectMarkdownIncludes) {
+      assert.ok(md.includes(part), `${f}: markdown missing "${part}"`);
+    }
+    log(`  -> PASS: ${f} (${c.name})`);
+  }
+  log("");
 
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
