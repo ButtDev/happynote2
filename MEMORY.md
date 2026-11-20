@@ -4,7 +4,7 @@
 
 ## 지금 하는 일
 - 가로모드 위쪽 빈칸 잡기. BRAT **1.0.6** 배포됨 = SPEC_005 진단 + 시험 수정(가로 `.view-content` 패딩: 위 `min(env,28px)`, 아래 `max(env,12px)`).
-- SPEC_004 STOPPED(같은 시그니처 「실기기: 가로 상단 여백 그대로」 2회). 1.0.5 기준: 좌우·아래는 화면 끝까지 OK, 버튼 한 줄 배치 OK, 위만 ≈84css 빈칸.
+- SPEC_004 STOPPED(같은 시그니처 「실기기: 가로 상단 여백 그대로」 2회). 1.0.5 기준: 좌우·아래는 화면 끝까지 OK, 버튼 한 줄 배치 OK, 위만 ≈84css 빈칸(상태표시줄 ≈36 + ≈48). 사람 메모: 「액션바 영역같은데」 — ≈48 = Obsidian 헤더(액션바) 높이. 진단 알림에서 env top·root y가 이 48을 설명하는지 먼저 본다.
 - 다음: SPEC_005 7 사진이 오면 → 위 여백이 사라졌으면 SPEC_004 마무리. 남았으면 알림 값으로 원인을 확정한 뒤 고친다(env 값·root y·조상 y/transform(T)·fixed(F)·topHits). 확정 뒤 진단 기능(알림·노트·명령 `ear-coach-layout-diagnostics`, `src/utils/layoutDiagnostics.ts`, `EarCoachView` resize 훅)을 지운다(backlog).
 - 그 뒤 후보: `memory/backlog.md` (iframe 안 유튜브 overlay, 자막 품질, 모바일 AI 번역, 사전+AnkiDroid — 번호는 만들 때 최대+1).
 
