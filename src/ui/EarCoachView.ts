@@ -6,7 +6,6 @@ import {
 } from "../types/transcript";
 import { SegmentTimeIndex } from "../utils/binarySearch";
 import { isMobileApp } from "../utils/platform";
-import { classifySwipe } from "../utils/swipeGesture";
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
@@ -26,7 +25,6 @@ export class EarCoachView extends ItemView {
   private activeNoteFile: TFile | null = null;
   private timeIndex = new SegmentTimeIndex();
   private playerBar: PlayerBar | null = null;
-  private drawerWatchTimer: number | null = null;
   private tutorPanel: AgyTutorPanel | null = null;
   private virtualList: VirtualSegmentList | null = null;
 
@@ -118,7 +116,6 @@ export class EarCoachView extends ItemView {
     window.removeEventListener("resize", this.boundLayoutDiagCheck);
     if (this.layoutDiagTimer !== null) window.clearTimeout(this.layoutDiagTimer);
     this.layoutDiagTimer = null;
-    this.stopDrawerWatch();
     this.virtualList?.destroy();
     this.virtualList = null;
     this.playerBar?.destroy();
@@ -344,7 +341,6 @@ export class EarCoachView extends ItemView {
     });
 
     this.setupMobileTouchResizer(resizerEl, listWrapper, mobileContainer);
-    this.setupLandscapeDrawerSwipe(listWrapper);
 
     this.virtualList = this.createVirtualSegmentList(
       listWrapper,
@@ -359,72 +355,6 @@ export class EarCoachView extends ItemView {
     this.isShellMounted = true;
     this.updateVirtualListSegments();
     this.playerBar?.render(this.session.videoId);
-  }
-
-  /**
-   * SPEC_010: 가로 전체화면에서는 옵시디언 자체 스와이프로 옆 메뉴가 안 보인다(고정 덮개 아래).
-   * 카드 목록 위 좌우 스와이프를 직접 받아 옆 메뉴를 열고, 열려 있는 동안 body에
-   * `ear-coach-drawer-open`을 달아 덮개를 숨긴다. 세로는 옵시디언 기본 동작 그대로.
-   */
-  private setupLandscapeDrawerSwipe(target: HTMLElement): void {
-    let start: { x: number; y: number; t: number } | null = null;
-    const isLandscape = () => window.matchMedia?.("(orientation: landscape)").matches ?? window.innerWidth > window.innerHeight;
-    target.addEventListener(
-      "touchstart",
-      (ev: TouchEvent) => {
-        const t = ev.touches[0];
-        const el = ev.target as HTMLElement | null;
-        if (ev.touches.length !== 1 || !t || !isLandscape() || el?.closest("input, textarea, [contenteditable='true']")) {
-          start = null;
-          return;
-        }
-        start = { x: t.clientX, y: t.clientY, t: performance.now() };
-      },
-      { passive: true }
-    );
-    target.addEventListener(
-      "touchend",
-      (ev: TouchEvent) => {
-        const s = start;
-        start = null;
-        const t = ev.changedTouches[0];
-        if (!s || !t || !isLandscape()) return;
-        const action = classifySwipe(t.clientX - s.x, t.clientY - s.y, performance.now() - s.t);
-        if (!action) return;
-        const ws = this.app?.workspace;
-        const side = action === "open-left" ? ws?.leftSplit : ws?.rightSplit;
-        if (!side || typeof side.expand !== "function") return;
-        side.expand();
-        this.syncDrawerOpenClass();
-        this.startDrawerWatch();
-      },
-      { passive: true }
-    );
-  }
-
-  private isAnyDrawerOpen(): boolean {
-    const ws = this.app?.workspace;
-    return (ws?.leftSplit && ws.leftSplit.collapsed === false) || (ws?.rightSplit && ws.rightSplit.collapsed === false) || false;
-  }
-
-  private syncDrawerOpenClass(): boolean {
-    const open = this.isAnyDrawerOpen();
-    document.body.toggleClass("ear-coach-drawer-open", open);
-    return open;
-  }
-
-  /** 메뉴가 닫힐 때(바깥 탭 등) 덮개를 되돌리려고 열려 있는 동안만 살핀다. */
-  private startDrawerWatch(): void {
-    if (this.drawerWatchTimer !== null) return;
-    this.drawerWatchTimer = window.setInterval(() => {
-      if (!this.syncDrawerOpenClass()) this.stopDrawerWatch();
-    }, 300);
-  }
-
-  private stopDrawerWatch(): void {
-    if (this.drawerWatchTimer !== null) window.clearInterval(this.drawerWatchTimer);
-    this.drawerWatchTimer = null;
-    document.body.removeClass("ear-coach-drawer-open");
   }
 
   private setupMobileTouchResizer(

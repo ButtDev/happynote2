@@ -65,7 +65,6 @@ async function main(): Promise<void> {
     const d = collectLayoutDiag(view.contentEl);
     return { summary: summarizeLayoutDiag(d), chainLen: d.chain.length, topHits: d.topHits.length };
   };
-  (window as any).__earCoachApp = view.app;
   window.__uiReady = true;
 }
 

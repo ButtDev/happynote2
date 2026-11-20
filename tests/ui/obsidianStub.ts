@@ -109,18 +109,7 @@ export class ItemView {
     this.contentEl = document.createElement("div");
     this.contentEl.className = "view-content";
     this.containerEl.append(header, this.contentEl);
-    // SPEC_010: 옆 메뉴(drawer) 흉내 — expand 호출을 window.__drawerCalls에 남긴다.
-    const drawer = (side: string) => ({
-      collapsed: true,
-      expand() {
-        this.collapsed = false;
-        ((window as any).__drawerCalls ??= []).push(side);
-      },
-      collapse() {
-        this.collapsed = true;
-      },
-    });
-    this.app = { workspace: { requestSaveLayout: () => {}, leftSplit: drawer("left"), rightSplit: drawer("right") } };
+    this.app = { workspace: { requestSaveLayout: () => {} } };
   }
   async setState(_state: unknown, _result: ViewStateResult): Promise<void> {}
   getState(): Record<string, unknown> {
