@@ -1,0 +1,24 @@
+{
+  "pageId": 75797336,
+  "response": {
+    "batchcomplete": true,
+    "query": {
+      "pages": [
+        {
+          "pageid": 75797336,
+          "ns": 6,
+          "title": "File:En-au-hello.ogg",
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/En-au-hello.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:En-au-hello.ogg",
+              "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/75797336"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": "https://upload.wikimedia.org/wikipedia/commons/e/e9/En-au-hello.ogg"
+}

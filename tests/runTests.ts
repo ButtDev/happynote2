@@ -22,7 +22,7 @@ import {
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
-import { DictionaryApiDevProvider, normalizeLookupWord, parseDictionaryApiDev } from "../src/services/dictionary.ts";
+import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -367,7 +367,7 @@ async function runAllTests() {
   log("[Test 11] Dictionary: normalize word & parse dictionaryapi.dev (data-driven, SPEC_013)");
   const dictMod = process.env.EAR_COACH_DICT_MODULE
     ? await import(path.resolve(process.env.EAR_COACH_DICT_MODULE))
-    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider };
+    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl };
   const dictDir = path.resolve("tests/fixtures/dictionary");
   const norm = JSON.parse(fs.readFileSync(path.join(dictDir, "_normalize.json"), "utf8"));
   for (const [raw, want] of norm.cases) {
@@ -384,6 +384,7 @@ async function runAllTests() {
       assert.equal(got.word, c.expect.word, `${f}: word`);
       assert.equal(got.phonetic, c.expect.phonetic, `${f}: phonetic`);
       assert.equal(got.audioUrl, c.expect.audioUrl, `${f}: audioUrl`);
+      if ("commonsPageId" in c.expect) assert.equal(dictMod.pickPronunciation(c.response).commonsPageId, c.expect.commonsPageId, `${f}: commonsPageId`);
       assert.deepEqual(got.meanings.map((m: any) => m.partOfSpeech), c.expect.partsOfSpeech, `${f}: partsOfSpeech`);
       assert.equal(got.meanings[0].definitions[0].definition, c.expect.firstDefinition, `${f}: firstDefinition`);
       assert.ok(got.meanings.length <= 3, `${f}: at most 3 parts of speech`);
@@ -401,8 +402,31 @@ async function runAllTests() {
   assert.equal((await prov.lookup("Hello,"))?.word, "hello", "provider hello");
   await prov.lookup("HELLO");
   assert.equal(await prov.lookup("qwzxv"), null, "provider 404 → null");
-  assert.deepEqual(fetched, ["https://api.dictionaryapi.dev/api/v2/entries/en/hello", "https://api.dictionaryapi.dev/api/v2/entries/en/qwzxv"], "provider fetch once per word");
-  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404`);
+  assert.deepEqual(fetched.filter((u) => u.includes("dictionaryapi.dev")), ["https://api.dictionaryapi.dev/api/v2/entries/en/hello", "https://api.dictionaryapi.dev/api/v2/entries/en/qwzxv"], "provider fetch once per word");
+  // 발음: Commons imageinfo 응답 → upload.wikimedia.org 파일(SPEC_013 회차 2, mp3 404 대응)
+  const commonsDir = path.join(dictDir, "commons");
+  const commonsCases = fs.readdirSync(commonsDir).filter((n) => n.endsWith(".json")).sort();
+  for (const f of commonsCases) {
+    const c = JSON.parse(fs.readFileSync(path.join(commonsDir, f), "utf8"));
+    assert.equal(dictMod.parseCommonsAudioUrl(c.response), c.expect, `commons/${f}`);
+  }
+  // 제공자: 사전 응답의 curid로 Commons를 부르고 audioUrl을 바꾼다. Commons 실패면 원래 주소 유지.
+  const runRaw = JSON.parse(fs.readFileSync(path.join(dictDir, "run.json"), "utf8"));
+  const runCommons = JSON.parse(fs.readFileSync(path.join(commonsDir, "run-us.json"), "utf8"));
+  const audioFetched: string[] = [];
+  const provA = new dictMod.DictionaryApiDevProvider(async (url: string) => {
+    audioFetched.push(url);
+    if (url.includes("commons.wikimedia.org")) return { status: 200, json: runCommons.response };
+    return { status: 200, json: runRaw.response };
+  });
+  assert.equal((await provA.lookup("run"))?.audioUrl, runCommons.expect, "provider audioUrl → Commons");
+  assert.ok(audioFetched[1]?.includes(`pageids=${runRaw.expect.commonsPageId}`), "provider asks Commons with curid");
+  const provB = new dictMod.DictionaryApiDevProvider(async (url: string) => {
+    if (url.includes("commons.wikimedia.org")) throw new Error("offline");
+    return { status: 200, json: runRaw.response };
+  });
+  assert.equal((await provB.lookup("run"))?.audioUrl, runRaw.expect.audioUrl, "provider keeps audioUrl when Commons fails");
+  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons`);
   log("");
 
   log("==============================================================");

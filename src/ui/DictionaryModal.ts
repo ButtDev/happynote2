@@ -1,4 +1,4 @@
-import { App, Modal } from "obsidian";
+import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord } from "../services/dictionary";
 
@@ -48,8 +48,18 @@ export class DictionaryModal extends Modal {
       const btn = head.createEl("button", { cls: "ear-coach-dict-audio", text: "🔊 발음" });
       btn.addEventListener("click", () => {
         this.audio?.pause();
-        this.audio = new Audio(url);
-        void this.audio.play().catch(() => {});
+        const audio = new Audio(url);
+        this.audio = audio;
+        let told = false;
+        const fail = () => {
+          if (told || this.audio !== audio) return;
+          told = true;
+          new Notice("발음을 재생하지 못했습니다");
+        };
+        audio.addEventListener("error", fail, { once: true });
+        void audio.play().catch((e: unknown) => {
+          if ((e as { name?: string })?.name !== "AbortError") fail();
+        });
       });
     }
     for (const m of entry.meanings) {

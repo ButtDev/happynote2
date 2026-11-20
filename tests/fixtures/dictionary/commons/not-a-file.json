@@ -1,0 +1,16 @@
+{
+  "pageId": 1,
+  "response": {
+    "batchcomplete": true,
+    "query": {
+      "pages": [
+        {
+          "pageid": 1,
+          "ns": 0,
+          "title": "Main Page"
+        }
+      ]
+    }
+  },
+  "expect": null
+}

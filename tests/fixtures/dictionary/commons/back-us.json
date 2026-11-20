@@ -1,0 +1,24 @@
+{
+  "pageId": 709474,
+  "response": {
+    "batchcomplete": true,
+    "query": {
+      "pages": [
+        {
+          "pageid": 709474,
+          "ns": 6,
+          "title": "File:En-us-back.ogg",
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/En-us-back.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:En-us-back.ogg",
+              "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/709474"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": "https://upload.wikimedia.org/wikipedia/commons/e/ec/En-us-back.ogg"
+}
