@@ -5,14 +5,12 @@ import { EarCoachView } from "../../src/ui/EarCoachView.ts";
 import { mergeCuesIntoSegments } from "../../src/workers/transcriptProcessor.ts";
 import { setPlatformMobileOverrideForTest } from "../../src/utils/platform.ts";
 import { DEFAULT_EAR_COACH_SETTINGS } from "../../src/types/settings.ts";
-import { collectLayoutDiag, summarizeLayoutDiag } from "../../src/utils/layoutDiagnostics.ts";
 import fixture from "./fixtures/transcript-sample.json";
 
 declare global {
   interface Window {
     __uiReady?: boolean;
     __uiError?: string;
-    __layoutDiag?: () => { summary: string; chainLen: number; topHits: number };
   }
 }
 
@@ -61,11 +59,6 @@ async function main(): Promise<void> {
     },
     null
   );
-  // SPEC_005: 브라우저에서 진단 수집이 도는지 검사용
-  window.__layoutDiag = () => {
-    const d = collectLayoutDiag(view.contentEl);
-    return { summary: summarizeLayoutDiag(d), chainLen: d.chain.length, topHits: d.topHits.length };
-  };
   window.__uiReady = true;
 }
 

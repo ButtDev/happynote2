@@ -1,0 +1,5 @@
+{
+  "name": "SPEC_005 임시 가로 화면 진단 (SPEC_012에서 제거)",
+  "files": ["main.js", "src"],
+  "forbidden": ["ear-coach-layout-diagnostics", "Ear-Coach 화면 진단", "Layout Diagnostics", "layoutDiagnostics"]
+}

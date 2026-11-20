@@ -21,10 +21,6 @@ import {
   setPlatformMobileOverrideForTest,
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
-import {
-  formatLayoutDiagMarkdown,
-  summarizeLayoutDiag,
-} from "../src/utils/layoutDiagnostics.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
 
 const logs: string[] = [];
@@ -257,20 +253,27 @@ async function runAllTests() {
   }
   log("  -> PASS: Mobile guard, manifest.json (isDesktopOnly: false), and platform isolation verified.\n");
 
-  // 7. Layout diagnostics text (SPEC_005) — data in tests/fixtures/layout-diag/
-  log("[Test 7] Layout Diagnostics Summary & Markdown (data-driven)");
-  const diagDir = path.resolve("tests/fixtures/layout-diag");
-  for (const f of fs.readdirSync(diagDir).filter((n) => n.endsWith(".json")).sort()) {
-    const c = JSON.parse(fs.readFileSync(path.join(diagDir, f), "utf8"));
-    const summaryLines = summarizeLayoutDiag(c.diag).split("\n");
-    for (const line of c.expectSummaryLines) {
-      assert.ok(summaryLines.includes(line), `${f}: summary missing line "${line}"\n--- got ---\n${summaryLines.join("\n")}`);
+  // 7. Removed temporary features (SPEC_012) — data in tests/fixtures/removed-features/
+  //    EAR_COACH_ROOT로 검사 대상 폴더를 바꿀 수 있다(변이 시험용).
+  log("[Test 7] Removed Temporary Features (data-driven)");
+  const removedDir = path.resolve("tests/fixtures/removed-features");
+  const scanRoot = path.resolve(process.env.EAR_COACH_ROOT ?? ".");
+  const listFiles = (p: string): string[] => {
+    if (!fs.existsSync(p)) return [];
+    if (fs.statSync(p).isFile()) return [p];
+    return fs.readdirSync(p).flatMap((n) => listFiles(path.join(p, n)));
+  };
+  for (const f of fs.readdirSync(removedDir).filter((n) => n.endsWith(".json")).sort()) {
+    const c = JSON.parse(fs.readFileSync(path.join(removedDir, f), "utf8"));
+    const targets = (c.files as string[]).flatMap((t) => listFiles(path.join(scanRoot, t)));
+    assert.ok(targets.length > 0, `${f}: no files to scan under ${scanRoot}`);
+    for (const file of targets) {
+      const text = fs.readFileSync(file, "utf8");
+      for (const word of c.forbidden as string[]) {
+        assert.ok(!text.includes(word), `${f}: "${word}" still in ${path.relative(scanRoot, file)}`);
+      }
     }
-    const md = formatLayoutDiagMarkdown(c.diag, c.generatedAt);
-    for (const part of c.expectMarkdownIncludes) {
-      assert.ok(md.includes(part), `${f}: markdown missing "${part}"`);
-    }
-    log(`  -> PASS: ${f} (${c.name})`);
+    log(`  -> PASS: ${f} (${c.name}) — ${targets.length} files clean`);
   }
   log("");
 

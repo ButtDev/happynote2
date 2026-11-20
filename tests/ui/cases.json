@@ -70,11 +70,6 @@
           ".ear-coach-player-controls",
           ".ear-coach-step-bar"
         ],
-        "diag": {
-          "title": "Ear-Coach 화면 진단",
-          "minChain": 4,
-          "topHits": 5
-        },
         "activeCardNoShift": 0.5,
         "sameHeight": [
           ".ear-coach-time-btn",

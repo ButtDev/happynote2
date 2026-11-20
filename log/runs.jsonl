@@ -31,3 +31,4 @@
 {"ts":"2026-11-20T18:28:57.691Z","cmd":"/spec-run","spec":"SPEC_002","iteration":1,"status":"DONE","evidence":"사람확인 OK + verify regression ok"}
 {"ts":"2026-11-20T18:28:57.734Z","cmd":"/spec-run","spec":"SPEC_005","iteration":1,"status":"DONE","evidence":"사람확인 OK + verify regression ok"}
 {"ts":"2026-11-20T18:29:33.997Z","cmd":"/spec-new","spec":"SPEC_012","result":"READY","questions":0}
+{"ts":"2026-11-20T18:30:49.796Z","cmd":"/spec-run","spec":"SPEC_012","iteration":1,"status":"IMPLEMENTED","evidence":"grep 0줄, Test 7 pass+변이 fail, verify regression ok"}

@@ -40,9 +40,6 @@ export class EarCoachView extends ItemView {
   private tutorContainerEl: HTMLElement | null = null;
   private boundKeyHandler: (ev: KeyboardEvent) => void;
   // SPEC_005 임시 진단: 모바일 가로로 열릴 때 뷰 열림당 1회
-  private layoutDiagDone = false;
-  private layoutDiagTimer: number | null = null;
-  private readonly boundLayoutDiagCheck = () => this.maybeRunLayoutDiag();
 
   constructor(
     leaf: WorkspaceLeaf,
@@ -96,27 +93,11 @@ export class EarCoachView extends ItemView {
 
   public async onOpen(): Promise<void> {
     this.containerEl.addEventListener("keydown", this.boundKeyHandler, { capture: true });
-    window.addEventListener("resize", this.boundLayoutDiagCheck);
     this.renderWorkspace();
-  }
-
-  private maybeRunLayoutDiag(): void {
-    if (this.layoutDiagDone || !isMobileApp() || !this.session) return;
-    if (window.innerWidth <= window.innerHeight) return;
-    if (this.layoutDiagTimer !== null) window.clearTimeout(this.layoutDiagTimer);
-    this.layoutDiagTimer = window.setTimeout(() => {
-      this.layoutDiagTimer = null;
-      if (this.layoutDiagDone || window.innerWidth <= window.innerHeight) return;
-      this.layoutDiagDone = true;
-      void this.plugin.runLayoutDiagnostics?.(this.contentEl);
-    }, 1200);
   }
 
   public async onClose(): Promise<void> {
     this.containerEl.removeEventListener("keydown", this.boundKeyHandler, { capture: true });
-    window.removeEventListener("resize", this.boundLayoutDiagCheck);
-    if (this.layoutDiagTimer !== null) window.clearTimeout(this.layoutDiagTimer);
-    this.layoutDiagTimer = null;
     this.virtualList?.destroy();
     this.virtualList = null;
     this.playerBar?.destroy();
@@ -147,7 +128,6 @@ export class EarCoachView extends ItemView {
     }
 
     this.renderWorkspace();
-    this.maybeRunLayoutDiag();
 
     if (focusTimestampSec !== undefined) {
       const nearestIdx = this.timeIndex.findNearestSegmentIndex(focusTimestampSec);
