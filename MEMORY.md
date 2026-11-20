@@ -4,11 +4,12 @@
 
 ## 지금 하는 일
 - 가로모드 다듬기. 위 빈칸은 SPEC_006(1.0.7)으로 사진상 해결(명시 OK 대기). SPEC_007(1.0.8): 활성 카드 밀림(4px border→inset shadow), 모바일 카드 버튼 알약·단계 세그먼트, 모바일 유튜브 `controls=0` 등 + 플레이어 위아래 56px 자르기.
-- 다음: SPEC_006 6·SPEC_007 8 OK면 → SPEC_004 마무리·SPEC_002 9·003 7 함께 판정 → 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅) 제거(backlog).
+- SPEC_008(1.0.9): 모바일 CC 버튼(loadModule/unloadModule captions, 기본 켜짐 cc_load_policy=1). 자막이 56px 자르기에 가려지면 아래 자르기 줄이기.
+- 다음: SPEC_006 6·SPEC_007 8·SPEC_008 6 OK면 → SPEC_004 마무리·SPEC_002 9·003 7 함께 판정 → 진단 기능(`src/utils/layoutDiagnostics.ts`, 명령 `ear-coach-layout-diagnostics`, `EarCoachView` resize 훅) 제거(backlog).
 - 그 뒤 후보: `memory/backlog.md` (자막 품질, 모바일 AI 번역, 사전+AnkiDroid — 번호는 만들 때 최대+1).
 
 ## 열린 질문 (사람에게)
-- SPEC_006 6(1.0.7 위 빈칸 — 사진상 OK), SPEC_007 8(1.0.8 카드·오버레이) 버튼 대기. SPEC_005 7은 NG(진단 목적 달성).
+- SPEC_006 6(위 빈칸 — 사진상 OK), SPEC_007 8(메모: 깔끔, CC 아쉬움), SPEC_008 6(1.0.9 CC 버튼) 버튼 대기. SPEC_005 7은 NG(진단 목적 달성).
 - SPEC_002 9·SPEC_003 7은 따로 묻지 않고 SPEC_004가 해결되면 함께 판정.
 
 ## 주의

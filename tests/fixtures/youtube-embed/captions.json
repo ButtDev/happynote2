@@ -1,0 +1,23 @@
+{
+  "name": "CC 버튼 명령",
+  "cases": [
+    {
+      "on": true,
+      "expect": {
+        "func": "loadModule",
+        "args": [
+          "captions"
+        ]
+      }
+    },
+    {
+      "on": false,
+      "expect": {
+        "func": "unloadModule",
+        "args": [
+          "captions"
+        ]
+      }
+    }
+  ]
+}

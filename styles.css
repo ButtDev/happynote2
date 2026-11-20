@@ -1094,3 +1094,17 @@
   top: -56px !important;
   height: calc(100% + 112px) !important;
 }
+
+/* SPEC_008: 모바일 자막(CC) 토글 — 켜짐은 채움, 꺼짐은 테두리만 */
+.ear-coach-mobile-top-player .ear-coach-cc-btn {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background-color: transparent;
+  color: var(--text-muted);
+}
+
+.ear-coach-mobile-top-player .ear-coach-cc-btn.is-active {
+  background-color: var(--text-normal);
+  border-color: var(--text-normal);
+  color: var(--background-primary);
+}

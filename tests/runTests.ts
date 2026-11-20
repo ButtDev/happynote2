@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
+  buildCaptionsCommand,
   buildYouTubeEmbedParams,
   buildYouTubeEmbedUrl,
   formatSecondsToTimestamp,
@@ -278,6 +279,13 @@ async function runAllTests() {
   const embedDir = path.resolve("tests/fixtures/youtube-embed");
   for (const f of fs.readdirSync(embedDir).filter((n) => n.endsWith(".json")).sort()) {
     const c = JSON.parse(fs.readFileSync(path.join(embedDir, f), "utf8"));
+    if (f.startsWith("captions")) {
+      for (const k of c.cases) {
+        assert.deepEqual(buildCaptionsCommand(k.on), k.expect, `${f} on=${k.on}`);
+        log(`  -> PASS: ${f} on=${k.on}`);
+      }
+      continue;
+    }
     for (const k of c.cases) {
       const params = buildYouTubeEmbedParams(c.origin, k.mobile);
       for (const [key, val] of Object.entries(k.expectParams)) {

@@ -1,6 +1,6 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform.ts";
-import { buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
+import { buildCaptionsCommand, buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 
 export interface PlayerBarCallbacks {
   onTimeUpdate: (currentTimeSec: number) => void;
@@ -28,6 +28,8 @@ export class PlayerBar {
   private ytPlayer: any = null;
   private playerMountEl: HTMLElement | null = null;
   private statusLabelEl: HTMLElement | null = null;
+  private ccBtnEl: HTMLButtonElement | null = null;
+  private captionsOn = true; // mobile default: cc_load_policy=1 (SPEC_008)
   private loopBtnEl: HTMLButtonElement | null = null;
   private currentVideoId = "";
   private containerId = "";
@@ -138,6 +140,16 @@ export class PlayerBar {
         this.setPlaybackRate(spd);
       });
       speedButtons.push(btn);
+    }
+
+    // Captions toggle (mobile only — YouTube native controls are hidden there, SPEC_008)
+    if (mobile) {
+      this.ccBtnEl = controlsBar.createEl("button", {
+        cls: `ear-coach-btn ear-coach-cc-btn ${this.captionsOn ? "is-active" : ""}`,
+        text: "CC",
+        attr: { "aria-pressed": String(this.captionsOn), "aria-label": "자막 켜기/끄기" },
+      });
+      this.ccBtnEl.addEventListener("click", () => this.setCaptions(!this.captionsOn));
     }
 
     this.statusLabelEl = controlsBar.createDiv({
@@ -336,6 +348,22 @@ export class PlayerBar {
       this.ytPlayer.pauseVideo();
     } else {
       this.sendCommand("pauseVideo", []);
+    }
+  }
+
+  public setCaptions(on: boolean): void {
+    this.captionsOn = on;
+    this.ccBtnEl?.toggleClass("is-active", on);
+    this.ccBtnEl?.setAttr("aria-pressed", String(on));
+    const cmd = buildCaptionsCommand(on);
+    try {
+      if (this.ytPlayer && typeof this.ytPlayer[cmd.func] === "function") {
+        this.ytPlayer[cmd.func](...cmd.args);
+      } else {
+        this.sendCommand(cmd.func, cmd.args);
+      }
+    } catch {
+      // Ignore: captions module may be unavailable for this video
     }
   }
 

@@ -150,6 +150,7 @@ export function buildYouTubeEmbedParams(origin: string, mobile: boolean): Record
     params.iv_load_policy = 3;
     params.fs = 0;
     params.disablekb = 1;
+    params.cc_load_policy = 1;
   }
   params.origin = origin;
   return params;
@@ -161,4 +162,9 @@ export function buildYouTubeEmbedUrl(videoId: string, origin: string, mobile: bo
     .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
     .join("&");
   return `https://www.youtube.com/embed/${videoId}?${query}&widget_referrer=${encodeURIComponent(origin)}`;
+}
+
+/** YouTube IFrame API command to show/hide captions (SPEC_008). */
+export function buildCaptionsCommand(on: boolean): { func: string; args: string[] } {
+  return { func: on ? "loadModule" : "unloadModule", args: ["captions"] };
 }

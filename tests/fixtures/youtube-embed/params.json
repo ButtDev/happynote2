@@ -5,15 +5,53 @@
   "cases": [
     {
       "mobile": true,
-      "expectParams": { "enablejsapi": 1, "rel": 0, "modestbranding": 1, "playsinline": 1, "controls": 0, "iv_load_policy": 3, "fs": 0, "disablekb": 1, "origin": "app://obsidian.md" },
+      "expectParams": {
+        "enablejsapi": 1,
+        "rel": 0,
+        "modestbranding": 1,
+        "playsinline": 1,
+        "controls": 0,
+        "iv_load_policy": 3,
+        "fs": 0,
+        "disablekb": 1,
+        "origin": "app://obsidian.md",
+        "cc_load_policy": 1
+      },
       "absentParams": [],
-      "expectUrlIncludes": ["https://www.youtube.com/embed/dQw4w9WgXcQ?", "controls=0", "iv_load_policy=3", "fs=0", "disablekb=1", "rel=0", "origin=app%3A%2F%2Fobsidian.md", "widget_referrer=app%3A%2F%2Fobsidian.md"]
+      "expectUrlIncludes": [
+        "https://www.youtube.com/embed/dQw4w9WgXcQ?",
+        "controls=0",
+        "iv_load_policy=3",
+        "fs=0",
+        "disablekb=1",
+        "rel=0",
+        "origin=app%3A%2F%2Fobsidian.md",
+        "widget_referrer=app%3A%2F%2Fobsidian.md",
+        "cc_load_policy=1"
+      ]
     },
     {
       "mobile": false,
-      "expectParams": { "enablejsapi": 1, "rel": 0, "modestbranding": 1, "playsinline": 1, "origin": "app://obsidian.md" },
-      "absentParams": ["controls", "iv_load_policy", "fs", "disablekb"],
-      "expectUrlIncludes": ["https://www.youtube.com/embed/dQw4w9WgXcQ?", "enablejsapi=1", "rel=0", "playsinline=1"]
+      "expectParams": {
+        "enablejsapi": 1,
+        "rel": 0,
+        "modestbranding": 1,
+        "playsinline": 1,
+        "origin": "app://obsidian.md"
+      },
+      "absentParams": [
+        "controls",
+        "iv_load_policy",
+        "fs",
+        "disablekb",
+        "cc_load_policy"
+      ],
+      "expectUrlIncludes": [
+        "https://www.youtube.com/embed/dQw4w9WgXcQ?",
+        "enablejsapi=1",
+        "rel=0",
+        "playsinline=1"
+      ]
     }
   ]
 }
