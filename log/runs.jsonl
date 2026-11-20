@@ -41,3 +41,4 @@
 {"ts":"2026-11-20T21:45:25.282Z","cmd":"/spec-run","spec":"SPEC_013","iteration":2,"status":"IMPLEMENTED","evidence":"7 NG(발음) 원인 dictionaryapi.dev mp3 404 → Commons ogg로 교체; Test 11 PASS + 변이 3 exit1, regression ok, Chrome Audio ogg 3개 로드 ok"}
 {"ts":"2026-11-20T21:46:24.141Z","cmd":"release","spec":"SPEC_013","status":"IMPLEMENTED","evidence":"BRAT 1.0.17 push buttdev main+tag, 릴리스 자산 main.js,manifest.json,styles.css 확인"}
 {"ts":"2026-11-20T21:53:26.937Z","cmd":"/spec-run","spec":"SPEC_013","status":"DONE","evidence":"사람확인 7 메모 「잘동작함」→ OK, 구동사 요청은 backlog"}
+{"ts":"2026-11-20T22:02:39.295Z","cmd":"/spec-new","spec":"SPEC_014","result":"READY","questions":0}
