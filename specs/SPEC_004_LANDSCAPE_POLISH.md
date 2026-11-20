@@ -1,7 +1,7 @@
 ---
 id: SPEC_004
 title: 가로모드 다듬기 — 화면 끝까지 쓰기 + 버튼 정리
-status: STOPPED
+status: DONE
 iterations: 2
 max_iterations: 3
 depends_on: []
@@ -61,3 +61,4 @@ parent: SPEC_003
 - 2026-11-20 회차 2: IMPLEMENTED — 8 ❌→재작업: 사람 「[Button pressed: SPEC_004 8 NG] 동일하게 상단여백」. 원인 가설: 모바일 탭 스와이프의 조상 `transform`(또는 contain)이 fixed를 가둠. 검사 HTML에 `.workspace-leaf{transform:translateX(0)}`·`#app{contain:layout}` 넣으니 이전 CSS가 rootFillsViewport(y40 h348) 실패로 재현 → 조상(`:has`)의 transform·translate·filter·perspective·contain·container-type·will-change를 가로+활성일 때만 해제, 안전 영역은 `env()`만 사용 · 1~4 ✅ ui ok(rootFillsViewport {0,0,915,412}, toolbar 44, controls 32, side gap 8/9, list 384) · 5 ✅ 변이 둘: 해제 규칙만 뺀 css exit 1(rootFillsViewport), SPEC_004 블록 전체 뺀 css exit 1(rootFillsViewport·maxHeight 51) · 6 ✅ landscape.png 회차 1과 같은 모양 · 7 ✅ `verify --set regression` → `verify: ok`(중간에 `test`가 styles.css의 `backdrop-filter` 금지 규칙으로 실패 → 그 줄 제거), src 무변경 · 8 ⏳ 실기기
 - 2026-11-20 사람확인(회차 셈 없음): STOPPED — 8 ❌ 1.0.5 사진(`.scratch/inbox/20261120-222219-335.jpg`): 좌우·아래는 화면 끝까지 쓰고(갇힘 해소, 버튼 한 줄 모양 OK), 위만 상태 표시줄 아래 ≈48css(전체 ≈84css) 빈칸. 같은 시그니처 2회째 → 정지. 아래쪽은 제스처 바 밑까지 내려감(env bottom=0 추정).
 - 2026-11-20 사람 메모(회차 셈 없음): STOPPED 유지 — 「[Button pressed: SPEC_004 8 NG] 액션바 영역같은데」. 1.0.5 사진에서 빈칸 ≈48css = Obsidian 헤더(액션바) 높이와 같음 → 헤더 자리만큼 아래로 밀린 것으로 보임. 원인 확정은 SPEC_005 진단(1.0.6) 값으로.
+- 2026-11-21 사람확인(회차 셈 없음): DONE — 8 ✅ 「[Button pressed: SPEC_004 8 OK]」(1.0.14 기준, 위 빈칸은 SPEC_006에서 해결, 가로 비율 막대 메모는 SPEC_011로 반영) · 1~7 ✅ 이번 `verify --set regression` → ok(harness·build·test·ui: landscape 891×411 video 500×281, list 362×326, `ui-check: ok`)
