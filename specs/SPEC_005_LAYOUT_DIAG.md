@@ -60,3 +60,4 @@ SPEC_004가 1.0.5에서 위 ≈84css 빈칸으로 STOPPED(같은 시그니처 2�
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 7 `PASS: landscape-gap.json`(요약 7줄·노트 4조각) · 2 ✅ ui landscape `diag` ok: chainLen 7, topHits 5, 첫 줄 `Ear-Coach 화면 진단` · 3 ✅ `src/main.ts:88-89` 명령 id·이름, Test 6(main.js 정적 Node require 0) 통과 · 4 ✅ SPEC_002~004 가로 규칙 ok, `rootFillsViewport` {0,0,915,400} bottomSlack 12 · 5 ✅ 변이: env 줄 t/r 바꾼 사본 → `FAIL missing: ['env t36 r0 b0 l0']` exit 1 · 6 ✅ `verify --set regression` → `verify: ok` · 7 ⏳ 실기기
   - 가결정: 변이 시험은 같은 fixture·같은 판정 로직의 일회 러너(`.scratch/mut/diag/run.ts`)로 확인 · 이유: runTests.ts가 src 경로를 고정 import · 대안: 러너에 경로 인자 추가.
+- 2026-11-20 사람확인(회차 셈 없음): IMPLEMENTED 유지(진단 목적 달성) — 7 ❌ 1.0.6 사진(`.scratch/inbox/20261120-223635-342.jpg`): 위 빈칸 그대로. 진단 `env t0 r0 b0 l0`, `obs t30px b15.1px`, `root y82 h317`, `.view-content y82 pt0`, `y4~y80` 전부 `.workspace-leaf-content` → leaf-content(화면 맨 위에 붙음) 안쪽 위 82px이 원인. 수정은 SPEC_006.

@@ -817,15 +817,23 @@
     background-color: var(--background-primary);
   }
 
+  /* SPEC_006: 1.0.6 진단 — leaf-content 안쪽 위 82px(상태 표시줄+헤더 자리)이 빈칸.
+     view-content를 leaf-content 패딩 상자에 깔아 그 여백을 무시한다. */
+  .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] {
+    padding: 0 !important;
+  }
+
   .workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"] > .view-content {
-    flex: 1 1 auto;
+    position: absolute;
+    inset: 0;
+    margin: 0 !important;
+    width: auto;
+    height: auto;
     min-height: 0;
-    height: 100%;
     box-sizing: border-box;
-    /* WebView 실제 안전 영역만(Obsidian 변수는 앱 크롬 몫까지 커질 수 있음) */
-    /* SPEC_005 시험 수정: 위는 상한 28px(1.0.5에서 위 빈칸), 아래는 제스처 바 몫 최소 12px */
+    /* 위: 기기 env가 0이라 Obsidian 변수(상태 표시줄 높이, 상한 40px), 아래: 제스처 바 몫 최소 12px */
     padding:
-      min(env(safe-area-inset-top, 0px), 28px)
+      max(env(safe-area-inset-top, 0px), min(var(--safe-area-inset-top, 0px), 40px))
       env(safe-area-inset-right, 0px)
       max(env(safe-area-inset-bottom, 0px), 12px)
       env(safe-area-inset-left, 0px);

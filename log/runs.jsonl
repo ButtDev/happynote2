@@ -12,3 +12,4 @@
 {"ts":"2026-11-20T13:19:14.054Z","cmd":"/spec-run","spec":"SPEC_004","iteration":2,"status":"IMPLEMENTED","evidence":"8 NG 반영: 조상 transform 재현→해제, ui·변이2·regression ok"}
 {"ts":"2026-11-20T13:31:18.479Z","cmd":"/spec-new","spec":"SPEC_005","result":"READY","questions":0}
 {"ts":"2026-11-20T13:33:25.033Z","cmd":"/spec-run","spec":"SPEC_005","iteration":1,"status":"IMPLEMENTED","evidence":"Test7 pass, ui diag ok, 변이 exit1, regression ok"}
+{"ts":"2026-11-20T13:38:28.710Z","spec":"SPEC_006","iteration":1,"status":"IMPLEMENTED","evidence":"ui rootFillsViewport y30; mutation HEAD css y82 exit1; verify regression ok"}

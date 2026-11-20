@@ -47,7 +47,8 @@
         ],
         "maxVideoTop": 60,
         "rootFillsViewport": {
-          "bottomSlack": 12
+          "bottomSlack": 12,
+          "top": 30
         },
         "maxHeight": {
           ".ear-coach-mobile-toolbar": 44,
