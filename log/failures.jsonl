@@ -1,0 +1,1 @@
+{"ts":"2026-11-20T13:17:15.333Z","signature":"실기기: 가로 상단 여백 그대로","spec":"SPEC_004","tried":"leaf-content position:fixed inset:0","avoid":"조상 transform/contain/container-type이 fixed를 가둠 — 검사 HTML에 transform 재현 후 판정"}

@@ -2,7 +2,7 @@
 id: SPEC_004
 title: 가로모드 다듬기 — 화면 끝까지 쓰기 + 버튼 정리
 status: IMPLEMENTED
-iterations: 1
+iterations: 2
 max_iterations: 3
 depends_on: []
 parent: SPEC_003
@@ -58,3 +58,4 @@ parent: SPEC_003
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ landscape `rootFillsViewport` {x0,y0,w915,h412}(바깥 여백 40/24 있음) · 2 ✅ `maxHeight` toolbar 44, controls 32, `noOverflowX` 둘 다 ok · 3 ✅ `maxVideoSideGap` left 8·right 9, `minListWidth` 384 · 4 ✅ sideBySide·videoAspect 1.777·minVideoHeight 289·minListHeight 369·hidden 2·maxVideoTop 42, portrait stacked·visible 2·minVideoWidth 396 ok · 5 ✅ 변이(SPEC_004 블록 뺀 css) exit 1: rootFillsViewport(y40 h348)·maxHeight toolbar 51 실패 · 6 ✅ landscape.png: 위아래 빈칸 없음, 영상이 왼쪽 열을 채움(둥근 모서리), 아래 [재생 강조알약][루프][0.7 0.85 1x 1.15 세그먼트] ··· 00:00 한 줄, 오른쪽 위 [전체·핀·과속 세그먼트] [블라인드][공개] 한 줄·잘림 없음 · 7 ✅ `verify --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 · 8 ⏳ 실기기
   - 가결정: 화면 검사 HTML에 Obsidian 모바일 테마 근사(:root 색 변수, `button{height:var(--input-height)=40px}`)와 `noOverflowX` 규칙 추가 · 이유: 테마 변수 없이는 알약·세그먼트 모양을 볼 수 없고, 실기기처럼 버튼이 커야 툴바 넘침을 잡음 · 대안: 없음. 열 상한 62%→58%(62%면 툴바 386>348 넘침).
+- 2026-11-20 회차 2: IMPLEMENTED — 8 ❌→재작업: 사람 「[Button pressed: SPEC_004 8 NG] 동일하게 상단여백」. 원인 가설: 모바일 탭 스와이프의 조상 `transform`(또는 contain)이 fixed를 가둠. 검사 HTML에 `.workspace-leaf{transform:translateX(0)}`·`#app{contain:layout}` 넣으니 이전 CSS가 rootFillsViewport(y40 h348) 실패로 재현 → 조상(`:has`)의 transform·translate·filter·perspective·contain·container-type·will-change를 가로+활성일 때만 해제, 안전 영역은 `env()`만 사용 · 1~4 ✅ ui ok(rootFillsViewport {0,0,915,412}, toolbar 44, controls 32, side gap 8/9, list 384) · 5 ✅ 변이 둘: 해제 규칙만 뺀 css exit 1(rootFillsViewport), SPEC_004 블록 전체 뺀 css exit 1(rootFillsViewport·maxHeight 51) · 6 ✅ landscape.png 회차 1과 같은 모양 · 7 ✅ `verify --set regression` → `verify: ok`(중간에 `test`가 styles.css의 `backdrop-filter` 금지 규칙으로 실패 → 그 줄 제거), src 무변경 · 8 ⏳ 실기기

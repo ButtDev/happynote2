@@ -42,12 +42,12 @@ const bundle = await esbuild.build({
 const css = fs.readFileSync(cssPath, "utf8");
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기에서 원인 모를 바깥 여백(SPEC_004) 흉내 -->
+<!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기 바깥 여백, .workspace-leaf transform = 모바일 탭 스와이프(fixed를 가둠) 흉내(SPEC_004) -->
 <style>:root{--background-primary:#1e1e1e;--background-primary-alt:#242424;--background-secondary:#262626;--background-modifier-border:#363636;--background-modifier-form-field:#2a2a2a;--background-modifier-hover:rgba(255,255,255,.075);--interactive-accent:#8a5cf5;--text-on-accent:#fff;--text-normal:#dadada;--text-muted:#a0a0a0;--color-orange:#e9973f;--font-monospace:monospace;--input-height:40px}
 button{height:var(--input-height);font:inherit;cursor:pointer}
 html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;box-sizing:border-box;padding:40px 0 24px 0}
-#app>.workspace-leaf{flex:1;display:flex;flex-direction:column;min-height:0}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;box-sizing:border-box;padding:40px 0 24px 0;contain:layout}
+#app>.workspace-leaf{flex:1;display:flex;flex-direction:column;min-height:0;transform:translateX(0);will-change:transform}
 #app .workspace-leaf-content{flex:1;display:flex;flex-direction:column;min-height:0}
 #app .view-header{flex:0 0 48px;height:48px;background:#111}
 #app .view-content{flex:1;min-height:0;overflow:hidden;box-sizing:border-box}

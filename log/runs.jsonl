@@ -9,3 +9,4 @@
 {"ts":"2026-11-20T12:58:04.642Z","cmd":"/spec-run","spec":"SPEC_003","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, landscape header/navbar hidden, mut exit 1, 7 ⏳"}
 {"ts":"2026-11-20T13:05:16.117Z","cmd":"/spec-new","spec":"SPEC_004","result":"READY","questions":0}
 {"ts":"2026-11-20T13:07:54.851Z","cmd":"/spec-run","spec":"SPEC_004","iteration":1,"status":"IMPLEMENTED","evidence":"ui landscape rootFillsViewport·maxHeight·noOverflowX·maxVideoSideGap ok, 변이 exit1, regression ok"}
+{"ts":"2026-11-20T13:19:14.054Z","cmd":"/spec-run","spec":"SPEC_004","iteration":2,"status":"IMPLEMENTED","evidence":"8 NG 반영: 조상 transform 재현→해제, ui·변이2·regression ok"}
