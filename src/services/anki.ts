@@ -265,6 +265,27 @@ export class AnkiConnectClient implements AnkiInvoker {
   }
 }
 
+/** 덱·노트 타입이 없을 때 문구 (SPEC_015 회차 3) */
+export function ankiMissingMessage(kind: "deck" | "model", name: string): string {
+  return `Anki에 「${name}」 ${kind === "deck" ? "덱" : "노트 타입"}이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
+}
+
+export type AnkiTarget = { ok: true; settings: AnkiSettingsLike } | { ok: false; message: string };
+
+/**
+ * SPEC_015 회차 3: 저장 전에 덱·노트 타입이 AnkiDroid에 있는지 보고(없으면 addNote가 「Couldn't get deck ID」),
+ * 노트 타입의 실제 필드 이름으로 대응을 맞춘 설정을 돌려준다(설정 자체는 바꾸지 않음).
+ */
+export async function resolveAnkiTarget(client: AnkiInvoker, settings: AnkiSettingsLike): Promise<AnkiTarget> {
+  const decks = await client.invoke("deckNames");
+  if (!Array.isArray(decks) || !decks.includes(settings.ankiDeck)) return { ok: false, message: ankiMissingMessage("deck", settings.ankiDeck) };
+  const models = await client.invoke("modelNames");
+  if (!Array.isArray(models) || !models.includes(settings.ankiNoteType)) return { ok: false, message: ankiMissingMessage("model", settings.ankiNoteType) };
+  const fields = await client.invoke("modelFieldNames", { modelName: settings.ankiNoteType });
+  const map = Array.isArray(fields) ? remapFieldsForModel(fields, settings.ankiFieldMap) : { ...settings.ankiFieldMap };
+  return { ok: true, settings: { ...settings, ankiFieldMap: map } };
+}
+
 export type AnkiSaveResult = "added" | "duplicate";
 
 /** canAddNotes로 중복을 먼저 보고, 새 카드일 때만 (prepare 뒤) addNote. */

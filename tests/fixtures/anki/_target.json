@@ -1,0 +1,9 @@
+{
+  "comment": "resolveAnkiTarget(client, settings) — SPEC_015 회차 3. replies = AnkiConnect 결과(deckNames·modelNames·modelFieldNames). settings default = 기본 설정. expect: message 또는 고쳐진 필드 대응(순서 sentence,picture,meaning,word,ipa,audio,source)",
+  "cases": [
+    { "name": "실기기: Default 덱 없음", "replies": { "deckNames": ["기본", "English"], "modelNames": ["Basic (and reversed card)"], "modelFieldNames": ["Front", "Back"] }, "settings": "default", "expect": { "message": "Anki에 「Default」 덱이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요" }, "calls": ["deckNames"] },
+    { "name": "노트 타입 없음", "replies": { "deckNames": ["Default"], "modelNames": ["Basic", "Cloze"], "modelFieldNames": ["Front", "Back"] }, "settings": "default", "expect": { "message": "Anki에 「Basic (and reversed card)」 노트 타입이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요" }, "calls": ["deckNames", "modelNames"] },
+    { "name": "그대로", "replies": { "deckNames": ["Default"], "modelNames": ["Basic (and reversed card)"], "modelFieldNames": ["Front", "Back"] }, "settings": "default", "expect": { "map": ["Front", "Front", "Front", "Back", "Back", "Back", "Back"] }, "calls": ["deckNames", "modelNames", "modelFieldNames"] },
+    { "name": "한국어 필드 이름", "replies": { "deckNames": ["Default"], "modelNames": ["Basic (and reversed card)"], "modelFieldNames": ["앞면", "뒷면"] }, "settings": "default", "expect": { "map": ["앞면", "앞면", "앞면", "뒷면", "뒷면", "뒷면", "뒷면"] }, "calls": ["deckNames", "modelNames", "modelFieldNames"] }
+  ]
+}

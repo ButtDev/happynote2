@@ -3,3 +3,5 @@
 {"ts":"2026-11-20T18:10:00.781Z","signature":"manual: 가로 전체화면에서 옵시디언 옆 메뉴 안 열림","spec":"SPEC_010","tried":"카드 스와이프로 leftSplit.expand + 덮개 숨김(1.0.11), 메뉴 열린 동안 전체화면 해제(1.0.12)","avoid":"실기기 DOM 진단 없이 추측 수정 반복"}
 {"ts":"2026-11-20T21:45:25.326Z","signature":"manual-7: 발음 버튼 무반응 (dictionaryapi.dev mp3 404)","spec":"SPEC_013","tried":"audio 주소 그대로 new Audio","avoid":"dictionaryapi.dev media mp3를 믿지 말 것 — Commons curid로 해석"}
 {"ts":"2026-11-20T23:02:07.004Z","signature":"실기기: AnkiConnect Android audio url FileNotFoundException (upload.wikimedia.org)","spec":"SPEC_015","tried":"addNote audio[{url}]로 앱이 내려받게 함","avoid":"AnkiConnect Android에 외부 오디오 url을 맡기지 말고 requestUrl로 받아 data(base64)로 보냄"}
+{"ts":"2026-11-20T23:10:58.196Z","signature":"실기기: addNote Couldn't get deck ID (설정 덱 Default 없음)","spec":"SPEC_015","tried":"기본 덱 Default로 바로 addNote","avoid":"저장 전 deckNames·modelNames·modelFieldNames로 대상 확인, 없으면 설정 안내"}
+{"ts":"2026-11-20T23:11:58.497Z","signature":"ui: page.evaluate ReferenceError decks is not defined","spec":"SPEC_015","tried":"evaluate 인자 객체에만 decks 추가","avoid":"evaluate 함수 매개변수 구조 분해에도 추가"}

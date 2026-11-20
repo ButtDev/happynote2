@@ -2,7 +2,7 @@ import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
-import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
+import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
 
 /** SPEC_015: 사전 창에서 Anki 카드를 만들 때 필요한 자막·영상 정보와 클라이언트 */
 export interface DictionaryAnkiContext {
@@ -132,21 +132,27 @@ export class DictionaryModal extends Modal {
       }
       btn.disabled = true;
       show(ANKI_MESSAGES.saving, "is-pending");
-      const note = buildAnkiNote(
-        {
-          word: entry.word,
-          phonetic: entry.phonetic,
-          audioUrl: entry.audioUrl,
-          meanings: entry.meanings.map((m) => ({ partOfSpeech: m.partOfSpeech, definition: m.definitions[0]?.definition ?? "" })),
-          sentence: ctx.sentence,
-          tapped: this.rawWord,
-          videoId: ctx.videoId,
-          videoTitle: ctx.videoTitle,
-          startSec: ctx.startSec,
-        },
-        settings
-      );
       try {
+        const target = await resolveAnkiTarget(ctx.client, settings);
+        if (!target.ok) {
+          show(target.message, "is-error");
+          btn.disabled = false;
+          return;
+        }
+        const note = buildAnkiNote(
+          {
+            word: entry.word,
+            phonetic: entry.phonetic,
+            audioUrl: entry.audioUrl,
+            meanings: entry.meanings.map((m) => ({ partOfSpeech: m.partOfSpeech, definition: m.definitions[0]?.definition ?? "" })),
+            sentence: ctx.sentence,
+            tapped: this.rawWord,
+            videoId: ctx.videoId,
+            videoTitle: ctx.videoTitle,
+            startSec: ctx.startSec,
+          },
+          target.settings
+        );
         const r = await addNoteIfNew(ctx.client, note, (n) => inlineAudio(n, ctx.fetchBytes));
         show(ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
       } catch (e) {

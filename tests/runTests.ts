@@ -516,11 +516,26 @@ async function runAllTests() {
   const prepFake = { invoke: async (a: string, p: any) => (prepCalls.push(`${a}:${p?.note?.audio?.[0]?.data ?? p?.notes?.[0]?.audio?.[0]?.url ?? "-"}`), a === "canAddNotes" ? [true] : 1) };
   await ankiMod.addNoteIfNew(prepFake, { audio: [{ url: "u", filename: "f.ogg", fields: ["Back"] }] }, (n: any) => ankiMod.inlineAudio(n, async () => new Uint8Array([1, 2, 3]).buffer));
   assert.deepEqual(prepCalls, ["canAddNotes:u", "addNote:AQID"], "addNoteIfNew prepare → addNote gets data");
+  // 회차 3: 저장 전 덱·노트 타입 확인 + 실제 필드 이름으로 대응
+  const targetData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_target.json"), "utf8"));
+  for (const tc of targetData.cases) {
+    const calls: string[] = [];
+    const fake = { invoke: async (a: string) => (calls.push(a), tc.replies[a]) };
+    const got = await ankiMod.resolveAnkiTarget(fake, tc.settings === "default" ? ankiDefaults : tc.settings);
+    if (tc.expect.message) {
+      assert.equal(got.ok, false, `${tc.name}: not ok`);
+      assert.equal(got.message, tc.expect.message, `${tc.name}: message`);
+    } else {
+      assert.equal(got.ok, true, `${tc.name}: ok`);
+      assert.deepEqual(roleOrder.map((r) => got.settings.ankiFieldMap[r]), tc.expect.map, `${tc.name}: map`);
+    }
+    assert.deepEqual(calls, tc.calls, `${tc.name}: calls`);
+  }
   for (const [raw, want] of audioData.messages) {
     assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("api", raw)), want, `ankiStatusMessage(${JSON.stringify(raw.slice(0, 30))})`);
   }
   assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요", "connection message");
-  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases`);
+  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases`);
   log("");
 
   log("==============================================================");
