@@ -3,3 +3,4 @@
 {"ts":"2026-11-20T12:30:23.611Z","id":"brat-release","kind":"simple","what":"BRAT 배포: 태그 push 시 Actions가 main.js·manifest.json·styles.css로 Release 생성, version 1.0.1, main.js 추적 해제","evidence":"verify --set regression ok","decision":"고른 것: BRAT(Release) · 이유: 원작자 방식, 사람 지시 · 대안: 저장소에 main.js 커밋(되돌림)"}
 {"ts":"2026-11-20T12:42:00.289Z","cmd":"/spec-run","spec":"SPEC_001","iteration":1,"status":"DONE","evidence":"10 사람확인 OK (BRAT 1.0.1)"}
 {"ts":"2026-11-20T12:44:40.934Z","cmd":"/spec-new","spec":"SPEC_002","result":"READY","questions":0}
+{"ts":"2026-11-20T12:46:24.283Z","cmd":"/spec-run","spec":"SPEC_002","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, landscape video 487x274 sideBySide, mut exit 1, 9 ⏳"}

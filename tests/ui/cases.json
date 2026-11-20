@@ -1,14 +1,59 @@
 {
   "viewports": [
-    { "name": "portrait", "width": 412, "height": 915 },
-    { "name": "landscape", "width": 915, "height": 412 }
+    {
+      "name": "portrait",
+      "width": 412,
+      "height": 915,
+      "expect": {
+        "maxOverlapVideoControlsPx2": 0,
+        "maxOverlayOnVideoPx2": 0,
+        "insideViewport": [
+          "video",
+          "controls",
+          "toolbar",
+          "list"
+        ],
+        "minCards": 3,
+        "layout": "stacked",
+        "minVideoWidth": 380
+      }
+    },
+    {
+      "name": "landscape",
+      "width": 915,
+      "height": 412,
+      "expect": {
+        "maxOverlapVideoControlsPx2": 0,
+        "maxOverlayOnVideoPx2": 0,
+        "insideViewport": [
+          "video",
+          "controls",
+          "toolbar",
+          "list"
+        ],
+        "minCards": 3,
+        "layout": "sideBySide",
+        "videoAspect": 1.7777777777777777,
+        "videoAspectTolerance": 0.03,
+        "minVideoHeight": 240,
+        "minListHeight": 280
+      }
+    }
   ],
   "selectors": {
     "root": ".ear-coach-mobile-container",
     "video": ".ear-coach-video-box",
-    "controls": [".ear-coach-player-controls", ".ear-coach-mobile-toolbar"],
+    "controls": [
+      ".ear-coach-player-controls",
+      ".ear-coach-mobile-toolbar"
+    ],
     "list": ".ear-coach-mobile-list-wrapper",
-    "segmentCard": ".ear-coach-segment-list > *"
+    "segmentCard": ".ear-coach-segment-list > *",
+    "toolbar": ".ear-coach-mobile-toolbar"
   },
-  "overlayExclude": [".ear-coach-video-thumbnail", "iframe", "[id^='ear-coach-player-']"]
+  "overlayExclude": [
+    ".ear-coach-video-thumbnail",
+    "iframe",
+    "[id^='ear-coach-player-']"
+  ]
 }

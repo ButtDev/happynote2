@@ -706,3 +706,64 @@
 .ear-coach-mobile-list-wrapper .ear-coach-time-btn {
   min-height: 30px;
 }
+
+/* --------------------------------------------------------------------------
+   Mobile landscape: side-by-side (SPEC_002)
+   왼쪽 = 영상(16:9) + 재생 컨트롤, 오른쪽 = 필터 툴바 + 자막 목록.
+   세로 배치·데스크톱은 그대로. TS 변경 없이 grid + display: contents로 재배치.
+   -------------------------------------------------------------------------- */
+@media (orientation: landscape) {
+  .ear-coach-mobile-container {
+    display: grid;
+    grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "player toolbar"
+      "player list";
+  }
+
+  .ear-coach-mobile-top-pane {
+    display: contents;
+  }
+
+  .ear-coach-mobile-top-player {
+    grid-area: player;
+    min-height: 0;
+    overflow: hidden;
+    container-type: size;
+    background-color: var(--background-secondary);
+    border-right: 1px solid var(--background-modifier-border);
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-player-wrapper,
+  .ear-coach-mobile-top-player .ear-coach-player-section {
+    justify-content: center;
+  }
+
+  /* 열 너비에 맞춘 16:9, 단 열 높이에서 컨트롤 몫(56px)을 뺀 높이를 넘지 않음 */
+  .ear-coach-mobile-top-player .ear-coach-video-box {
+    flex: 0 0 auto;
+    min-height: 0;
+    width: min(100%, calc((100cqh - 56px) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    align-self: center;
+  }
+
+  .ear-coach-mobile-toolbar {
+    grid-area: toolbar;
+    border-top: none;
+    border-bottom: 1px solid var(--background-modifier-border);
+  }
+
+  .ear-coach-mobile-resizer {
+    display: none;
+  }
+
+  /* 상하 리사이저가 넣는 인라인 flex/height를 가로에서는 무시 */
+  .ear-coach-mobile-list-wrapper {
+    grid-area: list;
+    flex: none !important;
+    height: auto !important;
+    min-height: 0;
+  }
+}

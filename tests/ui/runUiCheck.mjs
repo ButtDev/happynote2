@@ -2,9 +2,10 @@
 // 모바일 화면 검사: 가짜 obsidian 모듈로 EarCoachView를 Chromium에 띄우고
 // 뷰포트별로 영상·컨트롤·목록·overlay 좌표를 재서 보고서와 스크린샷을 남긴다.
 //
-// 사용: node tests/ui/runUiCheck.mjs [--fail-on-overlap] [--cases <json>] [--stub <ts>] [--out <dir>]
+// 사용: node tests/ui/runUiCheck.mjs [--fail-on-overlap] [--cases <json>] [--stub <ts>] [--css <css>] [--out <dir>]
 // 종료 코드: 렌더링·측정 성공 0, 뷰가 안 뜨거나 셀렉터가 없으면 1.
 //           --fail-on-overlap 이면 겹침(영상∩컨트롤/목록, overlay∩영상)이 0보다 클 때도 1.
+//           cases.json 뷰포트의 expect(배치 규칙)가 하나라도 어긋나면 1.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -21,6 +22,7 @@ const failOnOverlap = process.argv.includes("--fail-on-overlap");
 const casesPath = path.resolve(root, arg("--cases", "tests/ui/cases.json"));
 const stubPath = path.resolve(root, arg("--stub", "tests/ui/obsidianStub.ts"));
 const outDir = path.resolve(root, arg("--out", ".scratch/ui"));
+const cssPath = path.resolve(root, arg("--css", "styles.css"));
 const cases = JSON.parse(fs.readFileSync(casesPath, "utf8"));
 
 fs.mkdirSync(outDir, { recursive: true });
@@ -37,7 +39,7 @@ const bundle = await esbuild.build({
   define: { __INLINE_WORKER_CODE__: '""' },
   logLevel: "silent",
 });
-const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
+const css = fs.readFileSync(cssPath, "utf8");
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
@@ -61,6 +63,42 @@ try {
 
 const PLACEHOLDER_HTML =
   "<!doctype html><html><body style='margin:0;background:#000;color:#666;font:14px sans-serif;display:flex;align-items:center;justify-content:center;height:100vh'>video placeholder</body></html>";
+
+// cases.json 뷰포트의 expect(배치 규칙)를 측정값에 적용한다. 규칙이 없으면 빈 배열.
+function evaluateExpect(vp, m, nums) {
+  const e = vp.expect;
+  if (!e) return [];
+  const out = [];
+  const add = (name, ok, detail) => out.push({ name, ok: Boolean(ok), detail });
+  const right = (r) => r.x + r.w;
+  const bottom = (r) => r.y + r.h;
+  if (e.maxOverlapVideoControlsPx2 !== undefined)
+    add("overlapVideoControls", nums.overlapVideoControlsPx2 <= e.maxOverlapVideoControlsPx2, `${nums.overlapVideoControlsPx2} <= ${e.maxOverlapVideoControlsPx2}`);
+  if (e.maxOverlayOnVideoPx2 !== undefined)
+    add("overlayOnVideo", nums.overlayOnVideoPx2 <= e.maxOverlayOnVideoPx2, `${nums.overlayOnVideoPx2} <= ${e.maxOverlayOnVideoPx2}`);
+  for (const key of e.insideViewport ?? []) {
+    const r = m[key];
+    // rect는 Math.round 값이라 소수 좌표 반올림으로 1px 넘칠 수 있음 → 1px 허용
+    add(`inside:${key}`, r && r.x >= -1 && r.y >= -1 && right(r) <= vp.width + 1 && bottom(r) <= vp.height + 1 && r.w > 0 && r.h > 0, JSON.stringify(r));
+  }
+  if (e.minCards !== undefined) add("minCards", m.cardCount >= e.minCards, `${m.cardCount} >= ${e.minCards}`);
+  const v = m.video, l = m.list, t = m.toolbar;
+  if (e.layout === "stacked")
+    add("stacked", v && l && bottom(v) <= l.y, `video.bottom=${v && bottom(v)} list.y=${l && l.y}`);
+  if (e.layout === "sideBySide") {
+    add("sideBySide:list", v && l && right(v) <= l.x, `video.right=${v && right(v)} list.x=${l && l.x}`);
+    add("sideBySide:toolbar", v && t && right(v) <= t.x, `video.right=${v && right(v)} toolbar.x=${t && t.x}`);
+  }
+  if (e.minVideoWidth !== undefined) add("minVideoWidth", v && v.w >= e.minVideoWidth, `${v && v.w} >= ${e.minVideoWidth}`);
+  if (e.minVideoHeight !== undefined) add("minVideoHeight", v && v.h >= e.minVideoHeight, `${v && v.h} >= ${e.minVideoHeight}`);
+  if (e.minListHeight !== undefined) add("minListHeight", l && l.h >= e.minListHeight, `${l && l.h} >= ${e.minListHeight}`);
+  if (e.videoAspect !== undefined) {
+    const ratio = v && v.h > 0 ? v.w / v.h : 0;
+    const tol = e.videoAspectTolerance ?? 0.03;
+    add("videoAspect", Math.abs(ratio / e.videoAspect - 1) <= tol, `${ratio.toFixed(3)} vs ${e.videoAspect.toFixed(3)} ±${tol * 100}%`);
+  }
+  return out;
+}
 
 const report = { generatedAt: new Date().toISOString(), failOnOverlap, viewports: [] };
 const errors = [];
@@ -128,6 +166,11 @@ for (const vp of cases.viewports) {
       controls = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
     }
     const cardCount = document.querySelectorAll(selectors.segmentCard).length;
+    let toolbar = null;
+    if (selectors.toolbar) {
+      toolbar = one(selectors.toolbar);
+      if (!toolbar) missing.push(selectors.toolbar);
+    }
 
     const overlays = [];
     const videoEl = document.querySelector(selectors.video);
@@ -147,7 +190,7 @@ for (const vp of cases.viewports) {
         });
       }
     }
-    return { video, controls, controlRects, list, root: rootRect, cardCount, overlays, missing };
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing };
   }, cases.selectors ? { selectors: cases.selectors, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   const inter = (a, b) => {
@@ -174,11 +217,15 @@ for (const vp of cases.viewports) {
     errors.push(`${vp.name}: overlap video/controls=${overlapVideoControlsPx2} overlayOnVideo=${overlayOnVideoPx2}`);
   }
 
+  const checks = evaluateExpect(vp, m, { overlapVideoControlsPx2, overlayOnVideoPx2 });
+  for (const c of checks) if (!c.ok) errors.push(`${vp.name}: ${c.name} failed (${c.detail})`);
+
   report.viewports.push({
     name: vp.name,
     width: vp.width,
     height: vp.height,
-    rects: { video: m.video, controls: m.controls, controlParts: m.controlRects, list: m.list, overlays: overlaysOnVideo },
+    rects: { video: m.video, controls: m.controls, controlParts: m.controlRects, toolbar: m.toolbar, list: m.list, overlays: overlaysOnVideo },
+    checks,
     cardCount: m.cardCount,
     overlapVideoControlsPx2,
     overlayOnVideoPx2,

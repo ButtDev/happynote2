@@ -1,8 +1,8 @@
 ---
 id: SPEC_002
 title: 모바일 가로모드 좌우 배치 (왼쪽 영상, 오른쪽 필터·자막 목록)
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_001]
 ---
@@ -64,3 +64,7 @@ Android 가로 화면(사람 스크린샷 `.scratch/inbox/20261120-214321-314.jp
 - iframe 안 overlay는 이번 SPEC에서 다루지 않음 · 영상이 16:9로 커지면 유튜브 UI가 덜 덮는지 사람 확인으로 먼저 봄 · 대안: 바로 `controls=0`+자체 컨트롤(별도 SPEC).
 
 ## 실행 기록
+- 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ ui landscape: video 487×274 (x 8~495), list.x 503·toolbar.x 503, aspect 1.777, checks sideBySide·videoAspect·minVideoHeight ok · 2 ✅ list 412×374(≥280), cards 3 · 3 ✅ portrait stacked(video.bottom 363 ≤ list.y 458), video.w 396, cards 3 — rect가 SPEC_001 기준선과 같음 · 4 ✅ 두 뷰포트 overlap 0/0, inside:video·controls·toolbar·list ok · 5 ✅ landscape.png 직접 봄: 왼쪽 검은 영상 + 아래 재생·루프·배속 줄, 오른쪽 위 필터(전체·핀·과속·블라인드·공개) + 자막 카드 2장 반; portrait.png는 위 영상·컨트롤·필터·아래 카드로 이전과 같음 · 6 ✅ 변이: 가로 블록 뺀 css 사본 → sideBySide·minVideoHeight(105)·videoAspect(8.562) 실패 exit 1 · 7 ✅ `verify --set regression` → `verify: ok` (ui `--fail-on-overlap`) · 8 ✅ `git diff --stat -- src` 비어 있음 · 9 ⏳ 실기기
+  - 참고: 실기기처럼 높이가 낮은 915×320에서도 영상 452×254(16:9 유지, 컨트롤 몫 확보), 목록 282 — 컨테이너 쿼리 상한이 동작.
+  - 가결정: 뷰포트 안 판정에 1px 허용 · 이유: rect가 Math.round 값이라 세로 목록 458+458=916로 1px 넘침(SPEC_001 기준선부터 있던 반올림) · 대안: 반올림 전 소수값으로 판정.
+  - 가결정: 영상 높이 상한 `calc((100cqh - 56px) * 16 / 9)`(container query) · 이유: Obsidian 헤더·하단 바로 실제 높이가 412보다 낮아도 16:9와 컨트롤이 열 안에 들어감 · 대안: 고정 max-height.
