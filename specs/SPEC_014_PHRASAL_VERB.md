@@ -1,8 +1,8 @@
 ---
 id: SPEC_014
 title: 사전 창에 구동사 뜻 (looking forward to → look forward to)
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_013]
 ---
@@ -23,7 +23,7 @@ depends_on: [SPEC_013]
 
 ## 3. 정의 — 공개 이름·데이터 구조·문구·수치를 글자 그대로
 - `lemmaVariants(word: string): string[]` — `normalizeLookupWord` 결과를 첫째로, 원형 후보를 이어 붙여 중복 없이 **최대 3개**. 빈 단어면 `[]`.
-  - 불규칙 표(정확히 일치): went·gone→go, got·gotten→get, took·taken→take, came→come, gave·given→give, made→make, ran→run, brought→bring, thought→think, found→find, told→tell, said→say, saw·seen→see, kept→keep, left→leave, held→hold, stood→stand, broke·broken→break, fell→fall, felt→feel, met→meet, paid→pay, sat→sit, spoke→speak, threw·thrown→throw, wore→wear, woke→wake, ate·eaten→eat, did·done·does→do, goes→go, had·has→have, was·were→be.
+  - 불규칙 표(정확히 일치하면 아래 규칙은 쓰지 않음): went·gone→go, got·gotten→get, took·taken→take, came→come, gave·given→give, made→make, ran→run, brought→bring, thought→think, found→find, told→tell, said→say, saw·seen→see, kept→keep, left→leave, held→hold, stood→stand, broke·broken→break, fell→fall, felt→feel, met→meet, paid→pay, sat→sit, spoke→speak, threw·thrown→throw, wore→wear, woke→wake, ate·eaten→eat, did·done·does→do, goes→go, had·has→have, was·were→be.
   - `-ing`(어간 2자 이상): 어간, 겹자음이면 하나 뺀 어간(running→run), 어간+`e`(making→make).
   - `-ied`→`y`(tried→try); `-ed`(어간 2자 이상): 어간, 겹자음 하나 뺀 어간(stopped→stop), `-d`만 뺀 형태(liked→like).
   - `-ies`→`y`; `-es`(어간이 s·x·z·ch·sh로 끝남)→어간; 그 밖의 `-s`(전체 4자 이상, `ss`로 끝나지 않음)→`-s` 뺀 형태.
@@ -61,3 +61,5 @@ depends_on: [SPEC_013]
 - 구동사 칸은 맨 위, 단어 칸은 그 아래 · 사람 요청 그대로.
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 11 `… 16 lemma + 9 phrase cases` PASS · 2 ✅ 같은 실행 `6 response fixtures`(look-forward-to·show-up 실제 응답: word·품사 verb·첫 뜻) · 3 ✅ ui portrait·landscape `phrase` ok: 「going」 → phraseTitle `go to`, 꼬리표 `구동사`, 구 뜻 1줄, word `going`, phraseAboveWord true; 「So」(후보 so i was·so i 없음) → phraseOnFirst false · 4 ✅ 변이 `-ing` 어간을 `slice(0,-2)`로 → `lemmaVariants("looking")` exit 1 · 5 ✅ `verify --set regression` ok(dictionary 규칙 포함) · 6 ✅ `phrase-portrait.png`: 시트 맨 위 보라 테두리 칸에 「구동사」 꼬리표·`go to`·🔊 발음·verb 뜻, 그 아래 `going /həˈləʊ/`·뜻 목록; `phrase-landscape.png` 같은 구성 · 실재 조회(Node fetch): looking forward to → look forward to(ogg 있음), showed up. → show up, got up early → get up, gave up smoking → give up, ran into my → run into · 7 ⏳ 실기기
+  - 가결정: 불규칙 표에 있으면 접미 규칙은 쓰지 않음(goes→goe 방지, SPEC 3장에 반영) · 단어 뜻 줄 수 검사를 `.ear-coach-dict-body` 안으로 한정(구 칸 뜻과 섞이지 않게, 기준은 그대로 ≥1) · 대안: 규칙 함께 적용, 전체 개수.

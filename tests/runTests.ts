@@ -22,7 +22,7 @@ import {
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
-import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, pickPronunciation } from "../src/services/dictionary.ts";
+import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -367,7 +367,7 @@ async function runAllTests() {
   log("[Test 11] Dictionary: normalize word & parse dictionaryapi.dev (data-driven, SPEC_013)");
   const dictMod = process.env.EAR_COACH_DICT_MODULE
     ? await import(path.resolve(process.env.EAR_COACH_DICT_MODULE))
-    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl };
+    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl, lemmaVariants, phraseCandidates };
   const dictDir = path.resolve("tests/fixtures/dictionary");
   const norm = JSON.parse(fs.readFileSync(path.join(dictDir, "_normalize.json"), "utf8"));
   for (const [raw, want] of norm.cases) {
@@ -426,7 +426,11 @@ async function runAllTests() {
     return { status: 200, json: runRaw.response };
   });
   assert.equal((await provB.lookup("run"))?.audioUrl, runRaw.expect.audioUrl, "provider keeps audioUrl when Commons fails");
-  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons`);
+  // SPEC_014: 원형 후보·구동사 후보
+  const phr = JSON.parse(fs.readFileSync(path.join(dictDir, "_phrases.json"), "utf8"));
+  for (const [w, want] of phr.lemma) assert.deepEqual(dictMod.lemmaVariants(w), want, `lemmaVariants(${JSON.stringify(w)})`);
+  for (const [[t, f], want] of phr.phrases) assert.deepEqual(dictMod.phraseCandidates(t, f), want, `phraseCandidates(${JSON.stringify(t)}, ${JSON.stringify(f)})`);
+  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons, ${phr.lemma.length} lemma + ${phr.phrases.length} phrase cases`);
   log("");
 
   log("==============================================================");

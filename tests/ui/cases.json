@@ -30,6 +30,10 @@
         "overlayToggle": ".ear-coach-overlay-btn",
         "dictionary": {
           "minDefs": 1
+        },
+        "phrase": {
+          "tap": "going",
+          "title": "go to"
         }
       }
     },
@@ -86,6 +90,10 @@
         "landscapeResizer": true,
         "dictionary": {
           "minDefs": 1
+        },
+        "phrase": {
+          "tap": "going",
+          "title": "go to"
         }
       }
     }

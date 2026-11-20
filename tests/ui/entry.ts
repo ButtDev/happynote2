@@ -9,6 +9,7 @@ import fixture from "./fixtures/transcript-sample.json";
 import { parseDictionaryApiDev } from "../../src/services/dictionary.ts";
 import { PlayerBar } from "../../src/ui/components/PlayerBar.ts";
 import helloDict from "../fixtures/dictionary/hello.json";
+import phraseDict from "../fixtures/dictionary/look-forward-to.json";
 
 declare global {
   interface Window {
@@ -43,6 +44,12 @@ async function main(): Promise<void> {
       name: "dictionaryapi.dev",
       lookup: async (w: string) => {
         (window as any).__dictLookups = [...((window as any).__dictLookups ?? []), w];
+        // SPEC_014: 구는 이 목록에 있을 때만 결과(실제 구동사 응답 fixture를 단어만 바꿔서)
+        if (w.includes(" ")) {
+          if (!["go to", "get up", "show up"].includes(w)) return null;
+          const p = parseDictionaryApiDev(phraseDict.response);
+          return p ? { ...p, word: w } : null;
+        }
         const e = parseDictionaryApiDev(helloDict.response);
         return e ? { ...e, word: w } : null;
       },

@@ -119,6 +119,10 @@ function evaluateExpect(vp, m, nums) {
     const want = d && d.tapped ? d.tapped.toLowerCase().replace(/[\u2018\u2019]/g, "'").replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, "").replace(/^'+|'+$/g, "").replace(/'s$/, "") : null;
     add("dictionary", !!d && !d.error && d.words >= d.tokens && d.modal && d.title === want && d.defs >= e.dictionary.minDefs && !!d.ipa && d.audioBtn && d.pauseCalls === 1, JSON.stringify(d));
   }
+  if (e.phrase) {
+    const p = m.phrase;
+    add("phrase", !!p && !p.error && p.modal && p.phraseTitle === e.phrase.title && p.tag === "구동사" && p.phraseDefs >= 1 && p.word === e.phrase.tap.toLowerCase() && p.phraseAboveWord && m.dictionary?.phraseOnFirst === false, JSON.stringify({ ...p, phraseOnFirst: m.dictionary?.phraseOnFirst }));
+  }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
     add(`maxHeight:${sel}`, r && r.h > 0 && r.h <= max, r ? `${r.h} <= ${max}` : "element missing");
@@ -423,12 +427,42 @@ for (const vp of cases.viewports) {
         title: modal?.querySelector(".ear-coach-dict-word")?.textContent ?? null,
         ipa: modal?.querySelector(".ear-coach-dict-ipa")?.textContent ?? null,
         audioBtn: !!modal?.querySelector(".ear-coach-dict-audio"),
-        defs: modal ? modal.querySelectorAll(".ear-coach-dict-def").length : 0,
+        defs: modal ? modal.querySelectorAll(".ear-coach-dict-body .ear-coach-dict-def").length : 0,
+        phraseOnFirst: !!modal?.querySelector(".ear-coach-dict-phrase"),
         pauseCalls: (window.__pauseCalls ?? 0) - before,
         lookups: window.__dictLookups ?? [],
       };
     });
     await page.screenshot({ path: path.join(outDir, `dictionary-${vp.name}.png`) });
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+  }
+
+  // SPEC_014: 같은 카드에서 「going」 누름 → 맨 위 구동사 칸(go to) + 그 아래 단어 칸
+  m.phrase = null;
+  if (vp.expect?.phrase) {
+    const tapWord = vp.expect.phrase.tap;
+    m.phrase = await page.evaluate(async (tapWord) => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const script = document.querySelector(".ear-coach-segment-card .ear-coach-full-script");
+      if (!script) return { error: "full-script missing" };
+      const target = [...script.querySelectorAll(".ear-coach-word")].find((w) => w.textContent === tapWord);
+      if (!target) return { error: `word ${tapWord} missing` };
+      target.click();
+      await wait(300);
+      const modal = document.querySelector(".ear-coach-dictionary-modal");
+      const box = modal?.querySelector(".ear-coach-dict-phrase");
+      const title = box?.querySelector(".ear-coach-dict-phrase-title");
+      const word = modal?.querySelector(".ear-coach-dict-word");
+      return {
+        modal: !!modal,
+        phraseTitle: title?.textContent ?? null,
+        tag: box?.querySelector(".ear-coach-dict-phrase-tag")?.textContent ?? null,
+        phraseDefs: box ? box.querySelectorAll(".ear-coach-dict-def").length : 0,
+        word: word?.textContent ?? null,
+        phraseAboveWord: !!(title && word && title.getBoundingClientRect().bottom <= word.getBoundingClientRect().top),
+      };
+    }, tapWord);
+    await page.screenshot({ path: path.join(outDir, `phrase-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
   }
 

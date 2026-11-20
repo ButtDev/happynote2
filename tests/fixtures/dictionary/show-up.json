@@ -1,0 +1,63 @@
+{
+ "name": "show up",
+ "response": [
+  {
+   "word": "show up",
+   "phonetics": [
+    {
+     "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/show%20up-au.mp3",
+     "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=79150607",
+     "license": {
+      "name": "BY-SA 4.0",
+      "url": "https://creativecommons.org/licenses/by-sa/4.0"
+     }
+    }
+   ],
+   "meanings": [
+    {
+     "partOfSpeech": "verb",
+     "definitions": [
+      {
+       "definition": "To appear, arrive, or attend, especially suddenly or erratically.",
+       "synonyms": [],
+       "antonyms": [],
+       "example": "No matter how many I throw away, more copies always show up."
+      },
+      {
+       "definition": "To make visible or expose faults and deficiencies in, usually by comparison.",
+       "synonyms": [],
+       "antonyms": [],
+       "example": "I bet the Jayhawk fast break could show up the Nimrod's lack of speed."
+      },
+      {
+       "definition": "To make visible; to expose.",
+       "synonyms": [],
+       "antonyms": []
+      }
+     ],
+     "synonyms": [
+      "turn up"
+     ],
+     "antonyms": []
+    }
+   ],
+   "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0"
+   },
+   "sourceUrls": [
+    "https://en.wiktionary.org/wiki/show%20up"
+   ]
+  }
+ ],
+ "expect": {
+  "word": "show up",
+  "phonetic": null,
+  "audioUrl": "https://api.dictionaryapi.dev/media/pronunciations/en/show%20up-au.mp3",
+  "commonsPageId": 79150607,
+  "partsOfSpeech": [
+   "verb"
+  ],
+  "firstDefinition": "To appear, arrive, or attend, especially suddenly or erratically."
+ }
+}

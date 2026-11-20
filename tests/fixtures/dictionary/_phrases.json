@@ -1,0 +1,31 @@
+{
+  "lemma": [
+    ["looking", ["looking", "look", "looke"]],
+    ["Running", ["running", "runn", "run"]],
+    ["making", ["making", "mak", "make"]],
+    ["going", ["going", "go", "goe"]],
+    ["stopped", ["stopped", "stopp", "stop"]],
+    ["liked", ["liked", "lik", "like"]],
+    ["showed", ["showed", "show", "showe"]],
+    ["tried", ["tried", "try"]],
+    ["goes", ["goes", "go"]],
+    ["watches", ["watches", "watch"]],
+    ["looks", ["looks", "look"]],
+    ["got", ["got", "get"]],
+    ["went", ["went", "go"]],
+    ["pass", ["pass"]],
+    ["up", ["up"]],
+    ["42", []]
+  ],
+  "phrases": [
+    [["looking", ["forward", "to"]], ["looking forward to", "look forward to", "looke forward to", "looking forward", "look forward", "looke forward"]],
+    [["got", ["up", "early"]], ["got up early", "get up early", "got up", "get up"]],
+    [["showed", ["up."]], ["showed up", "show up", "showe up"]],
+    [["showed", ["up,", "and"]], ["showed up", "show up", "showe up"]],
+    [["Pick", ["it", "up"]], ["pick it up", "pick it"]],
+    [["trip.", ["We", "got"]], []],
+    [["going", ["", "to"]], []],
+    [["going", []], []],
+    [["going", ["to", "tell"]], ["going to tell", "go to tell", "goe to tell", "going to", "go to", "goe to"]]
+  ]
+}

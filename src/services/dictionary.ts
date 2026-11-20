@@ -157,3 +157,106 @@ export class DictionaryApiDevProvider implements DictionaryProvider {
     return entry;
   }
 }
+
+// ---------------------------------------------------------------------------
+// SPEC_014: 구동사 — 누른 낱말 + 뒤 1~2낱말을 원형으로 바꾼 구 후보
+// ---------------------------------------------------------------------------
+
+export const MAX_LEMMA_VARIANTS = 3;
+export const MAX_PHRASE_CANDIDATES = 6;
+
+const IRREGULAR_LEMMAS: Record<string, string> = {
+  went: "go", gone: "go", goes: "go",
+  got: "get", gotten: "get",
+  took: "take", taken: "take",
+  came: "come",
+  gave: "give", given: "give",
+  made: "make",
+  ran: "run",
+  brought: "bring",
+  thought: "think",
+  found: "find",
+  told: "tell",
+  said: "say",
+  saw: "see", seen: "see",
+  kept: "keep",
+  left: "leave",
+  held: "hold",
+  stood: "stand",
+  broke: "break", broken: "break",
+  fell: "fall",
+  felt: "feel",
+  met: "meet",
+  paid: "pay",
+  sat: "sit",
+  spoke: "speak",
+  threw: "throw", thrown: "throw",
+  wore: "wear",
+  woke: "wake",
+  ate: "eat", eaten: "eat",
+  did: "do", done: "do", does: "do",
+  had: "have", has: "have",
+  was: "be", were: "be",
+};
+
+function undouble(stem: string): string | null {
+  const n = stem.length;
+  return n >= 2 && stem[n - 1] === stem[n - 2] && /[b-df-hj-np-tv-z]/.test(stem[n - 1]) ? stem.slice(0, -1) : null;
+}
+
+/** 낱말과 원형 후보(첫째는 정리된 낱말 그대로). 중복 없이 최대 3개. */
+export function lemmaVariants(word: string): string[] {
+  const w = normalizeLookupWord(word);
+  if (!w) return [];
+  const out: string[] = [w];
+  const add = (s: string | null) => {
+    if (s && s.length >= 2 && !out.includes(s)) out.push(s);
+  };
+  if (IRREGULAR_LEMMAS[w]) {
+    add(IRREGULAR_LEMMAS[w]);
+  } else if (/ing$/.test(w) && w.length - 3 >= 2) {
+    const stem = w.slice(0, -3);
+    add(stem);
+    add(undouble(stem));
+    add(stem + "e");
+  } else if (/ied$/.test(w) && w.length > 4) {
+    add(w.slice(0, -3) + "y");
+  } else if (/ed$/.test(w) && w.length - 2 >= 2) {
+    const stem = w.slice(0, -2);
+    add(stem);
+    add(undouble(stem));
+    add(w.slice(0, -1));
+  } else if (/ies$/.test(w) && w.length > 4) {
+    add(w.slice(0, -3) + "y");
+  } else if (/(s|x|z|ch|sh)es$/.test(w)) {
+    add(w.slice(0, -2));
+  } else if (/s$/.test(w) && !/ss$/.test(w) && w.length >= 4) {
+    add(w.slice(0, -1));
+  }
+  return out.slice(0, MAX_LEMMA_VARIANTS);
+}
+
+const PHRASE_BREAK = /[.,!?;:]["'”’)\]]*$/;
+
+/** 구 후보: 3낱말 먼저, 그다음 2낱말. 첫 낱말은 원형 후보 순서. 중복 없이 최대 6개. */
+export function phraseCandidates(tapped: string, following: string[]): string[] {
+  if (PHRASE_BREAK.test((tapped ?? "").trim())) return [];
+  const heads = lemmaVariants(tapped);
+  if (heads.length === 0) return [];
+  const tail: string[] = [];
+  for (const raw of (following ?? []).slice(0, 2)) {
+    const n = normalizeLookupWord(raw);
+    if (!n) break;
+    tail.push(n);
+    if (PHRASE_BREAK.test(raw.trim())) break;
+  }
+  const out: string[] = [];
+  for (let len = tail.length; len >= 1; len--) {
+    const rest = tail.slice(0, len).join(" ");
+    for (const h of heads) {
+      const p = `${h} ${rest}`;
+      if (!out.includes(p)) out.push(p);
+    }
+  }
+  return out.slice(0, MAX_PHRASE_CANDIDATES);
+}

@@ -507,11 +507,11 @@ export class EarCoachView extends ItemView {
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
       },
-      onLookupWord: (word) => {
+      onLookupWord: (word, _segment, following) => {
         const provider = this.plugin.dictionary;
         if (!provider) return;
         this.playerBar?.pause();
-        new DictionaryModal(this.app, word, provider).open();
+        new DictionaryModal(this.app, word, provider, following ?? []).open();
       },
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;

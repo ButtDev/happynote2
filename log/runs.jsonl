@@ -42,3 +42,4 @@
 {"ts":"2026-11-20T21:46:24.141Z","cmd":"release","spec":"SPEC_013","status":"IMPLEMENTED","evidence":"BRAT 1.0.17 push buttdev main+tag, 릴리스 자산 main.js,manifest.json,styles.css 확인"}
 {"ts":"2026-11-20T21:53:26.937Z","cmd":"/spec-run","spec":"SPEC_013","status":"DONE","evidence":"사람확인 7 메모 「잘동작함」→ OK, 구동사 요청은 backlog"}
 {"ts":"2026-11-20T22:02:39.295Z","cmd":"/spec-new","spec":"SPEC_014","result":"READY","questions":0}
+{"ts":"2026-11-20T22:05:17.035Z","cmd":"/spec-run","spec":"SPEC_014","iteration":1,"status":"IMPLEMENTED","evidence":"Test 11 16 lemma+9 phrase PASS, ui phrase ok(go to 위·going 아래), 변이 exit1, regression ok, 실제 조회 look forward to·show up·get up·give up·run into"}
