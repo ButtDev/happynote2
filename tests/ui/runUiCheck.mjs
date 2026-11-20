@@ -122,7 +122,9 @@ function evaluateExpect(vp, m, nums) {
   }
   if (e.maxVideoSideGap !== undefined) {
     const gl = v && r0 ? v.x - r0.x : Infinity;
-    const gr = v && t ? t.x - right(v) : Infinity;
+    // SPEC_011: 가로 조절 막대가 있으면 영상 열의 오른쪽 끝 = 막대 왼쪽(막대 자체는 의도된 칸)
+    const barX = m.landscapeResizer?.before?.bar?.x;
+    const gr = v && t ? (barX ?? t.x) - right(v) : Infinity;
     add("maxVideoSideGap", gl <= e.maxVideoSideGap && gr <= e.maxVideoSideGap, `left=${gl} right=${gr} <= ${e.maxVideoSideGap}`);
   }
   for (const sel of e.noOverflowX ?? []) {
@@ -152,6 +154,15 @@ function evaluateExpect(vp, m, nums) {
       t.on.active === true && crop(t.on) === 0 && t.on.player.h === t.on.box.h && !String(t.on.src).includes("controls=0") &&
       t.off.active === false && crop(t.off) >= (e.videoCrop ?? 40) && String(t.off.src).includes("controls=0");
     add("overlayToggle", !!ok, JSON.stringify(t));
+  }
+  if (e.landscapeResizer !== undefined) {
+    const z = m.landscapeResizer;
+    const ok = z && !z.error && z.before.bar.w >= 10 && z.before.bar.h >= 200 && z.before.barVisible &&
+      z.after.listW - z.before.listW >= 100 &&
+      Math.abs(z.after.videoW / z.after.videoH - 16 / 9) <= 16 / 9 * 0.03 &&
+      z.after.saved !== 58 && String(z.after.saved) === z.after.cssVar && z.after.controlsOverflowX <= 1 &&
+      z.reset.saved === 58 && z.reset.listW === z.before.listW;
+    add("landscapeResizer", !!ok, JSON.stringify(z));
   }
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
@@ -321,6 +332,47 @@ for (const vp of cases.viewports) {
       await page.waitForTimeout(800);
       const off = await measure();
       m.overlayToggle = { on, off };
+    }
+  }
+
+  // SPEC_011: 가로 좌우 비율 조절 바 — 막대를 왼쪽으로 150px 끌어 목록이 넓어지고 값이 저장되는지
+  m.landscapeResizer = null;
+  if (vp.expect?.landscapeResizer) {
+    const snap = () =>
+      page.evaluate(() => {
+        const q = (s) => document.querySelector(s);
+        const rr = (el) => { const b = el.getBoundingClientRect(); return { x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height) }; };
+        const bar = q(".ear-coach-mobile-resizer"), list = q(".ear-coach-mobile-list-wrapper"), video = q(".ear-coach-video-box");
+        if (!bar || !list || !video) return { error: "element missing" };
+        const cs = getComputedStyle(bar);
+        const v = rr(video);
+        return {
+          bar: rr(bar), barVisible: cs.display !== "none" && cs.visibility !== "hidden",
+          listW: rr(list).w, videoW: v.w, videoH: v.h,
+          saved: window.__earCoachSettings?.mobileLandscapeLeftPercent,
+          controlsOverflowX: (() => { const c = q(".ear-coach-player-controls"); return c ? c.scrollWidth - c.clientWidth : null; })(),
+          cssVar: q(".ear-coach-mobile-container").style.getPropertyValue("--ear-coach-landscape-left"),
+        };
+      });
+    const before = await snap();
+    if (before.error) m.landscapeResizer = before;
+    else {
+      // 합성 포인터 이벤트(모바일 컨텍스트에선 page.mouse가 막대에 안 닿음)
+      await page.evaluate(async ({ cx, cy }) => {
+        const bar = document.querySelector(".ear-coach-mobile-resizer");
+        const ev = (type, x) => bar.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 7, pointerType: "touch", clientX: x, clientY: cy }));
+        const frame = () => new Promise((res) => requestAnimationFrame(() => res()));
+        ev("pointerdown", cx);
+        for (let i = 1; i <= 6; i++) { ev("pointermove", cx - 25 * i); await frame(); await frame(); }
+        ev("pointerup", cx - 150);
+        await new Promise((res) => setTimeout(res, 100));
+      }, { cx: before.bar.x + before.bar.w / 2, cy: before.bar.y + before.bar.h / 2 });
+      const after = await snap();
+      await page.screenshot({ path: path.join(outDir, `${vp.name}-resized.png`) });
+      // 두 번 눌러 기본(58)으로 → 이후 스크린샷·측정은 기본 배치
+      await page.evaluate(() => document.querySelector(".ear-coach-mobile-resizer").dispatchEvent(new MouseEvent("dblclick", { bubbles: true })));
+      await page.waitForTimeout(150);
+      m.landscapeResizer = { before, after, reset: await snap() };
     }
   }
 

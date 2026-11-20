@@ -18,6 +18,8 @@ export interface EarCoachSettings {
   preferredCaptionLang: string;
   tutorPanelHeightPx: number;
   mobileListHeightPercent: number;
+  /** SPEC_011: 가로 화면 영상 열 폭(%) */
+  mobileLandscapeLeftPercent: number;
 }
 
 export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
@@ -35,4 +37,5 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   preferredCaptionLang: "en",
   tutorPanelHeightPx: 380,
   mobileListHeightPercent: 50,
+  mobileLandscapeLeftPercent: 58,
 };

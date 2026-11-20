@@ -1,0 +1,17 @@
+{
+  "clamp": [
+    { "in": 58, "out": 58 },
+    { "in": 45.4, "out": 45 },
+    { "in": 10, "out": 30 },
+    { "in": 95, "out": 70 },
+    { "in": "x", "out": 58 },
+    { "in": null, "out": 58 }
+  ],
+  "pointer": [
+    { "clientX": 445, "left": 0, "width": 891, "out": 50 },
+    { "clientX": 517, "left": 0, "width": 891, "out": 58 },
+    { "clientX": 100, "left": 0, "width": 891, "out": 30 },
+    { "clientX": 850, "left": 0, "width": 891, "out": 70 },
+    { "clientX": 140, "left": 40, "width": 100, "out": 50 }
+  ]
+}

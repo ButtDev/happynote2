@@ -21,6 +21,7 @@ async function main(): Promise<void> {
   setPlatformMobileOverrideForTest(true);
 
   const settings = { ...DEFAULT_EAR_COACH_SETTINGS };
+  (window as any).__earCoachSettings = settings; // SPEC_011: 저장 값 확인용
   const segments = mergeCuesIntoSegments(fixture.cues, {
     speedSpikeWpmThreshold: settings.speedSpikeWpmThreshold,
     defaultUnlockStep: settings.defaultUnlockStep,

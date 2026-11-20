@@ -84,7 +84,8 @@
         "visible": [
           ".ear-coach-overlay-btn"
         ],
-        "overlayToggle": ".ear-coach-overlay-btn"
+        "overlayToggle": ".ear-coach-overlay-btn",
+        "landscapeResizer": true
       }
     }
   ],

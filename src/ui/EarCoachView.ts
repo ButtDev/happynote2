@@ -6,6 +6,7 @@ import {
 } from "../types/transcript";
 import { SegmentTimeIndex } from "../utils/binarySearch";
 import { isMobileApp } from "../utils/platform";
+import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
@@ -328,7 +329,7 @@ export class EarCoachView extends ItemView {
     // 2. Touch Drag Resizer Bar (user-adjustable split ratio, persisted locally)
     const resizerEl = mobileContainer.createDiv({
       cls: "ear-coach-mobile-resizer",
-      attr: { "aria-label": "상하 영역 크기 조절 핸들 (위아래로 드래그)" },
+      attr: { "aria-label": "영역 크기 조절 핸들 (세로: 위아래, 가로: 좌우로 드래그)" },
     });
     resizerEl.createDiv({ cls: "ear-coach-mobile-resizer-pill" });
 
@@ -378,6 +379,21 @@ export class EarCoachView extends ItemView {
 
     applyListHeight(currentPercent);
 
+    // SPEC_011: 가로에서는 같은 막대가 영상 열 폭(좌우)을 조절한다(CSS 변수 --ear-coach-landscape-left).
+    const isLandscape = () => window.matchMedia("(orientation: landscape)").matches;
+    let currentLeft = clampLandscapeLeftPercent(
+      this.plugin.settings.mobileLandscapeLeftPercent ?? LANDSCAPE_LEFT_DEFAULT
+    );
+    const applyLeft = (pct: number) => {
+      currentLeft = clampLandscapeLeftPercent(pct);
+      mobileContainer.style.setProperty("--ear-coach-landscape-left", String(currentLeft));
+    };
+    applyLeft(currentLeft);
+    let dragLandscape = false;
+    let containerLeft = 0;
+    let containerW = 0;
+    let latestClientX = 0;
+
     let isDragging = false;
     let startY = 0;
     let startListH = 0;
@@ -393,15 +409,21 @@ export class EarCoachView extends ItemView {
         window.cancelAnimationFrame(pendingRaf);
         pendingRaf = null;
       }
-      this.plugin.settings.mobileListHeightPercent = currentPercent;
+      if (dragLandscape) this.plugin.settings.mobileLandscapeLeftPercent = currentLeft;
+      else this.plugin.settings.mobileListHeightPercent = currentPercent;
       await this.plugin.saveSettings();
     };
 
-    const scheduleUpdate = (clientY: number) => {
+    const scheduleUpdate = (clientY: number, clientX: number) => {
       latestClientY = clientY;
+      latestClientX = clientX;
       if (pendingRaf !== null) return;
       pendingRaf = window.requestAnimationFrame(() => {
         pendingRaf = null;
+        if (dragLandscape) {
+          applyLeft(landscapeLeftPercentFromPointer(latestClientX, containerLeft, containerW));
+          return;
+        }
         const deltaY = startY - latestClientY;
         const nextListH = startListH + deltaY;
         const rawPct = (nextListH / Math.max(200, containerH)) * 100;
@@ -412,6 +434,10 @@ export class EarCoachView extends ItemView {
     resizerEl.addEventListener("pointerdown", (ev: PointerEvent) => {
       ev.preventDefault();
       isDragging = true;
+      dragLandscape = isLandscape();
+      const cRect = mobileContainer.getBoundingClientRect();
+      containerLeft = cRect.left;
+      containerW = cRect.width || window.innerWidth;
       startY = ev.clientY;
       startListH = listWrapper.getBoundingClientRect().height;
       containerH =
@@ -427,7 +453,7 @@ export class EarCoachView extends ItemView {
     resizerEl.addEventListener("pointermove", (ev: PointerEvent) => {
       if (!isDragging) return;
       ev.preventDefault();
-      scheduleUpdate(ev.clientY);
+      scheduleUpdate(ev.clientY, ev.clientX);
     });
 
     resizerEl.addEventListener("pointerup", () => {
@@ -437,10 +463,15 @@ export class EarCoachView extends ItemView {
       void commitResize();
     });
 
-    // Double-tap / double-click resets cleanly to 50%
+    // Double-tap / double-click resets cleanly to 50% (가로는 58%)
     resizerEl.addEventListener("dblclick", async () => {
-      applyListHeight(50);
-      this.plugin.settings.mobileListHeightPercent = 50;
+      if (isLandscape()) {
+        applyLeft(LANDSCAPE_LEFT_DEFAULT);
+        this.plugin.settings.mobileLandscapeLeftPercent = LANDSCAPE_LEFT_DEFAULT;
+      } else {
+        applyListHeight(50);
+        this.plugin.settings.mobileListHeightPercent = 50;
+      }
       await this.plugin.saveSettings();
     });
   }

@@ -25,6 +25,7 @@ import {
   formatLayoutDiagMarkdown,
   summarizeLayoutDiag,
 } from "../src/utils/layoutDiagnostics.ts";
+import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -294,6 +295,18 @@ async function runAllTests() {
       log(`  -> PASS: ${f} ${tag}`);
     }
   }
+  log("");
+
+  log("[Test 9] Landscape split ratio: clamp & pointer → percent (data-driven, SPEC_011)");
+  const splitCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/landscape-split/cases.json"), "utf8"));
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.mobileLandscapeLeftPercent, 58, "landscape left default 58");
+  for (const k of splitCases.clamp) {
+    assert.equal(clampLandscapeLeftPercent(k.in), k.out, `clamp ${JSON.stringify(k.in)}`);
+  }
+  for (const k of splitCases.pointer) {
+    assert.equal(landscapeLeftPercentFromPointer(k.clientX, k.left, k.width), k.out, `pointer x=${k.clientX} left=${k.left} w=${k.width}`);
+  }
+  log(`  -> PASS: ${splitCases.clamp.length + splitCases.pointer.length} landscape-split cases`);
   log("");
 
   log("==============================================================");
