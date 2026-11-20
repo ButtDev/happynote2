@@ -19,14 +19,15 @@
         "visible": [
           ".view-header",
           ".mobile-navbar",
-          ".ear-coach-cc-btn"
+          ".ear-coach-overlay-btn"
         ],
         "activeCardNoShift": 0.5,
         "sameHeight": [
           ".ear-coach-time-btn",
           ".ear-coach-mini-btn"
         ],
-        "videoCrop": 40
+        "videoCrop": 40,
+        "overlayToggle": ".ear-coach-overlay-btn"
       }
     },
     {
@@ -81,8 +82,9 @@
         ],
         "videoCrop": 40,
         "visible": [
-          ".ear-coach-cc-btn"
-        ]
+          ".ear-coach-overlay-btn"
+        ],
+        "overlayToggle": ".ear-coach-overlay-btn"
       }
     }
   ],

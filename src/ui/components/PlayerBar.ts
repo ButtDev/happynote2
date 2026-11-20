@@ -1,6 +1,6 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform.ts";
-import { buildCaptionsCommand, buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
+import { buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 
 export interface PlayerBarCallbacks {
   onTimeUpdate: (currentTimeSec: number) => void;
@@ -28,8 +28,10 @@ export class PlayerBar {
   private ytPlayer: any = null;
   private playerMountEl: HTMLElement | null = null;
   private statusLabelEl: HTMLElement | null = null;
-  private ccBtnEl: HTMLButtonElement | null = null;
-  private captionsOn = true; // mobile default: cc_load_policy=1 (SPEC_008)
+  private videoBoxEl: HTMLElement | null = null;
+  private overlayBtnEl: HTMLButtonElement | null = null;
+  private ytOverlayOn = false; // mobile: YouTube native controls/overlay hidden by default (SPEC_009)
+  private pendingAutoplay = true;
   private loopBtnEl: HTMLButtonElement | null = null;
   private currentVideoId = "";
   private containerId = "";
@@ -91,6 +93,7 @@ export class PlayerBar {
     this.containerEl.addClass("ear-coach-player-wrapper");
 
     const videoBox = this.containerEl.createDiv({ cls: "ear-coach-video-box" });
+    this.videoBoxEl = videoBox;
     this.thumbnailEl = videoBox.createDiv({ cls: "ear-coach-video-thumbnail" });
     this.thumbnailEl.style.backgroundImage = `url("https://i.ytimg.com/vi/${videoId}/hqdefault.jpg")`;
     this.thumbnailEl.createDiv({
@@ -142,14 +145,14 @@ export class PlayerBar {
       speedButtons.push(btn);
     }
 
-    // Captions toggle (mobile only — YouTube native controls are hidden there, SPEC_008)
+    // YouTube overlay toggle (mobile only — native controls are hidden there by default, SPEC_009)
     if (mobile) {
-      this.ccBtnEl = controlsBar.createEl("button", {
-        cls: `ear-coach-btn ear-coach-cc-btn ${this.captionsOn ? "is-active" : ""}`,
-        text: "CC",
-        attr: { "aria-pressed": String(this.captionsOn), "aria-label": "자막 켜기/끄기" },
+      this.overlayBtnEl = controlsBar.createEl("button", {
+        cls: "ear-coach-btn ear-coach-overlay-btn",
+        text: "YT",
+        attr: { "aria-pressed": "false", "aria-label": "유튜브 오버레이 켜기/끄기", title: "유튜브 오버레이 켜기/끄기" },
       });
-      this.ccBtnEl.addEventListener("click", () => this.setCaptions(!this.captionsOn));
+      this.overlayBtnEl.addEventListener("click", () => this.setYouTubeOverlay(!this.ytOverlayOn));
     }
 
     this.statusLabelEl = controlsBar.createDiv({
@@ -199,7 +202,7 @@ export class PlayerBar {
     }
 
     if (this.iframeEl) {
-      this.iframeEl.src = buildYouTubeEmbedUrl(videoId, window.location.origin || "https://www.youtube.com", isMobileApp());
+      this.iframeEl.src = buildYouTubeEmbedUrl(videoId, window.location.origin || "https://www.youtube.com", isMobileApp(), this.ytOverlayOn);
     }
   }
 
@@ -217,8 +220,9 @@ export class PlayerBar {
         const sec = this.pendingStartSec;
         this.pendingStartSec = null;
         this.seekTo(sec);
-        this.play();
+        if (this.pendingAutoplay) this.play();
       }
+      this.pendingAutoplay = true;
     };
 
     if (window.YT && window.YT.Player) {
@@ -227,7 +231,7 @@ export class PlayerBar {
           width: "100%",
           height: "100%",
           videoId,
-          playerVars: buildYouTubeEmbedParams(window.location.origin, mobile),
+          playerVars: buildYouTubeEmbedParams(window.location.origin, mobile, this.ytOverlayOn),
           events: {
             onReady: () => onPlayerInitialized(),
             onStateChange: (ev: any) => {
@@ -244,7 +248,7 @@ export class PlayerBar {
       this.iframeEl = this.playerMountEl.createEl("iframe", {
         cls: "ear-coach-youtube-iframe",
         attr: {
-          src: buildYouTubeEmbedUrl(videoId, origin, mobile),
+          src: buildYouTubeEmbedUrl(videoId, origin, mobile, this.ytOverlayOn),
           allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
           allowfullscreen: "true",
         },
@@ -270,6 +274,7 @@ export class PlayerBar {
     const startSec = Math.max(0, segment.start - 0.12);
     if (!this.isEmbedLoaded) {
       this.pendingStartSec = startSec;
+      this.pendingAutoplay = true;
       if (this.mountTimeoutId !== null) {
         window.clearTimeout(this.mountTimeoutId);
         this.mountTimeoutId = null;
@@ -351,20 +356,35 @@ export class PlayerBar {
     }
   }
 
-  public setCaptions(on: boolean): void {
-    this.captionsOn = on;
-    this.ccBtnEl?.toggleClass("is-active", on);
-    this.ccBtnEl?.setAttr("aria-pressed", String(on));
-    const cmd = buildCaptionsCommand(on);
+  /**
+   * SPEC_009: show/hide YouTube's own controls & overlay on mobile.
+   * `controls` is a load-time player parameter, so the player is rebuilt at the current time.
+   */
+  public setYouTubeOverlay(on: boolean): void {
+    if (this.ytOverlayOn === on) return;
+    this.ytOverlayOn = on;
+    this.overlayBtnEl?.toggleClass("is-active", on);
+    this.overlayBtnEl?.setAttr("aria-pressed", String(on));
+    this.containerEl.toggleClass("is-yt-overlay", on);
+    if (!this.isEmbedLoaded || !this.videoBoxEl) return;
+
+    const resumeAt = this.getEffectiveCurrentTime();
+    const wasPlaying = this.isPlaying;
     try {
-      if (this.ytPlayer && typeof this.ytPlayer[cmd.func] === "function") {
-        this.ytPlayer[cmd.func](...cmd.args);
-      } else {
-        this.sendCommand(cmd.func, cmd.args);
-      }
+      this.ytPlayer?.destroy();
     } catch {
-      // Ignore: captions module may be unavailable for this video
+      // Ignore
     }
+    this.ytPlayer = null;
+    this.iframeEl = null;
+    this.videoBoxEl.querySelector(`#${this.containerId}`)?.remove();
+    this.playerMountEl = this.videoBoxEl.createDiv({ attr: { id: this.containerId } });
+    this.isEmbedLoaded = false;
+    this.isPlaying = false;
+    this.hasReportedYtTime = false;
+    this.pendingStartSec = resumeAt > 0.5 ? resumeAt : null;
+    this.pendingAutoplay = wasPlaying;
+    this.mountYouTubeEmbed(this.currentVideoId, this.containerId);
   }
 
   public togglePlayPause(): void {

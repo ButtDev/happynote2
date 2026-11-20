@@ -135,36 +135,34 @@ export function generateBookmarkletCode(): string {
 }
 
 /**
- * YouTube embed player parameters (SPEC_007).
- * Mobile hides YouTube's own controls/overlays because Ear-Coach has its own controls.
+ * YouTube embed player parameters (SPEC_007, SPEC_009).
+ * Mobile hides YouTube's own controls/overlays because Ear-Coach has its own controls,
+ * unless the user turned the YouTube overlay back on (`ytOverlay`).
  */
-export function buildYouTubeEmbedParams(origin: string, mobile: boolean): Record<string, string | number> {
+export function buildYouTubeEmbedParams(origin: string, mobile: boolean, ytOverlay = false): Record<string, string | number> {
   const params: Record<string, string | number> = {
     enablejsapi: 1,
     rel: 0,
     modestbranding: 1,
     playsinline: 1,
   };
-  if (mobile) {
+  if (mobile && !ytOverlay) {
     params.controls = 0;
     params.iv_load_policy = 3;
     params.fs = 0;
     params.disablekb = 1;
+  }
+  if (mobile) {
     params.cc_load_policy = 1;
   }
   params.origin = origin;
   return params;
 }
 
-export function buildYouTubeEmbedUrl(videoId: string, origin: string, mobile: boolean): string {
-  const params = buildYouTubeEmbedParams(origin, mobile);
+export function buildYouTubeEmbedUrl(videoId: string, origin: string, mobile: boolean, ytOverlay = false): string {
+  const params = buildYouTubeEmbedParams(origin, mobile, ytOverlay);
   const query = Object.entries(params)
     .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
     .join("&");
   return `https://www.youtube.com/embed/${videoId}?${query}&widget_referrer=${encodeURIComponent(origin)}`;
-}
-
-/** YouTube IFrame API command to show/hide captions (SPEC_008). */
-export function buildCaptionsCommand(on: boolean): { func: string; args: string[] } {
-  return { func: on ? "loadModule" : "unloadModule", args: ["captions"] };
 }

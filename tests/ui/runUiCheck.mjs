@@ -144,6 +144,15 @@ function evaluateExpect(vp, m, nums) {
     const ok = p && v && v.y - p.y >= e.videoCrop && bottom(p) - bottom(v) >= e.videoCrop && p.x === v.x && p.w === v.w;
     add("videoCrop", ok, `player=${JSON.stringify(p)} box=${JSON.stringify(v)} >= ${e.videoCrop}`);
   }
+  if (e.overlayToggle !== undefined) {
+    const t = m.overlayToggle;
+    const crop = (x) => x && x.box && x.player ? x.box.y - x.player.y : null;
+    const ok =
+      t && t.on && t.off &&
+      t.on.active === true && crop(t.on) === 0 && t.on.player.h === t.on.box.h && !String(t.on.src).includes("controls=0") &&
+      t.off.active === false && crop(t.off) >= (e.videoCrop ?? 40) && String(t.off.src).includes("controls=0");
+    add("overlayToggle", !!ok, JSON.stringify(t));
+  }
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
     const tol = e.videoAspectTolerance ?? 0.03;
@@ -280,6 +289,40 @@ for (const vp of cases.viewports) {
     const player = playerEl ? rectOf(playerEl) : null;
     return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, player };
   }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
+
+  // SPEC_009: YT 버튼을 누르면 플레이어를 다시 만들고 자르기를 푼다, 다시 누르면 원래대로.
+  m.overlayToggle = null;
+  if (vp.expect?.overlayToggle) {
+    const measure = () =>
+      page.evaluate((btnSel) => {
+        const box = document.querySelector(".ear-coach-video-box");
+        const pl = box?.querySelector(':scope > [id^="ear-coach-player-"]');
+        const btn = document.querySelector(btnSel);
+        const r = (el) => {
+          const b = el.getBoundingClientRect();
+          return { y: Math.round(b.y), h: Math.round(b.height) };
+        };
+        return {
+          box: box ? r(box) : null,
+          player: pl ? r(pl) : null,
+          tag: pl ? pl.tagName.toLowerCase() : null,
+          src: pl?.getAttribute("src") ?? pl?.querySelector("iframe")?.getAttribute("src") ?? null,
+          active: btn ? btn.classList.contains("is-active") : null,
+        };
+      }, vp.expect.overlayToggle);
+    const btn = page.locator(vp.expect.overlayToggle).first();
+    if ((await btn.count()) === 0) {
+      m.overlayToggle = { error: "button missing" };
+    } else {
+      await btn.click();
+      await page.waitForTimeout(800);
+      const on = await measure();
+      await btn.click();
+      await page.waitForTimeout(800);
+      const off = await measure();
+      m.overlayToggle = { on, off };
+    }
+  }
 
   m.diag = vp.expect?.diag
     ? await page.evaluate(() => {

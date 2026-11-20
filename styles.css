@@ -1090,20 +1090,21 @@
 
 /* 유튜브 플레이어를 위아래 56px씩 키워 상자 밖(overflow hidden)으로 제목줄·하단 띠를 보냄.
    16:9 영상은 폭에 맞춰 가운데 그려지므로 영상 자체는 잘리지 않는다. */
-.ear-coach-mobile-top-player .ear-coach-video-box > [id^="ear-coach-player-"] {
+/* SPEC_009: 유튜브 오버레이를 켜면(.is-yt-overlay) 자르지 않는다. */
+.ear-coach-mobile-top-player .ear-coach-player-wrapper:not(.is-yt-overlay) .ear-coach-video-box > [id^="ear-coach-player-"] {
   top: -56px !important;
   height: calc(100% + 112px) !important;
 }
 
-/* SPEC_008: 모바일 자막(CC) 토글 — 켜짐은 채움, 꺼짐은 테두리만 */
-.ear-coach-mobile-top-player .ear-coach-cc-btn {
+/* SPEC_009: 모바일 유튜브 오버레이(YT) 토글 — 켜짐은 채움, 꺼짐은 테두리만 (SPEC_008 CC 버튼 자리) */
+.ear-coach-mobile-top-player .ear-coach-overlay-btn {
   font-weight: 700;
   letter-spacing: 0.04em;
   background-color: transparent;
   color: var(--text-muted);
 }
 
-.ear-coach-mobile-top-player .ear-coach-cc-btn.is-active {
+.ear-coach-mobile-top-player .ear-coach-overlay-btn.is-active {
   background-color: var(--text-normal);
   border-color: var(--text-normal);
   color: var(--background-primary);

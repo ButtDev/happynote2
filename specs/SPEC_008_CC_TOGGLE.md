@@ -1,7 +1,7 @@
 ---
 id: SPEC_008
 title: 모바일 자막(CC) 켜기·끄기 버튼
-status: IMPLEMENTED
+status: DROPPED
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -48,3 +48,4 @@ SPEC_007(1.0.8)에서 모바일 유튜브 기본 컨트롤을 끄자 화면은 �
 
 ## 실행 기록
 - 2026-11-20 회차 1: IMPLEMENTED — 1 ✅ Test 8 `PASS: captions.json on=true/false`, `params.json mobile=true`(cc_load_policy=1)/`false`(없음) · 2 ✅ ui `visible:.ear-coach-cc-btn` 세로·가로, 가로 controls 34 ≤ 44, `noOverflowX` 500 ≤ 500, 나머지 규칙 ok · 3 ✅ 변이(끄기도 loadModule) → `AssertionError on=false` exit 1 · 4 ✅ landscape.png: [재생][루프 OFF][배속 세그먼트][CC 채움 알약] ··· 00:00 한 줄 · 5 ✅ `verify --set regression` → `verify: ok` · 6 ⏳ 실기기(자막이 위아래 56px 자르기에 가려지는지 포함)
+- 2026-11-20 사람확인(회차 셈 없음): 6 NG 「Cc 동작안함, 차라리 overlay on/off 버튼이 유용하겠네」 → CC 버튼 제거, SPEC_009(YT 오버레이 버튼)로 대체. DROPPED.
