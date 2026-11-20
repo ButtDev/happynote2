@@ -3,11 +3,11 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.22**. 가로모드(SPEC_002~012)·사전(SPEC_013·014)·Anki 저장(SPEC_015·016) 모두 DONE — 다시 열지 않음.
-- 다음: **SPEC_017 영상 스냅샷 → Anki 카드 그림** 초안(`/spec-new`). `picture` 역할은 이미 있음(기본 대응 Front, 지금은 빈 값). 그 뒤 후보는 `memory/backlog.md`.
+- 최신 배포 BRAT **1.0.23**(SPEC_017). 가로모드(SPEC_002~012)·사전(SPEC_013·014)·Anki 저장(SPEC_015·016) 모두 DONE — 다시 열지 않음.
+- **SPEC_017 장면 그림 IMPLEMENTED** — ⏳ 9 실기기 카드 앞면 그림 확인 대기. 다음 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- 없음. SPEC_017 초안에서 물을 것: 그림을 어디서 얻을지(유튜브 iframe은 교차 출처라 픽셀 캡처 불가 — 썸네일 `i.ytimg.com` 등 대안)·카드 앞면에 넣을지.
+- SPEC_017 9 ⏳ (그림 320×180이 작다고 하면 더 큰 출처는 SPEC 범위 밖 — 새 SPEC).
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록. 같은 확인을 두 SPEC에 쓸 땐 보고에 미리 적어 둠.
 
 ## 주의
@@ -22,3 +22,4 @@
 - Playwright 직접 스크립트는 `chromium.launch({ channel: "chrome" })`로(번들 Chromium 미설치).
 - AnkiConnect Android: `createDeck`·`createModel` 없음(지원: version·deckNames·modelNames·modelFieldNames·findNotes·canAddNotes·addNote(audio/picture url·data)·storeMediaFile·notesInfo·updateNoteFields·guiBrowse·multi). CORS 헤더 없음 → `requestUrl`로.
 - Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). AnkiConnect Android는 외부 미디어 url(upload.wikimedia.org)을 못 받음 — 그림도 data(base64)로 보낼 것 → `inlineAudio`로 requestUrl 받아 data(base64). 실기기 AnkiDroid엔 「Default」 덱이 없을 수 있음 → `resolveAnkiTarget`이 저장 전에 확인·안내. 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.
+- 장면 그림(SPEC_017): `src/services/storyboard.ts`(스펙 파싱·칸 계산, Test 13 + `tests/fixtures/storyboard/` 실제 스펙, 변이용 `EAR_COACH_STORYBOARD_MODULE`), 자르기 `src/ui/snapshot.ts`(캔버스, requestUrl 바이트라 오염 없음), `plugin.storyboard(videoId)` 시청 페이지 L3 320×180 → Android innertube L2 160×90. 저장 순서 deckNames→modelNames→modelFieldNames→storeMediaFile→canAddNotes→addNote, Front에 `<img>`. 실제 스토리보드 격자는 모두 정사각(3×3·5×5·10×10) — 열/행 시험엔 비정사각 사례 필요. 화면 검사 합성 시트 `tests/ui/fixtures/storyboard-sheet.png`(esbuild binary 로더 + `tests/ui/png.d.ts`).

@@ -36,7 +36,8 @@
           "title": "go to"
         },
         "anki": {
-          "tap": "going"
+          "tap": "going",
+          "picture": { "filename": "ear-coach-uiCheck0001-4.jpg", "width": 320, "height": 180, "sheet": "storyboard3_L0/M0.jpg", "rgb": [32, 64, 208] }
         }
       }
     },
@@ -99,7 +100,8 @@
           "title": "go to"
         },
         "anki": {
-          "tap": "going"
+          "tap": "going",
+          "picture": { "filename": "ear-coach-uiCheck0001-4.jpg", "width": 320, "height": 180, "sheet": "storyboard3_L0/M0.jpg", "rgb": [32, 64, 208] }
         }
       }
     }

@@ -2,7 +2,7 @@ import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
-import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
+import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote, snapshotFilename, storeSnapshot } from "../services/anki";
 
 /** SPEC_015: 사전 창에서 Anki 카드를 만들 때 필요한 자막·영상 정보와 클라이언트 */
 export interface DictionaryAnkiContext {
@@ -14,6 +14,10 @@ export interface DictionaryAnkiContext {
   videoId: string | null;
   videoTitle: string | null;
   startSec: number;
+  /** SPEC_017: 자막 문장 끝 시각(장면 = 문장 가운데) */
+  endSec?: number | null;
+  /** SPEC_017: 영상·시각 → 장면 그림 JPEG base64(없으면 null) */
+  snapshot?: ((videoId: string, sec: number) => Promise<string | null>) | null;
 }
 
 /**
@@ -139,6 +143,15 @@ export class DictionaryModal extends Modal {
           btn.disabled = false;
           return;
         }
+        // SPEC_017: 문장 가운데 장면 → storeMediaFile → 앞면 그림(실패면 그림 없이)
+        let pictureFilename: string | null = null;
+        const videoId = ctx.videoId;
+        const snap = ctx.snapshot;
+        if (videoId && snap) {
+          const end = ctx.endSec ?? null;
+          const sec = end !== null && end > ctx.startSec ? (ctx.startSec + end) / 2 : ctx.startSec;
+          pictureFilename = await storeSnapshot(ctx.client, () => snap(videoId, sec), snapshotFilename(videoId, sec));
+        }
         const note = buildAnkiNote(
           {
             word: entry.word,
@@ -150,11 +163,12 @@ export class DictionaryModal extends Modal {
             videoId: ctx.videoId,
             videoTitle: ctx.videoTitle,
             startSec: ctx.startSec,
+            pictureFilename,
           },
           target.settings
         );
         const r = await addNoteIfNew(ctx.client, note, (n) => inlineAudio(n, ctx.fetchBytes));
-        show(ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
+        show(r === "added" && !pictureFilename ? ANKI_MESSAGES.addedNoPicture : ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
       } catch (e) {
         show(ankiStatusMessage(e), "is-error");
         btn.disabled = false;

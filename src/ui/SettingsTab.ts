@@ -8,7 +8,7 @@ import { ANKI_MESSAGES, ANKI_ROLES, AnkiConnectError, AnkiRole, remapFieldsForMo
 /** SPEC_015: 필드 대응 화면에 보일 역할 이름 */
 const ANKI_ROLE_LABELS: Record<AnkiRole, string> = {
   sentence: "문장(빈칸)",
-  picture: "그림(영상 스냅샷, 준비 중)",
+  picture: "그림(영상 장면)",
   meaning: "영어 뜻",
   word: "단어",
   ipa: "발음기호",

@@ -35,7 +35,7 @@ const bundle = await esbuild.build({
   format: "iife",
   target: "es2022",
   alias: { obsidian: stubPath },
-  loader: { ".json": "json" },
+  loader: { ".json": "json", ".png": "binary" },
   define: { __INLINE_WORKER_CODE__: '""' },
   logLevel: "silent",
 });
@@ -126,11 +126,17 @@ function evaluateExpect(vp, m, nums) {
   if (e.anki) {
     const a = m.anki?.added;
     const d = m.anki?.dup;
-    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.deckName === "happynote2" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]);
-    const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
+    // SPEC_017: 장면 그림 — storeMediaFile 뒤 Front에 <img>, 풀면 칸 크기·기대 칸 색
+    const pe = e.anki.picture;
+    const pic = a?.picture;
+    const okPicture = !!pe && !!pic && !pic.error && pic.filename === pe.filename && pic.w === pe.width && pic.h === pe.height && pic.rgb.every((v, i) => Math.abs(v - pe.rgb[i]) <= 24) && a.sbUrls?.length === 1 && a.sbUrls[0].includes(pe.sheet) && (a.note?.fields?.Front ?? "").includes(`<img src="${pe.filename}">`);
+    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.deckName === "happynote2" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]) && okPicture;
+    const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
+    const np = m.anki?.noPic;
+    const okNoPic = !!np && !np.error && JSON.stringify(np.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && np.status === "Anki에 저장했습니다 (그림 없음)" && !(np.note?.fields?.Front ?? "").includes("<img");
     const n = m.anki?.noDeck;
     const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
-    add("anki", okAdded && okDup && okNoDeck, JSON.stringify(m.anki));
+    add("anki", okAdded && okDup && okNoDeck && okNoPic, JSON.stringify({ okAdded, okPicture, okDup, okNoDeck, okNoPic, ...m.anki }));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
@@ -481,14 +487,17 @@ for (const vp of cases.viewports) {
   m.anki = null;
   if (vp.expect?.anki) {
     const tapWord = vp.expect.anki.tap;
-    const run = async (duplicate, decks = null) =>
+    const run = async (duplicate, decks = null, noStoryboard = false) =>
       page.evaluate(
-        async ({ tapWord, duplicate, decks }) => {
+        async ({ tapWord, duplicate, decks, noStoryboard }) => {
           const wait = (ms) => new Promise((r) => setTimeout(r, ms));
           window.__ankiCalls = [];
           window.__ankiNotes = [];
+          window.__ankiMedia = [];
+          window.__sbUrls = [];
           window.__ankiDuplicate = duplicate;
           window.__ankiDecks = decks ?? undefined;
+          window.__storyboardNone = noStoryboard;
           const script = document.querySelector(".ear-coach-segment-card .ear-coach-full-script");
           if (!script) return { error: "full-script missing" };
           const target = [...script.querySelectorAll(".ear-coach-word")].find((w) => w.textContent === tapWord);
@@ -502,15 +511,36 @@ for (const vp of cases.viewports) {
           wordBtn.click();
           await wait(300);
           const status = [...modal.querySelectorAll(".ear-coach-dict-anki-status")].find((e) => e.style.display !== "none");
+          // SPEC_017: 저장한 그림을 풀어 크기·가운데 색
+          let picture = null;
+          const media = window.__ankiMedia[0];
+          if (media?.data) {
+            picture = await new Promise((resolve) => {
+              const img = new Image();
+              img.onload = () => {
+                const c = document.createElement("canvas");
+                c.width = img.naturalWidth;
+                c.height = img.naturalHeight;
+                const x = c.getContext("2d");
+                x.drawImage(img, 0, 0);
+                const px = x.getImageData(Math.floor(c.width / 2), Math.floor(c.height / 2), 1, 1).data;
+                resolve({ filename: media.filename, w: img.naturalWidth, h: img.naturalHeight, rgb: [px[0], px[1], px[2]] });
+              };
+              img.onerror = () => resolve({ filename: media.filename, error: "decode failed" });
+              img.src = `data:image/jpeg;base64,${media.data}`;
+            });
+          }
           return {
             phraseBtn: phraseBtn?.textContent ?? null,
             wordBtn: wordBtn.textContent,
             calls: window.__ankiCalls,
             status: status?.textContent ?? null,
             note: window.__ankiNotes[0] ?? null,
+            sbUrls: window.__sbUrls,
+            picture,
           };
         },
-        { tapWord, duplicate, decks }
+        { tapWord, duplicate, decks, noStoryboard }
       );
     const added = await run(false);
     await page.screenshot({ path: path.join(outDir, `anki-${vp.name}.png`) });
@@ -521,7 +551,10 @@ for (const vp of cases.viewports) {
     const noDeck = await run(false, ["기본"]);
     await page.screenshot({ path: path.join(outDir, `anki-nodeck-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
-    m.anki = { added, dup, noDeck };
+    // SPEC_017: 스토리보드가 없으면 그림 없이 저장 + 문구
+    const noPic = await run(false, null, true);
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+    m.anki = { added, dup, noDeck, noPic };
   }
 
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);

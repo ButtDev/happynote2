@@ -10,6 +10,8 @@ import { parseDictionaryApiDev } from "../../src/services/dictionary.ts";
 import { PlayerBar } from "../../src/ui/components/PlayerBar.ts";
 import helloDict from "../fixtures/dictionary/hello.json";
 import phraseDict from "../fixtures/dictionary/look-forward-to.json";
+// SPEC_017: 합성 스토리보드 시트(960×540, 3×3 색 칸)
+import storyboardSheet from "./fixtures/storyboard-sheet.png";
 
 declare global {
   interface Window {
@@ -41,7 +43,19 @@ async function main(): Promise<void> {
     weaknessTracker: { recordWeakSegment: async () => {} },
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
     // SPEC_015 회차 2: 발음 바이트(가짜, 3바이트)
-    fetchBytes: async () => new Uint8Array([1, 2, 3]).buffer,
+    // SPEC_017: 스토리보드 시트 주소면 합성 시트 바이트
+    fetchBytes: async (url: string) => {
+      if (url.includes("/sb/")) {
+        (window as any).__sbUrls = [...((window as any).__sbUrls ?? []), url];
+        return (storyboardSheet as Uint8Array).slice().buffer;
+      }
+      return new Uint8Array([1, 2, 3]).buffer;
+    },
+    // SPEC_017: 가짜 스토리보드 스펙(L0 3×3 2초), window.__storyboardNone이면 없음
+    storyboard: async (videoId: string) =>
+      (window as any).__storyboardNone
+        ? null
+        : { spec: `https://i.ytimg.com/sb/${videoId}/storyboard3_L$L/$N.jpg?sqp=x|320#180#9#3#3#2000#M$M#sig`, durationSec: 60 },
     // SPEC_015: 가짜 AnkiConnect — 호출 기록, window.__ankiDuplicate면 canAddNotes가 false
     anki: {
       invoke: async (action: string, params?: any) => {
@@ -51,6 +65,10 @@ async function main(): Promise<void> {
         if (action === "modelNames") return ["Basic (and reversed card)"];
         if (action === "modelFieldNames") return ["Front", "Back"];
         if (action === "canAddNotes") return [!w.__ankiDuplicate];
+        if (action === "storeMediaFile") {
+          w.__ankiMedia = [...(w.__ankiMedia ?? []), params];
+          return params?.filename;
+        }
         if (action === "addNote") {
           w.__ankiNotes = [...(w.__ankiNotes ?? []), params?.note];
           return 1700000000000;

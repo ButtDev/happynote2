@@ -14,6 +14,7 @@ export const ANKI_MESSAGES = {
   button: "➕ Anki",
   saving: "Anki에 저장 중…",
   added: "Anki에 저장했습니다",
+  addedNoPicture: "Anki에 저장했습니다 (그림 없음)",
   duplicate: "이미 Anki에 있는 카드입니다",
   connection: "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요",
   noSettings: "설정에서 Anki 덱·노트 타입을 골라 주세요",
@@ -40,6 +41,8 @@ export interface AnkiNoteInput {
   videoId?: string | null;
   videoTitle?: string | null;
   startSec?: number | null;
+  /** SPEC_017: storeMediaFile로 넣은 장면 그림 파일 이름(없으면 그림 없음) */
+  pictureFilename?: string | null;
 }
 
 export interface AnkiNote {
@@ -141,7 +144,37 @@ function audioFilename(word: string, url: string): string {
   return `ear-coach-${slug}.${ext}`;
 }
 
-/** 역할별 HTML 값(audio는 빈 값 — AnkiConnect가 [sound:]를 붙인다, picture는 SPEC_016). */
+/** SPEC_017: 장면 그림 파일 이름 */
+export function snapshotFilename(videoId: string, sec: number): string {
+  const id = String(videoId ?? "").replace(/[^A-Za-z0-9_-]/g, "-") || "video";
+  return `ear-coach-${id}-${Math.max(0, Math.floor(Number.isFinite(sec) ? sec : 0))}.jpg`;
+}
+
+/**
+ * SPEC_017: 장면 그림을 Anki 미디어에 넣고 실제 이름을 돌려준다.
+ * 데이터가 없으면 호출 없이 null, storeMediaFile 오류면 null(그림 없이 저장).
+ */
+export async function storeSnapshot(
+  client: AnkiInvoker,
+  getData: () => Promise<string | null>,
+  filename: string
+): Promise<string | null> {
+  let data: string | null = null;
+  try {
+    data = await getData();
+  } catch {
+    data = null;
+  }
+  if (!data) return null;
+  try {
+    const r = await client.invoke("storeMediaFile", { filename, data });
+    return typeof r === "string" && r ? r : filename;
+  } catch {
+    return null;
+  }
+}
+
+/** 역할별 HTML 값(audio는 빈 값 — AnkiConnect가 [sound:]를 붙인다, picture는 SPEC_017 <img>). */
 export function ankiRoleValues(input: AnkiNoteInput): Record<AnkiRole, string> {
   const meaning = input.meanings
     .map((m) => `<i>${escapeHtml(m.partOfSpeech)}</i> ${escapeHtml(m.definition)}`)
@@ -157,7 +190,7 @@ export function ankiRoleValues(input: AnkiNoteInput): Record<AnkiRole, string> {
     audio: "",
     meaning,
     sentence: escapeHtml(clozeSentence(input.sentence ?? "", input.word, input.tapped)),
-    picture: "",
+    picture: input.pictureFilename ? `<img src="${escapeHtml(input.pictureFilename)}">` : "",
     source,
   };
 }

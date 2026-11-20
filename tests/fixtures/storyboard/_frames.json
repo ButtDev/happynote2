@@ -1,0 +1,147 @@
+{
+  "cases": [
+    {
+      "note": "0초 = 첫 시트 첫 칸(L3)",
+      "spec": "watch",
+      "sec": 0,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M0.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "17.9초 = 첫 시트 마지막 칸",
+      "spec": "watch",
+      "sec": 17.9,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M0.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 640,
+        "y": 360,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "18초 = 둘째 시트 첫 칸(시트 경계)",
+      "spec": "watch",
+      "sec": 18,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M1.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "25초 = 둘째 시트 4번째 칸(둘째 줄 첫 칸)",
+      "spec": "watch",
+      "sec": 25,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M1.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 0,
+        "y": 180,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "끝 넘김 = 마지막 칸(idx 107)",
+      "spec": "watch",
+      "sec": 999,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M11.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 640,
+        "y": 360,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "음수 = 0초",
+      "spec": "watch",
+      "sec": -5,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L3/M0.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLCHZGerbRu0IiBb-AIyubx5_-E4oQ",
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 180,
+        "level": 3
+      }
+    },
+    {
+      "note": "Android 스펙은 L2 160x90 5x5",
+      "spec": "android",
+      "sec": 25,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L2/M0.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLClA1jTU48sHENDTij_c2ZcE493TQ",
+        "x": 320,
+        "y": 180,
+        "width": 160,
+        "height": 90,
+        "level": 2
+      }
+    },
+    {
+      "note": "간격 0 단(L0)만 + 길이 213 → 간격 2130ms",
+      "spec": "watchL0",
+      "sec": 50,
+      "durationSec": 213,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/dQw4w9WgXcQ/storyboard3_L0/default.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgjXxPfBBg==&sigh=rs$AOn4CLDgtWGAnaqZZSEHsiFathAqjUlfLQ",
+        "x": 144,
+        "y": 54,
+        "width": 48,
+        "height": 27,
+        "level": 0
+      }
+    },
+    {
+      "note": "간격 0 단만 + 길이 없음 → null",
+      "spec": "watchL0",
+      "sec": 50,
+      "expect": null
+    },
+    {
+      "note": "빈 스펙 → null",
+      "spec": "",
+      "sec": 3,
+      "expect": null
+    },
+    {
+      "note": "5열×2행 시트(정사각 아님) 7초 → 둘째 줄 셋째 칸",
+      "spec": "https://i.ytimg.com/sb/v/storyboard3_L$L/$N.jpg|160#90#20#5#2#1000#M$M#s",
+      "sec": 7,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/v/storyboard3_L0/M0.jpg?sigh=s",
+        "x": 320,
+        "y": 90,
+        "width": 160,
+        "height": 90,
+        "level": 0
+      }
+    },
+    {
+      "note": "5열×2행 12초 → 둘째 시트 첫 줄 셋째 칸",
+      "spec": "https://i.ytimg.com/sb/v/storyboard3_L$L/$N.jpg|160#90#20#5#2#1000#M$M#s",
+      "sec": 12,
+      "expect": {
+        "url": "https://i.ytimg.com/sb/v/storyboard3_L0/M1.jpg?sigh=s",
+        "x": 320,
+        "y": 0,
+        "width": 160,
+        "height": 90,
+        "level": 0
+      }
+    }
+  ]
+}

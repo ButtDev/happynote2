@@ -14,6 +14,7 @@ import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
 import { DictionaryApiDevProvider, DictionaryProvider } from "./services/dictionary";
 import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker, migrateAnkiDeck } from "./services/anki";
+import { StoryboardInfo, storyboardFromPlayerResponse, storyboardFromWatchHtml } from "./services/storyboard";
 import { AgyCliService } from "./services/AgyCliService";
 import { NoteGenerator } from "./services/NoteGenerator";
 import { WeaknessTracker } from "./services/WeaknessTracker";
@@ -57,6 +58,48 @@ export default class EarCoachPlugin extends Plugin {
     if (r.status < 200 || r.status >= 300) throw new Error(`HTTP ${r.status}`);
     return r.arrayBuffer;
   };
+  /** SPEC_017: 영상 스토리보드 스펙(시청 페이지 L3 320×180 → Android innertube L2), 영상별 캐시 */
+  private storyboardCache = new Map<string, Promise<StoryboardInfo | null>>();
+  public storyboard = (videoId: string): Promise<StoryboardInfo | null> => {
+    const hit = this.storyboardCache.get(videoId);
+    if (hit) return hit;
+    const p = this.fetchStoryboard(videoId);
+    this.storyboardCache.set(videoId, p);
+    void p.then((v) => {
+      if (!v) this.storyboardCache.delete(videoId);
+    });
+    return p;
+  };
+  private async fetchStoryboard(videoId: string): Promise<StoryboardInfo | null> {
+    const id = encodeURIComponent(videoId);
+    try {
+      const r = await requestUrl({
+        url: `https://www.youtube.com/watch?v=${id}&hl=en`,
+        headers: {
+          "Accept-Language": "en-US,en;q=0.9",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+        throw: false,
+      });
+      const info = r.status === 200 ? storyboardFromWatchHtml(r.text) : null;
+      if (info) return info;
+    } catch {
+      // Android innertube로
+    }
+    try {
+      const r = await requestUrl({
+        url: "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
+        method: "POST",
+        contentType: "application/json",
+        headers: { "User-Agent": "com.google.android.youtube/20.10.38 (Linux; U; Android 11) gzip" },
+        body: JSON.stringify({ context: { client: { clientName: "ANDROID", clientVersion: "20.10.38", hl: "en", gl: "US" } }, videoId }),
+        throw: false,
+      });
+      return r.status === 200 ? storyboardFromPlayerResponse(JSON.parse(r.text)) : null;
+    } catch {
+      return null;
+    }
+  }
   public noteGenerator!: NoteGenerator;
   public weaknessTracker!: WeaknessTracker;
   public bypassOpenInterceptor = false;

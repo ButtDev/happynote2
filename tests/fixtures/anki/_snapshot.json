@@ -1,0 +1,106 @@
+{
+  "comment": "SPEC_017 storeSnapshot: data 없음/있음/다른 이름/오류, snapshotFilename",
+  "store": [
+    {
+      "note": "데이터 없음 → 호출 0, null",
+      "data": null,
+      "reply": "x",
+      "expect": null,
+      "calls": []
+    },
+    {
+      "note": "데이터 → storeMediaFile 1회, 응답 이름",
+      "data": "/9j/AA==",
+      "reply": "ear-coach-v-3.jpg",
+      "expect": "ear-coach-v-3.jpg",
+      "calls": [
+        [
+          "storeMediaFile",
+          {
+            "filename": "ear-coach-v-3.jpg",
+            "data": "/9j/AA=="
+          }
+        ]
+      ]
+    },
+    {
+      "note": "앱이 다른 이름으로 저장 → 그 이름",
+      "data": "/9j/AA==",
+      "reply": "ear-coach-v-3_1.jpg",
+      "expect": "ear-coach-v-3_1.jpg",
+      "calls": [
+        [
+          "storeMediaFile",
+          {
+            "filename": "ear-coach-v-3.jpg",
+            "data": "/9j/AA=="
+          }
+        ]
+      ]
+    },
+    {
+      "note": "응답이 글자가 아님 → 보낸 이름",
+      "data": "/9j/AA==",
+      "reply": null,
+      "expect": "ear-coach-v-3.jpg",
+      "calls": [
+        [
+          "storeMediaFile",
+          {
+            "filename": "ear-coach-v-3.jpg",
+            "data": "/9j/AA=="
+          }
+        ]
+      ]
+    },
+    {
+      "note": "storeMediaFile 오류 → null",
+      "data": "/9j/AA==",
+      "reply": {
+        "throw": "boom"
+      },
+      "expect": null,
+      "calls": [
+        [
+          "storeMediaFile",
+          {
+            "filename": "ear-coach-v-3.jpg",
+            "data": "/9j/AA=="
+          }
+        ]
+      ]
+    },
+    {
+      "note": "getData 오류 → 호출 0, null",
+      "data": {
+        "throw": "net"
+      },
+      "reply": "x",
+      "expect": null,
+      "calls": []
+    }
+  ],
+  "filenames": [
+    [
+      [
+        "dQw4w9WgXcQ",
+        77.9
+      ],
+      "ear-coach-dQw4w9WgXcQ-77.jpg"
+    ],
+    [
+      [
+        "a/b?c",
+        0
+      ],
+      "ear-coach-a-b-c-0.jpg"
+    ],
+    [
+      [
+        "v",
+        -3
+      ],
+      "ear-coach-v-0.jpg"
+    ]
+  ]
+}

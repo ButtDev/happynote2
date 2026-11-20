@@ -10,6 +10,7 @@ import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_L
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
+import { captureSnapshot } from "./snapshot";
 import { DictionaryModal } from "./DictionaryModal";
 import type EarCoachPlugin from "../main";
 
@@ -521,6 +522,11 @@ export class EarCoachView extends ItemView {
               videoId: this.session?.videoId ?? null,
               videoTitle: this.session?.title ?? null,
               startSec: segment?.start ?? 0,
+              // SPEC_017: 장면 그림(스토리보드 칸)
+              endSec: segment?.end ?? null,
+              snapshot: this.plugin.storyboard
+                ? (videoId: string, sec: number) => captureSnapshot(this.plugin.storyboard, this.plugin.fetchBytes, videoId, sec)
+                : null,
             }
           : null;
         new DictionaryModal(this.app, word, provider, following ?? [], anki).open();

@@ -23,6 +23,7 @@ import {
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
 import * as ankiSrc from "../src/services/anki.ts";
+import * as storyboardSrc from "../src/services/storyboard.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -539,7 +540,53 @@ async function runAllTests() {
     assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("api", raw)), want, `ankiStatusMessage(${JSON.stringify(raw.slice(0, 30))})`);
   }
   assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요", "connection message");
-  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases`);
+  // SPEC_017: 장면 그림 storeMediaFile + 파일 이름
+  const snapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_snapshot.json"), "utf8"));
+  for (const sc of snapData.store) {
+    const calls: any[] = [];
+    const fake = {
+      invoke: async (a: string, p: any) => {
+        calls.push([a, p]);
+        if (sc.reply && typeof sc.reply === "object" && sc.reply.throw) throw new Error(sc.reply.throw);
+        return sc.reply;
+      },
+    };
+    const getData = async () => {
+      if (sc.data && typeof sc.data === "object" && sc.data.throw) throw new Error(sc.data.throw);
+      return sc.data;
+    };
+    assert.equal(await ankiMod.storeSnapshot(fake, getData, "ear-coach-v-3.jpg"), sc.expect, `storeSnapshot: ${sc.note}`);
+    assert.deepEqual(calls, sc.calls, `storeSnapshot calls: ${sc.note}`);
+  }
+  for (const [args, want] of snapData.filenames) assert.equal(ankiMod.snapshotFilename(...(args as [string, number])), want, `snapshotFilename(${JSON.stringify(args)})`);
+  assert.equal(ankiMod.ANKI_MESSAGES.addedNoPicture, "Anki에 저장했습니다 (그림 없음)", "addedNoPicture message");
+  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases, ${snapData.store.length} snapshot store cases`);
+  log("");
+
+  // ---------------------------------------------------------------------------
+  log("[Test 13] Storyboard: spec parse, frame at time, spec from responses (data-driven, SPEC_017)");
+  const sbMod = process.env.EAR_COACH_STORYBOARD_MODULE ? await import(path.resolve(process.env.EAR_COACH_STORYBOARD_MODULE)) : storyboardSrc;
+  const sbDir = path.resolve("tests/fixtures/storyboard");
+  const sbSpecs = JSON.parse(fs.readFileSync(path.join(sbDir, "_specs.json"), "utf8"));
+  const watchLevels = sbMod.parseStoryboardSpec(sbSpecs.watch.spec);
+  assert.equal(watchLevels.length, 4, "watch spec levels");
+  const l3 = watchLevels[3];
+  assert.deepEqual([l3.level, l3.width, l3.height, l3.count, l3.cols, l3.rows, l3.intervalMs, l3.name], [3, 320, 180, 108, 3, 3, 2000, "M$M"], "watch L3");
+  assert.equal(watchLevels[0].intervalMs, 0, "watch L0 interval 0");
+  assert.equal(sbMod.parseStoryboardSpec(sbSpecs.android.spec).length, 3, "android spec levels");
+  assert.deepEqual(sbMod.parseStoryboardSpec(""), [], "empty spec");
+  const specOf = (k: string) => (k === "watch" ? sbSpecs.watch.spec : k === "android" ? sbSpecs.android.spec : k === "watchL0" ? sbSpecs.watch.spec.split("|").slice(0, 2).join("|") : k);
+  const frames = JSON.parse(fs.readFileSync(path.join(sbDir, "_frames.json"), "utf8"));
+  for (const fc of frames.cases) {
+    assert.deepEqual(sbMod.storyboardFrame(specOf(fc.spec), fc.sec, fc.durationSec ?? null), fc.expect, `storyboardFrame: ${fc.note}`);
+  }
+  const fromHtml = sbMod.storyboardFromWatchHtml(fs.readFileSync(path.join(sbDir, "watch-snippet.html"), "utf8"));
+  assert.deepEqual(fromHtml, { spec: sbSpecs.watch.spec, durationSec: sbSpecs.watch.durationSec }, "storyboardFromWatchHtml");
+  const fromPr = sbMod.storyboardFromPlayerResponse(JSON.parse(fs.readFileSync(path.join(sbDir, "player-android.json"), "utf8")));
+  assert.deepEqual(fromPr, { spec: sbSpecs.android.spec, durationSec: sbSpecs.android.durationSec }, "storyboardFromPlayerResponse");
+  assert.equal(sbMod.storyboardFromWatchHtml("<html>no player</html>"), null, "html without storyboard");
+  assert.equal(sbMod.storyboardFromPlayerResponse({ videoDetails: {} }), null, "player response without storyboard");
+  log(`  -> PASS: ${watchLevels.length} watch levels, ${frames.cases.length} frame cases, html + player response extraction`);
   log("");
 
   log("==============================================================");
