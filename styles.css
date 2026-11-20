@@ -1197,7 +1197,7 @@
   text-align: right;
 }
 
-/* SPEC_014: 사전 창 맨 위 구동사 칸 */
+/* SPEC_014: 사전 창 맨 위 구(구동사·숙어) 칸 */
 .ear-coach-dictionary-modal .ear-coach-dict-phrase {
   margin-bottom: 14px;
   padding: 10px 12px;
@@ -1207,14 +1207,6 @@
 }
 .ear-coach-dictionary-modal .ear-coach-dict-phrase .ear-coach-dict-meaning:first-of-type {
   margin-top: 4px;
-}
-.ear-coach-dictionary-modal .ear-coach-dict-phrase-tag {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background-color: var(--interactive-accent);
-  color: var(--text-on-accent);
 }
 .ear-coach-dictionary-modal .ear-coach-dict-phrase-title {
   margin: 0;

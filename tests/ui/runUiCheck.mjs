@@ -121,7 +121,7 @@ function evaluateExpect(vp, m, nums) {
   }
   if (e.phrase) {
     const p = m.phrase;
-    add("phrase", !!p && !p.error && p.modal && p.phraseTitle === e.phrase.title && p.tag === "구동사" && p.phraseDefs >= 1 && p.word === e.phrase.tap.toLowerCase() && p.phraseAboveWord && m.dictionary?.phraseOnFirst === false, JSON.stringify({ ...p, phraseOnFirst: m.dictionary?.phraseOnFirst }));
+    add("phrase", !!p && !p.error && p.modal && p.phraseTitle === e.phrase.title && p.tag === null && p.tagText === false && p.phraseDefs >= 1 && p.word === e.phrase.tap.toLowerCase() && p.phraseAboveWord && m.dictionary?.phraseOnFirst === false, JSON.stringify({ ...p, phraseOnFirst: m.dictionary?.phraseOnFirst }));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
@@ -457,6 +457,7 @@ for (const vp of cases.viewports) {
         modal: !!modal,
         phraseTitle: title?.textContent ?? null,
         tag: box?.querySelector(".ear-coach-dict-phrase-tag")?.textContent ?? null,
+        tagText: !!box && box.textContent.includes("구동사"),
         phraseDefs: box ? box.querySelectorAll(".ear-coach-dict-def").length : 0,
         word: word?.textContent ?? null,
         phraseAboveWord: !!(title && word && title.getBoundingClientRect().bottom <= word.getBoundingClientRect().top),

@@ -4,10 +4,10 @@
 
 ## 지금 하는 일
 - 최신 배포 BRAT **1.0.18**. 가로모드(SPEC_002~012) 전부 DONE/DROPPED — 다시 열지 않음(SPEC_010 옆 메뉴 스와이프는 DROPPED, 세로로 돌려서 연다).
-- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 DONE(1.0.17) → SPEC_014 구동사 칸 IMPLEMENTED(7 ⏳, 1.0.18) → 다음 SPEC_015 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_016 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
+- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 DONE(1.0.17) → SPEC_014 구(구동사·숙어) 칸 DONE(꼬리표 뗀 버전은 아직 미배포 — 1.0.18엔 「구동사」 꼬리표 있음) → 다음 SPEC_015 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_016 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
 
 ## 열린 질문 (사람에게)
-- ⏳ SPEC_014 7(1.0.18 실기기: 구동사 문장 첫 낱말 눌러 맨 위 구동사 뜻) 버튼 보냄. OK면 DONE 후 SPEC_015 Anki `/spec-new`.
+- 물음 보냄: 꼬리표 제거 지금 배포(1.0.19) vs 다음 배포에 같이. 그다음 SPEC_015 Anki `/spec-new`.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의

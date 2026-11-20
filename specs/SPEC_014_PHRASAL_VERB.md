@@ -1,8 +1,8 @@
 ---
 id: SPEC_014
 title: 사전 창에 구동사 뜻 (looking forward to → look forward to)
-status: IMPLEMENTED
-iterations: 1
+status: DONE
+iterations: 2
 max_iterations: 3
 depends_on: [SPEC_013]
 ---
@@ -29,7 +29,7 @@ depends_on: [SPEC_013]
   - `-ies`→`y`; `-es`(어간이 s·x·z·ch·sh로 끝남)→어간; 그 밖의 `-s`(전체 4자 이상, `ss`로 끝나지 않음)→`-s` 뺀 형태.
 - `phraseCandidates(tapped: string, following: string[]): string[]` — 낱말 3개짜리 먼저, 그다음 2개짜리. 각 길이에서 첫 낱말은 `lemmaVariants(tapped)` 순서, 뒤 낱말은 `normalizeLookupWord`만. 누른 낱말이 `.,!?;:`로 끝나면 `[]`; 뒤 낱말은 비면 거기서 멈추고, `.,!?;:`로 끝나는 낱말은 넣되 그 뒤로는 이어 가지 않는다. 중복 없이 **최대 6개**.
   - 예: `("looking", ["forward", "to"])` → `["looking forward to", "look forward to", "looke forward to", "looking forward", "look forward", "looke forward"]`
-- 사전 창: 단어와 구 후보를 함께 조회한다. 후보 순서대로 처음 결과가 있는 구를 `.ear-coach-dict-phrase` 칸(사전 창 맨 위, 단어 머리 위)에 보인다. 칸 안: 꼬리표 `구동사`, 제목 `.ear-coach-dict-phrase-title` = 사전 응답의 `word`, 🔊 발음 버튼(있으면), 품사별 뜻·예문(단어와 같은 모양). 결과가 없거나 오류면 칸을 만들지 않는다(단어 쪽은 그대로).
+- 사전 창: 단어와 구 후보를 함께 조회한다. 후보 순서대로 처음 결과가 있는 구를 `.ear-coach-dict-phrase` 칸(사전 창 맨 위, 단어 머리 위)에 보인다. 칸 안: 꼬리표 없음(2026-11-21 사람 결정 「숙어표현 등도 보여주고 있으니, 구동사 태그를 떼자」 — 칸 안에 글자 `구동사` 없음), 제목 `.ear-coach-dict-phrase-title` = 사전 응답의 `word`, 🔊 발음 버튼(있으면), 품사별 뜻·예문(단어와 같은 모양). 결과가 없거나 오류면 칸을 만들지 않는다(단어 쪽은 그대로).
 - 단어 쪽 문구·동작은 SPEC_013 그대로.
 
 ## 4. 범위 밖
@@ -41,7 +41,7 @@ depends_on: [SPEC_013]
 3. [ ] 화면 검사(세로·가로): 「going」을 누르면 사전 창 맨 위 `.ear-coach-dict-phrase-title` = `go to`, 그 칸이 `.ear-coach-dict-word`(= `going`)보다 위, 구 뜻 줄 ≥ 1; 구가 없는 낱말을 누르면 `.ear-coach-dict-phrase` 없음 (`expect.phrase` ok) [자동]
 4. [ ] 변이: `lemmaVariants`의 `-ing` 규칙을 망가뜨린 사본으로 Test 11 실패 [자동]
 5. [ ] 기존 화면 규칙·SPEC_013 `dictionary` 규칙 ok, `verify.mjs --set regression` → ok [자동]
-6. [ ] 스크린샷 `phrase-portrait.png`에서 맨 위 구동사 칸(꼬리표·제목·뜻)과 그 아래 단어 칸이 보인다 [자동]
+6. [ ] 스크린샷 `phrase-portrait.png`에서 맨 위 구 칸(제목·뜻, 꼬리표 없음)과 그 아래 단어 칸이 보인다 [자동]
 7. [ ] Android 실기기에서 「looking forward to」 같은 문장의 첫 낱말을 눌러 맨 위에 구동사 뜻이 뜨는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -63,3 +63,4 @@ depends_on: [SPEC_013]
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 11 `… 16 lemma + 9 phrase cases` PASS · 2 ✅ 같은 실행 `6 response fixtures`(look-forward-to·show-up 실제 응답: word·품사 verb·첫 뜻) · 3 ✅ ui portrait·landscape `phrase` ok: 「going」 → phraseTitle `go to`, 꼬리표 `구동사`, 구 뜻 1줄, word `going`, phraseAboveWord true; 「So」(후보 so i was·so i 없음) → phraseOnFirst false · 4 ✅ 변이 `-ing` 어간을 `slice(0,-2)`로 → `lemmaVariants("looking")` exit 1 · 5 ✅ `verify --set regression` ok(dictionary 규칙 포함) · 6 ✅ `phrase-portrait.png`: 시트 맨 위 보라 테두리 칸에 「구동사」 꼬리표·`go to`·🔊 발음·verb 뜻, 그 아래 `going /həˈləʊ/`·뜻 목록; `phrase-landscape.png` 같은 구성 · 실재 조회(Node fetch): looking forward to → look forward to(ogg 있음), showed up. → show up, got up early → get up, gave up smoking → give up, ran into my → run into · 7 ⏳ 실기기
   - 가결정: 불규칙 표에 있으면 접미 규칙은 쓰지 않음(goes→goe 방지, SPEC 3장에 반영) · 단어 뜻 줄 수 검사를 `.ear-coach-dict-body` 안으로 한정(구 칸 뜻과 섞이지 않게, 기준은 그대로 ≥1) · 대안: 규칙 함께 적용, 전체 개수.
+- 2026-11-21 회차 2: DONE — 사람확인 7 메모 「기능은 만족, … 구동사 태그를 떼자」(`log/confirmations.jsonl`) → 7 ✅(기능) + 꼬리표 제거. 3 ✅ ui portrait·landscape `phrase` ok, 규칙에 「꼬리표 요소 없음·칸 안 글자 `구동사` 없음」 추가(`tagText:false`) · 변이: 꼬리표 줄을 되살린 사본 → `portrait: phrase failed ("tag":"구동사","tagText":true)` exit 1, 원본 복원 · 5 ✅ `verify --set regression` ok · 6 ✅ `phrase-portrait.png`: 맨 위 보라 테두리 칸에 `go to`·🔊 발음·verb 뜻, 꼬리표 없음, 그 아래 `going` 칸 · 1·2·4 ✅ 회차 1 그대로(Test 11 이번 회귀에서 PASS)

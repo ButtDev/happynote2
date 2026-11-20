@@ -4,7 +4,7 @@ import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
 
 /**
  * SPEC_013: 자막 단어 사전 창 — 단어·IPA·품사별 뜻·예문·발음 듣기.
- * SPEC_014: 누른 낱말 + 뒤 낱말로 만든 구 후보 중 사전에 있는 첫 구를 맨 위 「구동사」 칸에.
+ * SPEC_014: 누른 낱말 + 뒤 낱말로 만든 구 후보 중 사전에 있는 첫 구를 맨 위 구 칸에(꼬리표 없음 — 숙어도 나오므로).
  */
 export class DictionaryModal extends Modal {
   private readonly word: string;
@@ -62,7 +62,6 @@ export class DictionaryModal extends Modal {
   private renderPhrase(slot: HTMLElement, entry: DictionaryEntry): void {
     const box = slot.createDiv({ cls: "ear-coach-dict-phrase" });
     const head = box.createDiv({ cls: "ear-coach-dict-head" });
-    head.createSpan({ cls: "ear-coach-dict-phrase-tag", text: "구동사" });
     head.createEl("h3", { cls: "ear-coach-dict-phrase-title", text: entry.word });
     if (entry.phonetic) head.createSpan({ cls: "ear-coach-dict-ipa", text: entry.phonetic });
     if (entry.audioUrl) this.addAudioButton(head, entry.audioUrl);
