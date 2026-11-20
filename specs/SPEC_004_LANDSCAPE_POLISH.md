@@ -1,0 +1,58 @@
+---
+id: SPEC_004
+title: 가로모드 다듬기 — 화면 끝까지 쓰기 + 버튼 정리
+status: READY
+iterations: 0
+max_iterations: 3
+depends_on: []
+parent: SPEC_003
+---
+
+# SPEC 004 — 가로모드 다듬기 — 화면 끝까지 쓰기 + 버튼 정리
+
+## 1. 목표 — 이번에 할 것과 하지 않을 것 한 문단
+실기기 1.0.3 가로 스크린샷(`.scratch/inbox/20261120-220318-329.jpg`)에서 헤더·내비바는 사라졌지만 ① 상태 표시줄 아래 높이의 약 1/5(≈75px)과 아래쪽이 검은 빈칸으로 남고, ② 영상 좌우에 회색 띠가 있어 오른쪽 목록이 좁으며, ③ 필터 툴바가 잘리고(「📖 공개」), 재생 버튼이 제각각 모양이다. 사람 메모 「상단활용필요, 버튼배치 직관, 세련되게 개선」. **가로 + Ear-Coach 활성일 때만** 뷰를 화면 전체(안전 영역 안)로 띄워 빈칸을 없애고, 왼쪽 열을 영상 폭에 딱 맞추고, 재생 컨트롤과 필터 툴바를 한 줄의 정돈된 묶음(세그먼트·알약)으로 바꾼다. 세로·데스크톱·버튼 글자·동작은 그대로(CSS만).
+
+## 2. 파일 — 추가·수정할 파일, 이전과 달라지는 점
+- `styles.css` — 끝에 SPEC_004 가로 블록 추가(SPEC_002·003 블록은 남기고 덮어씀).
+- `tests/ui/runUiCheck.mjs` — 검사 HTML에 정체 모를 Obsidian 바깥 여백(위 40px·아래 24px)을 흉내 내고, 새 `expect` 규칙(`rootFillsViewport`, `maxHeight`, `maxVideoSideGap`, `minListWidth`) 판정 추가.
+- `tests/ui/cases.json` — landscape에 새 규칙 추가.
+- `src/`는 바꾸지 않는다.
+
+## 3. 정의 — 공개 이름·데이터 구조·문구·수치를 글자 그대로
+- 전체화면: `@media (orientation: landscape)` 안에서 `.workspace-leaf.mod-active > .workspace-leaf-content[data-type="ear-coach-listening-view"]`를 `position: fixed; inset: 0; z-index: var(--layer-cover, 5)`로, `.view-content`는 안전 영역(`--safe-area-inset-*` → `env(safe-area-inset-*)` → 0) 패딩 + `container-type: size`.
+- 왼쪽 열 폭 = `min(62cqw, (100cqh − 컨트롤 몫) × 16/9 + 좌우 패딩)` — 영상이 열 폭을 꽉 채움.
+- 재생 컨트롤: 한 줄, 높이 32px 버튼, 재생은 둥근 강조 버튼, 배속 4개는 하나의 세그먼트(알약 안에 붙은 버튼, 선택만 채움), 시간은 오른쪽 고정폭 숫자.
+- 툴바: 한 줄(줄바꿈 없음, 넘치면 가로 스크롤), 필터 3개는 세그먼트, 블라인드·공개는 테두리만 있는 알약으로 오른쪽 끝.
+- `cases.json` landscape 규칙: `rootFillsViewport: true`, `maxHeight: {".ear-coach-mobile-toolbar": 44, ".ear-coach-player-controls": 44}`, `maxVideoSideGap: 12`(영상 왼쪽 끝–열 왼쪽, 영상 오른쪽 끝–툴바 왼쪽), `minListWidth: 330`. SPEC_002·003 규칙 유지.
+
+## 4. 범위 밖
+- 버튼 글자·아이콘·순서(TS) 변경, 새 버튼.
+- 자막 카드 안 버튼·카드 디자인, 세로 배치, iframe 안 유튜브 overlay, 상태 표시줄 숨기기.
+
+## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
+1. [ ] 가로 915×412에서 바깥 여백(위 40·아래 24)이 있어도 `.ear-coach-mobile-container`가 화면 전체를 덮는다(`rootFillsViewport` ok) [자동]
+2. [ ] 가로에서 툴바·재생 컨트롤 높이 ≤ 44(한 줄) [자동]
+3. [ ] 가로에서 영상 좌우 빈 띠 ≤ 12px, 목록 폭 ≥ 330 [자동]
+4. [ ] SPEC_002·003 가로 규칙과 세로 규칙 전부 ok [자동]
+5. [ ] 변이: SPEC_004 블록을 뺀 `styles.css` 사본으로 `ui`가 exit 1 (`rootFillsViewport`·`maxHeight` 실패) [자동]
+6. [ ] `landscape.png`에서 위아래 빈칸 없이 영상이 왼쪽 열을 채우고, 컨트롤·툴바가 한 줄 알약/세그먼트로 보이며 「공개」가 잘리지 않는다 [자동]
+7. [ ] `verify.mjs --set regression` → `verify: ok`, `git diff --stat -- src` 비어 있음 [자동]
+8. [ ] Android 실기기 가로에서 위아래 빈칸이 사라지고 버튼 배치가 직관적·세련돼 보이는지 보고 버튼 [수동]
+
+## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
+1~4. `verify.mjs`의 `ui` + `.scratch/ui/report.json` `checks`
+5. `.scratch/mut/styles.css` → `node tests/ui/runUiCheck.mjs --fail-on-overlap --css .scratch/mut/styles.css --out .scratch/mut/ui` exit 코드
+6. 스크린샷 Read
+7. `verify.mjs --set regression`, `git diff --stat -- src`
+
+## 7. 수동 검증 — 사람이 따라 할 번호 절차 (있으면)
+1. BRAT 새 릴리스로 업데이트(실행자가 배포하고 버전을 알려 줌)
+2. 가로로 Ear-Coach 세션을 열어 보고 버튼
+
+## 8. 가결정 — 고른 것 · 이유 · 대안 (있으면)
+- 빈칸 원인을 모르는 채(실기기 DOM 덤프 불가) 뷰를 `position: fixed; inset: 0`으로 띄움 · 조상 여백·패딩과 무관하게 화면을 씀 · 대안: 원인 요소를 추정해 하나씩 숨김(실기기 왕복 필요).
+- 왼쪽 열 상한 62% · 915×412에서 영상 ≈ 300px 높이, 목록 ≥ 330px 폭 · 대안: 55%(영상 작음), 70%(목록 좁음).
+- 배속·필터를 세그먼트로 · 「하나만 고르는 묶음」이 한눈에 보임 · 대안: 개별 버튼 유지.
+
+## 실행 기록
