@@ -1,8 +1,8 @@
 ---
 id: SPEC_015
 title: 사전 창 → AnkiDroid 카드 저장 (AnkiConnect Android)
-status: DRAFT
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_013, SPEC_014]
 ---
@@ -29,10 +29,7 @@ depends_on: [SPEC_013, SPEC_014]
 - 문구: 버튼 `➕ Anki`, 저장 중 `Anki에 저장 중…`, 성공 `Anki에 저장했습니다`, 중복 `이미 Anki에 있는 카드입니다`, 연결 실패 `AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요`, 설정 없음 `설정에서 Anki 덱·노트 타입을 골라 주세요`.
 - 중복: 저장 전 `canAddNotes` → false면 중복 문구, `addNote` 안 함.
 
-[사람 확인 필요: 카드 모양 — 어떤 노트 타입에 넣을까?
- A) AnkiDroid 기본 「Basic (and reversed card)」 — 앞: 빈칸 예문 + 영어 뜻(나중에 그림) / 뒤: 단어·IPA·발음·출처. 카드 2장(문장→단어, 단어→문장). 바로 쓸 수 있음.
- B) 사람이 AnkiDroid에서 Fluent Forever용 노트 타입(필드 Word·Picture·IPA·Audio·Meaning·Sentence·Source, 카드 여러 장)을 직접 만들고, 플러그인은 설정에서 필드를 대응만. 책 방식에 더 가깝지만 처음 한 번 손이 감.
- 추천: A로 시작, 설정의 필드 대응은 B도 받도록 만들어 두어 나중에 바꿀 수 있게.]
+- 노트 타입(사람 결정 2026-11-21 「A 기본 Basic으로」): 기본값 `ankiNoteType = "Basic (and reversed card)"`, 기본 대응 `sentence·meaning·picture → "Front"`, `word·ipa·audio·source → "Back"`. 한 필드에 여러 역할이 대응되면 역할 순서(`sentence, picture, meaning` / `word, ipa, audio, source`)대로 `<br>`로 잇는다. 「덱·노트 타입 불러오기」로 고른 노트 타입의 필드가 2개이고 대응 이름이 그 필드에 없으면 첫 필드=앞(sentence·meaning·picture), 둘째 필드=뒤(나머지)로 다시 대응한다(AnkiDroid 한국어 판의 필드 이름 대비). 필드가 3개 이상이면 역할마다 고를 수 있게 둔다(B 방식 대비).
 
 ## 4. 범위 밖
 - 영상 스냅샷 이미지(SPEC_016, `picture` 역할은 비워 둠), 노트 타입·덱 만들기(AnkiConnect Android 미지원), 데스크톱 Anki 동기화, 저장한 카드 목록·수정, 한국어 뜻, 0~2단계.
@@ -63,5 +60,8 @@ depends_on: [SPEC_013, SPEC_014]
 - 발음은 `addNote`의 `audio` url로 · 앱이 내려받아 미디어에 넣음, 우리 쪽에서 바이트를 다루지 않음 · 대안: `storeMediaFile` + data(base64).
 - 빈칸은 `____` · Anki 클로즈 문법이 아닌 일반 노트에서도 보임 · 대안: `{{c1::}}`(Cloze 노트 타입 전용).
 - 태그 `ear-coach` · 나중에 모아 보기 쉽게.
+- 필드 이름이 맞지 않을 때 위치로 다시 대응 · AnkiDroid가 언어에 따라 기본 노트 타입의 필드 이름을 바꿀 수 있음 · 대안: 사람이 설정에서 직접 고름.
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ Test 12 「16 cloze cases」 PASS · 2 ✅ Test 12 「2 note fixtures」(Basic 기본·B 방식 필드, audio[0].url, tags, allowDuplicate=false) · 3 ✅ Test 12 「7 client cases」(error→api throw, 네트워크 throw·status 0→connection) + 2 save cases · 4 ✅ ui 세로·가로 `anki` ok: 구 칸·단어 칸 `➕ Anki`, calls [canAddNotes, addNote] + 「Anki에 저장했습니다」, 중복 calls [canAddNotes] + 「이미 Anki에 있는 카드입니다」 · 5 ✅ `.scratch/mut/anki-noboundary.ts`(낱말 경계 제거)로 Test 12 실패 `clozeSentence(["The cat sat on the category mat.","cat"])` · 6 ✅ verify regression harness/build/test/ui 모두 ok, Test 10 「26 src files clean」 · 7 ✅ `anki-portrait.png`: 구 칸·단어 칸에 `➕ Anki`, 단어 칸 아래 「Anki에 저장했습니다」, 누른 버튼은 흐려짐 · 8 ⏳ 실기기
+  - 가결정: 영어 뜻 = 품사별 첫 뜻(최대 3) `<i>품사</i> 뜻`을 `<br>`로 · 카드 앞면에 뜻이 너무 길지 않게 · 대안: 첫 뜻 하나만. 발음 파일 이름 `ear-coach-<단어>.<확장자>`. 저장 성공 뒤 버튼은 눌리지 않게(두 번 저장 방지), 실패면 다시 누를 수 있음.

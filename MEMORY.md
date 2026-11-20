@@ -3,11 +3,11 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.18**. 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
-- 사전+AnkiDroid: SPEC_013 사전 창 DONE · SPEC_014 구(구동사·숙어) 칸 DONE — 「구동사」 꼬리표 뗀 버전은 미배포(사람 선택: SPEC_015 배포에 같이) · **SPEC_015 Anki 저장 DRAFT** → SPEC_016 영상 스냅샷. 그 뒤 후보는 `memory/backlog.md`.
+- 최신 배포 BRAT **1.0.19** (SPEC_015 Anki 저장 + SPEC_014 꼬리표 제거). 가로모드(SPEC_002~012)는 끝남 — 다시 열지 않음.
+- 사전+AnkiDroid: SPEC_013·014 DONE · **SPEC_015 Anki 저장 IMPLEMENTED — ⏳ 8 실기기 카드 확인 대기** → 다음 SPEC_016 영상 스냅샷(`picture` 역할, 기본 대응 Front). 그 뒤 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- SPEC_015 노트 타입: A 기본 「Basic (and reversed card)」(추천) / B 사람이 만든 Fluent Forever 노트 타입 — 버튼 `A 기본 Basic으로 | B 직접 만든 노트 타입` 보냄, 답 대기. 답 오면 SPEC 반영·READY → `/spec-run SPEC_015`.
+- SPEC_015 ⏳ 8 버튼 보냄(`SPEC_015 8 OK|NG|메모`), 답 대기.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
@@ -20,3 +20,4 @@
 - 사전: `src/services/dictionary.ts`(obsidian import 없음, fetcher 주입, 발음은 Commons curid → ogg로 교체, 시험 데이터 `tests/fixtures/dictionary/commons/`), 창 `src/ui/DictionaryModal.ts`, 플러그인 `plugin.dictionary`. 시험 Test 11 + `tests/fixtures/dictionary/`(실제 응답, `_phrases.json` 구동사 후보). 구동사: `lemmaVariants`·`phraseCandidates`(누른 낱말부터만), 창 맨 위 `.ear-coach-dict-phrase`, 화면 검사 `expect.phrase`(going → go to). 화면 검사 `expect.dictionary`는 기본 스크린샷 뒤에 첫 카드를 3단계로 바꿔 누름, `dictionary-<뷰>.png`.
 - Playwright 직접 스크립트는 `chromium.launch({ channel: "chrome" })`로(번들 Chromium 미설치).
 - AnkiConnect Android: `createDeck`·`createModel` 없음(지원: version·deckNames·modelNames·modelFieldNames·findNotes·canAddNotes·addNote(audio/picture url·data)·storeMediaFile·notesInfo·updateNoteFields·guiBrowse·multi). CORS 헤더 없음 → `requestUrl`로.
+- Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.

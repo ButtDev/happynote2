@@ -507,11 +507,22 @@ export class EarCoachView extends ItemView {
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
       },
-      onLookupWord: (word, _segment, following) => {
+      onLookupWord: (word, segment, following) => {
         const provider = this.plugin.dictionary;
         if (!provider) return;
         this.playerBar?.pause();
-        new DictionaryModal(this.app, word, provider, following ?? []).open();
+        // SPEC_015: 사전 창 「➕ Anki」에 자막 문장·영상 정보 전달
+        const anki = this.plugin.anki
+          ? {
+              client: this.plugin.anki,
+              settings: () => this.plugin.settings,
+              sentence: segment?.text ?? "",
+              videoId: this.session?.videoId ?? null,
+              videoTitle: this.session?.title ?? null,
+              startSec: segment?.start ?? 0,
+            }
+          : null;
+        new DictionaryModal(this.app, word, provider, following ?? [], anki).open();
       },
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;

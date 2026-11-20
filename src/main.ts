@@ -13,6 +13,7 @@ import { isDesktopApp, isMobileApp } from "./utils/platform";
 import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
 import { DictionaryApiDevProvider, DictionaryProvider } from "./services/dictionary";
+import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker } from "./services/anki";
 import { AgyCliService } from "./services/AgyCliService";
 import { NoteGenerator } from "./services/NoteGenerator";
 import { WeaknessTracker } from "./services/WeaknessTracker";
@@ -31,6 +32,17 @@ export default class EarCoachPlugin extends Plugin {
   /** SPEC_013: 자막 단어 사전 */
   public dictionary: DictionaryProvider = new DictionaryApiDevProvider(async (url) => {
     const r = await requestUrl({ url, throw: false });
+    let json: unknown = null;
+    try {
+      json = r.json;
+    } catch {
+      json = null;
+    }
+    return { status: r.status, json };
+  });
+  /** SPEC_015: AnkiConnect Android (웹뷰 CORS를 피해 requestUrl) */
+  public anki: AnkiInvoker = new AnkiConnectClient(async (body) => {
+    const r = await requestUrl({ url: ANKI_CONNECT_URL, method: "POST", contentType: "application/json", body, throw: false });
     let json: unknown = null;
     try {
       json = r.json;
@@ -726,6 +738,8 @@ export default class EarCoachPlugin extends Plugin {
       DEFAULT_EAR_COACH_SETTINGS,
       await this.loadData()
     );
+    // SPEC_015: 필드 대응은 객체라 얕은 병합으로 빠진 역할을 기본값으로 채운다
+    this.settings.ankiFieldMap = { ...DEFAULT_EAR_COACH_SETTINGS.ankiFieldMap, ...(this.settings.ankiFieldMap ?? {}) };
   }
 
   public async saveSettings(): Promise<void> {

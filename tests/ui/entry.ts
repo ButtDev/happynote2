@@ -40,6 +40,19 @@ async function main(): Promise<void> {
     noteGenerator: { saveSessionToNote: async () => {}, appendTutorCalloutToNote: async () => {} },
     weaknessTracker: { recordWeakSegment: async () => {} },
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
+    // SPEC_015: 가짜 AnkiConnect — 호출 기록, window.__ankiDuplicate면 canAddNotes가 false
+    anki: {
+      invoke: async (action: string, params?: any) => {
+        const w = window as any;
+        w.__ankiCalls = [...(w.__ankiCalls ?? []), action];
+        if (action === "canAddNotes") return [!w.__ankiDuplicate];
+        if (action === "addNote") {
+          w.__ankiNotes = [...(w.__ankiNotes ?? []), params?.note];
+          return 1700000000000;
+        }
+        return null;
+      },
+    },
     dictionary: {
       name: "dictionaryapi.dev",
       lookup: async (w: string) => {

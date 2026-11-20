@@ -1,0 +1,16 @@
+{
+  "comment": "AnkiConnectClient.invoke 응답 해석. reply: status/json 또는 throw(네트워크 실패). expect: result 값 또는 error 종류",
+  "cases": [
+    { "action": "deckNames", "reply": { "status": 200, "json": { "result": ["Default", "English"], "error": null } }, "expect": { "result": ["Default", "English"] } },
+    { "action": "addNote", "reply": { "status": 200, "json": { "result": 1700000000000, "error": null } }, "expect": { "result": 1700000000000 } },
+    { "action": "addNote", "reply": { "status": 200, "json": { "result": null, "error": "cannot create note because it is a duplicate" } }, "expect": { "error": "api", "message": "cannot create note because it is a duplicate" } },
+    { "action": "version", "reply": { "throw": "net::ERR_CONNECTION_REFUSED" }, "expect": { "error": "connection" } },
+    { "action": "version", "reply": { "status": 0, "json": null }, "expect": { "error": "connection" } },
+    { "action": "version", "reply": { "status": 200, "json": "Ankiconnect Android" }, "expect": { "error": "api" } },
+    { "action": "canAddNotes", "reply": { "status": 200, "json": { "result": [false], "error": null } }, "expect": { "result": [false] } }
+  ],
+  "save": [
+    { "canAdd": [true], "expect": "added", "calls": ["canAddNotes", "addNote"] },
+    { "canAdd": [false], "expect": "duplicate", "calls": ["canAddNotes"] }
+  ]
+}

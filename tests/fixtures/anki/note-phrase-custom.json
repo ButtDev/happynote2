@@ -1,0 +1,45 @@
+{
+  "comment": "B 방식(필드 여러 개) 대응 + 구 칸 저장(원형 불일치) + 발음 없음",
+  "input": {
+    "word": "look forward to",
+    "phonetic": null,
+    "audioUrl": null,
+    "meanings": [
+      { "partOfSpeech": "verb", "definition": "To anticipate, expect, or wait for." }
+    ],
+    "sentence": "I'm really looking forward to the trip.",
+    "tapped": "looking",
+    "videoId": "abc123XYZ_-",
+    "videoTitle": "Trip vlog",
+    "startSec": 3605
+  },
+  "settings": {
+    "ankiDeck": "English::Listening",
+    "ankiNoteType": "Fluent Forever",
+    "ankiFieldMap": {
+      "word": "Word",
+      "ipa": "IPA",
+      "audio": "Audio",
+      "meaning": "Meaning",
+      "sentence": "Sentence",
+      "picture": "Picture",
+      "source": ""
+    },
+    "ankiTags": "ear-coach  phrase"
+  },
+  "expect": {
+    "deckName": "English::Listening",
+    "modelName": "Fluent Forever",
+    "fields": {
+      "Sentence": "I'm really ____ the trip.",
+      "Picture": "",
+      "Meaning": "<i>verb</i> To anticipate, expect, or wait for.",
+      "Word": "look forward to",
+      "IPA": "",
+      "Audio": ""
+    },
+    "tags": ["ear-coach", "phrase"],
+    "options": { "allowDuplicate": false, "duplicateScope": "deck" },
+    "audio": null
+  }
+}

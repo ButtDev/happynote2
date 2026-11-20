@@ -1212,3 +1212,24 @@
   margin: 0;
   font-size: 1.3em;
 }
+
+/* SPEC_015: 사전 창 「➕ Anki」 버튼·저장 상태 */
+.ear-coach-dictionary-modal .ear-coach-dict-anki {
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 0 14px;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-audio + .ear-coach-dict-anki {
+  margin-left: 0;
+}
+.ear-coach-dictionary-modal .ear-coach-dict-anki-status {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.ear-coach-dictionary-modal .ear-coach-dict-anki-status.is-ok {
+  color: var(--color-green, var(--interactive-accent));
+}
+.ear-coach-dictionary-modal .ear-coach-dict-anki-status.is-error {
+  color: var(--color-red);
+}

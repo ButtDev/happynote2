@@ -1,0 +1,10 @@
+{
+  "comment": "remapFieldsForModel(fieldNames, map) — 노트 타입을 고른 뒤 필드 대응. 순서: sentence,picture,meaning,word,ipa,audio,source",
+  "cases": [
+    { "fields": ["Front", "Back"], "map": "default", "expect": ["Front", "Front", "Front", "Back", "Back", "Back", "Back"] },
+    { "fields": ["앞면", "뒷면"], "map": "default", "expect": ["앞면", "앞면", "앞면", "뒷면", "뒷면", "뒷면", "뒷면"] },
+    { "fields": ["Text"], "map": "default", "expect": ["Text", "Text", "Text", "Text", "Text", "Text", "Text"] },
+    { "fields": ["Word", "Picture", "IPA", "Audio", "Meaning", "Sentence", "Source"], "map": "default", "expect": ["Sentence", "Picture", "Meaning", "Word", "IPA", "Audio", "Source"] },
+    { "fields": ["Word", "Pic", "Sentence"], "map": "default", "expect": ["Sentence", "", "", "Word", "", "", ""] }
+  ]
+}

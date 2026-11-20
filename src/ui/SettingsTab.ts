@@ -3,11 +3,28 @@ import { isMobileApp } from "../utils/platform";
 import { generateBookmarkletCode } from "../utils/youtubeUrlParser";
 import { UnlockStep } from "../types/transcript";
 import type EarCoachPlugin from "../main";
+import { ANKI_MESSAGES, ANKI_ROLES, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
+
+/** SPEC_015: 필드 대응 화면에 보일 역할 이름 */
+const ANKI_ROLE_LABELS: Record<AnkiRole, string> = {
+  sentence: "문장(빈칸)",
+  picture: "그림(영상 스냅샷, 준비 중)",
+  meaning: "영어 뜻",
+  word: "단어",
+  ipa: "발음기호",
+  audio: "발음 소리",
+  source: "출처(영상 링크)",
+};
 
 /**
  * Settings tab for configuring `agy` CLI path, bookmarklet generator, WPM threshold, and default blind step.
  */
 export class EarCoachSettingTab extends PluginSettingTab {
+  /** SPEC_015: 「덱·노트 타입 불러오기」로 받은 목록(이 화면에서만) */
+  private ankiDecks: string[] | null = null;
+  private ankiModels: string[] | null = null;
+  private ankiFields: string[] | null = null;
+
   constructor(
     app: App,
     private plugin: EarCoachPlugin
@@ -25,12 +42,14 @@ export class EarCoachSettingTab extends PluginSettingTab {
       });
       this.displayMobileGuideBanner(containerEl);
       this.displayCommonSettings(containerEl);
+      this.displayAnkiSettings(containerEl);
     } else {
       containerEl.createEl("h2", {
         text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
       });
       this.displayDesktopBookmarkletSection(containerEl);
       this.displayCommonSettings(containerEl);
+      this.displayAnkiSettings(containerEl);
       this.displayDesktopAgyCliSettings(containerEl);
     }
   }
@@ -185,5 +204,114 @@ export class EarCoachSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+  }
+
+  /** SPEC_015: AnkiConnect Android — 덱·노트 타입·필드 대응·태그 */
+  private displayAnkiSettings(containerEl: HTMLElement): void {
+    containerEl.createEl("h3", { text: "🗂️ Anki 카드 저장 (AnkiConnect Android)" });
+    const st = this.plugin.settings;
+    const save = async () => this.plugin.saveSettings();
+
+    new Setting(containerEl)
+      .setName("덱·노트 타입 불러오기")
+      .setDesc("AnkiDroid와 AnkiConnect Android 앱이 켜져 있어야 합니다.")
+      .addButton((btn) =>
+        btn.setButtonText("🔄 덱·노트 타입 불러오기").onClick(async () => {
+          try {
+            this.ankiDecks = await this.plugin.anki.invoke("deckNames");
+            this.ankiModels = await this.plugin.anki.invoke("modelNames");
+            await this.loadAnkiFields();
+            new Notice(`덱 ${this.ankiDecks?.length ?? 0}개, 노트 타입 ${this.ankiModels?.length ?? 0}개를 불러왔습니다`);
+          } catch (e) {
+            new Notice(e instanceof AnkiConnectError && e.kind === "connection" ? ANKI_MESSAGES.connection : `Anki 오류: ${String((e as Error)?.message ?? e)}`);
+          }
+          this.display();
+        })
+      );
+
+    const deck = new Setting(containerEl).setName("덱");
+    if (this.ankiDecks && this.ankiDecks.length > 0) {
+      deck.addDropdown((d) => {
+        for (const n of this.ankiDecks!) d.addOption(n, n);
+        if (!this.ankiDecks!.includes(st.ankiDeck)) d.addOption(st.ankiDeck, st.ankiDeck);
+        d.setValue(st.ankiDeck).onChange(async (v) => {
+          st.ankiDeck = v;
+          await save();
+        });
+      });
+    } else {
+      deck.addText((t) =>
+        t.setValue(st.ankiDeck).onChange(async (v) => {
+          st.ankiDeck = v.trim();
+          await save();
+        })
+      );
+    }
+
+    const model = new Setting(containerEl).setName("노트 타입").setDesc("기본: Basic (and reversed card) — 앞면 빈칸 문장·뜻, 뒷면 단어·발음기호·발음·출처");
+    if (this.ankiModels && this.ankiModels.length > 0) {
+      model.addDropdown((d) => {
+        for (const n of this.ankiModels!) d.addOption(n, n);
+        if (!this.ankiModels!.includes(st.ankiNoteType)) d.addOption(st.ankiNoteType, st.ankiNoteType);
+        d.setValue(st.ankiNoteType).onChange(async (v) => {
+          st.ankiNoteType = v;
+          await this.loadAnkiFields();
+          await save();
+          this.display();
+        });
+      });
+    } else {
+      model.addText((t) =>
+        t.setValue(st.ankiNoteType).onChange(async (v) => {
+          st.ankiNoteType = v.trim();
+          await save();
+        })
+      );
+    }
+
+    for (const role of ANKI_ROLES) {
+      const row = new Setting(containerEl).setName(`필드: ${ANKI_ROLE_LABELS[role]}`);
+      const cur = st.ankiFieldMap[role] ?? "";
+      if (this.ankiFields && this.ankiFields.length > 0) {
+        row.addDropdown((d) => {
+          d.addOption("", "(넣지 않음)");
+          for (const f of this.ankiFields!) d.addOption(f, f);
+          d.setValue(this.ankiFields!.includes(cur) ? cur : "").onChange(async (v) => {
+            st.ankiFieldMap = { ...st.ankiFieldMap, [role]: v };
+            await save();
+          });
+        });
+      } else {
+        row.addText((t) =>
+          t.setValue(cur).onChange(async (v) => {
+            st.ankiFieldMap = { ...st.ankiFieldMap, [role]: v.trim() };
+            await save();
+          })
+        );
+      }
+    }
+
+    new Setting(containerEl)
+      .setName("태그")
+      .setDesc("띄어쓰기로 여러 개")
+      .addText((t) =>
+        t.setValue(st.ankiTags).onChange(async (v) => {
+          st.ankiTags = v;
+          await save();
+        })
+      );
+  }
+
+  /** 고른 노트 타입의 필드를 받아 대응을 맞춘다(Basic 한국어 판 등 필드 이름이 다를 때). */
+  private async loadAnkiFields(): Promise<void> {
+    const st = this.plugin.settings;
+    try {
+      const fields: string[] = await this.plugin.anki.invoke("modelFieldNames", { modelName: st.ankiNoteType });
+      this.ankiFields = Array.isArray(fields) ? fields : null;
+      if (this.ankiFields) st.ankiFieldMap = remapFieldsForModel(this.ankiFields, st.ankiFieldMap);
+      await this.plugin.saveSettings();
+    } catch {
+      this.ankiFields = null;
+    }
   }
 }

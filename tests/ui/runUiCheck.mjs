@@ -123,6 +123,13 @@ function evaluateExpect(vp, m, nums) {
     const p = m.phrase;
     add("phrase", !!p && !p.error && p.modal && p.phraseTitle === e.phrase.title && p.tag === null && p.tagText === false && p.phraseDefs >= 1 && p.word === e.phrase.tap.toLowerCase() && p.phraseAboveWord && m.dictionary?.phraseOnFirst === false, JSON.stringify({ ...p, phraseOnFirst: m.dictionary?.phraseOnFirst }));
   }
+  if (e.anki) {
+    const a = m.anki?.added;
+    const d = m.anki?.dup;
+    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.options?.allowDuplicate === false;
+    const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
+    add("anki", okAdded && okDup, JSON.stringify(m.anki));
+  }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
     add(`maxHeight:${sel}`, r && r.h > 0 && r.h <= max, r ? `${r.h} <= ${max}` : "element missing");
@@ -465,6 +472,49 @@ for (const vp of cases.viewports) {
     }, tapWord);
     await page.screenshot({ path: path.join(outDir, `phrase-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+  }
+
+  // SPEC_015: 「going」 누름 → 구 칸·단어 칸 「➕ Anki」 → 단어 칸 버튼 → canAddNotes·addNote 각 1회 + 저장 문구.
+  //           그다음 중복 응답이면 addNote 0회 + 중복 문구.
+  m.anki = null;
+  if (vp.expect?.anki) {
+    const tapWord = vp.expect.anki.tap;
+    const run = async (duplicate) =>
+      page.evaluate(
+        async ({ tapWord, duplicate }) => {
+          const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+          window.__ankiCalls = [];
+          window.__ankiNotes = [];
+          window.__ankiDuplicate = duplicate;
+          const script = document.querySelector(".ear-coach-segment-card .ear-coach-full-script");
+          if (!script) return { error: "full-script missing" };
+          const target = [...script.querySelectorAll(".ear-coach-word")].find((w) => w.textContent === tapWord);
+          if (!target) return { error: `word ${tapWord} missing` };
+          target.click();
+          await wait(300);
+          const modal = document.querySelector(".ear-coach-dictionary-modal");
+          const phraseBtn = modal?.querySelector(".ear-coach-dict-phrase .ear-coach-dict-anki");
+          const wordBtn = modal?.querySelector(".ear-coach-dict-body")?.previousElementSibling?.querySelector(".ear-coach-dict-anki");
+          if (!wordBtn) return { error: "word anki button missing", phraseBtn: !!phraseBtn };
+          wordBtn.click();
+          await wait(300);
+          const status = [...modal.querySelectorAll(".ear-coach-dict-anki-status")].find((e) => e.style.display !== "none");
+          return {
+            phraseBtn: phraseBtn?.textContent ?? null,
+            wordBtn: wordBtn.textContent,
+            calls: window.__ankiCalls,
+            status: status?.textContent ?? null,
+            note: window.__ankiNotes[0] ?? null,
+          };
+        },
+        { tapWord, duplicate }
+      );
+    const added = await run(false);
+    await page.screenshot({ path: path.join(outDir, `anki-${vp.name}.png`) });
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+    const dup = await run(true);
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+    m.anki = { added, dup };
   }
 
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);

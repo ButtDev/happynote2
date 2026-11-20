@@ -34,6 +34,9 @@
         "phrase": {
           "tap": "going",
           "title": "go to"
+        },
+        "anki": {
+          "tap": "going"
         }
       }
     },
@@ -94,6 +97,9 @@
         "phrase": {
           "tap": "going",
           "title": "go to"
+        },
+        "anki": {
+          "tap": "going"
         }
       }
     }

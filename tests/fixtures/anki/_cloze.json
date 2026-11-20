@@ -1,0 +1,21 @@
+{
+  "comment": "clozeSentence(sentence, target, tapped?) → 기대 문장. SPEC_015",
+  "cases": [
+    [["I'm looking forward to it.", "looking forward to"], "I'm ____ it."],
+    [["I'm looking forward to it.", "look forward to", "looking"], "I'm ____ it."],
+    [["She showed up late.", "show up", "showed"], "She ____ late."],
+    [["We got up early, then left.", "get up", "got"], "We ____ early, then left."],
+    [["Hello, world!", "hello"], "____, world!"],
+    [["HELLO there", "hello"], "____ there"],
+    [["The cat sat on the category mat.", "cat"], "The ____ sat on the category mat."],
+    [["Concatenate the scatter.", "cat"], "Concatenate the scatter."],
+    [["Run, run, run!", "run"], "____, ____, ____!"],
+    [["I gave up.", "give up", "gave"], "I ____."],
+    [["Nothing to see here.", "banana"], "Nothing to see here."],
+    [["Nothing to see here.", "look forward to", "looking"], "Nothing to see here."],
+    [["It's the dog's toy.", "dog's"], "It's the ____ toy."],
+    [["Use (parens) here.", "(parens)"], "Use ____ here."],
+    [["", "word"], ""],
+    [["Keep it.", ""], "Keep it."]
+  ]
+}

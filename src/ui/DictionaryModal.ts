@@ -1,10 +1,23 @@
 import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
+import type { AnkiInvoker, AnkiSettingsLike } from "../services/anki";
+import { ANKI_MESSAGES, addNoteIfNew, ankiSettingsReady, ankiStatusMessage, buildAnkiNote } from "../services/anki";
+
+/** SPEC_015: 사전 창에서 Anki 카드를 만들 때 필요한 자막·영상 정보와 클라이언트 */
+export interface DictionaryAnkiContext {
+  client: AnkiInvoker;
+  settings: () => AnkiSettingsLike;
+  sentence: string;
+  videoId: string | null;
+  videoTitle: string | null;
+  startSec: number;
+}
 
 /**
  * SPEC_013: 자막 단어 사전 창 — 단어·IPA·품사별 뜻·예문·발음 듣기.
  * SPEC_014: 누른 낱말 + 뒤 낱말로 만든 구 후보 중 사전에 있는 첫 구를 맨 위 구 칸에(꼬리표 없음 — 숙어도 나오므로).
+ * SPEC_015: 단어 칸·구 칸마다 「➕ Anki」 → AnkiConnect Android addNote.
  */
 export class DictionaryModal extends Modal {
   private readonly word: string;
@@ -12,9 +25,11 @@ export class DictionaryModal extends Modal {
   private readonly following: string[];
   private readonly provider: DictionaryProvider;
   private audio: HTMLAudioElement | null = null;
+  private readonly anki: DictionaryAnkiContext | null;
 
-  constructor(app: App, rawWord: string, provider: DictionaryProvider, following: string[] = []) {
+  constructor(app: App, rawWord: string, provider: DictionaryProvider, following: string[] = [], anki: DictionaryAnkiContext | null = null) {
     super(app);
+    this.anki = anki;
     this.rawWord = rawWord;
     this.word = normalizeLookupWord(rawWord) || rawWord.trim();
     this.provider = provider;
@@ -65,12 +80,14 @@ export class DictionaryModal extends Modal {
     head.createEl("h3", { cls: "ear-coach-dict-phrase-title", text: entry.word });
     if (entry.phonetic) head.createSpan({ cls: "ear-coach-dict-ipa", text: entry.phonetic });
     if (entry.audioUrl) this.addAudioButton(head, entry.audioUrl);
+    this.addAnkiButton(head, box, entry);
     this.renderMeanings(box, entry);
   }
 
   private renderEntry(head: HTMLElement, body: HTMLElement, entry: DictionaryEntry): void {
     if (entry.phonetic) head.createSpan({ cls: "ear-coach-dict-ipa", text: entry.phonetic });
     if (entry.audioUrl) this.addAudioButton(head, entry.audioUrl);
+    this.addAnkiButton(head, body, entry);
     this.renderMeanings(body, entry);
     body.createDiv({ cls: "ear-coach-dict-source", text: this.provider.name });
   }
@@ -91,6 +108,49 @@ export class DictionaryModal extends Modal {
       void audio.play().catch((e: unknown) => {
         if ((e as { name?: string })?.name !== "AbortError") fail();
       });
+    });
+  }
+
+  private addAnkiButton(head: HTMLElement, box: HTMLElement, entry: DictionaryEntry): void {
+    const ctx = this.anki;
+    if (!ctx) return;
+    const btn = head.createEl("button", { cls: "ear-coach-dict-anki", text: ANKI_MESSAGES.button });
+    const status = box.createDiv({ cls: "ear-coach-dict-anki-status" });
+    status.style.display = "none";
+    const show = (text: string, cls: string) => {
+      status.setText(text);
+      status.className = `ear-coach-dict-anki-status ${cls}`;
+      status.style.display = "";
+    };
+    btn.addEventListener("click", async () => {
+      const settings = ctx.settings();
+      if (!ankiSettingsReady(settings)) {
+        show(ANKI_MESSAGES.noSettings, "is-error");
+        return;
+      }
+      btn.disabled = true;
+      show(ANKI_MESSAGES.saving, "is-pending");
+      const note = buildAnkiNote(
+        {
+          word: entry.word,
+          phonetic: entry.phonetic,
+          audioUrl: entry.audioUrl,
+          meanings: entry.meanings.map((m) => ({ partOfSpeech: m.partOfSpeech, definition: m.definitions[0]?.definition ?? "" })),
+          sentence: ctx.sentence,
+          tapped: this.rawWord,
+          videoId: ctx.videoId,
+          videoTitle: ctx.videoTitle,
+          startSec: ctx.startSec,
+        },
+        settings
+      );
+      try {
+        const r = await addNoteIfNew(ctx.client, note);
+        show(ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
+      } catch (e) {
+        show(ankiStatusMessage(e), "is-error");
+        btn.disabled = false;
+      }
     });
   }
 

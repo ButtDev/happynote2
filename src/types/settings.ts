@@ -1,4 +1,5 @@
 import type { UnlockStep } from "./transcript";
+import type { AnkiRole } from "../services/anki";
 
 /**
  * User-configurable settings for the Obsidian Ear-Coach plugin.
@@ -20,6 +21,11 @@ export interface EarCoachSettings {
   mobileListHeightPercent: number;
   /** SPEC_011: 가로 화면 영상 열 폭(%) */
   mobileLandscapeLeftPercent: number;
+  /** SPEC_015: AnkiConnect Android 저장 */
+  ankiDeck: string;
+  ankiNoteType: string;
+  ankiFieldMap: Record<AnkiRole, string>;
+  ankiTags: string;
 }
 
 export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
@@ -38,4 +44,16 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   tutorPanelHeightPx: 380,
   mobileListHeightPercent: 50,
   mobileLandscapeLeftPercent: 58,
+  ankiDeck: "Default",
+  ankiNoteType: "Basic (and reversed card)",
+  ankiFieldMap: {
+    sentence: "Front",
+    picture: "Front",
+    meaning: "Front",
+    word: "Back",
+    ipa: "Back",
+    audio: "Back",
+    source: "Back",
+  },
+  ankiTags: "ear-coach",
 };

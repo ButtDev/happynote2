@@ -22,6 +22,7 @@ import {
 } from "../src/utils/platform.ts";
 import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
+import * as ankiSrc from "../src/services/anki.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -431,6 +432,76 @@ async function runAllTests() {
   for (const [w, want] of phr.lemma) assert.deepEqual(dictMod.lemmaVariants(w), want, `lemmaVariants(${JSON.stringify(w)})`);
   for (const [[t, f], want] of phr.phrases) assert.deepEqual(dictMod.phraseCandidates(t, f), want, `phraseCandidates(${JSON.stringify(t)}, ${JSON.stringify(f)})`);
   log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons, ${phr.lemma.length} lemma + ${phr.phrases.length} phrase cases`);
+  log("");
+
+  // 12. Anki (SPEC_015) — data in tests/fixtures/anki/. EAR_COACH_ANKI_MODULE로 대상 모듈을 바꿀 수 있다(변이 시험용).
+  log("[Test 12] Anki: cloze, note build, field remap, AnkiConnect response (data-driven, SPEC_015)");
+  const ankiMod = process.env.EAR_COACH_ANKI_MODULE ? await import(path.resolve(process.env.EAR_COACH_ANKI_MODULE)) : ankiSrc;
+  const ankiDir = path.resolve("tests/fixtures/anki");
+  const clozeData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_cloze.json"), "utf8"));
+  for (const [args, want] of clozeData.cases) {
+    assert.equal(ankiMod.clozeSentence(...(args as [string, string, string?])), want, `clozeSentence(${JSON.stringify(args)})`);
+  }
+  const ankiDefaults = {
+    ankiDeck: DEFAULT_EAR_COACH_SETTINGS.ankiDeck,
+    ankiNoteType: DEFAULT_EAR_COACH_SETTINGS.ankiNoteType,
+    ankiFieldMap: DEFAULT_EAR_COACH_SETTINGS.ankiFieldMap,
+    ankiTags: DEFAULT_EAR_COACH_SETTINGS.ankiTags,
+  };
+  const noteFiles = fs.readdirSync(ankiDir).filter((n) => n.endsWith(".json") && !n.startsWith("_")).sort();
+  for (const f of noteFiles) {
+    const c = JSON.parse(fs.readFileSync(path.join(ankiDir, f), "utf8"));
+    const got = ankiMod.buildAnkiNote(c.input, c.settings === "default" ? ankiDefaults : c.settings);
+    assert.equal(got.deckName, c.expect.deckName, `${f}: deckName`);
+    assert.equal(got.modelName, c.expect.modelName, `${f}: modelName`);
+    assert.deepEqual(got.fields, c.expect.fields, `${f}: fields`);
+    assert.deepEqual(got.tags, c.expect.tags, `${f}: tags`);
+    assert.deepEqual(got.options, c.expect.options, `${f}: options`);
+    assert.equal(got.options.allowDuplicate, false, `${f}: allowDuplicate=false`);
+    if (c.expect.audio === null) assert.equal(got.audio, undefined, `${f}: no audio`);
+    else {
+      assert.equal(got.audio?.[0]?.url, c.expect.audio[0].url, `${f}: audio[0].url`);
+      assert.deepEqual(got.audio, c.expect.audio, `${f}: audio`);
+    }
+  }
+  const remapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_remap.json"), "utf8"));
+  const roleOrder = ["sentence", "picture", "meaning", "word", "ipa", "audio", "source"];
+  for (const rc of remapData.cases) {
+    const got = ankiMod.remapFieldsForModel(rc.fields, rc.map === "default" ? DEFAULT_EAR_COACH_SETTINGS.ankiFieldMap : rc.map);
+    assert.deepEqual(roleOrder.map((r) => got[r]), rc.expect, `remapFieldsForModel(${JSON.stringify(rc.fields)})`);
+  }
+  const clientData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_client.json"), "utf8"));
+  for (const cc of clientData.cases) {
+    const sent: any[] = [];
+    const client = new ankiMod.AnkiConnectClient(async (body: string) => {
+      sent.push(JSON.parse(body));
+      if (cc.reply.throw) throw new Error(cc.reply.throw);
+      return cc.reply;
+    });
+    const label = `client ${cc.action} ${JSON.stringify(cc.reply)}`;
+    if ("result" in cc.expect) {
+      assert.deepEqual(await client.invoke(cc.action, {}), cc.expect.result, label);
+    } else {
+      let err: any = null;
+      try {
+        await client.invoke(cc.action, {});
+      } catch (e) {
+        err = e;
+      }
+      assert.ok(err, `${label}: should throw`);
+      assert.equal(err.kind, cc.expect.error, `${label}: error kind`);
+      if (cc.expect.message) assert.equal(err.message, cc.expect.message, `${label}: message`);
+    }
+    assert.deepEqual(sent, [{ action: cc.action, version: 6, params: {} }], `${label}: request body`);
+  }
+  for (const sc of clientData.save) {
+    const calls: string[] = [];
+    const fake = { invoke: async (a: string) => (calls.push(a), a === "canAddNotes" ? sc.canAdd : 1) };
+    assert.equal(await ankiMod.addNoteIfNew(fake, { deckName: "D" }), sc.expect, `addNoteIfNew canAdd=${JSON.stringify(sc.canAdd)}`);
+    assert.deepEqual(calls, sc.calls, `addNoteIfNew calls canAdd=${JSON.stringify(sc.canAdd)}`);
+  }
+  assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요", "connection message");
+  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases`);
   log("");
 
   log("==============================================================");

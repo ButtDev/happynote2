@@ -1,0 +1,31 @@
+{
+  "comment": "기본 Basic (and reversed card) + 단어 칸 저장",
+  "input": {
+    "word": "hello",
+    "phonetic": "/həˈləʊ/",
+    "audioUrl": "https://upload.wikimedia.org/wikipedia/commons/7/77/En-us-hello.ogg",
+    "meanings": [
+      { "partOfSpeech": "noun", "definition": "\"Hello!\" or an equivalent greeting." },
+      { "partOfSpeech": "verb", "definition": "To greet with \"hello\"." }
+    ],
+    "sentence": "Hello everyone, welcome back to the channel.",
+    "tapped": "Hello",
+    "videoId": "dQw4w9WgXcQ",
+    "videoTitle": "Daily <English> & Talk",
+    "startSec": 75.6
+  },
+  "settings": "default",
+  "expect": {
+    "deckName": "Default",
+    "modelName": "Basic (and reversed card)",
+    "fields": {
+      "Front": "____ everyone, welcome back to the channel.<br><i>noun</i> &quot;Hello!&quot; or an equivalent greeting.<br><i>verb</i> To greet with &quot;hello&quot;.",
+      "Back": "hello<br>/həˈləʊ/<br><a href=\"https://youtu.be/dQw4w9WgXcQ?t=75\">Daily &lt;English&gt; &amp; Talk 01:15</a>"
+    },
+    "tags": ["ear-coach"],
+    "options": { "allowDuplicate": false, "duplicateScope": "deck" },
+    "audio": [
+      { "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/En-us-hello.ogg", "filename": "ear-coach-hello.ogg", "fields": ["Back"] }
+    ]
+  }
+}
