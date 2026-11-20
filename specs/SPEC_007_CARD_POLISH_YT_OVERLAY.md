@@ -1,7 +1,7 @@
 ---
 id: SPEC_007
 title: 자막 카드 다듬기(포커스 밀림·버튼 룩) + 유튜브 오버레이 줄이기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -39,7 +39,7 @@ parent: SPEC_004
 5. [x] 변이: HEAD `styles.css`로 `ui` exit 1(`activeCardNoShift`·`videoCrop` 실패), 파라미터 함수의 `controls` 줄을 뺀 사본으로 Test 8 실패 [자동]
 6. [x] `landscape.png`·`portrait.png`에서 카드 버튼이 알약·세그먼트로 정돈돼 보임 [자동]
 7. [x] `verify.mjs --set regression` → `verify: ok` [자동]
-8. [ ] Android 실기기 가로에서 ① 카드 포커스 때 밀림 없음 ② 카드 버튼 룩 ③ 루프 이동 때 유튜브 오버레이가 덜 거슬리는지 보고 버튼 [수동]
+8. [x] Android 실기기 가로에서 ① 카드 포커스 때 밀림 없음 ② 카드 버튼 룩 ③ 루프 이동 때 유튜브 오버레이가 덜 거슬리는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1. `npm test` Test 8 · 2~4. `ui` + `.scratch/ui/report.json` · 5. `.scratch/mut/` 사본 · 6. 스크린샷 Read · 7. `verify.mjs --set regression`
@@ -58,3 +58,4 @@ parent: SPEC_004
 - 2026-11-20 사람확인(회차 셈 없음): 8 메모 「화면은 깔끔해졌다. 근대 cc 컨트롤이 안되는게 아쉬움」 → CC 버튼은 SPEC_008. ①②③ 판정은 SPEC_008 확인 때 함께.
 - 2026-11-20 사람확인(회차 셈 없음): BLOCKED — 8 NG 「Yt 상관없이 가로모드에서 카드 좌우 드래그 안됨, 원래그랬던거 같기도함. 세로에선 됨」. 검사 화면에선 세로·가로 모두 가로 스크롤 요소 없음, 가로에선 리사이저 `display:none`(styles.css:759). 「좌우 드래그」가 무엇인지(경계 폭 조절 / 옵시디언 스와이프) 사람 답 대기. ①②③ 자체 판정은 아직 없음.
 - 2026-11-20 사람 답 「좌우 드래그 B 카드 스와이프」 → SPEC_010에서 고침. 8의 남은 판정(①밀림 ②버튼 룩)은 SPEC_010 6과 함께 받음. 상태 IMPLEMENTED로 되돌림.
+- 2026-11-21 사람확인(회차 셈 없음): DONE — 8 OK(1.0.13, `[Button pressed: SPEC_007 8 OK]`, ①밀림 ②버튼 룩; ③은 SPEC_009 YT 토글 DONE으로 대체).

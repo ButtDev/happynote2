@@ -22,3 +22,4 @@
 {"ts":"2026-11-20T14:27:05.526Z","cmd":"/spec-run","spec":"SPEC_010","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok; Test9 8건; ui swipeDrawer 가로/세로 ok; 변이 2종 실패"}
 {"ts":"2026-11-20T17:59:55.765Z","cmd":"/spec-run","spec":"SPEC_010","iteration":2,"status":"IMPLEMENTED","evidence":"6 NG 사진 → 메뉴 열린 동안 가로 전체화면 규칙 해제(:not drawer-open); regression ok, 변이 ui FAIL 확인"}
 {"ts":"2026-11-20T18:10:00.825Z","cmd":"/spec-run","spec":"SPEC_010","iteration":2,"status":"DROPPED","evidence":"6 NG 2회째 → 폐기, 제품·시험 SPEC_010 이전으로 복원, regression ok"}
+{"ts":"2026-11-20T18:13:00.156Z","cmd":"/spec-run","spec":"SPEC_007","status":"DONE","evidence":"사람확인 8 OK (1.0.13)"}
