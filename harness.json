@@ -1,0 +1,9 @@
+{
+  "verify": [
+    { "name": "harness", "cmd": "node .claude/harness/status.mjs --json > /dev/null", "timeoutSec": 60 }
+  ],
+  "regression": ["harness"],
+  "detachAfterSec": 120,
+  "memoryMaxKB": 20,
+  "night": { "enabled": false, "improve": true, "maxNightBranches": 2 }
+}
