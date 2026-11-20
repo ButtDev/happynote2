@@ -43,7 +43,7 @@ const css = fs.readFileSync(cssPath, "utf8");
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- :root·button = Obsidian 모바일 기본 테마 근사(버튼 높이 --input-height), #app 위 40px·아래 24px = 실기기 바깥 여백, .workspace-leaf transform = 모바일 탭 스와이프(fixed를 가둠) 흉내(SPEC_004), --safe-area-inset 30/15·가로 leaf-content 위 82px = 1.0.6 실기기 진단 값(SPEC_006) -->
-<style>:root{--background-primary:#1e1e1e;--background-primary-alt:#242424;--background-secondary:#262626;--background-modifier-border:#363636;--background-modifier-form-field:#2a2a2a;--background-modifier-hover:rgba(255,255,255,.075);--interactive-accent:#8a5cf5;--text-on-accent:#fff;--text-normal:#dadada;--text-muted:#a0a0a0;--color-orange:#e9973f;--font-monospace:monospace;--input-height:40px;--safe-area-inset-top:30px;--safe-area-inset-bottom:15px}
+<style>:root{--background-primary:#1e1e1e;--background-primary-alt:#242424;--background-secondary:#262626;--background-modifier-border:#363636;--background-modifier-form-field:#2a2a2a;--background-modifier-hover:rgba(255,255,255,.075);--interactive-accent:#8a5cf5;--text-on-accent:#fff;--text-normal:#dadada;--text-muted:#a0a0a0;--color-orange:#e9973f;--color-yellow:#e0de71;--color-red:#fb464c;--font-monospace:monospace;--input-height:40px;--safe-area-inset-top:30px;--safe-area-inset-bottom:15px}
 @media (orientation:landscape){#app .workspace-leaf-content{padding-top:82px;box-sizing:border-box}}
 button{height:var(--input-height);font:inherit;cursor:pointer}
 html,body{margin:0;padding:0;height:100%;background:#1e1e1e;color:#ddd;font-family:sans-serif}
@@ -131,6 +131,19 @@ function evaluateExpect(vp, m, nums) {
   }
   if (e.minListWidth !== undefined) add("minListWidth", l && l.w >= e.minListWidth, `${l && l.w} >= ${e.minListWidth}`);
   if (e.maxVideoTop !== undefined) add("maxVideoTop", v && v.y <= e.maxVideoTop, `${v && v.y} <= ${e.maxVideoTop}`);
+  if (e.activeCardNoShift !== undefined) {
+    add("activeCardNoShift", m.activeShift !== null && m.activeShift <= e.activeCardNoShift, `shift=${m.activeShift} <= ${e.activeCardNoShift}`);
+  }
+  if (e.sameHeight) {
+    const hs = e.sameHeight.map((sel) => m.heights?.[sel]);
+    const ok = hs.every((h) => typeof h === "number" && h > 0) && Math.max(...hs) - Math.min(...hs) <= 1;
+    add("sameHeight", ok, JSON.stringify(m.heights));
+  }
+  if (e.videoCrop !== undefined) {
+    const p = m.player;
+    const ok = p && v && v.y - p.y >= e.videoCrop && bottom(p) - bottom(v) >= e.videoCrop && p.x === v.x && p.w === v.w;
+    add("videoCrop", ok, `player=${JSON.stringify(p)} box=${JSON.stringify(v)} >= ${e.videoCrop}`);
+  }
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
     const tol = e.videoAspectTolerance ?? 0.03;
@@ -244,8 +257,29 @@ for (const vp of cases.viewports) {
       const el = document.querySelector(sel);
       overflowX[sel] = el ? { scrollWidth: el.scrollWidth, clientWidth: el.clientWidth } : null;
     }
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX };
-  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
+    // SPEC_007: 첫 카드에 활성 표시를 붙였다 뗄 때 시간 버튼 x 이동량
+    let activeShift = null;
+    const card0 = document.querySelector(selectors.segmentCard + ".ear-coach-segment-card") ?? document.querySelector(".ear-coach-segment-card");
+    const probe = card0?.querySelector(".ear-coach-time-btn");
+    if (card0 && probe) {
+      const had = card0.classList.contains("is-active-playing");
+      card0.classList.remove("is-active-playing");
+      const x0 = probe.getBoundingClientRect().x;
+      card0.classList.add("is-active-playing");
+      const x1 = probe.getBoundingClientRect().x;
+      if (!had) card0.classList.remove("is-active-playing");
+      activeShift = Math.abs(x1 - x0);
+    }
+    const heights = {};
+    for (const sel of selectors.__sameHeight ?? []) {
+      const el = document.querySelector(sel);
+      heights[sel] = el ? Math.round(el.getBoundingClientRect().height * 10) / 10 : null;
+    }
+    // SPEC_007: 플레이어 요소(유튜브 iframe/자리)와 영상 상자
+    const playerEl = videoEl?.querySelector(':scope > [id^="ear-coach-player-"]');
+    const player = playerEl ? rectOf(playerEl) : null;
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, player };
+  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   m.diag = vp.expect?.diag
     ? await page.evaluate(() => {

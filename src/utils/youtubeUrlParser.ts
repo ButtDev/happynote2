@@ -133,3 +133,32 @@ export function generateBookmarkletCode(): string {
   ].join("");
   return code;
 }
+
+/**
+ * YouTube embed player parameters (SPEC_007).
+ * Mobile hides YouTube's own controls/overlays because Ear-Coach has its own controls.
+ */
+export function buildYouTubeEmbedParams(origin: string, mobile: boolean): Record<string, string | number> {
+  const params: Record<string, string | number> = {
+    enablejsapi: 1,
+    rel: 0,
+    modestbranding: 1,
+    playsinline: 1,
+  };
+  if (mobile) {
+    params.controls = 0;
+    params.iv_load_policy = 3;
+    params.fs = 0;
+    params.disablekb = 1;
+  }
+  params.origin = origin;
+  return params;
+}
+
+export function buildYouTubeEmbedUrl(videoId: string, origin: string, mobile: boolean): string {
+  const params = buildYouTubeEmbedParams(origin, mobile);
+  const query = Object.entries(params)
+    .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
+    .join("&");
+  return `https://www.youtube.com/embed/${videoId}?${query}&widget_referrer=${encodeURIComponent(origin)}`;
+}

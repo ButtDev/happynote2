@@ -1,6 +1,6 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform.ts";
-import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
+import { buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 
 export interface PlayerBarCallbacks {
   onTimeUpdate: (currentTimeSec: number) => void;
@@ -187,15 +187,15 @@ export class PlayerBar {
     }
 
     if (this.iframeEl) {
-      const origin = encodeURIComponent(window.location.origin || "https://www.youtube.com");
-      this.iframeEl.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&origin=${origin}&widget_referrer=${origin}`;
+      this.iframeEl.src = buildYouTubeEmbedUrl(videoId, window.location.origin || "https://www.youtube.com", isMobileApp());
     }
   }
 
   private mountYouTubeEmbed(videoId: string, containerId: string): void {
     if (!this.playerMountEl || this.isEmbedLoaded) return;
     this.isEmbedLoaded = true;
-    const origin = encodeURIComponent(window.location.origin || "https://www.youtube.com");
+    const origin = window.location.origin || "https://www.youtube.com";
+    const mobile = isMobileApp();
 
     const onPlayerInitialized = () => {
       this.thumbnailEl?.remove();
@@ -215,13 +215,7 @@ export class PlayerBar {
           width: "100%",
           height: "100%",
           videoId,
-          playerVars: {
-            enablejsapi: 1,
-            rel: 0,
-            modestbranding: 1,
-            playsinline: 1,
-            origin: window.location.origin,
-          },
+          playerVars: buildYouTubeEmbedParams(window.location.origin, mobile),
           events: {
             onReady: () => onPlayerInitialized(),
             onStateChange: (ev: any) => {
@@ -238,7 +232,7 @@ export class PlayerBar {
       this.iframeEl = this.playerMountEl.createEl("iframe", {
         cls: "ear-coach-youtube-iframe",
         attr: {
-          src: `https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&origin=${origin}&widget_referrer=${origin}`,
+          src: buildYouTubeEmbedUrl(videoId, origin, mobile),
           allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
           allowfullscreen: "true",
         },

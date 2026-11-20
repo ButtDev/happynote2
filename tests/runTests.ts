@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
+  buildYouTubeEmbedParams,
+  buildYouTubeEmbedUrl,
   formatSecondsToTimestamp,
   generateBookmarkletCode,
   parseTimestampToSeconds,
@@ -268,6 +270,28 @@ async function runAllTests() {
       assert.ok(md.includes(part), `${f}: markdown missing "${part}"`);
     }
     log(`  -> PASS: ${f} (${c.name})`);
+  }
+  log("");
+
+  // 8. YouTube embed params (SPEC_007) — data in tests/fixtures/youtube-embed/
+  log("[Test 8] YouTube Embed Params: mobile hides native controls (data-driven)");
+  const embedDir = path.resolve("tests/fixtures/youtube-embed");
+  for (const f of fs.readdirSync(embedDir).filter((n) => n.endsWith(".json")).sort()) {
+    const c = JSON.parse(fs.readFileSync(path.join(embedDir, f), "utf8"));
+    for (const k of c.cases) {
+      const params = buildYouTubeEmbedParams(c.origin, k.mobile);
+      for (const [key, val] of Object.entries(k.expectParams)) {
+        assert.equal(params[key], val, `${f} mobile=${k.mobile}: param ${key}`);
+      }
+      for (const key of k.absentParams) {
+        assert.equal(key in params, false, `${f} mobile=${k.mobile}: param ${key} must be absent`);
+      }
+      const url = buildYouTubeEmbedUrl(c.videoId, c.origin, k.mobile);
+      for (const part of k.expectUrlIncludes) {
+        assert.ok(url.includes(part), `${f} mobile=${k.mobile}: url missing "${part}" in ${url}`);
+      }
+      log(`  -> PASS: ${f} mobile=${k.mobile}`);
+    }
   }
   log("");
 

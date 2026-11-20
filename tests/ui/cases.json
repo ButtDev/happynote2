@@ -19,13 +19,19 @@
         "visible": [
           ".view-header",
           ".mobile-navbar"
-        ]
+        ],
+        "activeCardNoShift": 0.5,
+        "sameHeight": [
+          ".ear-coach-time-btn",
+          ".ear-coach-mini-btn"
+        ],
+        "videoCrop": 40
       }
     },
     {
       "name": "landscape",
-      "width": 915,
-      "height": 412,
+      "width": 891,
+      "height": 411,
       "expect": {
         "maxOverlapVideoControlsPx2": 0,
         "maxOverlayOnVideoPx2": 0,
@@ -52,19 +58,27 @@
         },
         "maxHeight": {
           ".ear-coach-mobile-toolbar": 44,
-          ".ear-coach-player-controls": 44
+          ".ear-coach-player-controls": 44,
+          ".ear-coach-step-bar": 36
         },
         "maxVideoSideGap": 12,
         "minListWidth": 330,
         "noOverflowX": [
           ".ear-coach-mobile-toolbar",
-          ".ear-coach-player-controls"
+          ".ear-coach-player-controls",
+          ".ear-coach-step-bar"
         ],
         "diag": {
           "title": "Ear-Coach 화면 진단",
           "minChain": 4,
           "topHits": 5
-        }
+        },
+        "activeCardNoShift": 0.5,
+        "sameHeight": [
+          ".ear-coach-time-btn",
+          ".ear-coach-mini-btn"
+        ],
+        "videoCrop": 40
       }
     }
   ],
