@@ -3,17 +3,17 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 가로모드 마무리 단계. 최신 배포 BRAT **1.0.16**. 끝난 것: SPEC_007·SPEC_011(가로 좌우 비율 막대) DONE, SPEC_010(가로 카드 스와이프로 옆 메뉴) DROPPED — 가로에서 옆 메뉴는 세로로 돌려서 연다(다시 시도하지 않음).
-- 가로모드 SPEC_002~007·011 모두 DONE(2026-11-21). SPEC_012(진단 기능 제거) DONE. Test 7은 이제 「지운 기능이 main.js·src에 없음」(`tests/fixtures/removed-features/`).
-- 사전+AnkiDroid(사람 선택 2026-11-21)를 셋으로: SPEC_013 단어 탭 → 사전 창(IMPLEMENTED, 7 ⏳) → SPEC_014 AnkiConnect Android 카드 저장(사전 창에 버튼) → SPEC_015 영상 스냅샷 이미지. 남은 후보: 자막 품질, 모바일 AI 번역.
+- 최신 배포 BRAT **1.0.16**. 가로모드(SPEC_002~012) 전부 DONE/DROPPED — 다시 열지 않음(SPEC_010 옆 메뉴 스와이프는 DROPPED, 세로로 돌려서 연다).
+- 사전+AnkiDroid 진행 중: SPEC_013 단어 탭 → 사전 창 IMPLEMENTED(7 ⏳) → 다음 SPEC_014 AnkiConnect Android 카드 저장(사전 창에 버튼, 덱·노트 타입 결정 필요할 수 있음) → SPEC_015 영상 스냅샷 이미지. 그 뒤 후보: 자막 품질, 모바일 AI 번역(`memory/backlog.md`).
 
 ## 열린 질문 (사람에게)
-- ⏳ SPEC_013 7(실기기 단어 눌러 뜻·발음, 1.0.16) 버튼 보냄.
+- ⏳ SPEC_013 7(1.0.16 실기기: 3단계 문장 단어 눌러 뜻·발음 쓸 만한지) 버튼 보냄, 답 대기. OK면 DONE 처리 후 SPEC_014 `/spec-new`.
 - 사람이 버튼을 다른 SPEC 행으로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → 릴리스 확인은 `curl` GitHub API, `gh` 없음) 후 ⏳ 요청. 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.
-- 가로 CSS는 `styles.css` 끝 SPEC_002~011 블록. 가로 비율 막대 = 같은 `.ear-coach-mobile-resizer`를 그리드 12px 열로, 왼쪽 열 폭 `--ear-coach-landscape-left`(설정 `mobileLandscapeLeftPercent` 기본 58, 30~70, `src/utils/landscapeSplit.ts`, Test 9), 영상 맞춤 폭 상한 유지. 가로+활성일 때 조상(`:has`) transform·contain 해제, leaf-content `position:fixed`, `.view-content`는 leaf-content 안 absolute inset 0(Obsidian이 leaf-content에 위 82px 패딩), 위 패딩 = `--safe-area-inset-top`(실기기 env는 0).
+- Test 7 = 지운 기능(SPEC_005 진단)이 main.js·src에 없음(`tests/fixtures/removed-features/`). 시험 `npm test`는 `PATH=tests/fixtures/bin:$PATH`가 있어야 Test 4(agy) 통과 — `verify.mjs`가 넣어 줌.
+- 가로 CSS는 `styles.css` SPEC_002~011 블록(그 뒤 SPEC_013 사전 블록). 가로 비율 막대 = 같은 `.ear-coach-mobile-resizer`를 그리드 12px 열로, 왼쪽 열 폭 `--ear-coach-landscape-left`(설정 `mobileLandscapeLeftPercent` 기본 58, 30~70, `src/utils/landscapeSplit.ts`, Test 9), 영상 맞춤 폭 상한 유지. 가로+활성일 때 조상(`:has`) transform·contain 해제, leaf-content `position:fixed`, `.view-content`는 leaf-content 안 absolute inset 0(Obsidian이 leaf-content에 위 82px 패딩), 위 패딩 = `--safe-area-inset-top`(실기기 env는 0).
 - 유튜브 embed 파라미터는 `src/utils/youtubeUrlParser.ts` `buildYouTubeEmbedParams/Url`(모바일만 컨트롤 끔), `ytOverlay` 인자(SPEC_009), 자르기 CSS는 `.ear-coach-player-wrapper:not(.is-yt-overlay)`. 데이터 시험 `tests/fixtures/youtube-embed/`(Test 8).
 - 화면 검사 가로 뷰포트는 실기기 891×411. HTML은 실기기를 흉내 낸다: Obsidian 테마 변수(+yellow/red), `button` 높이 40px, `#app` 바깥 여백 40/24px + `contain:layout`, `--safe-area-inset` 30/15, 가로 leaf-content 위 패딩 82px, `.workspace-leaf` transform, 가짜 헤더 48px·내비바 56px. 규칙은 `cases.json` `expect`(SPEC_009 `overlayToggle`, SPEC_011 `landscapeResizer` — 합성 PointerEvent로 끌기, 모바일 컨텍스트에선 `page.mouse`가 안 닿음; 끌기 뒤 `landscape-resized.png`, 두 번 눌러 기본으로 되돌린 뒤 `landscape.png`). iframe 안 유튜브 UI는 측정 안 됨. 단계 세그먼트·툴바는 기본 목록 폭 362에서 딱 맞음(여유 0) — 글자 늘리면 넘침.
 - `styles.css`에 `backdrop-filter`·`filter: blur` 글자 금지(npm test). `docs/test_result.txt`는 `npm test`가 덮어씀 — 커밋하지 않음.
