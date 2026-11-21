@@ -1,7 +1,7 @@
 ---
 id: SPEC_019
 title: 사전 구동사 — 누른 낱말 앞에서 시작하는 구도 찾기 (forward → look forward to)
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_014]
@@ -34,12 +34,12 @@ depends_on: [SPEC_014]
 - 여러 낱말 끌어 고르기, 관용구 사전·AI 판별, 사이에 낀 목적어가 2낱말 이상인 구(pick the box up), 누른 낱말 뒤로 목적어를 건너뛰는 구(pick 누름 → pick it up), 문장(카드) 경계를 넘는 구, 사전 창 모양 변경.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] `_phrases.json` `around` 사례 8개 이상(forward·to·up(pick it up)·up(showed up)·앞 낱말 문장부호 끊김·빈 앞 낱말·누른 낱말 끝 문장부호·preceding 빈 경우 = phraseCandidates) 전부 통과, 기존 `lemma`·`phrases` 사례 그대로 통과 (`npm test` Test 11) [자동]
-2. [ ] 변이: 앞 낱말 창을 빼 버린 사본으로 Test 11 실패 [자동]
-3. [ ] 화면 검사(세로·가로): 「So I was going to tell you…」에서 「to」를 누르면 맨 위 `.ear-coach-dict-phrase-title` = `go to`, 그 칸이 단어 칸(= `to`)보다 위 (`expect.phraseBefore` ok). 기존 `phrase`(going → go to)·「So」 구 없음 규칙 ok [자동]
-4. [ ] 실재 조회(Node fetch, dictionaryapi.dev): 「looking forward to」의 forward·「pick it up」의 up·「showed up」의 up에서 후보 순서대로 처음 결과가 있는 구를 실행 기록에 적는다(관찰, 기대 look forward to · pick up 계열 · show up) [자동]
-5. [ ] `verify.mjs --set regression` ok [자동]
-6. [ ] Android 실기기에서 「looking forward to」의 「forward」(또는 「showed up」의 「up」)를 눌러 맨 위에 구동사 뜻이 뜨는지 보고 버튼 [수동]
+1. [x] `_phrases.json` `around` 사례 8개 이상(forward·to·up(pick it up)·up(showed up)·앞 낱말 문장부호 끊김·빈 앞 낱말·누른 낱말 끝 문장부호·preceding 빈 경우 = phraseCandidates) 전부 통과, 기존 `lemma`·`phrases` 사례 그대로 통과 (`npm test` Test 11) [자동]
+2. [x] 변이: 앞 낱말 창을 빼 버린 사본으로 Test 11 실패 [자동]
+3. [x] 화면 검사(세로·가로): 「So I was going to tell you…」에서 「to」를 누르면 맨 위 `.ear-coach-dict-phrase-title` = `go to`, 그 칸이 단어 칸(= `to`)보다 위 (`expect.phraseBefore` ok). 기존 `phrase`(going → go to)·「So」 구 없음 규칙 ok [자동]
+4. [x] 실재 조회(Node fetch, dictionaryapi.dev): 「looking forward to」의 forward·「pick it up」의 up·「showed up」의 up에서 후보 순서대로 처음 결과가 있는 구를 실행 기록에 적는다(관찰, 기대 look forward to · pick up 계열 · show up) [자동]
+5. [x] `verify.mjs --set regression` ok [자동]
+6. [x] Android 실기기에서 「looking forward to」의 「forward」(또는 「showed up」의 「up」)를 눌러 맨 위에 구동사 뜻이 뜨는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1. `npm test` Test 11 · 2. `.scratch/mut/` 사본 + `EAR_COACH_DICT_MODULE` · 3·5. `ui` + `.scratch/ui/report.json`, `phrase-before-portrait.png` 열어 봄 · 4. `.scratch/` Node 스크립트 출력
@@ -55,3 +55,4 @@ depends_on: [SPEC_014]
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 11 `16 lemma + 9 phrase + 9 around cases` PASS(앞 낱말 없음 = phraseCandidates 불변식 포함) · 2 ✅ 변이: 앞 낱말 창 4줄 주석 처리 사본 → `phraseCandidatesAround("forward", ["was","looking"], ["to","it"])` AssertionError · 3 ✅ ui portrait·landscape `phraseBefore` ok·`phrase` ok(report.json), `phrase-before-portrait.png`: 맨 위 보라 칸 `go to`·발음·Anki·verb 뜻, 그 아래 `to` 단어 칸 · 4 ✅ 실재 조회: really looking [forward] to it → look forward to · pick it [up] → pick up · she showed [up] late → show up · looking forward [to] seeing → look forward to · 5 ✅ `verify --set regression` ok · 6 ⏳ 실기기
   - 가결정(실행 중): 2낱말 창에 [p2 + 누른 낱말] 추가(pick it up → pick up) — SPEC 3장에 반영, 대안: 빼기(pick it up은 사전에 없어 못 찾음).
+- 2026-11-21 사람확인: DONE — 6 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_019 6 OK]」(실기기 1.0.25), 1~5는 회차 1 근거 그대로

@@ -3,11 +3,11 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_019(구동사 앞 낱말부터) IMPLEMENTED — ⏳ 6 실기기 버튼 대기(보낸 버튼 `SPEC_019 6 OK|NG|메모`). 그 밖의 SPEC은 모두 DONE/DROPPED. 최신 배포 BRAT **1.0.25**.
+- 진행 중인 SPEC 없음(SPEC_019까지 DONE/DROPPED). 최신 배포 BRAT **1.0.25**.
 - 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini). 자막 품질 남은 것: 트랙 선택·um/uh·대소문자 복원(SPEC_018 범위 밖).
 
 ## 열린 질문 (사람에게)
-- SPEC_019 ⏳ 6: 1.0.25에서 구동사 뒤쪽 낱말(forward·up) 눌러 맨 위 구동사 뜻 확인 → OK면 DONE 커밋.
+- 다음 SPEC 고르기: 모바일 AI 번역(Gemini) 추천.
 - Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2(코드 변경 없음). 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 설정 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록(SPEC_017 9 메모 「잘동작함」 → OK 처리).
 
