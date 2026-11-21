@@ -537,6 +537,8 @@ export default class EarCoachPlugin extends Plugin {
     const session = await this.loadOrRecoverSession(targetFile);
     if (session) {
       await view.loadSession(session, targetFile);
+      // SPEC_021: 앱 재시작으로 복원된 화면도 해석 없는 카드를 AI로 채움
+      if (isMobileApp() && this.getAiConfig() && session.segments.some(needsAiAnalysis)) void this.runMobileAiEnrichment(session, targetFile);
     }
   }
 

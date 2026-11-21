@@ -124,3 +124,8 @@
 {"ts":"2026-11-21T06:41:16.729Z","item":"SPEC_021 9","answer":"NG 사유(스크린샷)","raw":"[사진] AI 연결 실패: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. / Grok 키 발급은?"}
 {"ts":"2026-11-21T06:42:18.666Z","source":"button","question":"오류 하나도 같이 고치면 좋겠어요. 지금 코드는 한도 초과(429)만 30초 뒤 다시 시도하고, 이번 같은 과부하 오류는 곧바로 실패로 끝내요(`src/services/aiAnalysis.ts:264`). 과부하 오류도 기다렸다가 다시 시도하게 고치면 Gemini를 계속 쓸 때 이번 같은 실패가 줄어들 거예요. 아직 손대지 않았고, 아래에서 골라 주시면 할게요. NG의 원인은 이 사진의 오류로 기록해 뒀어요.","answer":"과부하 재시도 추가","messageId":437}
 {"ts":"2026-11-21T06:42:24.402Z","item":"Gemini 과부하 대응","answer":"과부하 재시도 추가","raw":"[Button pressed: 과부하 재시도 추가]"}
+{"ts":"2026-11-21T06:50:45.861Z","source":"button","question":"**확인 방법:** BRAT에서 1.0.28로 업데이트하고 Obsidian을 다시 시작해 주세요. 설정에서 🔌 연결 확인을 누르면 ✅ 문구가 떠야 해요. 그다음 노트를 열고 카드를 3단계로 바꿔 한국어 해석과 발음 설명이 자연스러운지 봐 주세요. Gemini가 계속 붐비면 제공자를 「OpenAI 호환 (Groq 등)」으로 바꾸고 Groq 키로 시험해도 돼요.","answer":"SPEC_021 9 메모","messageId":438}
+{"ts":"2026-11-21T06:51:16.476Z","source":"button-note","question":"**확인 방법:** BRAT에서 1.0.28로 업데이트하고 Obsidian을 다시 시작해 주세요. 설정에서 🔌 연결 확인을 누르면 ✅ 문구가 떠야 해요. 그다음 노트를 열고 카드를 3단계로 바꿔 한국어 해석과 발음 설명이 자연스러운지 봐 주세요. Gemini가 계속 붐비면 제공자를 「OpenAI 호환 (Groq 등)」으로 바꾸고 Groq 키로 시험해도 돼요.","answer":"SPEC_021 9 메모","note":"새 유튭클립으로 해야하니?","messageId":438}
+{"ts":"2026-11-21T06:51:22.663Z","item":"SPEC_021 9","answer":"메모","raw":"[Button pressed: SPEC_021 9 메모] 새 유튭클립으로 해야하니?"}
+{"ts":"2026-11-21T06:54:31.357Z","source":"button","question":"데스크톱에서 이미 모든 카드를 분석한 노트라면 보낼 카드가 없어서 아무 일도 일어나지 않아요. 그럴 때만 새 유튜브 클립으로 노트를 하나 만들어 시험하면 돼요.","answer":"SPEC_021 9 메모","messageId":441}
+{"ts":"2026-11-21T06:59:18.749Z","item":"SPEC_021 9","answer":"메모","raw":"[사진] 오른쪽위 메뉴에 없음. 다른경로에는 비워 있음"}
