@@ -776,10 +776,11 @@ async function runAllTests() {
   }
   for (const c of loopCases.tick) assert.deepEqual(loopMod.decideLoopTick(c.in), c.expect, `decideLoopTick ${c.name}`);
   for (const c of loopCases.follow) assert.equal(loopMod.shouldAutoFollow(c.in), c.expect, `shouldAutoFollow ${c.name}`);
+  for (const c of loopCases.followTarget) assert.equal(loopMod.followTargetIndex(c.active, c.loop), c.expect, `followTargetIndex ${c.name}`);
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.loopRepeatCount, 3, "default loopRepeatCount");
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.loopGapSeconds, 0, "default loopGapSeconds");
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.autoFollowPlayback, true, "default autoFollowPlayback");
-  log(`  -> PASS: ${loopCases.cycle.length} cycle + ${loopCases.text.length} text + ${loopCases.tick.length} tick + ${loopCases.follow.length} follow cases; defaults 3 / 0s / follow on`);
+  log(`  -> PASS: ${loopCases.cycle.length} cycle + ${loopCases.text.length} text + ${loopCases.tick.length} tick + ${loopCases.follow.length} follow + ${loopCases.followTarget.length} followTarget cases; defaults 3 / 0s / follow on`);
   log("");
 
   log("==============================================================");

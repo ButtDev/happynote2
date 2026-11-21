@@ -202,7 +202,10 @@ function evaluateExpect(vp, m, nums) {
   if (e.follow) {
     const f = m.follow;
     const ok = f && !f.error && f.pressedBefore === "true" && f.top1 > f.top0 + 50 && f.lastVisible &&
-      f.pressedAfter === "false" && f.saved === false && Math.abs(f.top2 - f.top1) <= 1;
+      f.pressedAfter === "false" && f.saved === false && Math.abs(f.top2 - f.top1) <= 1 &&
+      f.loopFollow && JSON.stringify(f.loopFollow.loopHi) === JSON.stringify([f.loopFollow.k]) &&
+      JSON.stringify(f.loopFollow.pastEndHi) === JSON.stringify([f.loopFollow.k]) && Math.abs(f.loopFollow.pastEndTop - f.loopFollow.loopTop) <= 1 &&
+      JSON.stringify(f.loopFollow.offHi) === JSON.stringify([f.loopFollow.k + 1]);
     add("follow", !!ok, JSON.stringify(f));
   }
   if (e.videoAspect !== undefined) {
@@ -490,15 +493,35 @@ for (const vp of cases.viewports) {
       view.playerBar.seekTo((segs[0].start + segs[0].end) / 2);
       await wait(1200);
       const top2 = scroller.scrollTop;
-      // 되돌리기: 따라가기 켬, 맨 위로, 시각 0
+      // 회차 2: 따라가기 켬 + 반복 중 — 재생 시각이 반복 문장 끝을 넘어 다음 문장에 들어가도 카드는 반복 문장에 머문다.
       btn.click();
+      await wait(100);
+      const k = Math.floor(segs.length / 2);
+      const seg = segs[k], nextSeg = segs[k + 1];
+      view.playerBar.seekTo((seg.start + seg.end) / 2);
+      await wait(200);
+      view.playerBar.cycleLoopMode();
+      await wait(1500);
+      const highlighted = () => [...document.querySelectorAll(".ear-coach-segment-card.is-active-playing")].map((c) => Number(c.getAttribute("data-segment-index")));
+      const loopTop = scroller.scrollTop;
+      const loopHi = highlighted();
+      view.playerBar.seekTo(nextSeg.start + 0.05);
+      await wait(1500);
+      const pastEndTop = scroller.scrollTop;
+      const pastEndHi = highlighted();
+      view.playerBar.cycleLoopMode(); // ×N
+      view.playerBar.cycleLoopMode(); // off → 이제 다음 문장으로 따라감
+      await wait(1500);
+      const offHi = highlighted();
+      const loopFollow = { k, loopHi, loopTop, pastEndTop, pastEndHi, offHi };
+      // 되돌리기: 맨 위로, 시각 0
       scroller.scrollTop = 0;
       await wait(300);
       view.playerBar.seekTo(0);
       await wait(300);
       scroller.scrollTop = 0;
       await wait(300);
-      return { pressedBefore, top0, top1, lastVisible, pressedAfter, saved, top2 };
+      return { pressedBefore, top0, top1, lastVisible, pressedAfter, saved, top2, loopFollow };
     });
   }
 

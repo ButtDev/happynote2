@@ -57,6 +57,14 @@ export function decideLoopTick(input: LoopTickInput): LoopAction {
   return next();
 }
 
+/**
+ * SPEC_023 회차 2: 반복 중에는 하이라이트·따라가기 대상을 반복 문장에 고정한다.
+ * (반복 문장 끝 + 여유 동안 재생 시각이 다음 문장에 들어가 카드가 내려갔다 올라오는 것을 막음)
+ */
+export function followTargetIndex(activeIdx: number, loopIdx: number | null): number {
+  return loopIdx ?? activeIdx;
+}
+
 export const USER_SCROLL_PAUSE_MS = 4000;
 
 export function shouldAutoFollow(input: { enabled: boolean; nowMs: number; userScrollUntilMs: number }): boolean {

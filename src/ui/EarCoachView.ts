@@ -5,7 +5,7 @@ import {
   UnlockStep,
 } from "../types/transcript";
 import { SegmentTimeIndex } from "../utils/binarySearch";
-import { shouldAutoFollow, USER_SCROLL_PAUSE_MS } from "../utils/loopControl";
+import { followTargetIndex, shouldAutoFollow, USER_SCROLL_PAUSE_MS } from "../utils/loopControl";
 import { isMobileApp } from "../utils/platform";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
@@ -738,7 +738,10 @@ export class EarCoachView extends ItemView {
       this.setActiveHighlightSegment(this.manualLockSegmentIdx);
       return;
     }
-    const activeIdx = this.timeIndex.findActiveSegmentIndex(timeSec);
+    const activeIdx = followTargetIndex(
+      this.timeIndex.findActiveSegmentIndex(timeSec),
+      this.playerBar?.getLoopSegment()?.index ?? null
+    );
     const changed = activeIdx >= 0 && activeIdx !== this.lastActiveSegmentIdx;
     this.setActiveHighlightSegment(activeIdx);
     // SPEC_023: 재생 시점으로 지금 문장이 바뀌면 카드 목록을 따라가게 한다(사람이 손댄 지 4초 안이면 쉼).

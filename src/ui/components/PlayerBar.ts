@@ -287,6 +287,10 @@ export class PlayerBar {
     }
   }
 
+  public getLoopSegment(): TranscriptSegment | null {
+    return this.activeLoopSegment;
+  }
+
   public isSegmentLooping(segment: TranscriptSegment): boolean {
     return this.activeLoopSegment !== null && this.activeLoopSegment.index === segment.index;
   }
