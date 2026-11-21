@@ -1,8 +1,8 @@
 ---
 id: SPEC_026
 title: 안 들림 핀 문장 → Anki 듣기 카드
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -45,4 +45,11 @@ Test 12 사례 + 변이, `runUiCheck` `expect.anki` 확장(`anki-portrait.png`),
 - 앞면 소리: **AnkiDroid에서 TTS 노트 타입 한 번 만들기(추천, 필드·템플릿 글은 우리가 줌)** vs 소리 없이 기본 `Basic`.
 - 앞면에 한국어 소리 힌트(`phoneticKr`)를 넣을지 — FF는 모국어를 피하지만 이건 번역이 아니라 소리 표기. 추천: 넣음.
 
+## 가결정
+- 노트 타입 이름 `happynote2 Listening`, 필드 이름 고정 Sentence·Cloze·Picture·Hint·Source(대응 설정 없음) · 이유: 사람이 한 번 만들 때 글자 그대로 따라 하기 쉬움 · 대안: 단어 카드처럼 필드 대응 설정.
+- 받아쓰기에서 틀린 낱말이 없으면 Cloze 빈 값(앞면에 원문을 보이지 않음 — 듣기 카드) · 이유: 「문장 전체 그대로」면 앞면이 읽기 카드가 됨 · 대안: 문장 전체 빈칸.
+- 함정 한국어 이름 `src/utils/trapLabels.ts`를 이번에 만듦(SPEC_028이 같이 씀), Test 17 · 시험 데이터는 `tests/fixtures/anki/_sentence.json`(밑줄 — 단어 노트 반복문이 집지 않게).
+- 모바일 카드 머리 버튼 줄 `flex-wrap: wrap` · 가로 목록 362px에서 「➕ Anki」가 잘렸음 → 둘째 줄로. SPEC_028 아이콘화 뒤 한 줄로 돌아올 것.
+
 ## 실행 기록
+- 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 12 `_sentence.json` 노트 3·빈칸 4·대상 확인 4 사례 통과(틀린 낱말 「Did ____ ever … at ____?」, 힌트 「[디쥬 …]<br>연음 · 플랩 t」, SPEED_SPIKE 빠짐), 변이(빈칸 없을 때 원문) → 「buildSentenceNote: 받아쓰기·분석·영상 없음…」 실패, 변이(SPEED_SPIKE 안 뺌) → 실패 · Test 17 trapLabel 7+6 · 2 ✅ 화면 검사 `expect.sentenceAnki` 세로·가로 ok: 핀 2장에만 버튼(btnOnUnpinned 0), 호출 deckNames→modelNames→modelFieldNames→storeMediaFile→canAddNotes→addNote, modelName happynote2 Listening, Picture <img>, 알림 「Anki에 저장했습니다」, 버튼이 카드 안(inside) — 변이(모든 카드에 버튼) → ui exit 1 btnOnUnpinned 5, 변이(줄바꿈 없음) → 가로 inside false · `sentence-anki-portrait.png`·`-landscape.png` 열어 봄: 세로는 한 줄, 가로는 「➕ Anki」가 둘째 줄 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기

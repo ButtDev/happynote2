@@ -148,6 +148,13 @@ function evaluateExpect(vp, m, nums) {
     const okDefault = ce === undefined || (!!np?.note && meaningCount(np.note) === 1 && (np.note.fields.Front ?? "").includes(esc(np.firstDef)));
     add("anki", okAdded && okDup && okNoDeck && okNoPic && okChosen && okDefault, JSON.stringify({ okAdded, okPicture, okDup, okNoDeck, okNoPic, okChosen, okDefault, ...m.anki }));
   }
+  // SPEC_026: 핀 카드에만 「➕ Anki」 → 문장 듣기 카드 addNote 1회
+  if (e.sentenceAnki) {
+    const sa = m.sentenceAnki;
+    const n = sa?.note;
+    const ok = !!sa && !sa.error && sa.inside === true && sa.pinned >= 1 && sa.btnOnPinned === sa.pinned && sa.btnOnUnpinned === 0 && JSON.stringify(sa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes", "addNote"]) && n?.modelName === e.sentenceAnki.modelName && n?.deckName === "happynote2" && n?.fields?.Sentence === sa.text && (n?.fields?.Picture ?? "").startsWith("<img") && n?.tags?.includes("sentence") && sa.notice === "Anki에 저장했습니다";
+    add("sentenceAnki", ok, JSON.stringify(sa));
+  }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
     add(`maxHeight:${sel}`, r && r.h > 0 && r.h <= max, r ? `${r.h} <= ${max}` : "element missing");
@@ -628,6 +635,40 @@ for (const vp of cases.viewports) {
     await page.screenshot({ path: path.join(outDir, `${shot}-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
   }
+  }
+
+  // SPEC_026: 핀 카드 「➕ Anki」(카드 목록에서) — 사전 검사보다 먼저(모달 없음 상태)
+  m.sentenceAnki = null;
+  if (vp.expect?.sentenceAnki) {
+    m.sentenceAnki = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      window.__ankiCalls = [];
+      window.__ankiNotes = [];
+      window.__ankiMedia = [];
+      window.__ankiDuplicate = false;
+      window.__ankiDecks = undefined;
+      window.__storyboardNone = false;
+      window.__notices = [];
+      const cards = [...document.querySelectorAll(".ear-coach-segment-card")];
+      const pinned = cards.filter((c) => c.classList.contains("is-pinned"));
+      const btnOnPinned = pinned.filter((c) => c.querySelector(".ear-coach-sentence-anki")).length;
+      const btnOnUnpinned = cards.filter((c) => !c.classList.contains("is-pinned") && c.querySelector(".ear-coach-sentence-anki")).length;
+      const card = pinned[0];
+      if (!card) return { error: "no pinned card", cards: cards.length };
+      // 버튼이 카드 안에 다 보이는지(가로 목록 362px에서 잘리지 않음)
+      const inside = pinned.every((c) => {
+        const b = c.querySelector(".ear-coach-sentence-anki")?.getBoundingClientRect();
+        const r = c.getBoundingClientRect();
+        return !!b && b.right <= r.right - 1 && b.left >= r.left;
+      });
+      const idx = Number(card.dataset.segmentIndex);
+      const seg = window.__earCoachView?.session?.segments?.[idx];
+      card.scrollIntoView({ block: "center" });
+      card.querySelector(".ear-coach-sentence-anki").click();
+      await wait(400);
+      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, calls: window.__ankiCalls, note: window.__ankiNotes[0] ?? null, text: seg?.text ?? null, notice: (window.__notices ?? []).at(-1) ?? null };
+    });
+    await page.screenshot({ path: path.join(outDir, `sentence-anki-${vp.name}.png`) });
   }
 
   // SPEC_015: 「going」 누름 → 구 칸·단어 칸 「➕ Anki」 → 단어 칸 버튼 → canAddNotes·addNote 각 1회 + 저장 문구.

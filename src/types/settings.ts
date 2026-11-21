@@ -31,6 +31,8 @@ export interface EarCoachSettings {
   ankiNoteType: string;
   ankiFieldMap: Record<AnkiRole, string>;
   ankiTags: string;
+  /** SPEC_026: 안 들림 핀 문장 듣기 카드 노트 타입(필드 Sentence·Cloze·Picture·Hint·Source) */
+  ankiSentenceNoteType: string;
   /** SPEC_021: 모바일 AI 번역·분석 */
   aiProvider: AiProvider;
   geminiApiKey: string;
@@ -71,6 +73,7 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
     source: "Back",
   },
   ankiTags: "ear-coach",
+  ankiSentenceNoteType: "happynote2 Listening",
   aiProvider: "gemini",
   geminiApiKey: "",
   geminiModel: "gemini-3.5-flash-lite",

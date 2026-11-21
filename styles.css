@@ -1005,6 +1005,8 @@
 
 .ear-coach-mobile-list-wrapper .ear-coach-card-left-controls {
   gap: 6px;
+  /* SPEC_026: 핀 카드 「➕ Anki」가 좁은 가로 목록(362px)에서 밖으로 잘리지 않게 줄바꿈 */
+  flex-wrap: wrap;
 }
 
 .ear-coach-mobile-list-wrapper .ear-coach-time-btn,

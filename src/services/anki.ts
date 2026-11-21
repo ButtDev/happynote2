@@ -1,3 +1,5 @@
+import { trapLabelList } from "../utils/trapLabels.ts";
+
 /**
  * SPEC_015: 사전 창 → AnkiDroid 카드 저장 (AnkiConnect Android, http://127.0.0.1:8765).
  * 이 파일은 obsidian을 import하지 않는다(요청 함수는 주입) — Node 시험에서 바로 돈다.
@@ -376,4 +378,109 @@ export function ankiStatusMessage(r: AnkiSaveResult | unknown): string {
 
 export function ankiSettingsReady(s: AnkiSettingsLike): boolean {
   return !!s.ankiDeck?.trim() && !!s.ankiNoteType?.trim();
+}
+
+// ── SPEC_026: 안 들림 핀 문장 → 듣기 카드 ─────────────────────────────
+
+/** 문장 카드 노트 타입(사람이 AnkiDroid에서 한 번 만든다 — AnkiConnect Android에 createModel 없음). */
+export const ANKI_SENTENCE_NOTE_TYPE = "happynote2 Listening";
+/** 문장 카드 필드(이 이름 그대로 만든다). Sentence = TTS·뒷면 원문, Cloze = 앞면 빈칸 문장. */
+export const ANKI_SENTENCE_FIELDS = ["Sentence", "Cloze", "Picture", "Hint", "Source"] as const;
+/** AnkiDroid 노트 타입 카드 템플릿(⏳ 안내·설정 설명에 그대로 보여 줌). */
+export const ANKI_SENTENCE_FRONT_TEMPLATE = "{{tts en_US:Sentence}}<br>{{Picture}}<br>{{Cloze}}<br>{{Hint}}";
+export const ANKI_SENTENCE_BACK_TEMPLATE = "{{FrontSide}}<hr id=answer>{{Sentence}}<br>{{Source}}";
+
+export interface SentenceNoteInput {
+  text: string;
+  words: string[];
+  /** 받아쓰기 시도(낱말 번호 → 쓴 글자) */
+  attempts?: Record<number, string> | null;
+  phoneticKr?: string | null;
+  traps?: readonly string[] | null;
+  videoId: string | null;
+  videoTitle: string | null;
+  startSec: number;
+  pictureFilename?: string | null;
+}
+
+export interface SentenceSettingsLike {
+  ankiDeck: string;
+  ankiSentenceNoteType: string;
+  ankiTags: string;
+}
+
+const normWord = (w: string) => w.trim().toLowerCase().replace(/[^a-z0-9']/g, "");
+
+/** 받아쓰기에서 틀린 낱말 번호(빈 시도·맞은 것 제외, 오름차순) — 받아쓰기 칸과 같은 비교. */
+export function sentenceBlankIndices(words: string[], attempts: Record<number, string> | null | undefined): number[] {
+  const out: number[] = [];
+  for (const [k, v] of Object.entries(attempts ?? {})) {
+    const i = Number(k);
+    const want = words[i];
+    if (!Number.isInteger(i) || want === undefined) continue;
+    const got = normWord(String(v ?? ""));
+    if (!got || !normWord(want)) continue;
+    if (got !== normWord(want)) out.push(i);
+  }
+  return out.sort((a, b) => a - b);
+}
+
+/** 틀린 낱말을 ____로(앞뒤 문장부호는 남김). 틀린 낱말이 없으면 빈 글자 — 앞면에 원문을 보이지 않는다. */
+export function sentenceCloze(words: string[], blanks: number[]): string {
+  if (blanks.length === 0) return "";
+  const set = new Set(blanks);
+  return words
+    .map((w, i) => {
+      if (!set.has(i)) return w;
+      const m = w.match(/^([^A-Za-z0-9']*)(.*?)([^A-Za-z0-9']*)$/);
+      return m ? `${m[1]}${CLOZE_BLANK}${m[3]}` : CLOZE_BLANK;
+    })
+    .join(" ");
+}
+
+function sourceLink(videoId: string | null, videoTitle: string | null, startSec: number | undefined): string {
+  if (!videoId) return "";
+  const t = Math.max(0, Math.floor(startSec ?? 0));
+  return `<a href="https://youtu.be/${encodeURIComponent(videoId)}?t=${t}">${escapeHtml(videoTitle ?? "")} ${formatMmSs(t)}</a>`;
+}
+
+/** addNote용 문장 듣기 카드(순수). 앞면 = TTS 소리·장면·빈칸·소리 힌트·함정, 뒷면 = 원문·출처. */
+export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSettingsLike): AnkiNote {
+  const blanks = sentenceBlankIndices(input.words, input.attempts);
+  const hintParts = [input.phoneticKr?.trim() ?? "", trapLabelList(input.traps).join(" · ")].filter(Boolean);
+  const fields: Record<string, string> = {
+    Sentence: escapeHtml(input.text.trim()),
+    Cloze: escapeHtml(sentenceCloze(input.words, blanks)),
+    Picture: input.pictureFilename ? `<img src="${escapeHtml(input.pictureFilename)}">` : "",
+    Hint: hintParts.map(escapeHtml).join("<br>"),
+    Source: sourceLink(input.videoId, input.videoTitle, input.startSec),
+  };
+  const tags = [...settings.ankiTags.split(/\s+/).filter(Boolean), "sentence"];
+  return {
+    deckName: settings.ankiDeck,
+    modelName: settings.ankiSentenceNoteType,
+    fields,
+    tags: [...new Set(tags)],
+    options: { allowDuplicate: false, duplicateScope: "deck" },
+  };
+}
+
+/** 문장 카드 노트 타입 없음·필드 모자람 안내 */
+export function sentenceModelMessage(name: string, missing: string[] | null): string {
+  const how = `AnkiDroid에서 노트 타입 「${name}」을 만들고 필드 ${ANKI_SENTENCE_FIELDS.join("·")}를 넣어 주세요`;
+  if (missing === null) return `Anki에 「${name}」 노트 타입이 없습니다 — ${how}`;
+  return `「${name}」 노트 타입에 필드 ${missing.join("·")}가 없습니다 — ${how}`;
+}
+
+/** 저장 전 확인: 덱 → 노트 타입 → 필드 5개. */
+export async function resolveSentenceTarget(client: AnkiInvoker, settings: SentenceSettingsLike): Promise<{ ok: true } | { ok: false; message: string }> {
+  const decks = await client.invoke("deckNames");
+  if (!Array.isArray(decks) || !decks.includes(settings.ankiDeck)) return { ok: false, message: ankiMissingMessage("deck", settings.ankiDeck) };
+  const models = await client.invoke("modelNames");
+  if (!Array.isArray(models) || !models.includes(settings.ankiSentenceNoteType)) return { ok: false, message: sentenceModelMessage(settings.ankiSentenceNoteType, null) };
+  const fields = await client.invoke("modelFieldNames", { modelName: settings.ankiSentenceNoteType });
+  const have = Array.isArray(fields) ? fields.map(String) : [];
+  const missing = ANKI_SENTENCE_FIELDS.filter((f) => !have.includes(f));
+  if (missing.length > 0) return { ok: false, message: sentenceModelMessage(settings.ankiSentenceNoteType, missing) };
+  return { ok: true };
 }

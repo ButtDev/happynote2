@@ -62,8 +62,9 @@ async function main(): Promise<void> {
         const w = window as any;
         w.__ankiCalls = [...(w.__ankiCalls ?? []), action];
         if (action === "deckNames") return w.__ankiDecks ?? ["happynote2"];
-        if (action === "modelNames") return ["Basic (and reversed card)"];
-        if (action === "modelFieldNames") return ["Front", "Back"];
+        if (action === "modelNames") return ["Basic (and reversed card)", "happynote2 Listening"];
+        // SPEC_026: 문장 듣기 카드 노트 타입 필드
+        if (action === "modelFieldNames") return params?.modelName === "happynote2 Listening" ? ["Sentence", "Cloze", "Picture", "Hint", "Source"] : ["Front", "Back"];
         if (action === "canAddNotes") return [!w.__ankiDuplicate];
         if (action === "storeMediaFile") {
           w.__ankiMedia = [...(w.__ankiMedia ?? []), params];

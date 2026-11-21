@@ -3,7 +3,7 @@ import { isMobileApp } from "../utils/platform";
 import { generateBookmarkletCode } from "../utils/youtubeUrlParser";
 import { UnlockStep } from "../types/transcript";
 import type EarCoachPlugin from "../main";
-import { ANKI_MESSAGES, ANKI_ROLES, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
+import { ANKI_MESSAGES, ANKI_ROLES, ANKI_SENTENCE_BACK_TEMPLATE, ANKI_SENTENCE_FIELDS, ANKI_SENTENCE_FRONT_TEMPLATE, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
 
 /** SPEC_015: 필드 대응 화면에 보일 역할 이름 */
 const ANKI_ROLE_LABELS: Record<AnkiRole, string> = {
@@ -412,6 +412,17 @@ export class EarCoachSettingTab extends PluginSettingTab {
         );
       }
     }
+
+    // SPEC_026: 안 들림 핀 문장 듣기 카드
+    new Setting(containerEl)
+      .setName("문장 듣기 카드 노트 타입")
+      .setDesc(`핀 문장 「➕ Anki」용. AnkiDroid에서 한 번 만들기 — 필드 ${ANKI_SENTENCE_FIELDS.join("·")}, 앞면 ${ANKI_SENTENCE_FRONT_TEMPLATE}, 뒷면 ${ANKI_SENTENCE_BACK_TEMPLATE}`)
+      .addText((t) =>
+        t.setValue(st.ankiSentenceNoteType).onChange(async (v) => {
+          st.ankiSentenceNoteType = v.trim();
+          await save();
+        })
+      );
 
     new Setting(containerEl)
       .setName("태그")

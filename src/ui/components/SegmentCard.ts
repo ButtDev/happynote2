@@ -12,6 +12,8 @@ export interface SegmentCardCallbacks {
   /** SPEC_013: 3단계 문장에서 단어를 누름 */
   /** SPEC_014: following = 누른 낱말 뒤 낱말 최대 2개(글자 그대로, 구동사 후보용). SPEC_019: preceding = 앞 낱말 최대 2개(문장 순서) */
   onLookupWord?: (word: string, segment: TranscriptSegment, following: string[], preceding: string[]) => void;
+  /** SPEC_026: 핀 문장 → Anki 듣기 카드(저장 뒤 보일 문구) */
+  onAddSentenceToAnki?: (segment: TranscriptSegment) => Promise<string>;
 }
 
 /**
@@ -95,6 +97,20 @@ export class SegmentCard {
       this.callbacks.onTogglePin(this.segment);
       this.render();
     });
+
+    // SPEC_026: 핀 켜진 카드에만 「➕ Anki」(문장 듣기 카드)
+    const onAnki = this.callbacks.onAddSentenceToAnki;
+    if (this.segment.isPinned && onAnki) {
+      const ankiBtn = leftControls.createEl("button", { cls: "ear-coach-mini-btn ear-coach-sentence-anki", text: "➕ Anki" });
+      ankiBtn.addEventListener("click", async () => {
+        ankiBtn.disabled = true;
+        try {
+          await onAnki(this.segment);
+        } finally {
+          ankiBtn.disabled = false;
+        }
+      });
+    }
 
     // Badges (WPM + Traps)
     const badgeRow = headerEl.createDiv({ cls: "ear-coach-badge-row" });

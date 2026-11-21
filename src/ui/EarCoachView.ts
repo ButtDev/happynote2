@@ -13,6 +13,7 @@ import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
 import { captureSnapshot } from "./snapshot";
 import { DictionaryModal } from "./DictionaryModal";
+import { saveSentenceCard } from "./sentenceAnki";
 import type EarCoachPlugin from "../main";
 
 export const VIEW_TYPE_EAR_COACH = "ear-coach-listening-view";
@@ -547,6 +548,26 @@ export class EarCoachView extends ItemView {
             }
           : null;
         new DictionaryModal(this.app, word, provider, following ?? [], anki, preceding ?? []).open();
+      },
+      onAddSentenceToAnki: async (segment) => {
+        const anki = this.plugin.anki;
+        const msg = !anki
+          ? "Anki 연결이 없습니다"
+          : await saveSentenceCard(
+              {
+                client: anki,
+                fetchBytes: this.plugin.fetchBytes,
+                settings: this.plugin.settings,
+                videoId: this.session?.videoId ?? null,
+                videoTitle: this.session?.title ?? null,
+                snapshot: this.plugin.storyboard
+                  ? (videoId: string, sec: number) => captureSnapshot(this.plugin.storyboard, this.plugin.fetchBytes, videoId, sec)
+                  : null,
+              },
+              segment
+            );
+        new Notice(msg);
+        return msg;
       },
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;

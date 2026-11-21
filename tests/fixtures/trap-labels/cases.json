@@ -1,0 +1,20 @@
+{
+  "comment": "trapLabel(code) → 이름, trapLabelList(codes) → 보여 줄 목록(SPEED_SPIKE 빼기·중복 없음). SPEC_026·028",
+  "label": [
+    ["LINKING", "연음"],
+    ["FLAP_T", "플랩 t"],
+    ["WEAK_FORM", "약형"],
+    ["ELISION", "탈락"],
+    ["SLANG", "구어"],
+    ["SPEED_SPIKE", "SPEED_SPIKE"],
+    ["NEW_TRAP", "NEW_TRAP"]
+  ],
+  "list": [
+    [["LINKING", "SPEED_SPIKE", "FLAP_T"], ["연음", "플랩 t"]],
+    [["SPEED_SPIKE"], []],
+    [[], []],
+    [null, []],
+    [["WEAK_FORM", "WEAK_FORM", "ELISION"], ["약형", "탈락"]],
+    [["SLANG", "", "NEW_TRAP"], ["구어", "NEW_TRAP"]]
+  ]
+}

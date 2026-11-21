@@ -43,6 +43,9 @@
           "tap": "to",
           "title": "go to"
         },
+        "sentenceAnki": {
+          "modelName": "happynote2 Listening"
+        },
         "anki": {
           "tap": "going",
           "chooseDef": 1,
@@ -142,6 +145,9 @@
         "phraseBefore": {
           "tap": "to",
           "title": "go to"
+        },
+        "sentenceAnki": {
+          "modelName": "happynote2 Listening"
         },
         "anki": {
           "tap": "going",

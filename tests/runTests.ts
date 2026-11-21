@@ -28,6 +28,7 @@ import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
 import * as aiSrc from "../src/services/aiAnalysis.ts";
 import * as loopSrc from "../src/utils/loopControl.ts";
+import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -480,6 +481,20 @@ async function runAllTests() {
     assert.deepEqual(got, pc.expect, `pickCardMeaning(${JSON.stringify(pc.chosen)})`);
     assert.ok(got.length <= 1, "pickCardMeaning: at most one meaning");
   }
+  // SPEC_026: 핀 문장 듣기 카드
+  const sentData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_sentence.json"), "utf8"));
+  for (const sc of sentData.notes) {
+    const got = ankiMod.buildSentenceNote(sc.input, sc.settings ?? sentData.settings);
+    assert.deepEqual(got, sc.expect, `buildSentenceNote: ${sc.name}`);
+  }
+  for (const bc of sentData.blanks) assert.deepEqual(ankiMod.sentenceBlankIndices(bc.words, bc.attempts), bc.expect, `sentenceBlankIndices ${JSON.stringify(bc.attempts)}`);
+  for (const tc of sentData.targets) {
+    const calls: string[] = [];
+    const client = { invoke: async (action: string) => (calls.push(action), tc.replies[action]) };
+    assert.deepEqual(await ankiMod.resolveSentenceTarget(client, sentData.settings), tc.expect, `resolveSentenceTarget: ${tc.name}`);
+    assert.deepEqual(calls, tc.calls, `resolveSentenceTarget calls: ${tc.name}`);
+  }
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.ankiSentenceNoteType, ankiMod.ANKI_SENTENCE_NOTE_TYPE, "default ankiSentenceNoteType");
   const remapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_remap.json"), "utf8"));
   const roleOrder = ["sentence", "picture", "meaning", "word", "ipa", "audio", "source"];
   for (const rc of remapData.cases) {
@@ -575,7 +590,7 @@ async function runAllTests() {
   }
   for (const [args, want] of snapData.filenames) assert.equal(ankiMod.snapshotFilename(...(args as [string, number])), want, `snapshotFilename(${JSON.stringify(args)})`);
   assert.equal(ankiMod.ANKI_MESSAGES.addedNoPicture, "Anki에 저장했습니다 (그림 없음)", "addedNoPicture message");
-  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases, ${snapData.store.length} snapshot store cases`);
+  log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases, ${snapData.store.length} snapshot store cases, ${pickData.cases.length} pick cases, ${sentData.notes.length}+${sentData.blanks.length}+${sentData.targets.length} sentence note/blank/target cases`);
   log("");
 
   // ---------------------------------------------------------------------------
@@ -789,6 +804,14 @@ async function runAllTests() {
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.loopGapSeconds, 0, "default loopGapSeconds");
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.autoFollowPlayback, true, "default autoFollowPlayback");
   log(`  -> PASS: ${loopCases.cycle.length} cycle + ${loopCases.text.length} text + ${loopCases.tick.length} tick + ${loopCases.follow.length} follow + ${loopCases.followTarget.length} followTarget cases; defaults 3 / 0s / follow on`);
+  log("");
+
+  log("[Test 17] Trap labels — 한국어 이름·SPEED_SPIKE 빼기 (data-driven, SPEC_026·028)");
+  const trapMod = process.env.EAR_COACH_TRAP_MODULE ? await import(path.resolve(process.env.EAR_COACH_TRAP_MODULE)) : trapLabelsSrc;
+  const trapCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/trap-labels/cases.json"), "utf8"));
+  for (const [code, want] of trapCases.label) assert.equal(trapMod.trapLabel(code), want, `trapLabel ${code}`);
+  for (const [codes, want] of trapCases.list) assert.deepEqual(trapMod.trapLabelList(codes), want, `trapLabelList ${JSON.stringify(codes)}`);
+  log(`  -> PASS: ${trapCases.label.length} label + ${trapCases.list.length} list cases`);
   log("");
 
   log("==============================================================");
