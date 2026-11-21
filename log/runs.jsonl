@@ -76,3 +76,4 @@
 {"ts":"2026-11-21T09:44:24.252Z","cmd":"/spec-run","spec":"SPEC_021","iteration":1,"status":"DONE","evidence":"사람확인 9 OK(1.0.29 실기기); 1~8 회차 1 + 이후 regression ok"}
 {"ts":"2026-11-21T09:49:06.551Z","cmd":"/spec-new","spec":"SPEC_022","result":"READY","questions":0}
 {"ts":"2026-11-21T09:50:43.868Z","cmd":"/spec-run","spec":"SPEC_022","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 15 13 response + 8 batching + 10 restore + 5 needsRestore; 변이 2종 실패 확인"}
+{"ts":"2026-11-21T12:11:24.333Z","cmd":"/spec-run","spec":"SPEC_022","iteration":1,"status":"DONE","evidence":"사람확인 8 OK, 제품 파일 변경 없음"}
