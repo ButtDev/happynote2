@@ -4,9 +4,10 @@
 
 ## 지금 하는 일
 - 진행 중 SPEC 없음(SPEC_023·024 DONE, 최신 BRAT 1.0.34).
-- 오늘 밤 `memory/backlog.md` 「대기」 12건(문서·검사 위주, 순서대로): ① Anki·사전 Fluent Forever 점검 + 학습 극대화 발산 → `docs/review/anki-fluent-forever.md` ② UI·UX·버튼 아이콘/글자 간결화 점검 → `docs/review/ui-ux.md`(+시안 `docs/review/img/`) ③ 가로 컨트롤 `rowSlack` ④ 긴 영상(400장↑) 성능 ⑤ `main.ts` 900줄 여유 ⑥ 실패 경로 시험 ⑦ 사전 캐시 ⑧ 밝은 테마 화면 검사 ⑨ 업스트림 읽기만 ⑩ 설정 화면 정리안(ui-ux.md 절) ⑪ 안 쓰는 코드 + `npm audit` ⑫ 학습 기록 아이디어(anki-fluent-forever.md 절). ①②는 구현 안 함(SPEC DRAFT만), ③·⑦·⑧ 화면 바뀌면 night 브랜치 + 아침 ⏳.
+- 2026-11-22 밤 ① 끝: `docs/review/anki-fluent-forever.md` + SPEC_025(문맥 뜻 하나·품사 잘림)·026(핀 문장 Anki 듣기 카드)·027(핀 간격 재청취) DRAFT — 사람 질문 답 대기. 남은 백로그 대기 11건(순서대로): ② UI·UX·버튼 아이콘/글자 간결화 점검 → `docs/review/ui-ux.md`(+시안 `docs/review/img/`) ③ 가로 컨트롤 `rowSlack` ④ 긴 영상(400장↑) 성능 ⑤ `main.ts` 900줄 여유 ⑥ 실패 경로 시험 ⑦ 사전 캐시 ⑧ 밝은 테마 화면 검사 ⑨ 업스트림 읽기만 ⑩ 설정 화면 정리안(ui-ux.md 절) ⑪ 안 쓰는 코드 + `npm audit` ⑫ 학습 기록 아이디어(anki-fluent-forever.md 절). ②는 구현 안 함(SPEC DRAFT만), ③·⑦·⑧ 화면 바뀌면 night 브랜치 + 아침 ⏳.
 
 ## 열린 질문 (사람에게)
+- SPEC_025~027 DRAFT 각 「질문」 절(뜻 고르기 방식, TTS 노트 타입 만들기, 재청취 범위) — 답 받으면 READY로.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함(예: `SPEC_024 6 메모`로 새 요청) — 내용으로 판단해 기록.
 
 ## 주의
