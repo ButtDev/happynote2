@@ -174,6 +174,27 @@ export async function storeSnapshot(
   }
 }
 
+/** SPEC_025: 카드에 쓸 뜻 하나 — 고른 뜻(품사·뜻 번호), 없거나 범위 밖이면 첫 품사의 첫 뜻. 뜻이 없으면 빈 배열. */
+export function pickCardMeaning(
+  entry: { meanings: { partOfSpeech: string; definitions: { definition: string }[] }[] },
+  chosen: { pos: number; def: number } | null
+): { partOfSpeech: string; definition: string }[] {
+  const at = (p: number, d: number) => {
+    const m = entry.meanings[p];
+    const def = m?.definitions[d]?.definition;
+    return m && def ? [{ partOfSpeech: m.partOfSpeech, definition: def }] : null;
+  };
+  if (chosen) {
+    const got = at(chosen.pos, chosen.def);
+    if (got) return got;
+  }
+  for (let p = 0; p < entry.meanings.length; p++) {
+    const got = at(p, 0);
+    if (got) return got;
+  }
+  return [];
+}
+
 /** 역할별 HTML 값(audio는 빈 값 — AnkiConnect가 [sound:]를 붙인다, picture는 SPEC_017 <img>). */
 export function ankiRoleValues(input: AnkiNoteInput): Record<AnkiRole, string> {
   const meaning = input.meanings

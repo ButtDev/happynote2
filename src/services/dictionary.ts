@@ -27,7 +27,7 @@ export interface DictionaryProvider {
   lookup(word: string): Promise<DictionaryEntry | null>;
 }
 
-export const MAX_PARTS_OF_SPEECH = 3;
+/** SPEC_025: 품사는 자르지 않는다(back의 adverb처럼 뒤 품사에 문맥 뜻이 있음) — 뜻 상한만 둔다. */
 export const MAX_DEFINITIONS_PER_PART = 3;
 
 /** 자막에서 누른 글자를 사전 조회용 단어로 정리한다. 조회할 수 없으면 "". */
@@ -81,7 +81,6 @@ export function parseDictionaryApiDev(json: Json): DictionaryEntry | null {
   for (const [partOfSpeech, defs] of byPos) {
     if (defs.length === 0) continue;
     meanings.push({ partOfSpeech, definitions: defs.slice(0, MAX_DEFINITIONS_PER_PART) });
-    if (meanings.length >= MAX_PARTS_OF_SPEECH) break;
   }
   if (meanings.length === 0) return null;
 

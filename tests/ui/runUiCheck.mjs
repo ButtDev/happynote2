@@ -140,7 +140,13 @@ function evaluateExpect(vp, m, nums) {
     const okNoPic = !!np && !np.error && JSON.stringify(np.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && np.status === "Anki에 저장했습니다 (그림 없음)" && !(np.note?.fields?.Front ?? "").includes("<img");
     const n = m.anki?.noDeck;
     const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
-    add("anki", okAdded && okDup && okNoDeck && okNoPic, JSON.stringify({ okAdded, okPicture, okDup, okNoDeck, okNoPic, ...m.anki }));
+    // SPEC_025: 앞면 뜻은 하나(<i>품사</i> 한 번) — 고른 뜻(added) / 안 고르면 첫 뜻(noPic)
+    const meaningCount = (note) => ((note?.fields?.Front ?? "").match(/<i>/g) ?? []).length;
+    const esc = (t) => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const ce = e.anki.chooseDef;
+    const okChosen = ce === undefined || (!!a?.chosen && a.chosen.chosenCount === 1 && a.chosen.onTarget && a.chosen.text !== a.firstDef && meaningCount(a.note) === 1 && (a.note?.fields?.Front ?? "").includes(esc(a.chosen.text)) && !(a.note?.fields?.Front ?? "").includes(esc(a.firstDef)));
+    const okDefault = ce === undefined || (!!np?.note && meaningCount(np.note) === 1 && (np.note.fields.Front ?? "").includes(esc(np.firstDef)));
+    add("anki", okAdded && okDup && okNoDeck && okNoPic && okChosen && okDefault, JSON.stringify({ okAdded, okPicture, okDup, okNoDeck, okNoPic, okChosen, okDefault, ...m.anki }));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
@@ -629,9 +635,9 @@ for (const vp of cases.viewports) {
   m.anki = null;
   if (vp.expect?.anki) {
     const tapWord = vp.expect.anki.tap;
-    const run = async (duplicate, decks = null, noStoryboard = false) =>
+    const run = async (duplicate, decks = null, noStoryboard = false, chooseDef = null) =>
       page.evaluate(
-        async ({ tapWord, duplicate, decks, noStoryboard }) => {
+        async ({ tapWord, duplicate, decks, noStoryboard, chooseDef }) => {
           const wait = (ms) => new Promise((r) => setTimeout(r, ms));
           window.__ankiCalls = [];
           window.__ankiNotes = [];
@@ -650,6 +656,18 @@ for (const vp of cases.viewports) {
           const phraseBtn = modal?.querySelector(".ear-coach-dict-phrase .ear-coach-dict-anki");
           const wordBtn = modal?.querySelector(".ear-coach-dict-body")?.previousElementSibling?.querySelector(".ear-coach-dict-anki");
           if (!wordBtn) return { error: "word anki button missing", phraseBtn: !!phraseBtn };
+          // SPEC_025: 단어 칸 뜻 목록 — chooseDef번째 뜻을 누르면 그것만 is-chosen, 카드 앞면엔 그 뜻 하나
+          const defs = [...(modal.querySelector(".ear-coach-dict-body")?.querySelectorAll(".ear-coach-dict-def") ?? [])];
+          const defText = (li) => li?.querySelector("span")?.textContent ?? null;
+          let chosen = null;
+          if (chooseDef !== null) {
+            const li = defs[chooseDef];
+            if (!li) return { error: `def ${chooseDef} missing`, defs: defs.length };
+            defs[0].click();
+            li.click();
+            chosen = { text: defText(li), chosenCount: modal.querySelectorAll(".ear-coach-dict-def.is-chosen").length, onTarget: li.classList.contains("is-chosen") };
+          }
+          const firstDef = defText(defs[0]);
           wordBtn.click();
           await wait(300);
           const status = [...modal.querySelectorAll(".ear-coach-dict-anki-status")].find((e) => e.style.display !== "none");
@@ -680,11 +698,14 @@ for (const vp of cases.viewports) {
             note: window.__ankiNotes[0] ?? null,
             sbUrls: window.__sbUrls,
             picture,
+            chosen,
+            firstDef,
+            defCount: defs.length,
           };
         },
-        { tapWord, duplicate, decks, noStoryboard }
+        { tapWord, duplicate, decks, noStoryboard, chooseDef }
       );
-    const added = await run(false);
+    const added = await run(false, null, false, vp.expect.anki.chooseDef ?? null);
     await page.screenshot({ path: path.join(outDir, `anki-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
     const dup = await run(true);

@@ -2,7 +2,7 @@ import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidatesAround } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
-import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote, snapshotFilename, storeSnapshot } from "../services/anki";
+import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote, pickCardMeaning, snapshotFilename, storeSnapshot } from "../services/anki";
 
 /** SPEC_015: 사전 창에서 Anki 카드를 만들 때 필요한 자막·영상 정보와 클라이언트 */
 export interface DictionaryAnkiContext {
@@ -20,10 +20,14 @@ export interface DictionaryAnkiContext {
   snapshot?: ((videoId: string, sec: number) => Promise<string | null>) | null;
 }
 
+/** SPEC_025: 칸마다 고른 뜻(품사·뜻 번호) — 버튼과 뜻 목록이 함께 본다 */
+type ChosenMeaning = { value: { pos: number; def: number } | null };
+
 /**
  * SPEC_013: 자막 단어 사전 창 — 단어·IPA·품사별 뜻·예문·발음 듣기.
  * SPEC_014: 누른 낱말 + 뒤 낱말로 만든 구 후보 중 사전에 있는 첫 구를 맨 위 구 칸에(꼬리표 없음 — 숙어도 나오므로).
  * SPEC_015: 단어 칸·구 칸마다 「➕ Anki」 → AnkiConnect Android addNote.
+ * SPEC_025: 뜻 한 줄을 누르면 그 칸의 「카드에 쓸 뜻」(is-chosen) — 카드 앞면엔 그 뜻 하나만.
  */
 export class DictionaryModal extends Modal {
   private readonly word: string;
@@ -83,20 +87,22 @@ export class DictionaryModal extends Modal {
   }
 
   private renderPhrase(slot: HTMLElement, entry: DictionaryEntry): void {
+    const chosen: ChosenMeaning = { value: null };
     const box = slot.createDiv({ cls: "ear-coach-dict-phrase" });
     const head = box.createDiv({ cls: "ear-coach-dict-head" });
     head.createEl("h3", { cls: "ear-coach-dict-phrase-title", text: entry.word });
     if (entry.phonetic) head.createSpan({ cls: "ear-coach-dict-ipa", text: entry.phonetic });
     if (entry.audioUrl) this.addAudioButton(head, entry.audioUrl);
-    this.addAnkiButton(head, box, entry);
-    this.renderMeanings(box, entry);
+    this.addAnkiButton(head, box, entry, chosen);
+    this.renderMeanings(box, entry, chosen);
   }
 
   private renderEntry(head: HTMLElement, body: HTMLElement, entry: DictionaryEntry): void {
+    const chosen: ChosenMeaning = { value: null };
     if (entry.phonetic) head.createSpan({ cls: "ear-coach-dict-ipa", text: entry.phonetic });
     if (entry.audioUrl) this.addAudioButton(head, entry.audioUrl);
-    this.addAnkiButton(head, body, entry);
-    this.renderMeanings(body, entry);
+    this.addAnkiButton(head, body, entry, chosen);
+    this.renderMeanings(body, entry, chosen);
     body.createDiv({ cls: "ear-coach-dict-source", text: this.provider.name });
   }
 
@@ -119,7 +125,7 @@ export class DictionaryModal extends Modal {
     });
   }
 
-  private addAnkiButton(head: HTMLElement, box: HTMLElement, entry: DictionaryEntry): void {
+  private addAnkiButton(head: HTMLElement, box: HTMLElement, entry: DictionaryEntry, chosen: ChosenMeaning): void {
     const ctx = this.anki;
     if (!ctx) return;
     const btn = head.createEl("button", { cls: "ear-coach-dict-anki", text: ANKI_MESSAGES.button });
@@ -159,7 +165,7 @@ export class DictionaryModal extends Modal {
             word: entry.word,
             phonetic: entry.phonetic,
             audioUrl: entry.audioUrl,
-            meanings: entry.meanings.map((m) => ({ partOfSpeech: m.partOfSpeech, definition: m.definitions[0]?.definition ?? "" })),
+            meanings: pickCardMeaning(entry, chosen.value),
             sentence: ctx.sentence,
             tapped: this.rawWord,
             videoId: ctx.videoId,
@@ -178,17 +184,24 @@ export class DictionaryModal extends Modal {
     });
   }
 
-  private renderMeanings(container: HTMLElement, entry: DictionaryEntry): void {
-    for (const m of entry.meanings) {
+  private renderMeanings(container: HTMLElement, entry: DictionaryEntry, chosen: ChosenMeaning): void {
+    const items: HTMLElement[] = [];
+    entry.meanings.forEach((m, pos) => {
       const sec = container.createDiv({ cls: "ear-coach-dict-meaning" });
       sec.createDiv({ cls: "ear-coach-dict-pos", text: m.partOfSpeech });
       const ol = sec.createEl("ol", { cls: "ear-coach-dict-defs" });
-      for (const d of m.definitions) {
+      m.definitions.forEach((d, def) => {
         const li = ol.createEl("li", { cls: "ear-coach-dict-def" });
         li.createSpan({ text: d.definition });
         if (d.example) li.createDiv({ cls: "ear-coach-dict-example", text: `“${d.example}”` });
-      }
-    }
+        items.push(li);
+        li.addEventListener("click", () => {
+          chosen.value = { pos, def };
+          for (const it of items) it.removeClass("is-chosen");
+          li.addClass("is-chosen");
+        });
+      });
+    });
   }
 
   public onClose(): void {

@@ -1,0 +1,128 @@
+{
+  "comment": "pickCardMeaning(entry, chosen) → 카드 앞면 뜻(항상 0~1개). SPEC_025",
+  "entry": {
+    "meanings": [
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "The rear of the body."
+          },
+          {
+            "definition": "The reverse side."
+          }
+        ]
+      },
+      {
+        "partOfSpeech": "verb",
+        "definitions": [
+          {
+            "definition": "To go in the reverse direction."
+          }
+        ]
+      },
+      {
+        "partOfSpeech": "adverb",
+        "definitions": [
+          {
+            "definition": "To or in a previous condition or place."
+          },
+          {
+            "definition": "Away from the front."
+          }
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "chosen": null,
+      "expect": [
+        {
+          "partOfSpeech": "noun",
+          "definition": "The rear of the body."
+        }
+      ]
+    },
+    {
+      "chosen": {
+        "pos": 2,
+        "def": 0
+      },
+      "expect": [
+        {
+          "partOfSpeech": "adverb",
+          "definition": "To or in a previous condition or place."
+        }
+      ]
+    },
+    {
+      "chosen": {
+        "pos": 0,
+        "def": 1
+      },
+      "expect": [
+        {
+          "partOfSpeech": "noun",
+          "definition": "The reverse side."
+        }
+      ]
+    },
+    {
+      "chosen": {
+        "pos": 5,
+        "def": 0
+      },
+      "expect": [
+        {
+          "partOfSpeech": "noun",
+          "definition": "The rear of the body."
+        }
+      ]
+    },
+    {
+      "chosen": {
+        "pos": 1,
+        "def": 3
+      },
+      "expect": [
+        {
+          "partOfSpeech": "noun",
+          "definition": "The rear of the body."
+        }
+      ]
+    },
+    {
+      "entry": {
+        "meanings": []
+      },
+      "chosen": null,
+      "expect": []
+    },
+    {
+      "entry": {
+        "meanings": [
+          {
+            "partOfSpeech": "noun",
+            "definitions": []
+          },
+          {
+            "partOfSpeech": "verb",
+            "definitions": [
+              {
+                "definition": "To run."
+              }
+            ]
+          }
+        ]
+      },
+      "chosen": null,
+      "expect": [
+        {
+          "partOfSpeech": "verb",
+          "definition": "To run."
+        }
+      ]
+    }
+  ]
+}

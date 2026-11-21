@@ -45,6 +45,7 @@
         },
         "anki": {
           "tap": "going",
+          "chooseDef": 1,
           "picture": {
             "filename": "ear-coach-uiCheck0001-4.jpg",
             "width": 320,
@@ -144,6 +145,7 @@
         },
         "anki": {
           "tap": "going",
+          "chooseDef": 1,
           "picture": {
             "filename": "ear-coach-uiCheck0001-4.jpg",
             "width": 320,

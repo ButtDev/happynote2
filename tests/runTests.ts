@@ -393,7 +393,8 @@ async function runAllTests() {
       if ("commonsPageId" in c.expect) assert.equal(dictMod.pickPronunciation(c.response).commonsPageId, c.expect.commonsPageId, `${f}: commonsPageId`);
       assert.deepEqual(got.meanings.map((m: any) => m.partOfSpeech), c.expect.partsOfSpeech, `${f}: partsOfSpeech`);
       assert.equal(got.meanings[0].definitions[0].definition, c.expect.firstDefinition, `${f}: firstDefinition`);
-      assert.ok(got.meanings.length <= 3, `${f}: at most 3 parts of speech`);
+      // SPEC_025: 품사는 자르지 않되 같은 품사는 한 번만
+      assert.equal(new Set(got.meanings.map((m: any) => m.partOfSpeech)).size, got.meanings.length, `${f}: unique parts of speech`);
       for (const m of got.meanings) assert.ok(m.definitions.length >= 1 && m.definitions.length <= 3, `${f}: ${m.partOfSpeech} 1~3 definitions`);
     }
     dictCount++;
@@ -471,6 +472,13 @@ async function runAllTests() {
       assert.equal(got.audio?.[0]?.url, c.expect.audio[0].url, `${f}: audio[0].url`);
       assert.deepEqual(got.audio, c.expect.audio, `${f}: audio`);
     }
+  }
+  // SPEC_025: 카드 앞면 뜻은 고른 것 하나(없으면 첫 뜻)
+  const pickData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_pick.json"), "utf8"));
+  for (const pc of pickData.cases) {
+    const got = ankiMod.pickCardMeaning(pc.entry ?? pickData.entry, pc.chosen);
+    assert.deepEqual(got, pc.expect, `pickCardMeaning(${JSON.stringify(pc.chosen)})`);
+    assert.ok(got.length <= 1, "pickCardMeaning: at most one meaning");
   }
   const remapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_remap.json"), "utf8"));
   const roleOrder = ["sentence", "picture", "meaning", "word", "ipa", "audio", "source"];
