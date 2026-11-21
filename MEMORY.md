@@ -3,14 +3,16 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_022(자동 자막 대소문자·구두점 복원, AI `restoredText` 칸) IMPLEMENTED — ⏳ 8 실기기 버튼 대기(`SPEC_022 8 OK|NG|메모`). 확인엔 **새** 구두점 없는 자동 자막 노트 필요(이미 해석된 카드는 다시 안 보냄). 최신 배포 BRAT **1.0.30**.
-- 다음 후보(`memory/backlog.md` 「대기」): 자막 트랙 고르기(화면 방식 질문 필요: 카드 위 메뉴 / 열 때 고르는 창), —
+- SPEC_022(자동 자막 대소문자·구두점 복원, AI `restoredText` 칸) IMPLEMENTED — ⏳ 8 실기기 버튼 대기(`SPEC_022 8 OK|NG|메모`). BRAT **1.0.30** 배포·릴리스 확인됨. 그 밖의 SPEC은 모두 DONE/DROPPED.
+- 다음 후보(`memory/backlog.md` 「대기」): 자막 트랙 고르기 — 화면 방식 질문 필요(카드 위 메뉴 / 열 때 고르는 창).
 
 ## 열린 질문 (사람에게)
+- SPEC_022 ⏳ 8: 확인엔 **새** 구두점 없는 자동 자막 노트 필요(이미 해석된 카드는 다시 안 보냄). 요즘 유튜브 자동 자막은 구두점이 이미 있는 경우가 많아 바뀌는 게 없을 수 있음 → 메모로 오면 그 영상이 대상인지(구두점 유무)부터 볼 것. 실제 AI 복원 문장은 아직 못 봄(저장소에 키 없음).
 - Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
-- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록(SPEC_017 9 메모 「잘동작함」 → OK 처리).
+- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록.
 
 ## 주의
+- 사람 기기 AI: Gemini 키 사용 중(503 high demand 겪음 → 1.0.28 busy 재시도). Groq는 대안(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
 - 실기기 ⏳ 요청 문구엔 사람이 할 준비 단계(설정·덱 만들기 등)를 빠뜨리지 않는다(SPEC_015에서 빠뜨려 회차 낭비).
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → 릴리스 확인은 `curl` GitHub API, `gh` 없음) 후 ⏳ 요청. 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.
 - Test 7 = 지운 기능(SPEC_005 진단)이 main.js·src에 없음(`tests/fixtures/removed-features/`). 시험 `npm test`는 `PATH=tests/fixtures/bin:$PATH`가 있어야 Test 4(agy) 통과 — `verify.mjs`가 넣어 줌.
