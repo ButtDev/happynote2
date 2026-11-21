@@ -690,10 +690,25 @@ async function runAllTests() {
     for (const [k, v] of Object.entries(rc.expect.headers)) assert.equal(req.headers[k], v, `buildAiRequest ${rc.name}: header ${k}`);
     const body = JSON.parse(req.body);
     for (const [k, v] of Object.entries(rc.expect.body)) assert.deepEqual(dig(body, k), v, `buildAiRequest ${rc.name}: body ${k}`);
+    for (const [k, v] of Object.entries(rc.expect.bodyArrayExcludes ?? {})) {
+      const arr = dig(body, k);
+      assert.ok(Array.isArray(arr) && !arr.includes(v), `buildAiRequest ${rc.name}: ${k} must not include ${v}`);
+    }
+  }
+  const promptText = aiMod.buildAnalysisPrompt("t", [{ index: 0, text: "a b", wpm: 100 }]);
+  for (const needle of aiCases.promptMustContain) assert.ok(promptText.includes(needle), `prompt must contain: ${needle}`);
+  // SPEC_022: 대소문자·구두점 복원 — 받아들임/거절, 대상 판정
+  for (const rc of aiCases.restore) {
+    assert.equal(aiMod.acceptRestoredText(rc.words.split(" "), rc.restored), rc.expect, `acceptRestoredText ${rc.name}`);
+  }
+  for (const nc of aiCases.needsRestore) {
+    const words = nc.text.split(/\s+/).filter(Boolean);
+    assert.equal(aiMod.needsTextRestore({ text: nc.text, words }), nc.expect, `needsTextRestore ${JSON.stringify(nc.text)}`);
   }
   const pickItem = (it: Record<string, unknown>) => ({
     segmentIndex: it.segmentIndex, traps: it.traps, skeletonWordIndices: it.skeletonWordIndices,
     dictationBlankIndices: it.dictationBlankIndices, translationKr: it.translationKr,
+    ...(it.restoredText !== undefined ? { restoredText: it.restoredText } : {}),
   });
   for (const pc of aiCases.responses) {
     const segs = pc.segments.map((x: { index: number; text: string }) => mkSeg(x.index, x.text));
@@ -706,14 +721,14 @@ async function runAllTests() {
       assert.deepEqual(got.items.map(pickItem), pc.expect.items, `parseAiResponse ${pc.name}: items`);
     }
   }
-  const okReply = (req: { body: string }) => {
+  const okReply = (req: { body: string }, restored: Record<string, string> = {}) => {
     const prompt = JSON.parse(req.body).contents[0].parts[0].text as string;
     const sent = JSON.parse(prompt.split("Segments JSON:\n")[1]) as Array<{ index: number; text: string }>;
-    const items = sent.map((x) => ({ segmentIndex: x.index, traps: ["LINKING"], phoneticKr: "p", trapExplanation: "e", skeletonWordIndices: [0], dictationBlankIndices: [1], rhythmGuide: x.text, translationKr: `번역 ${x.index}` }));
+    const items = sent.map((x) => ({ segmentIndex: x.index, traps: ["LINKING"], phoneticKr: "p", trapExplanation: "e", skeletonWordIndices: [0], dictationBlankIndices: [1], rhythmGuide: x.text, translationKr: `번역 ${x.index}`, restoredText: restored[String(x.index)] ?? "" }));
     return { status: 200, json: { candidates: [{ content: { parts: [{ text: JSON.stringify({ summaryKr: "", keyListeningPoints: [], items }) }] } }] } };
   };
   for (const run of aiCases.runs) {
-    const segs = Array.from({ length: run.segments }, (_, i) => mkSeg(i, `word one two three ${i}`, run.analyzedAt.includes(i)));
+    const segs = Array.from({ length: run.segments }, (_, i) => mkSeg(i, run.texts?.[String(i)] ?? `word one two three ${i}`, run.analyzedAt.includes(i)));
     const batchSizes: number[] = [];
     const sleeps: number[] = [];
     let sentAnalyzed = 0;
@@ -727,7 +742,7 @@ async function runAllTests() {
         batchSizes.push(sent.length);
         sentAnalyzed += sent.filter((x) => run.analyzedAt.includes(x.index)).length;
         const reply = run.replies[call++];
-        if (reply === "ok") return okReply(req);
+        if (reply === "ok") return okReply(req, run.restoredTexts);
         if (reply === "bad") return { status: 200, json: { candidates: [{ content: { parts: [{ text: "not json" }] } }] } };
         return { status: reply, json: { error: { message: `HTTP ${reply}` } } };
       },
@@ -741,8 +756,14 @@ async function runAllTests() {
     const filled = segs.filter((sg: any) => /^번역 \d+$/.test(sg.analysis.translationKr)).length;
     assert.equal(filled, run.expect.analyzed, `runAiAnalysis ${run.name}: analysis written into segments`);
     for (const i of run.analyzedAt) assert.equal(segs[i].analysis.translationKr, `이미 분석 ${i}`, `runAiAnalysis ${run.name}: analyzed seg ${i} untouched`);
+    for (const [i, text] of Object.entries(run.expect.textsAfter ?? {})) {
+      const sg = segs[Number(i)];
+      assert.equal(sg.text, text, `runAiAnalysis ${run.name}: seg ${i} text`);
+      assert.deepEqual(sg.words, (text as string).split(/\s+/), `runAiAnalysis ${run.name}: seg ${i} words follow text`);
+      assert.equal(sg.words.length, (run.texts[i] as string).split(/\s+/).length, `runAiAnalysis ${run.name}: seg ${i} word count kept`);
+    }
   }
-  log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching cases`);
+  log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching + ${aiCases.restore.length} restore + ${aiCases.needsRestore.length} needsRestore cases`);
   log("");
 
   log("==============================================================");

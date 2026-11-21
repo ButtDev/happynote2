@@ -36,6 +36,8 @@ export interface AiError {
 
 export interface AiItem extends SegmentPhoneticAnalysis {
   segmentIndex: number;
+  /** SPEC_022: 구두점 없는 카드에서 낱말이 같다고 확인된 복원 문장 */
+  restoredText?: string;
 }
 
 export interface AiRunDeps {
@@ -81,8 +83,9 @@ export function buildAnalysisPrompt(title: string, segments: PromptSegment[]): s
     "5. dictationBlankIndices: 0-based word indices (2-3 words max) of the trickiest linked/reduced words for micro-dictation.",
     "6. rhythmGuide: Sentence with stressed words capitalized/bolded and '/' for natural pauses.",
     "7. translationKr: Natural Korean meaning.",
+    '8. restoredText: the SAME words in the SAME order, only fixing capitalization (proper nouns, sentence starts, "I") and adding punctuation (. , ? !). Never add, remove, merge, split or respell words. Use "" if the segment already has punctuation.',
     "",
-    'Return ONE JSON object only, with keys "summaryKr" (string), "keyListeningPoints" (string array) and "items" (array, one per segment, each with "segmentIndex" equal to the segment\'s "index" plus the 7 fields above).',
+    'Return ONE JSON object only, with keys "summaryKr" (string), "keyListeningPoints" (string array) and "items" (array, one per segment, each with "segmentIndex" equal to the segment\'s "index" plus the 8 fields above).',
     "",
     "Segments JSON:",
     JSON.stringify(segments.map((s) => ({ index: s.index, text: s.text, wpm: s.wpm }))),
@@ -118,6 +121,7 @@ const GEMINI_RESPONSE_SCHEMA = {
           dictationBlankIndices: { type: "ARRAY", items: { type: "INTEGER" } },
           rhythmGuide: { type: "STRING" },
           translationKr: { type: "STRING" },
+          restoredText: { type: "STRING" },
         },
       },
     },
@@ -186,6 +190,27 @@ const intList = (v: unknown, max: number): number[] =>
   Array.isArray(v) ? v.filter((n): n is number => Number.isInteger(n) && n >= 0 && n < max) : [];
 
 /** Validates raw model items against the segments that were actually sent. */
+/** SPEC_022: 구두점(. , ! ? ; :)이 하나도 없는 2낱말 이상 카드만 대소문자·구두점 복원 대상 */
+export function needsTextRestore(seg: Pick<TranscriptSegment, "text" | "words">): boolean {
+  return !/[.,!?;:]/.test(seg.text) && seg.words.length >= 2;
+}
+
+const bareWord = (w: string) => w.toLowerCase().replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
+
+/** SPEC_022: 낱말 수·낱말(소문자, 앞뒤 문장부호 무시)이 모두 같을 때만 복원 문장을 받아들임 */
+export function acceptRestoredText(words: string[], restored: unknown): string | null {
+  if (typeof restored !== "string") return null;
+  const text = restored.trim();
+  if (!text) return null;
+  const got = text.split(/\s+/);
+  if (got.length !== words.length) return null;
+  for (let i = 0; i < got.length; i++) {
+    const g = bareWord(got[i]);
+    if (!g || g !== bareWord(words[i])) return null;
+  }
+  return text;
+}
+
 export function sanitizeItems(rawItems: unknown[], segments: TranscriptSegment[]): AiItem[] {
   const byIndex = new Map(segments.map((s) => [s.index, s]));
   const out: AiItem[] = [];
@@ -200,6 +225,7 @@ export function sanitizeItems(rawItems: unknown[], segments: TranscriptSegment[]
       ? (r.traps.filter((t) => TRAPS.includes(t as ListeningTrapType)) as ListeningTrapType[])
       : [];
     const n = seg.words.length;
+    const restoredText = needsTextRestore(seg) ? acceptRestoredText(seg.words, r.restoredText) : null;
     out.push({
       segmentIndex: seg.index,
       traps: traps.length > 0 ? Array.from(new Set(traps)) : ["LINKING"],
@@ -209,6 +235,7 @@ export function sanitizeItems(rawItems: unknown[], segments: TranscriptSegment[]
       dictationBlankIndices: intList(r.dictationBlankIndices, n),
       rhythmGuide: typeof r.rhythmGuide === "string" && r.rhythmGuide ? r.rhythmGuide : seg.text,
       translationKr,
+      ...(restoredText ? { restoredText } : {}),
     });
   }
   return out;
@@ -295,6 +322,10 @@ export async function runAiAnalysis(
         rhythmGuide: item.rhythmGuide,
         translationKr: item.translationKr,
       };
+      if (item.restoredText) {
+        seg.text = item.restoredText;
+        seg.words = item.restoredText.split(/\s+/);
+      }
       analyzed++;
     }
     done += batch.length;

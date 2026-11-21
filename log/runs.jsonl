@@ -75,3 +75,4 @@
 {"ts":"2026-11-21T07:00:02.912Z","id":"ai-restore-trigger","spec":"SPEC_021","kind":"간이","what":"앱 재시작으로 복원된 Ear-Coach 화면(restoreSessionForView)에서도 모바일 AI 자동 시작","evidence":"verify.mjs --set regression ok; main.ts 891줄(<900); 동작은 실기기 ⏳(복원 경로는 시험 환경에 없음)","cause":"사람 실기기: 대기 카드 그대로·알림 없음, 명령 팔레트 못 찾음"}
 {"ts":"2026-11-21T09:44:24.252Z","cmd":"/spec-run","spec":"SPEC_021","iteration":1,"status":"DONE","evidence":"사람확인 9 OK(1.0.29 실기기); 1~8 회차 1 + 이후 regression ok"}
 {"ts":"2026-11-21T09:49:06.551Z","cmd":"/spec-new","spec":"SPEC_022","result":"READY","questions":0}
+{"ts":"2026-11-21T09:50:43.868Z","cmd":"/spec-run","spec":"SPEC_022","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 15 13 response + 8 batching + 10 restore + 5 needsRestore; 변이 2종 실패 확인"}

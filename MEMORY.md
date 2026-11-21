@@ -3,8 +3,8 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 모든 SPEC DONE/DROPPED (SPEC_021 모바일 AI 2026-11-21 DONE). 최신 배포 BRAT **1.0.29**.
-- 다음 후보(`memory/backlog.md` 「대기」): 자막 트랙 고르기(화면 방식 질문 필요: 카드 위 메뉴 / 열 때 고르는 창), 고유명사 대문자·구두점 복원(AI 경로로).
+- SPEC_022(자동 자막 대소문자·구두점 복원, AI `restoredText` 칸) IMPLEMENTED — ⏳ 8 실기기 버튼 대기(`SPEC_022 8 OK|NG|메모`). 확인엔 **새** 구두점 없는 자동 자막 노트 필요(이미 해석된 카드는 다시 안 보냄). 최신 배포 BRAT **1.0.30**.
+- 다음 후보(`memory/backlog.md` 「대기」): 자막 트랙 고르기(화면 방식 질문 필요: 카드 위 메뉴 / 열 때 고르는 창), —
 
 ## 열린 질문 (사람에게)
 - Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
@@ -24,4 +24,4 @@
 - Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). AnkiConnect Android는 외부 미디어 url(upload.wikimedia.org)을 못 받음 — 그림도 data(base64)로 보낼 것 → `inlineAudio`로 requestUrl 받아 data(base64). 실기기 AnkiDroid엔 「Default」 덱이 없을 수 있음 → `resolveAnkiTarget`이 저장 전에 확인·안내. 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.
 - 장면 그림(SPEC_017): `src/services/storyboard.ts`(스펙 파싱·칸 계산, Test 13 + `tests/fixtures/storyboard/` 실제 스펙, 변이용 `EAR_COACH_STORYBOARD_MODULE`), 자르기 `src/ui/snapshot.ts`(캔버스, requestUrl 바이트라 오염 없음), `plugin.storyboard(videoId)` 시청 페이지 L3 320×180 → Android innertube L2 160×90. 저장 순서 deckNames→modelNames→modelFieldNames→storeMediaFile→canAddNotes→addNote, Front에 `<img>`. 실제 스토리보드 격자는 모두 정사각(3×3·5×5·10×10) — 열/행 시험엔 비정사각 사례 필요. 화면 검사 합성 시트 `tests/ui/fixtures/storyboard-sheet.png`(esbuild binary 로더 + `tests/ui/png.d.ts`).
 - 자막(SPEC_018): 파서 `src/services/captionPayload.ts` `parseCaptionPayload`(srv3 `<s t>`·json3 `tOffsetMs` → `cue.words`), 구두점 없음+단어 시각 80%↑이면 `mergeTimedWords`(쉼 0.25s·4~18단어). 시험 Test 14 + `tests/fixtures/transcript/`(실제 srv3: TED ASR·수동, Rick 구두점 ASR). 변이용 `EAR_COACH_TRANSCRIPT_MODULE`·`EAR_COACH_TRANSCRIPT_SERVICE_MODULE`. 시각 모드 카드 글자는 `tidyAsrWords`(군말 `ASR_FILLER_WORDS` 빼기·I·첫 글자 대문자, SPEC_020, cases.json `tidy`), srv3 `<s>` 한 개에 두 낱말이 들기도 함 → 낱말별로 나눔. 실제 자막 받기는 Android innertube player(`clientName ANDROID 20.10.38`) baseUrl(이미 `fmt=srv3`).
-- 모바일 AI(SPEC_021): `src/services/aiAnalysis.ts`(obsidian import 없음, fetch·sleep 주입, Test 15 + `tests/fixtures/ai/cases.json` 합성 응답, 변이용 `EAR_COACH_AI_MODULE`), `plugin.aiFetch`·`runMobileAiEnrichment`(모바일 `activateWorkspaceView` 끝 자동, 대기 = translationKr이 `(AI 정밀 해석 대기 중`로 시작). `main.ts`는 900줄 한도 시험이 있음(지금 ~890).
+- 모바일 AI(SPEC_021): `src/services/aiAnalysis.ts`(obsidian import 없음, fetch·sleep 주입, Test 15 + `tests/fixtures/ai/cases.json` 합성 응답, 변이용 `EAR_COACH_AI_MODULE`), `plugin.aiFetch`·`runMobileAiEnrichment`(모바일 `activateWorkspaceView` 끝 자동, 대기 = translationKr이 `(AI 정밀 해석 대기 중`로 시작). `main.ts`는 900줄 한도 시험이 있음(지금 891). SPEC_022: `needsTextRestore`(구두점 없음+2낱말↑)·`acceptRestoredText`(낱말 같을 때만) → `seg.text`·`words` 교체, 시험 `cases.json` `restore`·`needsRestore`·`promptMustContain`.

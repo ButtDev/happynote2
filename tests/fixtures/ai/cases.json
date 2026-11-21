@@ -18,9 +18,13 @@
      "generationConfig.responseMimeType": "application/json",
      "generationConfig.temperature": 0.2,
      "generationConfig.responseSchema.type": "OBJECT",
-     "contents.0.parts.0.text": "PROMPT"
+     "contents.0.parts.0.text": "PROMPT",
+     "generationConfig.responseSchema.properties.items.items.properties.restoredText.type": "STRING"
     },
-    "urlMustNotContain": "TEST-KEY-G"
+    "urlMustNotContain": "TEST-KEY-G",
+    "bodyArrayExcludes": {
+     "generationConfig.responseSchema.properties.items.items.required": "restoredText"
+    }
    }
   },
   {
@@ -458,6 +462,84 @@
    "expect": {
     "error": "busy"
    }
+  },
+  {
+   "name": "restoredText: kept only for punctuation-free card with same words",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "role": "model",
+       "parts": [
+        {
+         "text": "{\"summaryKr\": \"\", \"keyListeningPoints\": [], \"items\": [{\"segmentIndex\": 1, \"traps\": [\"LINKING\"], \"phoneticKr\": \"p\", \"trapExplanation\": \"e\", \"skeletonWordIndices\": [0], \"dictationBlankIndices\": [1], \"rhythmGuide\": \"r\", \"translationKr\": \"뉴욕에 갔어요.\", \"restoredText\": \"I went to New York with Sarah.\"}, {\"segmentIndex\": 2, \"traps\": [\"LINKING\"], \"phoneticKr\": \"p\", \"trapExplanation\": \"e\", \"skeletonWordIndices\": [0], \"dictationBlankIndices\": [1], \"rhythmGuide\": \"r\", \"translationKr\": \"좋았어요.\", \"restoredText\": \"It was GREAT, really!\"}, {\"segmentIndex\": 3, \"traps\": [\"LINKING\"], \"phoneticKr\": \"p\", \"trapExplanation\": \"e\", \"skeletonWordIndices\": [0], \"dictationBlankIndices\": [1], \"rhythmGuide\": \"r\", \"translationKr\": \"가게에 갔어요.\", \"restoredText\": \"We walked to the store.\"}]}"
+        }
+       ]
+      },
+      "finishReason": "STOP"
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 1,
+     "text": "I went to new york with sarah"
+    },
+    {
+     "index": 2,
+     "text": "It was great, really."
+    },
+    {
+     "index": 3,
+     "text": "we went to the store"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 1,
+      "traps": [
+       "LINKING"
+      ],
+      "skeletonWordIndices": [
+       0
+      ],
+      "dictationBlankIndices": [
+       1
+      ],
+      "translationKr": "뉴욕에 갔어요.",
+      "restoredText": "I went to New York with Sarah."
+     },
+     {
+      "segmentIndex": 2,
+      "traps": [
+       "LINKING"
+      ],
+      "skeletonWordIndices": [
+       0
+      ],
+      "dictationBlankIndices": [
+       1
+      ],
+      "translationKr": "좋았어요."
+     },
+     {
+      "segmentIndex": 3,
+      "traps": [
+       "LINKING"
+      ],
+      "skeletonWordIndices": [
+       0
+      ],
+      "dictationBlankIndices": [
+       1
+      ],
+      "translationKr": "가게에 갔어요."
+     }
+    ]
+   }
   }
  ],
  "runs": [
@@ -635,6 +717,128 @@
     "stoppedBy": "busy",
     "sentAnalyzed": 0
    }
+  },
+  {
+   "name": "restore: punctuation-free cards get restored text, punctuated card untouched",
+   "segments": 3,
+   "analyzedAt": [],
+   "texts": {
+    "0": "we flew to tokyo with ken",
+    "1": "It was fun.",
+    "2": "we flew to tokyo again"
+   },
+   "restoredTexts": {
+    "0": "We flew to Tokyo with Ken.",
+    "1": "It was FUN!",
+    "2": "We drove to Tokyo again."
+   },
+   "replies": [
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     3
+    ],
+    "sleeps": [],
+    "analyzed": 3,
+    "total": 3,
+    "stoppedBy": null,
+    "sentAnalyzed": 0,
+    "textsAfter": {
+     "0": "We flew to Tokyo with Ken.",
+     "1": "It was fun.",
+     "2": "we flew to tokyo again"
+    }
+   }
+  }
+ ],
+ "promptMustContain": [
+  "8. restoredText: the SAME words in the SAME order",
+  "Never add, remove, merge, split or respell words",
+  "plus the 8 fields above"
+ ],
+ "restore": [
+  {
+   "name": "proper nouns + periods",
+   "words": "I went to new york with sarah last year it was great",
+   "restored": "I went to New York with Sarah last year. It was great.",
+   "expect": "I went to New York with Sarah last year. It was great."
+  },
+  {
+   "name": "question mark + comma",
+   "words": "so what do you think john",
+   "restored": "So, what do you think, John?",
+   "expect": "So, what do you think, John?"
+  },
+  {
+   "name": "trims outer spaces",
+   "words": "we met in paris",
+   "restored": "  We met in Paris. ",
+   "expect": "We met in Paris."
+  },
+  {
+   "name": "word changed -> reject",
+   "words": "we went to the store",
+   "restored": "We walked to the store.",
+   "expect": null
+  },
+  {
+   "name": "word dropped -> reject",
+   "words": "I think that we should go",
+   "restored": "I think we should go.",
+   "expect": null
+  },
+  {
+   "name": "word added -> reject",
+   "words": "we should go",
+   "restored": "We really should go.",
+   "expect": null
+  },
+  {
+   "name": "contraction respelled -> reject",
+   "words": "I dont know",
+   "restored": "I don't know.",
+   "expect": null
+  },
+  {
+   "name": "standalone dash token -> reject",
+   "words": "well we tried",
+   "restored": "Well — we tried.",
+   "expect": null
+  },
+  {
+   "name": "not a string -> reject",
+   "words": "we met in paris",
+   "restored": null,
+   "expect": null
+  },
+  {
+   "name": "empty string -> reject",
+   "words": "we met in paris",
+   "restored": "",
+   "expect": null
+  }
+ ],
+ "needsRestore": [
+  {
+   "text": "I went to new york with sarah",
+   "expect": true
+  },
+  {
+   "text": "I went to New York.",
+   "expect": false
+  },
+  {
+   "text": "what do you think?",
+   "expect": false
+  },
+  {
+   "text": "so, what now",
+   "expect": false
+  },
+  {
+   "text": "hello",
+   "expect": false
   }
  ]
 }
