@@ -3,13 +3,13 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_025~028 IMPLEMENTED, BRAT 1.0.35 배포 — ⏳ 실기기 확인 대기(025 5 · 026 4 · 027 4 · 028 4). 026은 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿은 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 먼저 만들어야 함.
-- 백로그 「대기」 9건 남음(④긴 영상 성능 ~ ⑫학습 기록), 다음 밤.
-- 이미지 보여 주기: 채팅 첨부 안 됨 → `.scratch/review-site/` + 8001 서버(`run-detached.mjs status review-site`, 지금 켜져 있음 — 다 보면 끄기).
+- SPEC_025~028 IMPLEMENTED, BRAT 1.0.35 배포(릴리스 3파일 확인) — ⏳ 실기기 버튼 대기: 025 5(고른 뜻 하나만 앞면) · 026 4(핀 문장 카드 소리·그림·힌트) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- 026 확인 전 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내는 이미 보냄.
+- 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
+- 이미지 서버 8001(`run-detached.mjs status review-site`)이 켜져 있음 — 사람이 끄라고 하면 끔.
 
 ## 열린 질문 (사람에게)
-- SPEC_025~027 DRAFT 각 「질문」 절(뜻 고르기 방식, TTS 노트 타입 만들기, 재청취 범위) — 답 받으면 READY로.
-- SPEC_028 DRAFT 「질문」(아이콘만 버튼, 단계 이름, 안내문 한 줄) + ui-ux.md H(과속 기준 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준으로?)·I(Lucide 아이콘).
+- `docs/review/ui-ux.md` H(과속 기준 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준으로?)·I(Lucide 아이콘 교체) — 아직 안 물음, SPEC_028 확인 뒤 물을 것.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함(예: `SPEC_024 6 메모`로 새 요청) — 내용으로 판단해 기록.
 
 ## 주의
