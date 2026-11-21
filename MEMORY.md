@@ -4,10 +4,9 @@
 
 ## 지금 하는 일
 - 진행 중 SPEC 없음(SPEC_023·024 DONE, 최신 BRAT 1.0.34).
-- 오늘 밤 `memory/backlog.md` 「대기」 7건(문서·검사 위주, 순서대로): ① Anki·사전 Fluent Forever 점검 + 학습 극대화 발산 → `docs/review/anki-fluent-forever.md` ② UI·UX·버튼 아이콘/글자 간결화 점검 → `docs/review/ui-ux.md`(+시안 `docs/review/img/`) ③ 가로 컨트롤 `rowSlack` ④ 긴 영상(400장↑) 성능 ⑤ `main.ts` 900줄 여유 ⑥ 실패 경로 시험 ⑦ 사전 캐시. ①②는 구현 안 함(SPEC DRAFT만), ③·⑦ 화면 바뀌면 night 브랜치 + 아침 ⏳.
+- 오늘 밤 `memory/backlog.md` 「대기」 12건(문서·검사 위주, 순서대로): ① Anki·사전 Fluent Forever 점검 + 학습 극대화 발산 → `docs/review/anki-fluent-forever.md` ② UI·UX·버튼 아이콘/글자 간결화 점검 → `docs/review/ui-ux.md`(+시안 `docs/review/img/`) ③ 가로 컨트롤 `rowSlack` ④ 긴 영상(400장↑) 성능 ⑤ `main.ts` 900줄 여유 ⑥ 실패 경로 시험 ⑦ 사전 캐시 ⑧ 밝은 테마 화면 검사 ⑨ 업스트림 읽기만 ⑩ 설정 화면 정리안(ui-ux.md 절) ⑪ 안 쓰는 코드 + `npm audit` ⑫ 학습 기록 아이디어(anki-fluent-forever.md 절). ①②는 구현 안 함(SPEC DRAFT만), ③·⑦·⑧ 화면 바뀌면 night 브랜치 + 아침 ⏳.
 
 ## 열린 질문 (사람에게)
-- 야간 추가 후보 버튼 대기: 「추천대로 1·2·4 추가 | 5개 전부 추가 | 이 정도면 됐어」 — 1 밝은 테마 화면 검사, 2 업스트림(sindng-ui) 새 변경 읽기만 확인, 3 설정 화면 정리안(문서), 4 안 쓰는 코드 정리 + `npm audit`, 5 학습 기록 아이디어(문서). 답 오면 backlog 「대기」 끝에 추가.
 - Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」 — 결과 보고 대기. 여전히 「기본」 덱이면 대안은 노트 타입 `Basic`(카드 1장).
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함(예: `SPEC_024 6 메모`로 새 요청) — 내용으로 판단해 기록.
 
