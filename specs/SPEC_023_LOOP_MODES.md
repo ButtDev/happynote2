@@ -1,8 +1,8 @@
 ---
 id: SPEC_023
 title: 공통 컨트롤 반복 버튼 — 지금 재생 위치 기준 켜기·끄기 + 반복 모드(무한/N번씩 다음 문장) + 카드 목록 자동 따라가기
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -50,15 +50,15 @@ depends_on: []
 - 데스크톱 `agy` 경로, 자막·AI 처리.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] `nextLoopMode`·`loopButtonText` 사례 통과(순환 3단계, 모바일·데스크톱 글자, N=5 글자, seg 없을 때) (Test 16) [자동]
-2. [ ] `decideLoopTick` 사례 8개 이상 통과: off none, 끝 전 none, one 끝 repeat, count 1·2번째 끝 repeat, count 3번째 끝 advance, 쉼 시작 gap(resumeAtMs 값), 쉼 중 none, 쉼 끝 repeat/advance (Test 16) [자동]
-3. [ ] `shouldAutoFollow` 사례: 꺼짐 false, 켜짐·손댄 지 4초 안 false, 켜짐·4초 뒤 true (Test 16) [자동]
-4. [ ] 변이: `decideLoopTick`에서 count 비교를 지운 사본, 쉼을 무시하는 사본, `shouldAutoFollow`가 늘 true인 사본으로 각각 Test 16 실패 [자동]
-5. [ ] 화면 검사 `loopCycle`(세로·가로): 재생 시각을 3번째 문장 안으로 두고 반복 버튼 누름 → 글자 `🔂 ∞`, 3번째 카드 버튼 `is-loop-active-btn`, 다른 카드는 아님 / 다시 누름 → `🔂 ×3`, 같은 카드 유지 / 다시 누름 → `🔁 OFF`, 반복 카드 없음 [자동]
-6. [ ] 화면 검사 `follow`(세로): 따라가기 켜짐(기본, `aria-pressed="true"`)에서 재생 시각을 마지막 문장으로 → 목록 `scrollTop` 늘고 그 카드가 목록 안에 보임 / 버튼 누름 → `aria-pressed="false"`·설정 `autoFollowPlayback` false, 재생 시각을 첫 문장으로 → `scrollTop` 그대로 [자동]
-7. [ ] 화면 검사 기존 규칙 모두 통과(컨트롤 겹침 0, 컨트롤·툴바 화면 안, 카드 활성 밀림 없음 등) — 버튼이 늘어도 컨트롤이 넘치지 않음. 스크린샷 `portrait.png`·`landscape.png`를 열어 컨트롤 줄 확인 [자동]
-8. [ ] 데스크톱 글자·동작은 위 정의대로(`loopButtonText` 데스크톱 사례), 설정 3개 기본값 `src/types/settings.ts`에 있음 [자동]
-9. [ ] `verify.mjs --set regression` ok, `main.ts` 900줄 한도 통과 [자동]
+1. [x] `nextLoopMode`·`loopButtonText` 사례 통과(순환 3단계, 모바일·데스크톱 글자, N=5 글자, seg 없을 때) (Test 16) [자동]
+2. [x] `decideLoopTick` 사례 8개 이상 통과: off none, 끝 전 none, one 끝 repeat, count 1·2번째 끝 repeat, count 3번째 끝 advance, 쉼 시작 gap(resumeAtMs 값), 쉼 중 none, 쉼 끝 repeat/advance (Test 16) [자동]
+3. [x] `shouldAutoFollow` 사례: 꺼짐 false, 켜짐·손댄 지 4초 안 false, 켜짐·4초 뒤 true (Test 16) [자동]
+4. [x] 변이: `decideLoopTick`에서 count 비교를 지운 사본, 쉼을 무시하는 사본, `shouldAutoFollow`가 늘 true인 사본으로 각각 Test 16 실패 [자동]
+5. [x] 화면 검사 `loopCycle`(세로·가로): 재생 시각을 3번째 문장 안으로 두고 반복 버튼 누름 → 글자 `🔂 ∞`, 3번째 카드 버튼 `is-loop-active-btn`, 다른 카드는 아님 / 다시 누름 → `🔂 ×3`, 같은 카드 유지 / 다시 누름 → `🔁 OFF`, 반복 카드 없음 [자동]
+6. [x] 화면 검사 `follow`(세로): 따라가기 켜짐(기본, `aria-pressed="true"`)에서 재생 시각을 마지막 문장으로 → 목록 `scrollTop` 늘고 그 카드가 목록 안에 보임 / 버튼 누름 → `aria-pressed="false"`·설정 `autoFollowPlayback` false, 재생 시각을 첫 문장으로 → `scrollTop` 그대로 [자동]
+7. [x] 화면 검사 기존 규칙 모두 통과(컨트롤 겹침 0, 컨트롤·툴바 화면 안, 카드 활성 밀림 없음 등) — 버튼이 늘어도 컨트롤이 넘치지 않음. 스크린샷 `portrait.png`·`landscape.png`를 열어 컨트롤 줄 확인 [자동]
+8. [x] 데스크톱 글자·동작은 위 정의대로(`loopButtonText` 데스크톱 사례), 설정 3개 기본값 `src/types/settings.ts`에 있음 [자동]
+9. [x] `verify.mjs --set regression` ok, `main.ts` 900줄 한도 통과 [자동]
 10. [ ] Android 실기기: BRAT 새 버전에서 영상을 재생하다 반복 버튼을 눌러 지금 문장이 반복되는지, 다시 눌러 「×3」에서 3번 듣고 다음 문장으로 넘어가는지, 재생 중 카드 목록이 지금 문장을 따라오는지(⇅로 끄면 멈추는지) 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -80,4 +80,7 @@ depends_on: []
 - 「다음 문장」은 지금 필터가 걸린 목록 기준: 「📌 고정만」 필터에서 고정 문장만 차례로 돌 수 있어서.
 - 자동 따라가기 기본 켬, 사람이 목록을 손대면 4초 쉼: 요청이 「자동 이동되면 좋겠다」이고, 스크롤하다 끌려가는 불편을 막으려고. 끄기는 컨트롤 줄 `⇅` 버튼(설정 화면은 모바일에서 깊어서). 대안: 설정 화면에만 두기.
 
+- (회차 1에 더함) 먼 카드로 자동 스크롤하면 아직 그리지 않은 카드의 추정 높이 때문에 약 1000px 빗나감(화면 검사 `follow`가 잡음) → `VirtualSegmentList.scheduleScrollCorrection`: 0.45초 뒤 실제 카드 위치로 최대 4번 다시 맞춤, 사람이 손대면 그만. 대안: 모든 카드 높이 미리 재기 — 가상 목록의 이점이 사라짐.
+
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 16 「3 cycle + 8 text」 · 2 ✅ 같은 시험 11 tick 사례(off·끝 전·pad 0.35·one 무한·count 1/2번째 repeat·3번째 advance·gap resumeAtMs 2500·쉼 중 none·쉼 끝 repeat/advance) · 3 ✅ 4 follow 사례 · 4 ✅ 변이 3개 각각 실패: count 비교 제거 → 「decideLoopTick count third end advances」, 쉼 무시 → 「gap starts at end」, follow 늘 true → 「shouldAutoFollow disabled」 · 5 ✅ 화면 검사 loopCycle 세로·가로: 대상 2번 카드, `🔂 ∞`[2] → `🔂 ×3`[2] → `🔁 OFF`[] · 6 ✅ follow 세로: aria-pressed true, scrollTop 0→3560, 마지막 카드 보임, 끈 뒤 false·설정 false, 첫 문장으로 가도 3560 그대로 · 7 ✅ 화면 검사 기존 규칙 모두 ok(가로 컨트롤 noOverflowX 500≤500), `portrait.png`·`landscape.png` 열어 봄: 컨트롤 줄 `⏯ 재생 · 🔁 OFF · ⇅(보라=켜짐) · 배속 4 · YT · 시각`이 한 줄에 들어감 · 8 ✅ 데스크톱 글자 사례 4개(Test 16), 기본값 `src/types/settings.ts` 3/0/true(Test 16 단언) · 9 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok, main.ts 891줄 · 10 ⏳ 실기기

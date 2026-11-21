@@ -78,3 +78,4 @@
 {"ts":"2026-11-21T09:50:43.868Z","cmd":"/spec-run","spec":"SPEC_022","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 15 13 response + 8 batching + 10 restore + 5 needsRestore; 변이 2종 실패 확인"}
 {"ts":"2026-11-21T12:11:24.333Z","cmd":"/spec-run","spec":"SPEC_022","iteration":1,"status":"DONE","evidence":"사람확인 8 OK, 제품 파일 변경 없음"}
 {"ts":"2026-11-21T12:26:54.359Z","cmd":"/spec-new","spec":"SPEC_023","result":"READY","questions":0}
+{"ts":"2026-11-21T12:33:08.487Z","cmd":"/spec-run","spec":"SPEC_023","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 16 26 cases; ui loopCycle/follow ok; mutants 3 fail"}

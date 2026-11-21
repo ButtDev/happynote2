@@ -152,6 +152,35 @@ export class EarCoachSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    // SPEC_023: 반복 버튼 모드 설정
+    new Setting(containerEl)
+      .setName("🔂 반복 횟수 (N번씩 다음 문장)")
+      .setDesc("반복 버튼의 「×N」 모드에서 한 문장을 몇 번 듣고 다음 문장으로 넘어갈지 정합니다.")
+      .addSlider((slider) =>
+        slider
+          .setLimits(2, 10, 1)
+          .setValue(this.plugin.settings.loopRepeatCount)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.loopRepeatCount = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("⏸ 반복 사이 쉼 (초)")
+      .setDesc("한 번 듣고 다시 듣기 전에 잠깐 멈춥니다(따라 말하기용). 0이면 바로 다시 재생합니다.")
+      .addSlider((slider) =>
+        slider
+          .setLimits(0, 5, 0.5)
+          .setValue(this.plugin.settings.loopGapSeconds)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.loopGapSeconds = value;
+            await this.plugin.saveSettings();
+          })
+      );
   }
 
   private displayDesktopAgyCliSettings(containerEl: HTMLElement): void {

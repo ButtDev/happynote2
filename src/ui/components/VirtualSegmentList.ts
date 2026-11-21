@@ -104,6 +104,20 @@ export class VirtualSegmentList {
       });
     };
     this.scrollContainerEl.addEventListener("scroll", this.boundOnScroll, { passive: true });
+    // SPEC_023: 사람이 목록을 손대면(터치·휠·포인터) 자동 따라가기를 잠시 쉬도록 시각을 남긴다.
+    for (const ev of ["touchstart", "wheel", "pointerdown"]) {
+      this.scrollContainerEl.addEventListener(ev, this.boundOnUserTouch, { passive: true });
+    }
+  }
+
+  /** SPEC_023: 마지막으로 사람이 목록을 손댄 시각(performance.now 기준, 없으면 -Infinity) */
+  public lastUserTouchMs = Number.NEGATIVE_INFINITY;
+  private boundOnUserTouch = (): void => {
+    this.lastUserTouchMs = performance.now();
+  };
+
+  public getSegments(): TranscriptSegment[] {
+    return this.segments;
   }
 
   public setSegments(segments: TranscriptSegment[]): void {
@@ -173,6 +187,38 @@ export class VirtualSegmentList {
     this.setActiveHighlight(segmentIdx, true);
     // Ensure window updates immediately around destination
     window.requestAnimationFrame(() => this.renderVisibleWindow(true));
+    this.scheduleScrollCorrection(segmentIdx);
+  }
+
+  /**
+   * SPEC_023: 아직 그리지 않은 카드는 추정 높이라 먼 카드로 가면 빗나간다.
+   * 카드가 그려진 뒤 실제 위치로 몇 번 다시 맞춘다(사람이 목록을 손대면 그만).
+   */
+  private scrollCorrectionTimer: number | null = null;
+  private scheduleScrollCorrection(segmentIdx: number, attempt = 0): void {
+    if (this.scrollCorrectionTimer !== null) window.clearTimeout(this.scrollCorrectionTimer);
+    const startedAt = performance.now();
+    this.scrollCorrectionTimer = window.setTimeout(() => {
+      this.scrollCorrectionTimer = null;
+      if (this.lastUserTouchMs >= startedAt || this.activeHighlightSegmentIdx !== segmentIdx) return;
+      const el = this.mountedCards.get(segmentIdx)?.getElement();
+      const box = this.scrollContainerEl.getBoundingClientRect();
+      let delta: number;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        delta = r.top - box.top - Math.max(0, (box.height - r.height) / 2);
+      } else {
+        const pos = this.indexMap.get(segmentIdx);
+        if (pos === undefined) return;
+        const h = this.heights[pos] || DEFAULT_CARD_HEIGHT;
+        delta = this.prefixOffsets[pos] - Math.max(0, (box.height - h) / 2) - this.scrollContainerEl.scrollTop;
+      }
+      if (Math.abs(delta) > 24) {
+        this.scrollContainerEl.scrollTo({ top: this.scrollContainerEl.scrollTop + delta, behavior: "auto" });
+        this.renderVisibleWindow(true);
+      }
+      if (attempt < 3 && Math.abs(delta) > 24) this.scheduleScrollCorrection(segmentIdx, attempt + 1);
+    }, attempt === 0 ? 450 : 120);
   }
 
   private rebuildOffsets(): void {
@@ -288,7 +334,11 @@ export class VirtualSegmentList {
   }
 
   public destroy(): void {
+    if (this.scrollCorrectionTimer !== null) window.clearTimeout(this.scrollCorrectionTimer);
     this.scrollContainerEl.removeEventListener("scroll", this.boundOnScroll);
+    for (const ev of ["touchstart", "wheel", "pointerdown"]) {
+      this.scrollContainerEl.removeEventListener(ev, this.boundOnUserTouch);
+    }
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.clearMountedCards();

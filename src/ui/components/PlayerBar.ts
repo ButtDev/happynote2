@@ -1,6 +1,7 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform.ts";
 import { buildYouTubeEmbedParams, buildYouTubeEmbedUrl, formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
+import { decideLoopTick, loopButtonText, nextLoopMode, type LoopMode } from "../../utils/loopControl.ts";
 
 export interface PlayerBarCallbacks {
   onTimeUpdate: (currentTimeSec: number) => void;
@@ -9,6 +10,15 @@ export interface PlayerBarCallbacks {
     segment: TranscriptSegment | null,
     previousSegment?: TranscriptSegment | null
   ) => void;
+  /** SPEC_023: 지금 재생 시각의 문장(반복 버튼으로 켤 때 대상) */
+  getSegmentAt?: (timeSec: number) => TranscriptSegment | null;
+  /** SPEC_023: 지금 목록(필터 적용)에서 다음 문장 */
+  getNextSegment?: (segment: TranscriptSegment) => TranscriptSegment | null;
+  /** SPEC_023: 반복 횟수·쉼 설정 */
+  getLoopOptions?: () => { count: number; gapSec: number };
+  /** SPEC_023: 카드 목록 자동 따라가기 */
+  isFollowOn?: () => boolean;
+  onFollowToggle?: (on: boolean) => void;
 }
 
 declare global {
@@ -44,6 +54,10 @@ export class PlayerBar {
   private isPlaying = false;
   private playbackRate = 1.0;
   private activeLoopSegment: TranscriptSegment | null = null;
+  private loopMode: LoopMode = "off";
+  private loopPlaysDone = 0;
+  private loopResumeAtMs: number | null = null;
+  private followBtnEl: HTMLButtonElement | null = null;
   private loopPaddingSec = 0.25;
   private boundMessageListener: (ev: MessageEvent) => void;
   private pollIntervalId: number | null = null;
@@ -114,13 +128,25 @@ export class PlayerBar {
     });
     playPauseBtn.addEventListener("click", () => this.togglePlayPause());
 
-    // Loop toggle button
+    // Loop button — SPEC_023: off → 한 문장 무한 → N번씩 다음 문장 → off, 켤 때 대상은 지금 재생 위치의 문장
     this.loopBtnEl = controlsBar.createEl("button", {
-      cls: "ear-coach-btn",
-      text: mobile ? "🔁 루프 OFF" : "🔁 문장 무한루프: OFF",
+      cls: "ear-coach-btn ear-coach-loop-btn",
+      text: loopButtonText("off", this.loopCount(), mobile),
     });
-    this.loopBtnEl.addEventListener("click", () => {
-      this.clearSegmentLoop();
+    this.loopBtnEl.addEventListener("click", () => this.cycleLoopMode());
+
+    // SPEC_023: 카드 목록 자동 따라가기 켜기·끄기
+    const followOn = this.callbacks.isFollowOn?.() ?? true;
+    this.followBtnEl = controlsBar.createEl("button", {
+      cls: `ear-coach-btn ear-coach-follow-btn${followOn ? " is-active" : ""}`,
+      text: mobile ? "⇅" : "⇅ 따라가기",
+      attr: { "aria-pressed": String(followOn), "aria-label": "카드 목록 자동 따라가기", title: "카드 목록 자동 따라가기" },
+    });
+    this.followBtnEl.addEventListener("click", () => {
+      const on = this.followBtnEl?.getAttribute("aria-pressed") !== "true";
+      this.followBtnEl?.toggleClass("is-active", on);
+      this.followBtnEl?.setAttr("aria-pressed", String(on));
+      this.callbacks.onFollowToggle?.(on);
     });
 
     // Playback speed buttons
@@ -293,31 +319,61 @@ export class PlayerBar {
   }
 
   public setSegmentLoop(segment: TranscriptSegment): void {
-    const prev = this.activeLoopSegment;
-    this.activeLoopSegment = segment;
     this.lastSeekWallTime = performance.now();
     this.lastSeekVideoTime = segment.start;
     this.isPlaying = true;
+    this.applyLoopTarget(segment, this.loopMode === "off" ? "one" : this.loopMode);
+  }
 
-    if (this.loopBtnEl) {
-      this.loopBtnEl.addClass("is-loop-active");
-      this.loopBtnEl.setText(
-        isMobileApp()
-          ? `🔁 [${formatSecondsToTimestamp(segment.start)}~${formatSecondsToTimestamp(segment.end)}]`
-          : `🔁 루프 중: [${formatSecondsToTimestamp(segment.start)} ~ ${formatSecondsToTimestamp(segment.end)}] (해제 클릭)`
-      );
+  public getLoopMode(): LoopMode {
+    return this.loopMode;
+  }
+
+  /** SPEC_023: 반복 버튼 — 모드를 한 단계 돌린다. off에서 켤 때 지금 재생 위치의 문장을 대상으로, 위치는 그대로 둔다. */
+  public cycleLoopMode(): void {
+    const next = nextLoopMode(this.loopMode);
+    if (next === "off") {
+      this.clearSegmentLoop();
+      return;
     }
-    this.callbacks.onLoopToggle(true, segment, prev);
+    let target = this.activeLoopSegment;
+    if (!target) {
+      target = this.callbacks.getSegmentAt?.(this.getEffectiveCurrentTime()) ?? null;
+      if (!target) return;
+    }
+    this.applyLoopTarget(target, next);
+  }
+
+  private applyLoopTarget(segment: TranscriptSegment, mode: LoopMode): void {
+    const prev = this.activeLoopSegment;
+    this.activeLoopSegment = segment;
+    this.loopMode = mode;
+    this.loopPlaysDone = 0;
+    this.loopResumeAtMs = null;
+    this.refreshLoopButton();
+    this.callbacks.onLoopToggle(true, segment, prev && prev.index !== segment.index ? prev : null);
+  }
+
+  private loopCount(): number {
+    return this.callbacks.getLoopOptions?.().count ?? 3;
+  }
+
+  private refreshLoopButton(): void {
+    if (!this.loopBtnEl) return;
+    this.loopBtnEl.toggleClass("is-loop-active", this.loopMode !== "off");
+    this.loopBtnEl.setText(loopButtonText(this.loopMode, this.loopCount(), isMobileApp(), this.activeLoopSegment));
   }
 
   public clearSegmentLoop(): void {
     const prev = this.activeLoopSegment;
-    if (!prev) return;
+    const wasGap = this.loopResumeAtMs !== null;
     this.activeLoopSegment = null;
-    if (this.loopBtnEl) {
-      this.loopBtnEl.removeClass("is-loop-active");
-      this.loopBtnEl.setText(isMobileApp() ? "🔁 루프 OFF" : "🔁 문장 무한루프: OFF");
-    }
+    this.loopMode = "off";
+    this.loopPlaysDone = 0;
+    this.loopResumeAtMs = null;
+    this.refreshLoopButton();
+    if (wasGap) this.play();
+    if (!prev) return;
     this.callbacks.onLoopToggle(false, null, prev);
   }
 
@@ -499,13 +555,38 @@ export class PlayerBar {
       const current = this.getEffectiveCurrentTime();
       this.onTimeTick(current);
 
-      if (this.activeLoopSegment && this.isPlaying) {
-        const effectivePad = Math.max(this.loopPaddingSec, 0.35);
-        const endLimit = this.activeLoopSegment.end + effectivePad;
-        if (current >= endLimit) {
-          const loopStart = Math.max(0, this.activeLoopSegment.start - 0.12);
-          this.seekTo(loopStart);
+      const seg = this.activeLoopSegment;
+      if (seg && (this.isPlaying || this.loopResumeAtMs !== null)) {
+        const opts = this.callbacks.getLoopOptions?.() ?? { count: 3, gapSec: 0 };
+        const action = decideLoopTick({
+          mode: this.loopMode,
+          nowMs: performance.now(),
+          current,
+          end: seg.end,
+          pad: this.loopPaddingSec,
+          playsDone: this.loopPlaysDone,
+          count: opts.count,
+          gapSec: opts.gapSec,
+          resumeAtMs: this.loopResumeAtMs,
+        });
+        if (action.kind === "gap") {
+          this.loopResumeAtMs = action.resumeAtMs;
+          this.pause();
+        } else if (action.kind === "repeat") {
+          this.loopResumeAtMs = null;
+          this.loopPlaysDone += 1;
+          this.seekTo(Math.max(0, seg.start - 0.12));
           this.play();
+        } else if (action.kind === "advance") {
+          this.loopResumeAtMs = null;
+          const nextSeg = this.callbacks.getNextSegment?.(seg) ?? null;
+          if (nextSeg) {
+            this.applyLoopTarget(nextSeg, this.loopMode);
+            this.seekTo(Math.max(0, nextSeg.start - 0.12));
+            this.play();
+          } else {
+            this.clearSegmentLoop();
+          }
         }
       }
     }, 80);

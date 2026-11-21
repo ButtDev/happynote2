@@ -190,6 +190,21 @@ function evaluateExpect(vp, m, nums) {
       z.reset.saved === 58 && z.reset.listW === z.before.listW;
     add("landscapeResizer", !!ok, JSON.stringify(z));
   }
+  if (e.loopCycle) {
+    const z = m.loopCycle;
+    const st = z?.steps ?? [];
+    const ok = z && !z.error && st.length === 3 &&
+      st[0].text === "🔂 ∞" && st[0].active && JSON.stringify(st[0].loopingCards) === JSON.stringify([z.target]) &&
+      st[1].text === `🔂 ×${e.loopCycle.count}` && st[1].active && JSON.stringify(st[1].loopingCards) === JSON.stringify([z.target]) &&
+      st[2].text === "🔁 OFF" && !st[2].active && st[2].loopingCards.length === 0;
+    add("loopCycle", !!ok, JSON.stringify(z));
+  }
+  if (e.follow) {
+    const f = m.follow;
+    const ok = f && !f.error && f.pressedBefore === "true" && f.top1 > f.top0 + 50 && f.lastVisible &&
+      f.pressedAfter === "false" && f.saved === false && Math.abs(f.top2 - f.top1) <= 1;
+    add("follow", !!ok, JSON.stringify(f));
+  }
   if (e.videoAspect !== undefined) {
     const ratio = v && v.h > 0 ? v.w / v.h : 0;
     const tol = e.videoAspectTolerance ?? 0.03;
@@ -415,6 +430,77 @@ for (const vp of cases.viewports) {
 
   const shot = path.join(outDir, `${vp.name}.png`);
   await page.screenshot({ path: shot });
+
+  // SPEC_023: 반복 버튼 순환(지금 재생 위치 기준) — 3번째 문장 안으로 시각을 두고 세 번 누른다.
+  m.loopCycle = null;
+  if (vp.expect?.loopCycle) {
+    m.loopCycle = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const segs = view?.session?.segments ?? [];
+      const btn = document.querySelector(".ear-coach-loop-btn");
+      if (!view || segs.length < 3 || !btn) return { error: "view/segments/button missing" };
+      const prevFollow = window.__earCoachSettings.autoFollowPlayback;
+      window.__earCoachSettings.autoFollowPlayback = false; // 스크롤 없이 3번째 카드가 화면에 있게
+      const target = segs[2];
+      view.playerBar.seekTo((target.start + target.end) / 2);
+      await wait(250);
+      const state = () => ({
+        text: btn.textContent,
+        active: btn.classList.contains("is-loop-active"),
+        loopingCards: [...document.querySelectorAll(".ear-coach-segment-card")]
+          .filter((c) => c.querySelector(".is-loop-active-btn"))
+          .map((c) => Number(c.getAttribute("data-segment-index"))),
+      });
+      const steps = [];
+      for (let i = 0; i < 3; i++) {
+        btn.click();
+        await wait(150);
+        steps.push(state());
+      }
+      window.__earCoachSettings.autoFollowPlayback = prevFollow;
+      return { target: target.index, steps };
+    });
+  }
+
+  // SPEC_023: 자동 따라가기 — 켜짐에서 마지막 문장으로 → 목록이 내려감, 끄고 첫 문장으로 → 그대로.
+  m.follow = null;
+  if (vp.expect?.follow) {
+    m.follow = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const segs = view?.session?.segments ?? [];
+      const btn = document.querySelector(".ear-coach-follow-btn");
+      const scroller = [...document.querySelectorAll(".ear-coach-mobile-list-wrapper, .ear-coach-mobile-list-wrapper *")].find((el) => el.scrollHeight > el.clientHeight + 10 && getComputedStyle(el).overflowY !== "visible");
+      if (!view || !btn || !scroller || segs.length < 4) return { error: "view/button/scroller missing" };
+      const pressedBefore = btn.getAttribute("aria-pressed");
+      const last = segs[segs.length - 1];
+      const top0 = scroller.scrollTop;
+      view.playerBar.seekTo((last.start + last.end) / 2);
+      await wait(3000);
+      const top1 = scroller.scrollTop;
+      const card = document.querySelector(`.ear-coach-segment-card[data-segment-index="${last.index}"]`);
+      const sr = scroller.getBoundingClientRect();
+      const cr = card?.getBoundingClientRect();
+      const lastVisible = !!cr && cr.bottom > sr.top && cr.top < sr.bottom;
+      btn.click();
+      await wait(100);
+      const pressedAfter = btn.getAttribute("aria-pressed");
+      const saved = window.__earCoachSettings.autoFollowPlayback;
+      view.playerBar.seekTo((segs[0].start + segs[0].end) / 2);
+      await wait(1200);
+      const top2 = scroller.scrollTop;
+      // 되돌리기: 따라가기 켬, 맨 위로, 시각 0
+      btn.click();
+      scroller.scrollTop = 0;
+      await wait(300);
+      view.playerBar.seekTo(0);
+      await wait(300);
+      scroller.scrollTop = 0;
+      await wait(300);
+      return { pressedBefore, top0, top1, lastVisible, pressedAfter, saved, top2 };
+    });
+  }
 
   // SPEC_013: 첫 카드를 3단계로 → 첫 단어 누름 → 사전 창(단어·뜻) + 영상 멈춤. 기본 스크린샷 뒤에 한다.
   m.dictionary = null;

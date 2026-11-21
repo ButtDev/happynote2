@@ -16,6 +16,10 @@ export interface EarCoachSettings {
   speedSpikeWpmThreshold: number;
   defaultPlaybackRate: number;
   loopPaddingSeconds: number;
+  /** SPEC_023: 「N번씩 다음 문장」의 N(2~10), 반복 사이 쉼(초, 0~5), 카드 목록 자동 따라가기 */
+  loopRepeatCount: number;
+  loopGapSeconds: number;
+  autoFollowPlayback: boolean;
   defaultUnlockStep: UnlockStep;
   preferredCaptionLang: string;
   tutorPanelHeightPx: number;
@@ -47,6 +51,9 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   speedSpikeWpmThreshold: 175,
   defaultPlaybackRate: 1.0,
   loopPaddingSeconds: 0.25,
+  loopRepeatCount: 3,
+  loopGapSeconds: 0,
+  autoFollowPlayback: true,
   defaultUnlockStep: 0,
   preferredCaptionLang: "en",
   tutorPanelHeightPx: 380,

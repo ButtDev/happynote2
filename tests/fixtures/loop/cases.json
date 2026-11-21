@@ -1,0 +1,36 @@
+{
+  "cycle": [
+    { "from": "off", "to": "one" },
+    { "from": "one", "to": "count" },
+    { "from": "count", "to": "off" }
+  ],
+  "text": [
+    { "mode": "off", "count": 3, "mobile": true, "expect": "🔁 OFF" },
+    { "mode": "one", "count": 3, "mobile": true, "expect": "🔂 ∞" },
+    { "mode": "count", "count": 3, "mobile": true, "expect": "🔂 ×3" },
+    { "mode": "count", "count": 5, "mobile": true, "expect": "🔂 ×5" },
+    { "mode": "off", "count": 3, "mobile": false, "expect": "🔁 반복: OFF" },
+    { "mode": "one", "count": 3, "mobile": false, "seg": { "start": 12, "end": 15 }, "expect": "🔂 한 문장 무한 [00:12 ~ 00:15]" },
+    { "mode": "count", "count": 3, "mobile": false, "seg": { "start": 12, "end": 15 }, "expect": "🔂 3번씩 다음 문장 [00:12 ~ 00:15]" },
+    { "mode": "count", "count": 5, "mobile": false, "expect": "🔂 5번씩 다음 문장" }
+  ],
+  "tick": [
+    { "name": "off never acts", "in": { "mode": "off", "nowMs": 1000, "current": 99, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "none" } },
+    { "name": "before end", "in": { "mode": "one", "nowMs": 1000, "current": 10.2, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "none" } },
+    { "name": "pad floor 0.35", "in": { "mode": "one", "nowMs": 1000, "current": 10.36, "end": 10, "pad": 0.1, "playsDone": 0, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "repeat" } },
+    { "name": "one repeats forever", "in": { "mode": "one", "nowMs": 1000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 50, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "repeat" } },
+    { "name": "count first end", "in": { "mode": "count", "nowMs": 1000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "repeat" } },
+    { "name": "count second end", "in": { "mode": "count", "nowMs": 1000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 1, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "repeat" } },
+    { "name": "count third end advances", "in": { "mode": "count", "nowMs": 1000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 2, "count": 3, "gapSec": 0, "resumeAtMs": null }, "expect": { "kind": "advance" } },
+    { "name": "gap starts at end", "in": { "mode": "one", "nowMs": 1000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 1.5, "resumeAtMs": null }, "expect": { "kind": "gap", "resumeAtMs": 2500 } },
+    { "name": "waiting in gap", "in": { "mode": "one", "nowMs": 2000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 1.5, "resumeAtMs": 2500 }, "expect": { "kind": "none" } },
+    { "name": "gap over repeats", "in": { "mode": "one", "nowMs": 2500, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 0, "count": 3, "gapSec": 1.5, "resumeAtMs": 2500 }, "expect": { "kind": "repeat" } },
+    { "name": "gap over advances on last count", "in": { "mode": "count", "nowMs": 3000, "current": 10.5, "end": 10, "pad": 0.25, "playsDone": 2, "count": 3, "gapSec": 1.5, "resumeAtMs": 2500 }, "expect": { "kind": "advance" } }
+  ],
+  "follow": [
+    { "name": "disabled", "in": { "enabled": false, "nowMs": 10000, "userScrollUntilMs": 0 }, "expect": false },
+    { "name": "user touched list recently", "in": { "enabled": true, "nowMs": 10000, "userScrollUntilMs": 12000 }, "expect": false },
+    { "name": "after pause", "in": { "enabled": true, "nowMs": 12000, "userScrollUntilMs": 12000 }, "expect": true },
+    { "name": "never touched", "in": { "enabled": true, "nowMs": 10000, "userScrollUntilMs": 0 }, "expect": true }
+  ]
+}

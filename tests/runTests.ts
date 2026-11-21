@@ -27,6 +27,7 @@ import * as storyboardSrc from "../src/services/storyboard.ts";
 import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
 import * as aiSrc from "../src/services/aiAnalysis.ts";
+import * as loopSrc from "../src/utils/loopControl.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -764,6 +765,21 @@ async function runAllTests() {
     }
   }
   log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching + ${aiCases.restore.length} restore + ${aiCases.needsRestore.length} needsRestore cases`);
+  log("");
+
+  log("[Test 16] Loop button modes, tick decisions, auto-follow (data-driven, SPEC_023)");
+  const loopMod = process.env.EAR_COACH_LOOP_MODULE ? await import(path.resolve(process.env.EAR_COACH_LOOP_MODULE)) : loopSrc;
+  const loopCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/loop/cases.json"), "utf8"));
+  for (const c of loopCases.cycle) assert.equal(loopMod.nextLoopMode(c.from), c.to, `nextLoopMode ${c.from}`);
+  for (const c of loopCases.text) {
+    assert.equal(loopMod.loopButtonText(c.mode, c.count, c.mobile, c.seg ?? null), c.expect, `loopButtonText ${c.mode} ${c.count} mobile=${c.mobile}`);
+  }
+  for (const c of loopCases.tick) assert.deepEqual(loopMod.decideLoopTick(c.in), c.expect, `decideLoopTick ${c.name}`);
+  for (const c of loopCases.follow) assert.equal(loopMod.shouldAutoFollow(c.in), c.expect, `shouldAutoFollow ${c.name}`);
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.loopRepeatCount, 3, "default loopRepeatCount");
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.loopGapSeconds, 0, "default loopGapSeconds");
+  assert.equal(DEFAULT_EAR_COACH_SETTINGS.autoFollowPlayback, true, "default autoFollowPlayback");
+  log(`  -> PASS: ${loopCases.cycle.length} cycle + ${loopCases.text.length} text + ${loopCases.tick.length} tick + ${loopCases.follow.length} follow cases; defaults 3 / 0s / follow on`);
   log("");
 
   log("==============================================================");

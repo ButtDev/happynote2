@@ -5,6 +5,7 @@ import {
   UnlockStep,
 } from "../types/transcript";
 import { SegmentTimeIndex } from "../utils/binarySearch";
+import { shouldAutoFollow, USER_SCROLL_PAUSE_MS } from "../utils/loopControl";
 import { isMobileApp } from "../utils/platform";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
@@ -472,6 +473,22 @@ export class EarCoachView extends ItemView {
             this.virtualList?.setLoopStateForSegment(segment.index, isLooping);
           }
         },
+        // SPEC_023: 반복 버튼 대상·다음 문장·설정·자동 따라가기
+        getSegmentAt: (t) => {
+          const i = this.timeIndex.findNearestSegmentIndex(t);
+          return (i >= 0 && this.session?.segments[i]) || null;
+        },
+        getNextSegment: (seg) => {
+          const list = this.virtualList?.getSegments() ?? [];
+          const pos = list.findIndex((x) => x.index === seg.index);
+          return (pos >= 0 ? list[pos + 1] : list.find((x) => x.start > seg.start)) ?? null;
+        },
+        getLoopOptions: () => ({ count: this.plugin.settings.loopRepeatCount, gapSec: this.plugin.settings.loopGapSeconds }),
+        isFollowOn: () => this.plugin.settings.autoFollowPlayback,
+        onFollowToggle: async (on) => {
+          this.plugin.settings.autoFollowPlayback = on;
+          await this.plugin.saveSettings();
+        },
       },
       this.plugin.settings.defaultPlaybackRate,
       this.plugin.settings.loopPaddingSeconds
@@ -722,7 +739,17 @@ export class EarCoachView extends ItemView {
       return;
     }
     const activeIdx = this.timeIndex.findActiveSegmentIndex(timeSec);
+    const changed = activeIdx >= 0 && activeIdx !== this.lastActiveSegmentIdx;
     this.setActiveHighlightSegment(activeIdx);
+    // SPEC_023: 재생 시점으로 지금 문장이 바뀌면 카드 목록을 따라가게 한다(사람이 손댄 지 4초 안이면 쉼).
+    if (changed && this.virtualList) {
+      const follow = shouldAutoFollow({
+        enabled: this.plugin.settings.autoFollowPlayback,
+        nowMs: performance.now(),
+        userScrollUntilMs: this.virtualList.lastUserTouchMs + USER_SCROLL_PAUSE_MS,
+      });
+      if (follow) this.virtualList.scrollToSegment(activeIdx);
+    }
   }
 
   public scrollToSegment(segmentIndex: number): void {

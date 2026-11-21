@@ -101,6 +101,7 @@ async function main(): Promise<void> {
   leaf.appendChild(view.containerEl);
   host.appendChild(leaf);
   await view.onOpen();
+  (window as any).__earCoachView = view; // SPEC_023: 재생 시각 흉내(playerBar.seekTo)
   const now = new Date().toISOString();
   await view.loadSession(
     {
