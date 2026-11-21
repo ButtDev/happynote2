@@ -1,7 +1,7 @@
 ---
 id: SPEC_020
 title: 자동 자막 글자 다듬기 — um/uh 빼기·I 대문자·카드 첫 글자 대문자
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_018]
@@ -36,7 +36,7 @@ parent: SPEC_018
 5. [x] 변이: 군말 빼기를 끈 사본, 대문자화를 끈 사본으로 각각 Test 14 실패 [자동]
 6. [x] 다듬은 TED 카드 실제 예 3개를 실행 기록에 적는다(관찰) [자동]
 7. [x] `verify.mjs --set regression` ok [자동]
-8. [ ] Android 실기기에서 자동 자막만 있는 영상을 새로 열어 카드 글자를 본다 — um/uh가 없고 첫 글자·I가 대문자면 OK [수동]
+8. [x] Android 실기기에서 자동 자막만 있는 영상을 새로 열어 카드 글자를 본다 — um/uh가 없고 첫 글자·I가 대문자면 OK [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 - 1~4: `npm test` Test 14 (`tests/fixtures/transcript/cases.json`).
@@ -56,3 +56,4 @@ parent: SPEC_018
 
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 14 `9 tidy cases` PASS · 2 ✅ 같은 Test 14 `ted-asr.srv3.xml 70->312 cards, max 18w, fillers 38->0`(군말 0·소문자 i 0·소문자 시작 카드 0 단언) · 3 ✅ 같은 Test 14 낱말 순서(군말 뺌·대소문자 무시)·첫 낱말 시각·카드 안 쉼 단언 통과 · 4 ✅ `ted-manual.srv3.xml 273 sentences`·`rick-asr.srv3.xml unchanged (43)` · 5 ✅ 변이: `isFillerWord` false 사본·첫 글자 대문자 끈 사본 → 각각 `AssertionError tidyAsrWords: filler dropped` · 6 ✅ 실제 예(전→후): `it's been i've been … in fact i'm leaving` / `um` → `It's been I've been blown away by the whole thing in fact I'm leaving`(um 카드 사라짐) · `uh which are rather relevant to what i want…` → `Which are rather relevant to what I want to talk about one is the extraordinary` · `good morning how are you` → `Good morning how are you` · 7 ✅ `verify.mjs --set regression --json` ok(harness·build·test·ui) · 8 ⏳ 실기기
+- 2026-11-21 사람확인: DONE — 8 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_020 8 OK]」(실기기 1.0.26), 1~7은 회차 1 근거 그대로

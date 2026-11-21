@@ -68,3 +68,4 @@
 {"ts":"2026-11-21T03:25:58.662Z","cmd":"/spec-run","spec":"SPEC_019","iteration":1,"status":"DONE","evidence":"사람확인 6 OK (Button pressed), 자동 1~5 회차1 ✅"}
 {"ts":"2026-11-21T03:44:31.047Z","cmd":"/spec-new","spec":"SPEC_020","result":"READY","questions":0}
 {"ts":"2026-11-21T03:46:02.288Z","cmd":"/spec-run","spec":"SPEC_020","iteration":1,"status":"IMPLEMENTED","evidence":"Test 14 9 tidy + ted-asr fillers 38->0, 312 cards max 18w; mutations fail; regression ok; 8 ⏳"}
+{"ts":"2026-11-21T03:53:23.101Z","cmd":"/spec-run","spec":"SPEC_020","iteration":1,"status":"DONE","evidence":"사람확인 8 OK (Button pressed), 자동 1~7 회차1 ✅"}
