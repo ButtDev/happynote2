@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 진행 중 SPEC 없음. SPEC_023(반복 버튼·⇅ 따라가기) DONE(2026-11-21 실기기 10 OK, 1.0.32).
+- SPEC_024(세로 공통 컨트롤·필터 툴바 알약 모양) IMPLEMENTED 1/3 — ⏳ 6 실기기 버튼 대기(`SPEC_024 6 OK|NG|메모`), BRAT 1.0.33. 세로 컨트롤 줄 여유 0(시각 끝 404 = 컨테이너 끝) — 버튼·글자 늘리면 시각이 둘째 줄로. 스타일은 `styles.css` 끝 SPEC_024 `@media (orientation: portrait)` 블록, 화면 검사 `expect.minRadius`.
 - 「대기」 목록 비어 있음. 자막 트랙 선택은 보류(2026-11-21, `memory/backlog.md`).
 
 ## 열린 질문 (사람에게)

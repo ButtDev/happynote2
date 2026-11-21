@@ -28,7 +28,9 @@
         ],
         "videoCrop": 40,
         "overlayToggle": ".ear-coach-overlay-btn",
-        "loopCycle": { "count": 3 },
+        "loopCycle": {
+          "count": 3
+        },
         "follow": true,
         "dictionary": {
           "minDefs": 1
@@ -43,8 +45,32 @@
         },
         "anki": {
           "tap": "going",
-          "picture": { "filename": "ear-coach-uiCheck0001-4.jpg", "width": 320, "height": 180, "sheet": "storyboard3_L0/M0.jpg", "rgb": [32, 64, 208] }
-        }
+          "picture": {
+            "filename": "ear-coach-uiCheck0001-4.jpg",
+            "width": 320,
+            "height": 180,
+            "sheet": "storyboard3_L0/M0.jpg",
+            "rgb": [
+              32,
+              64,
+              208
+            ]
+          }
+        },
+        "minRadius": {
+          ".ear-coach-player-controls .ear-coach-btn-primary": 14,
+          ".ear-coach-loop-btn": 14,
+          ".ear-coach-speed-group": 14,
+          ".ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child": 14
+        },
+        "maxHeight": {
+          ".ear-coach-player-controls": 44,
+          ".ear-coach-mobile-toolbar": 48
+        },
+        "noOverflowX": [
+          ".ear-coach-mobile-toolbar",
+          ".ear-coach-player-controls"
+        ]
       }
     },
     {
@@ -98,7 +124,9 @@
         ],
         "overlayToggle": ".ear-coach-overlay-btn",
         "landscapeResizer": true,
-        "loopCycle": { "count": 3 },
+        "loopCycle": {
+          "count": 3
+        },
         "dictionary": {
           "minDefs": 1
         },
@@ -112,7 +140,23 @@
         },
         "anki": {
           "tap": "going",
-          "picture": { "filename": "ear-coach-uiCheck0001-4.jpg", "width": 320, "height": 180, "sheet": "storyboard3_L0/M0.jpg", "rgb": [32, 64, 208] }
+          "picture": {
+            "filename": "ear-coach-uiCheck0001-4.jpg",
+            "width": 320,
+            "height": 180,
+            "sheet": "storyboard3_L0/M0.jpg",
+            "rgb": [
+              32,
+              64,
+              208
+            ]
+          }
+        },
+        "minRadius": {
+          ".ear-coach-player-controls .ear-coach-btn-primary": 14,
+          ".ear-coach-loop-btn": 14,
+          ".ear-coach-speed-group": 14,
+          ".ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child": 14
         }
       }
     }

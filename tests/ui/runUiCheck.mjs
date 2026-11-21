@@ -157,6 +157,10 @@ function evaluateExpect(vp, m, nums) {
     const o = m.overflowX?.[sel];
     add(`noOverflowX:${sel}`, o && o.scrollWidth <= o.clientWidth + 1, o ? `${o.scrollWidth} <= ${o.clientWidth}` : "element missing");
   }
+  for (const [sel, min] of Object.entries(e.minRadius ?? {})) {
+    const r = m.radii?.[sel];
+    add(`minRadius:${sel}`, typeof r === "number" && r >= min, r === null || r === undefined ? "element missing" : `${r} >= ${min}`);
+  }
   if (e.minListWidth !== undefined) add("minListWidth", l && l.w >= e.minListWidth, `${l && l.w} >= ${e.minListWidth}`);
   if (e.maxVideoTop !== undefined) add("maxVideoTop", v && v.y <= e.maxVideoTop, `${v && v.y} <= ${e.maxVideoTop}`);
   if (e.activeCardNoShift !== undefined) {
@@ -339,11 +343,17 @@ for (const vp of cases.viewports) {
       const el = document.querySelector(sel);
       heights[sel] = el ? Math.round(el.getBoundingClientRect().height * 10) / 10 : null;
     }
+    // SPEC_024: 첫 요소의 계산된 border-top-left-radius(px)
+    const radii = {};
+    for (const sel of selectors.__minRadius ?? []) {
+      const el = document.querySelector(sel);
+      radii[sel] = el ? parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0 : null;
+    }
     // SPEC_007: 플레이어 요소(유튜브 iframe/자리)와 영상 상자
     const playerEl = videoEl?.querySelector(':scope > [id^="ear-coach-player-"]');
     const player = playerEl ? rectOf(playerEl) : null;
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, player };
-  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [] }, overlayExclude: cases.overlayExclude ?? [] } : {});
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, player };
+  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}) }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   // SPEC_009: YT 버튼을 누르면 플레이어를 다시 만들고 자르기를 푼다, 다시 누르면 원래대로.
   m.overlayToggle = null;

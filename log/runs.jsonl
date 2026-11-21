@@ -81,3 +81,4 @@
 {"ts":"2026-11-21T12:33:08.487Z","cmd":"/spec-run","spec":"SPEC_023","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 16 26 cases; ui loopCycle/follow ok; mutants 3 fail"}
 {"ts":"2026-11-21T12:55:16.206Z","cmd":"/spec-run","spec":"SPEC_023","iteration":2,"status":"IMPLEMENTED","evidence":"memo fix followTargetIndex; regression ok; ui loopFollow ok; mutant reproduces bug"}
 {"ts":"2026-11-21T13:37:16.527Z","cmd":"/spec-run","spec":"SPEC_023","iteration":2,"status":"DONE","evidence":"사람확인 10 OK (BRAT 1.0.32), 구현 변경 없음"}
+{"ts":"2026-11-21T13:43:29.685Z","cmd":"/spec-run","spec":"SPEC_024","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok, ui minRadius 세로·가로 ok, 변이(블록 제거) 실패 확인, 6 ⏳ 실기기"}

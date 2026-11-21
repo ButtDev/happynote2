@@ -1233,3 +1233,113 @@
 .ear-coach-dictionary-modal .ear-coach-dict-anki-status.is-error {
   color: var(--color-red);
 }
+
+/* --------------------------------------------------------------------------
+   Mobile portrait pill buttons (SPEC_024)
+   가로(SPEC_004)와 같은 알약·세그먼트 모양을 세로 재생 컨트롤·필터 툴바에도.
+   세로 폭이 좁아 안쪽 여백만 줄여 한 줄을 지킨다. 가로 규칙은 건드리지 않음.
+   -------------------------------------------------------------------------- */
+@media (orientation: portrait) {
+  .ear-coach-mobile-top-pane .ear-coach-btn {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    box-shadow: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-player-controls {
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 32px;
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-btn-primary {
+    padding: 0 10px;
+    font-weight: 600;
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-btn.is-loop-active {
+    background-color: var(--color-orange);
+    border-color: var(--color-orange);
+    color: #fff;
+  }
+
+  /* 세그먼트: 배속, 필터 */
+  .ear-coach-mobile-top-player .ear-coach-speed-group,
+  .ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child {
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 2px;
+    border-radius: 999px;
+    background-color: var(--background-modifier-form-field, var(--background-primary));
+    border: 1px solid var(--background-modifier-border);
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-speed-group .ear-coach-btn,
+  .ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child .ear-coach-btn {
+    height: 28px;
+    min-height: 28px;
+    padding: 0 5px;
+    border: none;
+    background-color: transparent;
+    color: var(--text-muted);
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-speed-group .ear-coach-btn.is-active,
+  .ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child .ear-coach-btn.is-active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    font-weight: 600;
+  }
+
+  .ear-coach-mobile-top-player .ear-coach-player-status {
+    margin-left: auto;
+    padding-left: 0;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--text-muted);
+  }
+
+  /* 툴바: 한 줄, 넘치면 가로 스크롤 */
+  .ear-coach-mobile-toolbar {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 5px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .ear-coach-mobile-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ear-coach-mobile-toolbar .ear-coach-toolbar-group {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .ear-coach-mobile-toolbar .ear-coach-btn {
+    font-size: 11.5px;
+  }
+
+  .ear-coach-mobile-toolbar .ear-coach-toolbar-group + .ear-coach-toolbar-group .ear-coach-btn {
+    height: 30px;
+    min-height: 30px;
+    padding: 0 9px;
+    background-color: transparent;
+    color: var(--text-muted);
+  }
+}
