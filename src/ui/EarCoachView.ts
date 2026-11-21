@@ -740,13 +740,13 @@ export class EarCoachView extends ItemView {
 
     const blindAllBtn = actionGroup.createEl("button", {
       cls: "ear-coach-btn",
-      text: compact ? "🙈 블라인드" : "🙈 전체 블라인드",
+      text: compact ? "모두 가림" : "🙈 전체 블라인드",
     });
     blindAllBtn.addEventListener("click", () => this.setAllUnlockSteps(0));
 
     const revealAllBtn = actionGroup.createEl("button", {
       cls: "ear-coach-btn",
-      text: compact ? "📖 공개" : "📖 전체 공개",
+      text: compact ? "모두 공개" : "📖 전체 공개",
     });
     revealAllBtn.addEventListener("click", () => this.setAllUnlockSteps(3));
 

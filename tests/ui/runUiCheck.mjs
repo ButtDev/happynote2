@@ -175,6 +175,7 @@ function evaluateExpect(vp, m, nums) {
     const o = m.overflowX?.[sel];
     add(`noOverflowX:${sel}`, o && o.scrollWidth <= o.clientWidth + 1, o ? `${o.scrollWidth} <= ${o.clientWidth}` : "element missing");
   }
+  if (e.cardPitchMax !== undefined) add("cardPitchMax", m.cardPitch !== null && m.cardPitch <= e.cardPitchMax, `cardPitch=${m.cardPitch} <= ${e.cardPitchMax}`);
   if (e.rowSlack) {
     const rsl = m.rowSlack;
     add(`rowSlack:${e.rowSlack.selector}`, !!rsl && rsl.oneRow && rsl.slack >= e.rowSlack.min, rsl ? `oneRow=${rsl.oneRow} slack=${rsl.slack} >= ${e.rowSlack.min} last=${JSON.stringify(rsl.lastText)}` : "element missing");
@@ -377,6 +378,10 @@ for (const vp of cases.viewports) {
         rowSlack = { oneRow, slack: Math.round(last.left - prev.right), lastText: kids[kids.length - 1].textContent };
       }
     }
+    // SPEC_028: 카드 간격(목록 안 이웃 카드 위끝 차이 중 최대, 맨 끝 카드 제외 없음)
+    const cardTops = [...document.querySelectorAll(".ear-coach-segment-card")].map((c) => c.getBoundingClientRect().top).sort((a, b) => a - b);
+    let cardPitch = null;
+    for (let i = 1; i < cardTops.length; i++) cardPitch = Math.max(cardPitch ?? 0, Math.round(cardTops[i] - cardTops[i - 1]));
     // SPEC_024: 첫 요소의 계산된 border-top-left-radius(px)
     const radii = {};
     for (const sel of selectors.__minRadius ?? []) {
@@ -386,7 +391,7 @@ for (const vp of cases.viewports) {
     // SPEC_007: 플레이어 요소(유튜브 iframe/자리)와 영상 상자
     const playerEl = videoEl?.querySelector(':scope > [id^="ear-coach-player-"]');
     const player = playerEl ? rectOf(playerEl) : null;
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, rowSlack, player };
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, rowSlack, player, cardPitch };
   }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}), __rowSlack: vp.expect?.rowSlack?.selector ?? null }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   // SPEC_009: YT 버튼을 누르면 플레이어를 다시 만들고 자르기를 푼다, 다시 누르면 원래대로.
@@ -576,7 +581,7 @@ for (const vp of cases.viewports) {
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       const card = document.querySelector(".ear-coach-segment-card");
       if (!card) return { error: "card missing" };
-      const step3 = [...card.querySelectorAll(".ear-coach-step-btn")].find((b) => b.textContent.includes("3."));
+      const step3 = card.querySelector('.ear-coach-step-btn[data-step="3"]'); // SPEC_028: 글자 대신 data-step
       if (!step3) return { error: "step3 button missing" };
       step3.click();
       await wait(200);
@@ -784,10 +789,9 @@ for (const vp of cases.viewports) {
       const cards = [...document.querySelectorAll(".ear-coach-segment-card")];
       const shown = cards.map((c) => Number(c.dataset.segmentIndex));
       const card = cards[0];
-      const blind = !!card?.querySelector(".ear-coach-step-btn.is-current-step") && /블라인드|듣기/.test(card.querySelector(".ear-coach-step-btn.is-current-step").textContent);
+      const blind = card?.querySelector(".ear-coach-step-btn.is-current-step")?.dataset.step === "0";
       const seg = segs[shown[0]];
-      const stepBtns = card ? [...card.querySelectorAll(".ear-coach-step-btn")] : [];
-      stepBtns[3]?.click();
+      card?.querySelector('.ear-coach-step-btn[data-step="3"]')?.click();
       await wait(200);
       const reviews = seg?.reviews ?? null;
       const activeLabel = document.querySelector(".ear-coach-mobile-toolbar .ear-coach-btn.is-active")?.textContent ?? null;

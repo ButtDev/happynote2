@@ -1,5 +1,6 @@
 import { TranscriptSegment, UnlockStep } from "../../types/transcript";
-import { isDesktopApp } from "../../utils/platform";
+import { isDesktopApp, isMobileApp } from "../../utils/platform";
+import { trapLabel } from "../../utils/trapLabels";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
 
@@ -55,7 +56,7 @@ export class SegmentCard {
   public setLoopState(isLooping: boolean): void {
     if (!this.loopBtnEl) return;
     this.loopBtnEl.toggleClass("is-loop-active-btn", isLooping);
-    this.loopBtnEl.setText(isLooping ? "🔁 루프 중 (해제)" : "🔁 이 문장 루프");
+    this.loopBtnEl.setText(loopLabel(isLooping));
   }
 
   public updateSegment(segment: TranscriptSegment): void {
@@ -83,16 +84,19 @@ export class SegmentCard {
 
     const isCurrentlyLooping = this.callbacks.isLooping?.(this.segment) ?? false;
     this.loopBtnEl = leftControls.createEl("button", {
-      cls: `ear-coach-mini-btn ${isCurrentlyLooping ? "is-loop-active-btn" : ""}`,
-      text: isCurrentlyLooping ? "🔁 루프 중 (해제)" : "🔁 이 문장 루프",
+      cls: `ear-coach-mini-btn ear-coach-card-loop ${isCurrentlyLooping ? "is-loop-active-btn" : ""}`,
+      text: loopLabel(isCurrentlyLooping),
+      attr: { "aria-label": "이 문장 반복" },
     });
     this.loopBtnEl.addEventListener("click", () =>
       this.callbacks.onPlaySegment(this.segment, true)
     );
 
+    // SPEC_028: 모바일은 아이콘만(켜짐은 노란 is-pinned-btn), 뜻은 aria-label
     const pinBtn = leftControls.createEl("button", {
-      cls: `ear-coach-mini-btn ${this.segment.isPinned ? "is-pinned-btn" : ""}`,
-      text: this.segment.isPinned ? "📌 집중핀 해제" : "📌 안 들림 핀",
+      cls: `ear-coach-mini-btn ear-coach-card-pin ${this.segment.isPinned ? "is-pinned-btn" : ""}`,
+      text: isMobileApp() ? "📌" : this.segment.isPinned ? "📌 안 들림 핀 해제" : "📌 안 들림 핀",
+      attr: { "aria-label": "안 들림 핀", "aria-pressed": String(this.segment.isPinned) },
     });
     pinBtn.addEventListener("click", () => {
       this.segment.isPinned = !this.segment.isPinned;
@@ -118,31 +122,40 @@ export class SegmentCard {
     const badgeRow = headerEl.createDiv({ cls: "ear-coach-badge-row" });
     badgeRow.createSpan({
       cls: `ear-coach-badge ${this.segment.isSpeedSpike ? "badge-speed-spike" : "badge-wpm"}`,
-      text: `${this.segment.wpm} WPM${this.segment.isSpeedSpike ? " 🚀과속" : ""}`,
+      text: `${this.segment.wpm} WPM${this.segment.isSpeedSpike ? " 🚀" : ""}`,
     });
 
-    if (this.segment.analysis?.traps) {
-      for (const trap of this.segment.analysis.traps) {
-        badgeRow.createSpan({
-          cls: `ear-coach-badge badge-trap-${trap.toLowerCase()}`,
-          text: trap,
-        });
-      }
+    // SPEC_028: 함정 배지는 한국어 이름, SPEED_SPIKE는 WPM 배지가 이미 보여 주므로 뺀다
+    for (const trap of this.segment.analysis?.traps ?? []) {
+      if (trap === "SPEED_SPIKE") continue;
+      badgeRow.createSpan({
+        cls: `ear-coach-badge badge-trap-${trap.toLowerCase()}`,
+        text: trapLabel(trap),
+      });
     }
 
     // 2. Step Switcher Bar (3-Step Ear Unlocker)
     const stepBar = this.cardEl.createDiv({ cls: "ear-coach-step-bar" });
-    const stepDefinitions: Array<{ step: UnlockStep; label: string }> = [
-      { step: 0, label: "🙈 0. 블라인드" },
-      { step: 1, label: "🦴 1. 뼈대·빈칸" },
-      { step: 2, label: "💡 2. 소리 힌트" },
-      { step: 3, label: "📖 3. 정답·쉐도잉" },
-    ];
+    // SPEC_028: 모바일 단계 이름 「듣기·빈칸·힌트·정답」, 버튼은 data-step으로 찾는다
+    const stepDefinitions: Array<{ step: UnlockStep; label: string }> = isMobileApp()
+      ? [
+          { step: 0, label: "듣기" },
+          { step: 1, label: "빈칸" },
+          { step: 2, label: "힌트" },
+          { step: 3, label: "정답" },
+        ]
+      : [
+          { step: 0, label: "🙈 0. 블라인드" },
+          { step: 1, label: "🦴 1. 뼈대·빈칸" },
+          { step: 2, label: "💡 2. 소리 힌트" },
+          { step: 3, label: "📖 3. 정답·쉐도잉" },
+        ];
 
     for (const def of stepDefinitions) {
       const btn = stepBar.createEl("button", {
         cls: `ear-coach-step-btn ${this.segment.unlockStep === def.step ? "is-current-step" : ""}`,
         text: def.label,
+        attr: { "data-step": String(def.step) },
       });
       btn.addEventListener("click", () => {
         if (def.step >= 2 && this.segment.unlockStep < 2) this.callbacks.onReviewResult?.(this.segment, false);
@@ -206,7 +219,10 @@ export class SegmentCard {
       const blindBox = bodyEl.createDiv({ cls: "ear-coach-blind-box" });
       blindBox.createSpan({
         cls: "ear-coach-blind-prompt",
-        text: `🎧 눈을 감고 소리에만 집중해 보세요! (총 ${this.segment.words.length}단어, ${this.segment.duration}초) — 안 들리면 [1. 뼈대·빈칸]이나 [2. 소리 힌트]를 클릭하세요.`,
+        // SPEC_028: 모바일은 한 줄(단어 수·길이만)
+        text: isMobileApp()
+          ? `🎧 ${this.segment.words.length}단어 · ${this.segment.duration}초`
+          : `🎧 눈을 감고 소리에만 집중해 보세요! (총 ${this.segment.words.length}단어, ${this.segment.duration}초) — 안 들리면 [1. 뼈대·빈칸]이나 [2. 소리 힌트]를 클릭하세요.`,
       });
       return;
     }
@@ -276,4 +292,10 @@ export class SegmentCard {
       }
     }
   }
+}
+
+/** SPEC_028: 카드 반복 버튼 글자 — 모바일은 아이콘만(🔁 꺼짐 / 🔂 켜짐), 데스크톱은 「반복」으로 통일(G) */
+function loopLabel(isLooping: boolean): string {
+  if (isMobileApp()) return isLooping ? "🔂" : "🔁";
+  return isLooping ? "🔁 반복 중 (해제)" : "🔁 이 문장 반복";
 }

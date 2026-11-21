@@ -1,8 +1,8 @@
 ---
 id: SPEC_028
 title: 카드 버튼·글자 간결화 (반복·핀 아이콘, 단계 이름, 안내 한 줄, 함정 한국어)
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -52,4 +52,10 @@ depends_on: []
 ## 8. 가결정
 - 시안은 글자·CSS만 바꾼 worktree 사본으로 찍음 · 화면 결정 전 비용 최소 · 대안: night 브랜치 구현(취향 결정 전이라 안 함).
 
+- (회차 1) A·B·C·D는 모바일에만(데스크톱 글자 그대로, 단 G로 「루프」→「반복」), 핀 켜짐은 같은 📌에 노란 배경 + `aria-pressed` · 이유: 데스크톱 동작을 깨지 않음.
+- `trapLabel`은 SPEC_026에서 이미 만듦(`src/utils/trapLabels.ts`, Test 17) — 이번엔 배지에 씀.
+- 머리줄 `nowrap`은 넣지 않음 · 가로 목록 362px에서 배지까지 한 줄이면 넘침 → 배지는 둘째 줄로 감(버튼 줄은 한 줄).
+- 설정 안내문·노트 본문의 「무한루프」 글자(`SettingsTab.ts:66`, `NoteGenerator.ts:316`)는 범위 밖이라 그대로.
+
 ## 실행 기록
+- 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 17 trapLabel 7+6 통과, 변이(LINKING→링킹 사본 `EAR_COACH_TRAP_MODULE`) → 「trapLabel LINKING」 실패 · 2 ✅ 화면 검사 세로 `cardPitchMax` 「cardPitch=145 <= 160」(전 ≈198), 겹침 없음, 사전·Anki·문장 카드·⏰ 검사 ok(단계 버튼은 `data-step`으로 찾음), 변이(긴 안내문 되돌림) → 「cardPitch=161 <= 160」 실패 · `portrait.png` 열어 봄: ▶ 00:03 · 🔁 · 📌(켜짐 노랑) · ➕ Anki · 174 WPM · 약형/연음, 단계 「듣기·빈칸·힌트·정답」, 「🎧 10단어 · 3.45초」, 툴바 「모두 가림 · 모두 공개」 · `sentence-anki-landscape.png`: 버튼 줄 한 줄로 돌아옴 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기

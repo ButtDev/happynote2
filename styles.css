@@ -1355,3 +1355,14 @@
     color: var(--text-muted);
   }
 }
+
+/* SPEC_028: 모바일 카드 머리 아이콘 버튼(🔁·📌)은 정사각에 가깝게, 누르기 쉬운 최소 36px. 블라인드 안내는 한 줄이라 여백을 줄임 */
+.ear-coach-mobile-list-wrapper .ear-coach-card-loop,
+.ear-coach-mobile-list-wrapper .ear-coach-card-pin {
+  min-width: 36px;
+  padding: 0 9px;
+  justify-content: center;
+}
+.ear-coach-mobile-list-wrapper .ear-coach-blind-box {
+  padding: 6px 10px;
+}
