@@ -7,7 +7,7 @@
 - SPEC_017 장면 그림 DONE. 다음 후보는 `memory/backlog.md`.
 
 ## 열린 질문 (사람에게)
-- **2번째 카드 「기본」 덱 버그**(SPEC_017 메모): `Basic (and reversed card)`로 저장하면 1번 카드만 happynote2, 2번 카드는 노트 타입 기본 덱 → AnkiDroid가 「기본」 덱을 만들어 넣음. AnkiConnect Android엔 카드 덱 옮기는 액션이 없음(docs/api.md) → 플러그인 코드로 못 고침. 사람에게 물음: (추천) AnkiDroid에서 그 노트 타입 Card 2 「덱 덮어쓰기」=happynote2 / 설정 노트 타입을 `Basic`(카드 1장)으로.
+- 2번째 카드 「기본」 덱 버그: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2, 코드 변경 없음. 여전히 「기본」으로 가면 알려 달라고 함(AnkiConnect Android엔 덱 옮기기 액션 없음 → 다음 대안은 노트 타입 `Basic`).
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록. 같은 확인을 두 SPEC에 쓸 땐 보고에 미리 적어 둠.
 
 ## 주의
