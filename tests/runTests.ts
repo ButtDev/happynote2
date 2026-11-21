@@ -607,6 +607,9 @@ async function runAllTests() {
     }));
     assert.deepEqual(got, pc.expect, `parseCaptionPayload: ${pc.name}`);
   }
+  for (const tc of trCases.tidy) {
+    assert.equal(tpMod.tidyAsrWords(tc.words), tc.expect, `tidyAsrWords: ${tc.name}`);
+  }
   const trOpts = { speedSpikeWpmThreshold: 180, defaultUnlockStep: 0 as const };
   const fixtureSummary: string[] = [];
   for (const fc of trCases.fixtures) {
@@ -614,19 +617,36 @@ async function runAllTests() {
     const segs = tpMod.mergeCuesIntoSegments(cues, trOpts);
     if (fc.mode === "timed") {
       const isBracket = (t: string) => /^\[.*\]$/.test(t) || /^\(.*\)$/.test(t);
-      const src = cues
+      const fillerSet = new Set(["um", "umm", "uh", "uhh", "uhm", "er", "erm", "hmm", "mm", "mhm"]);
+      let src = cues
         .filter((c) => !isBracket(c.text.trim()))
         .flatMap((c) => (c.words ?? [{ start: c.start, text: c.text.trim() }]))
         .filter((w) => w.text && !isBracket(w.text))
         .sort((a, b) => a.start - b.start)
         .flatMap((w) => w.text.split(/\s+/).filter(Boolean).map((text) => ({ start: w.start, text })));
+      const isFiller = (t: string) => fillerSet.has(t.replace(/^[.,!?;:"']+|[.,!?;:"']+$/g, "").toLowerCase());
+      const fillersInSource = src.filter((w) => isFiller(w.text)).length;
+      if (fc.fillersBefore !== undefined) {
+        assert.equal(fillersInSource, fc.fillersBefore, `${fc.file}: fillers in source`);
+      }
+      src = src.filter((w) => !isFiller(w.text));
       const wc = segs.map((s: { words: string[] }) => s.words.length);
       assert.ok(Math.max(...wc) <= fc.maxWords, `${fc.file}: max words ${Math.max(...wc)} > ${fc.maxWords}`);
       const ratio = wc.filter((n: number) => n >= fc.minWords).length / wc.length;
       assert.ok(ratio >= fc.minWordsRatio, `${fc.file}: >=${fc.minWords}-word ratio ${ratio.toFixed(2)}`);
       assert.ok(segs.length >= fc.beforeSegments * fc.minSegmentsFactor, `${fc.file}: ${segs.length} segments < ${fc.beforeSegments}x${fc.minSegmentsFactor}`);
       const joined = segs.flatMap((s: { words: string[] }) => s.words);
-      assert.deepEqual(joined, src.map((w) => w.text), `${fc.file}: words preserved in order`);
+      assert.deepEqual(
+        joined.map((t: string) => t.toLowerCase()),
+        src.map((w) => w.text.toLowerCase()),
+        `${fc.file}: words preserved in order (fillers removed, case-insensitive)`
+      );
+      const leftFillers = joined.filter((t: string) => isFiller(t)).length;
+      assert.equal(leftFillers, 0, `${fc.file}: ${leftFillers} filler words left in cards`);
+      const lowerI = joined.filter((t: string) => /^i(?:'(?:m|ve|ll|d))?$/.test(t)).length;
+      assert.equal(lowerI, 0, `${fc.file}: ${lowerI} lowercase i words left`);
+      const lowerStart = segs.filter((s: { text: string }) => /^[a-z]/.test(s.text)).length;
+      assert.equal(lowerStart, 0, `${fc.file}: ${lowerStart} cards start lowercase`);
       let k = 0;
       for (const s of segs) {
         assert.ok(Math.abs(s.start - src[k].start) <= 0.01, `${fc.file}: seg ${s.index} start ${s.start} != first word ${src[k].start}`);
@@ -635,7 +655,7 @@ async function runAllTests() {
         }
         k += s.words.length;
       }
-      fixtureSummary.push(`${fc.file} ${fc.beforeSegments}->${segs.length} cards, max ${Math.max(...wc)}w`);
+      fixtureSummary.push(`${fc.file} ${fc.beforeSegments}->${segs.length} cards, max ${Math.max(...wc)}w, fillers ${fillersInSource}->0`);
     } else if (fc.mode === "punct") {
       assert.equal(segs.length, fc.segments, `${fc.file}: segment count unchanged`);
       const ends = segs.filter((s: { text: string }) => /[.?!]["')\]]*$/.test(s.text)).length / segs.length;
@@ -646,7 +666,7 @@ async function runAllTests() {
       fixtureSummary.push(`${fc.file} unchanged (${segs.length})`);
     }
   }
-  log(`  -> PASS: ${trCases.parser.length} parser cases; ${fixtureSummary.join("; ")}`);
+  log(`  -> PASS: ${trCases.parser.length} parser cases; ${trCases.tidy.length} tidy cases; ${fixtureSummary.join("; ")}`);
   log("");
 
   log("==============================================================");

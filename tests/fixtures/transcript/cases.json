@@ -1,5 +1,5 @@
 {
- "_about": "SPEC_018: real YouTube srv3 caption responses (2026-11-21, Android innertube baseUrl). Invariants per case; before=* numbers come from the pre-SPEC_018 code.",
+ "_about": "SPEC_018: real YouTube srv3 caption responses (2026-11-21, Android innertube baseUrl). Invariants per case; before=* numbers come from the pre-SPEC_018 code. SPEC_020: tidy = ASR card text cleanup (fillers, I, first capital).",
  "parser": [
   {
    "name": "srv3 ASR <s> word times",
@@ -84,7 +84,8 @@
    "maxWords": 18,
    "minWords": 4,
    "minWordsRatio": 0.9,
-   "hardPauseSec": 1.2
+   "hardPauseSec": 1.2,
+   "fillersBefore": 38
   },
   {
    "file": "ted-manual.srv3.xml",
@@ -140,6 +141,104 @@
     "Never going to say goodbye.",
     "Never going to say goodbye."
    ]
+  }
+ ],
+ "tidy": [
+  {
+   "name": "filler dropped",
+   "words": [
+    "so",
+    "um",
+    "we",
+    "went",
+    "uh",
+    "home"
+   ],
+   "expect": "So we went home"
+  },
+  {
+   "name": "standalone i",
+   "words": [
+    "and",
+    "i",
+    "said",
+    "i",
+    "know"
+   ],
+   "expect": "And I said I know"
+  },
+  {
+   "name": "i contractions",
+   "words": [
+    "i'm",
+    "sure",
+    "i've",
+    "seen",
+    "what",
+    "i'll",
+    "do",
+    "i'd",
+    "say"
+   ],
+   "expect": "I'm sure I've seen what I'll do I'd say"
+  },
+  {
+   "name": "first letter capital",
+   "words": [
+    "good",
+    "morning"
+   ],
+   "expect": "Good morning"
+  },
+  {
+   "name": "already capitalized kept",
+   "words": [
+    "Paris",
+    "is",
+    "in",
+    "France"
+   ],
+   "expect": "Paris is in France"
+  },
+  {
+   "name": "filler with punctuation and case",
+   "words": [
+    "Um,",
+    "hmm",
+    "mhm",
+    "well",
+    "erm."
+   ],
+   "expect": "Well"
+  },
+  {
+   "name": "look-alike words kept",
+   "words": [
+    "umbrella",
+    "error",
+    "ermine",
+    "hum",
+    "item",
+    "it's"
+   ],
+   "expect": "Umbrella error ermine hum item it's"
+  },
+  {
+   "name": "leading filler then i",
+   "words": [
+    "uh",
+    "i",
+    "think"
+   ],
+   "expect": "I think"
+  },
+  {
+   "name": "only fillers",
+   "words": [
+    "um",
+    "uh"
+   ],
+   "expect": ""
   }
  ]
 }

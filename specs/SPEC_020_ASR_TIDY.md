@@ -1,8 +1,8 @@
 ---
 id: SPEC_020
 title: 자동 자막 글자 다듬기 — um/uh 빼기·I 대문자·카드 첫 글자 대문자
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_018]
 parent: SPEC_018
@@ -29,13 +29,13 @@ parent: SPEC_018
 - 자막 트랙 고르기(다음 조각), 고유명사·문장 중간 대문자, 구두점 복원(AI 번역 SPEC), 수동 CC·구두점 있는 자막의 군말, 화면 변경, 저장된 노트의 기존 카드 다시 만들기, 설정 추가.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] `cases.json` `tidy` 사례 6개 이상(군말 빼기·`i` 단독·`i'm`류·첫 글자 대문자·이미 대문자·문장부호 붙은 군말 `um,`·`umbrella`/`error` 같은 비슷한 낱말은 그대로) 전부 통과 (`npm test` Test 14) [자동]
-2. [ ] TED 자동 자막 픽스처: 카드 글자 속 군말 낱말 0개(원본 38개), 소문자 `i`·`i'm`·`i've`·`i'll`·`i'd` 0개, 모든 카드 첫 글자가 대문자 [자동]
-3. [ ] 같은 픽스처: 카드 낱말을 이으면 원본 낱말에서 군말을 뺀 순서와 같음(대소문자 무시), 카드 `start` = 첫 남은 낱말 시각(±0.01), SPEC_018 불변식(최대 18단어·4단어+ 90%·카드 안 쉼) 그대로 통과 [자동]
-4. [ ] TED 수동 CC(273문장)·Rick 구두점 자동 자막(글자 그대로) 결과 불변 [자동]
-5. [ ] 변이: 군말 빼기를 끈 사본, 대문자화를 끈 사본으로 각각 Test 14 실패 [자동]
-6. [ ] 다듬은 TED 카드 실제 예 3개를 실행 기록에 적는다(관찰) [자동]
-7. [ ] `verify.mjs --set regression` ok [자동]
+1. [x] `cases.json` `tidy` 사례 6개 이상(군말 빼기·`i` 단독·`i'm`류·첫 글자 대문자·이미 대문자·문장부호 붙은 군말 `um,`·`umbrella`/`error` 같은 비슷한 낱말은 그대로) 전부 통과 (`npm test` Test 14) [자동]
+2. [x] TED 자동 자막 픽스처: 카드 글자 속 군말 낱말 0개(원본 38개), 소문자 `i`·`i'm`·`i've`·`i'll`·`i'd` 0개, 모든 카드 첫 글자가 대문자 [자동]
+3. [x] 같은 픽스처: 카드 낱말을 이으면 원본 낱말에서 군말을 뺀 순서와 같음(대소문자 무시), 카드 `start` = 첫 남은 낱말 시각(±0.01), SPEC_018 불변식(최대 18단어·4단어+ 90%·카드 안 쉼) 그대로 통과 [자동]
+4. [x] TED 수동 CC(273문장)·Rick 구두점 자동 자막(글자 그대로) 결과 불변 [자동]
+5. [x] 변이: 군말 빼기를 끈 사본, 대문자화를 끈 사본으로 각각 Test 14 실패 [자동]
+6. [x] 다듬은 TED 카드 실제 예 3개를 실행 기록에 적는다(관찰) [자동]
+7. [x] `verify.mjs --set regression` ok [자동]
 8. [ ] Android 실기기에서 자동 자막만 있는 영상을 새로 열어 카드 글자를 본다 — um/uh가 없고 첫 글자·I가 대문자면 OK [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -52,5 +52,7 @@ parent: SPEC_018
 - 군말은 카드 글자에서 뺀다(소리에는 남음): 받아쓰기·Anki 문장에서 학습 내용이 아니고 카드 단어 수만 늘려서. 대안: 남기거나 흐리게 표시 — 화면 변경이 필요해 범위 밖. 목록은 상수라 쉽게 바꿈.
 - `ah`·`oh`·`like`·`you know`는 뜻이 있는 경우가 많아 군말 목록에 넣지 않음.
 - 시각 단어 모드에만 적용: 수동 CC·구두점 자막은 사람이 다듬은 글자라 그대로 둠.
+- (실행 중 추가) srv3 `<s>` 하나에 두 낱말이 든 경우(`a place` 등 실제 5곳+)를 낱말마다 따로 센다 — 군말을 빼자 19낱말 카드가 생겨 SPEC_018 최대 18 불변식이 잡음. 대안: 상한 검사를 글자 대신 `<s>` 수로 — 화면 카드 길이와 어긋나서 안 씀.
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 14 `9 tidy cases` PASS · 2 ✅ 같은 Test 14 `ted-asr.srv3.xml 70->312 cards, max 18w, fillers 38->0`(군말 0·소문자 i 0·소문자 시작 카드 0 단언) · 3 ✅ 같은 Test 14 낱말 순서(군말 뺌·대소문자 무시)·첫 낱말 시각·카드 안 쉼 단언 통과 · 4 ✅ `ted-manual.srv3.xml 273 sentences`·`rick-asr.srv3.xml unchanged (43)` · 5 ✅ 변이: `isFillerWord` false 사본·첫 글자 대문자 끈 사본 → 각각 `AssertionError tidyAsrWords: filler dropped` · 6 ✅ 실제 예(전→후): `it's been i've been … in fact i'm leaving` / `um` → `It's been I've been blown away by the whole thing in fact I'm leaving`(um 카드 사라짐) · `uh which are rather relevant to what i want…` → `Which are rather relevant to what I want to talk about one is the extraordinary` · `good morning how are you` → `Good morning how are you` · 7 ✅ `verify.mjs --set regression --json` ok(harness·build·test·ui) · 8 ⏳ 실기기

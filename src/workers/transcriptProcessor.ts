@@ -470,6 +470,23 @@ export const ASR_MAX_WORDS = 18;
 const ASR_WORD_MAX_SEC = 0.6;
 const ASR_SPLIT_MIN_INDEX = 5; // split after the 6th word at the earliest
 
+/** Standalone filler words dropped from punctuation-free ASR cards (SPEC_020). */
+export const ASR_FILLER_WORDS = ["um", "umm", "uh", "uhh", "uhm", "er", "erm", "hmm", "mm", "mhm"];
+
+export function isFillerWord(word: string): boolean {
+  const bare = word.replace(/^[.,!?;:"']+|[.,!?;:"']+$/g, "").toLowerCase();
+  return ASR_FILLER_WORDS.includes(bare);
+}
+
+/** Joins ASR words into card text: drops fillers, capitalizes I / I'm… and the first letter (SPEC_020). */
+export function tidyAsrWords(words: string[]): string {
+  const kept = words
+    .filter((w) => w && !isFillerWord(w))
+    .map((w) => (/^i(?:'(?:m|ve|ll|d))?$/.test(w) ? "I" + w.slice(1) : w));
+  if (kept.length > 0 && /^[a-z]/.test(kept[0])) kept[0] = kept[0][0].toUpperCase() + kept[0].slice(1);
+  return kept.join(" ");
+}
+
 const isBracketToken = (t: string) => /^\[.*\]$/.test(t) || /^\(.*\)$/.test(t);
 
 function hasWordTimings(cues: RawTranscriptCue[]): boolean {
@@ -497,7 +514,11 @@ function collectTimedWords(cues: RawTranscriptCue[]): TimedWord[] {
     for (const w of list) {
       const text = cleanCaptionText(w.text);
       if (!text || isBracketToken(text)) continue;
-      raw.push({ start: w.start, text, cueEnd });
+      // srv3 sometimes packs two words into one <s> ("a place"); count them separately.
+      for (const token of text.split(/\s+/)) {
+        if (!token || isFillerWord(token)) continue;
+        raw.push({ start: w.start, text: token, cueEnd });
+      }
     }
   }
   raw.sort((a, b) => a.start - b.start);
@@ -577,7 +598,7 @@ export function mergeTimedWords(
     const last = chunk[chunk.length - 1];
     const nextStart = index + 1 < chunks.length ? chunks[index + 1][0].start : Infinity;
     const end = Math.max(last.end, Math.min(last.end + 0.15, nextStart - 0.02));
-    const text = chunk.map((w) => w.text).join(" ");
+    const text = tidyAsrWords(chunk.map((w) => w.text));
     return buildSegment(text, first.start, end, index, options);
   });
 }
