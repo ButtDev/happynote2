@@ -3,8 +3,9 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 진행 중 SPEC 없음(SPEC_023·024 DONE, 최신 BRAT 1.0.34).
-- 2026-11-22 밤 ① 끝: `docs/review/anki-fluent-forever.md` + SPEC_025(문맥 뜻 하나·품사 잘림)·026(핀 문장 Anki 듣기 카드)·027(핀 간격 재청취) DRAFT — 사람 질문 답 대기. ② 끝: `docs/review/ui-ux.md` + 시안 `docs/review/img/ui-mock-*.png` + SPEC_028(카드 버튼·글자 간결화) DRAFT. 남은 백로그 대기 10건(순서대로): ④ 긴 영상(400장↑) 성능 ⑤ `main.ts` 900줄 여유 ⑥ 실패 경로 시험 ⑦ 사전 캐시 ⑧ 밝은 테마 화면 검사 ⑨ 업스트림 읽기만 ⑩ 설정 화면 정리안(ui-ux.md 절) ⑪ 안 쓰는 코드 + `npm audit` ⑫ 학습 기록 아이디어(anki-fluent-forever.md 절). ⑦·⑧ 화면 바뀌면 night 브랜치 + 아침 ⏳.
+- SPEC_025~028 IMPLEMENTED, BRAT 1.0.35 배포 — ⏳ 실기기 확인 대기(025 5 · 026 4 · 027 4 · 028 4). 026은 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿은 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 먼저 만들어야 함.
+- 백로그 「대기」 9건 남음(④긴 영상 성능 ~ ⑫학습 기록), 다음 밤.
+- 이미지 보여 주기: 채팅 첨부 안 됨 → `.scratch/review-site/` + 8001 서버(`run-detached.mjs status review-site`, 지금 켜져 있음 — 다 보면 끄기).
 
 ## 열린 질문 (사람에게)
 - SPEC_025~027 DRAFT 각 「질문」 절(뜻 고르기 방식, TTS 노트 타입 만들기, 재청취 범위) — 답 받으면 READY로.

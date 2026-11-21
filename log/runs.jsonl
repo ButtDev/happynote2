@@ -93,3 +93,4 @@
 {"ts":"2026-11-21T21:49:22.131Z","cmd":"/spec-run","spec":"SPEC_026","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 12 _sentence 3+4+4, Test 17; ui sentenceAnki 세로·가로; 변이 4종 실패; 4 ⏳ 실기기"}
 {"ts":"2026-11-21T21:54:37.490Z","cmd":"/spec-run","spec":"SPEC_027","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 18 review cases; ui reviewQueue 세로·가로; 변이 2종 실패; 툴바 넘침 → 아이콘+숫자; 4 ⏳"}
 {"ts":"2026-11-21T21:58:03.804Z","cmd":"/spec-run","spec":"SPEC_028","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 17; ui cardPitch 145<=160; 변이 2종 실패; 4 ⏳"}
+{"ts":"2026-11-21T21:59:15.223Z","cmd":"release","spec":"SPEC_025,SPEC_026,SPEC_027,SPEC_028","status":"IMPLEMENTED","evidence":"BRAT 1.0.35 push+tag, release assets main.js,manifest.json,styles.css"}
