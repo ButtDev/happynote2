@@ -88,3 +88,4 @@
 {"ts":"2026-11-21T13:53:17.625Z","cmd":"/spec-run","spec":"SPEC_024","iteration":2,"status":"DONE","evidence":"사람확인 6 OK (1.0.34)"}
 {"ts":"2026-11-21T16:05:37.931Z","cmd":"/night-run","id":"NIGHT-anki-ff","status":"DONE","evidence":"docs/review/anki-fluent-forever.md + SPEC_025~027 DRAFT, regression ok"}
 {"ts":"2026-11-21T18:05:20.213Z","id":"NIGHT-ui-ux","date":"2026-11-22","result":"docs/review/ui-ux.md + img 4장 + SPEC_028 DRAFT, 화면 무변경","verify":"regression ok"}
+{"ts":"2026-11-21T20:03:24.963Z","id":"NIGHT-landscape-rowslack","kind":"간이","files":["tests/ui/cases.json"],"evidence":"가로 실측 player-controls slack=51, toolbar 6, step-bar 0; cases.json 가로 rowSlack>=24 추가; 변이(loop 버튼 margin-right 40px) slack=11 실패; verify --set regression ok(harness·build·test·ui)","decision":"기준 24px(세로와 같게) · 이유: 세로 실기기 NG 경험치 · 대안: 툴바까지 검사(지금은 실패해 화면 변경 필요 → SPEC_028로 미룸)"}

@@ -161,6 +161,10 @@
           ".ear-coach-loop-btn": 14,
           ".ear-coach-speed-group": 14,
           ".ear-coach-mobile-toolbar .ear-coach-toolbar-group:first-child": 14
+        },
+        "rowSlack": {
+          "selector": ".ear-coach-player-controls",
+          "min": 24
         }
       }
     }
