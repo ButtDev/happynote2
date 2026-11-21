@@ -119,6 +119,10 @@ function evaluateExpect(vp, m, nums) {
     const want = d && d.tapped ? d.tapped.toLowerCase().replace(/[\u2018\u2019]/g, "'").replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, "").replace(/^'+|'+$/g, "").replace(/'s$/, "") : null;
     add("dictionary", !!d && !d.error && d.words >= d.tokens && d.modal && d.title === want && d.defs >= e.dictionary.minDefs && !!d.ipa && d.audioBtn && d.pauseCalls === 1, JSON.stringify(d));
   }
+  if (e.phraseBefore) {
+    const p = m.phraseBefore;
+    add("phraseBefore", !!p && !p.error && p.modal && p.phraseTitle === e.phraseBefore.title && p.phraseDefs >= 1 && p.word === e.phraseBefore.tap.toLowerCase() && p.phraseAboveWord, JSON.stringify(p));
+  }
   if (e.phrase) {
     const p = m.phrase;
     add("phrase", !!p && !p.error && p.modal && p.phraseTitle === e.phrase.title && p.tag === null && p.tagText === false && p.phraseDefs >= 1 && p.word === e.phrase.tap.toLowerCase() && p.phraseAboveWord && m.dictionary?.phraseOnFirst === false, JSON.stringify({ ...p, phraseOnFirst: m.dictionary?.phraseOnFirst }));
@@ -453,10 +457,12 @@ for (const vp of cases.viewports) {
   }
 
   // SPEC_014: 같은 카드에서 「going」 누름 → 맨 위 구동사 칸(go to) + 그 아래 단어 칸
-  m.phrase = null;
-  if (vp.expect?.phrase) {
-    const tapWord = vp.expect.phrase.tap;
-    m.phrase = await page.evaluate(async (tapWord) => {
+  // SPEC_019: phraseBefore = 앞 낱말에서 시작하는 구(「to」 누름 → go to)
+  for (const [key, shot] of [["phrase", "phrase"], ["phraseBefore", "phrase-before"]]) {
+  m[key] = null;
+  if (vp.expect?.[key]) {
+    const tapWord = vp.expect[key].tap;
+    m[key] = await page.evaluate(async (tapWord) => {
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       const script = document.querySelector(".ear-coach-segment-card .ear-coach-full-script");
       if (!script) return { error: "full-script missing" };
@@ -478,8 +484,9 @@ for (const vp of cases.viewports) {
         phraseAboveWord: !!(title && word && title.getBoundingClientRect().bottom <= word.getBoundingClientRect().top),
       };
     }, tapWord);
-    await page.screenshot({ path: path.join(outDir, `phrase-${vp.name}.png`) });
+    await page.screenshot({ path: path.join(outDir, `${shot}-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+  }
   }
 
   // SPEC_015: 「going」 누름 → 구 칸·단어 칸 「➕ Anki」 → 단어 칸 버튼 → canAddNotes·addNote 각 1회 + 저장 문구.

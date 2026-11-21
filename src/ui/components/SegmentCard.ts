@@ -10,8 +10,8 @@ export interface SegmentCardCallbacks {
   onOpenTutor: (segment: TranscriptSegment, userHeardText?: string) => void;
   isLooping?: (segment: TranscriptSegment) => boolean;
   /** SPEC_013: 3단계 문장에서 단어를 누름 */
-  /** SPEC_014: following = 누른 낱말 뒤 낱말 최대 2개(글자 그대로, 구동사 후보용) */
-  onLookupWord?: (word: string, segment: TranscriptSegment, following: string[]) => void;
+  /** SPEC_014: following = 누른 낱말 뒤 낱말 최대 2개(글자 그대로, 구동사 후보용). SPEC_019: preceding = 앞 낱말 최대 2개(문장 순서) */
+  onLookupWord?: (word: string, segment: TranscriptSegment, following: string[], preceding: string[]) => void;
 }
 
 /**
@@ -171,10 +171,11 @@ export class SegmentCard {
         continue;
       }
       const following = tokens.slice(ti + 1, ti + 3);
+      const preceding = tokens.slice(Math.max(0, ti - 2), ti);
       const w = el.createSpan({ cls: "ear-coach-word", text: part });
       w.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        onLookup(part, this.segment, following);
+        onLookup(part, this.segment, following, preceding);
       });
     }
   }

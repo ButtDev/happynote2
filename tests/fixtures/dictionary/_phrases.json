@@ -1,31 +1,402 @@
 {
   "lemma": [
-    ["looking", ["looking", "look", "looke"]],
-    ["Running", ["running", "runn", "run"]],
-    ["making", ["making", "mak", "make"]],
-    ["going", ["going", "go", "goe"]],
-    ["stopped", ["stopped", "stopp", "stop"]],
-    ["liked", ["liked", "lik", "like"]],
-    ["showed", ["showed", "show", "showe"]],
-    ["tried", ["tried", "try"]],
-    ["goes", ["goes", "go"]],
-    ["watches", ["watches", "watch"]],
-    ["looks", ["looks", "look"]],
-    ["got", ["got", "get"]],
-    ["went", ["went", "go"]],
-    ["pass", ["pass"]],
-    ["up", ["up"]],
-    ["42", []]
+    [
+      "looking",
+      [
+        "looking",
+        "look",
+        "looke"
+      ]
+    ],
+    [
+      "Running",
+      [
+        "running",
+        "runn",
+        "run"
+      ]
+    ],
+    [
+      "making",
+      [
+        "making",
+        "mak",
+        "make"
+      ]
+    ],
+    [
+      "going",
+      [
+        "going",
+        "go",
+        "goe"
+      ]
+    ],
+    [
+      "stopped",
+      [
+        "stopped",
+        "stopp",
+        "stop"
+      ]
+    ],
+    [
+      "liked",
+      [
+        "liked",
+        "lik",
+        "like"
+      ]
+    ],
+    [
+      "showed",
+      [
+        "showed",
+        "show",
+        "showe"
+      ]
+    ],
+    [
+      "tried",
+      [
+        "tried",
+        "try"
+      ]
+    ],
+    [
+      "goes",
+      [
+        "goes",
+        "go"
+      ]
+    ],
+    [
+      "watches",
+      [
+        "watches",
+        "watch"
+      ]
+    ],
+    [
+      "looks",
+      [
+        "looks",
+        "look"
+      ]
+    ],
+    [
+      "got",
+      [
+        "got",
+        "get"
+      ]
+    ],
+    [
+      "went",
+      [
+        "went",
+        "go"
+      ]
+    ],
+    [
+      "pass",
+      [
+        "pass"
+      ]
+    ],
+    [
+      "up",
+      [
+        "up"
+      ]
+    ],
+    [
+      "42",
+      []
+    ]
   ],
   "phrases": [
-    [["looking", ["forward", "to"]], ["looking forward to", "look forward to", "looke forward to", "looking forward", "look forward", "looke forward"]],
-    [["got", ["up", "early"]], ["got up early", "get up early", "got up", "get up"]],
-    [["showed", ["up."]], ["showed up", "show up", "showe up"]],
-    [["showed", ["up,", "and"]], ["showed up", "show up", "showe up"]],
-    [["Pick", ["it", "up"]], ["pick it up", "pick it"]],
-    [["trip.", ["We", "got"]], []],
-    [["going", ["", "to"]], []],
-    [["going", []], []],
-    [["going", ["to", "tell"]], ["going to tell", "go to tell", "goe to tell", "going to", "go to", "goe to"]]
+    [
+      [
+        "looking",
+        [
+          "forward",
+          "to"
+        ]
+      ],
+      [
+        "looking forward to",
+        "look forward to",
+        "looke forward to",
+        "looking forward",
+        "look forward",
+        "looke forward"
+      ]
+    ],
+    [
+      [
+        "got",
+        [
+          "up",
+          "early"
+        ]
+      ],
+      [
+        "got up early",
+        "get up early",
+        "got up",
+        "get up"
+      ]
+    ],
+    [
+      [
+        "showed",
+        [
+          "up."
+        ]
+      ],
+      [
+        "showed up",
+        "show up",
+        "showe up"
+      ]
+    ],
+    [
+      [
+        "showed",
+        [
+          "up,",
+          "and"
+        ]
+      ],
+      [
+        "showed up",
+        "show up",
+        "showe up"
+      ]
+    ],
+    [
+      [
+        "Pick",
+        [
+          "it",
+          "up"
+        ]
+      ],
+      [
+        "pick it up",
+        "pick it"
+      ]
+    ],
+    [
+      [
+        "trip.",
+        [
+          "We",
+          "got"
+        ]
+      ],
+      []
+    ],
+    [
+      [
+        "going",
+        [
+          "",
+          "to"
+        ]
+      ],
+      []
+    ],
+    [
+      [
+        "going",
+        []
+      ],
+      []
+    ],
+    [
+      [
+        "going",
+        [
+          "to",
+          "tell"
+        ]
+      ],
+      [
+        "going to tell",
+        "go to tell",
+        "goe to tell",
+        "going to",
+        "go to",
+        "goe to"
+      ]
+    ]
+  ],
+  "around": [
+    [
+      [
+        "forward",
+        [
+          "was",
+          "looking"
+        ],
+        [
+          "to",
+          "it"
+        ]
+      ],
+      [
+        "forward to it",
+        "looking forward to",
+        "look forward to",
+        "looke forward to",
+        "was looking forward",
+        "be looking forward",
+        "forward to",
+        "looking forward",
+        "look forward",
+        "looke forward",
+        "was forward",
+        "be forward"
+      ]
+    ],
+    [
+      [
+        "to",
+        [
+          "looking",
+          "forward"
+        ],
+        []
+      ],
+      [
+        "looking forward to",
+        "look forward to",
+        "looke forward to",
+        "forward to",
+        "looking to",
+        "look to",
+        "looke to"
+      ]
+    ],
+    [
+      [
+        "up",
+        [
+          "pick",
+          "it"
+        ],
+        []
+      ],
+      [
+        "pick it up",
+        "it up",
+        "pick up"
+      ]
+    ],
+    [
+      [
+        "up.",
+        [
+          "She",
+          "showed"
+        ],
+        [
+          "Then",
+          "we"
+        ]
+      ],
+      [
+        "she showed up",
+        "showed up",
+        "show up",
+        "showe up",
+        "she up"
+      ]
+    ],
+    [
+      [
+        "up",
+        [
+          "trip.",
+          "showed"
+        ],
+        [
+          "early"
+        ]
+      ],
+      [
+        "showed up early",
+        "show up early",
+        "showe up early",
+        "up early",
+        "showed up",
+        "show up",
+        "showe up"
+      ]
+    ],
+    [
+      [
+        "up",
+        [
+          "",
+          "showed"
+        ],
+        []
+      ],
+      [
+        "showed up",
+        "show up",
+        "showe up"
+      ]
+    ],
+    [
+      [
+        "up",
+        [
+          "got",
+          ""
+        ],
+        []
+      ],
+      []
+    ],
+    [
+      [
+        "looking",
+        [],
+        [
+          "forward",
+          "to"
+        ]
+      ],
+      [
+        "looking forward to",
+        "look forward to",
+        "looke forward to",
+        "looking forward",
+        "look forward",
+        "looke forward"
+      ]
+    ],
+    [
+      [
+        "going",
+        [],
+        [
+          "to",
+          "tell"
+        ]
+      ],
+      [
+        "going to tell",
+        "go to tell",
+        "goe to tell",
+        "going to",
+        "go to",
+        "goe to"
+      ]
+    ]
   ]
 }

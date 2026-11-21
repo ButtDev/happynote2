@@ -508,7 +508,7 @@ export class EarCoachView extends ItemView {
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
       },
-      onLookupWord: (word, segment, following) => {
+      onLookupWord: (word, segment, following, preceding) => {
         const provider = this.plugin.dictionary;
         if (!provider) return;
         this.playerBar?.pause();
@@ -529,7 +529,7 @@ export class EarCoachView extends ItemView {
                 : null,
             }
           : null;
-        new DictionaryModal(this.app, word, provider, following ?? [], anki).open();
+        new DictionaryModal(this.app, word, provider, following ?? [], anki, preceding ?? []).open();
       },
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;

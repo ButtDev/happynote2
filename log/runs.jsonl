@@ -63,3 +63,5 @@
 {"ts":"2026-11-21T00:47:04.079Z","cmd":"/spec-new","spec":"SPEC_018","result":"READY","questions":0}
 {"ts":"2026-11-21T00:50:26.080Z","cmd":"/spec-run","spec":"SPEC_018","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 14 TED ASR 70->311 cards max 18w, manual 273 same, rick same; mutations fail"}
 {"ts":"2026-11-21T01:27:25.037Z","cmd":"/spec-run","spec":"SPEC_018","status":"DONE","evidence":"human 9 OK"}
+{"ts":"2026-11-21T01:29:50.210Z","cmd":"/spec-new","spec":"SPEC_019","result":"READY","questions":0}
+{"ts":"2026-11-21T01:31:53.693Z","cmd":"/spec-run","spec":"SPEC_019","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 11 9 around cases; ui phraseBefore ok; real: forward→look forward to, up→pick up/show up"}

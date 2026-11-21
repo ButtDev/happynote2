@@ -260,3 +260,52 @@ export function phraseCandidates(tapped: string, following: string[]): string[] 
   }
   return out.slice(0, MAX_PHRASE_CANDIDATES);
 }
+
+// ---------------------------------------------------------------------------
+// SPEC_019: 누른 낱말 앞 1~2낱말에서 시작하는 구도 후보로 (forward → look forward to)
+// ---------------------------------------------------------------------------
+
+export const MAX_PHRASE_CANDIDATES_AROUND = 12;
+
+/** 구 후보: 누른 낱말을 포함하는 3낱말·2낱말 창. 각 창의 첫 낱말만 원형 후보. 중복 없이 최대 12개. */
+export function phraseCandidatesAround(tapped: string, preceding: string[], following: string[]): string[] {
+  const tappedRaw = (tapped ?? "").trim();
+  const t = normalizeLookupWord(tappedRaw);
+  if (!t) return [];
+  const tappedBreaks = PHRASE_BREAK.test(tappedRaw);
+  const tail: string[] = [];
+  if (!tappedBreaks) {
+    for (const raw of (following ?? []).slice(0, 2)) {
+      const n = normalizeLookupWord(raw);
+      if (!n) break;
+      tail.push(n);
+      if (PHRASE_BREAK.test(raw.trim())) break;
+    }
+  }
+  // 앞 낱말: 누른 낱말에 가까운 쪽부터(p1, p2). 문장부호로 끝나는 낱말에서 멈춤.
+  const before: string[] = [];
+  for (const raw of (preceding ?? []).slice(-2).reverse()) {
+    if (PHRASE_BREAK.test(raw.trim())) break;
+    const n = normalizeLookupWord(raw);
+    if (!n) break;
+    before.push(n);
+  }
+  const [p1, p2] = before;
+  const windows: string[][] = [];
+  if (tail.length >= 2) windows.push([t, tail[0], tail[1]]);
+  if (p1 && tail.length >= 1) windows.push([p1, t, tail[0]]);
+  if (p1 && p2) windows.push([p2, p1, t]);
+  if (tail.length >= 1) windows.push([t, tail[0]]);
+  if (p1) windows.push([p1, t]);
+  if (p1 && p2) windows.push([p2, t]);
+
+  const out: string[] = [];
+  for (const [head, ...rest] of windows) {
+    const heads = head === t ? lemmaVariants(tappedRaw) : lemmaVariants(head);
+    for (const h of heads) {
+      const p = [h, ...rest].join(" ");
+      if (!out.includes(p)) out.push(p);
+    }
+  }
+  return out.slice(0, MAX_PHRASE_CANDIDATES_AROUND);
+}

@@ -26,7 +26,7 @@ import * as ankiSrc from "../src/services/anki.ts";
 import * as storyboardSrc from "../src/services/storyboard.ts";
 import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
-import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
+import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -371,7 +371,7 @@ async function runAllTests() {
   log("[Test 11] Dictionary: normalize word & parse dictionaryapi.dev (data-driven, SPEC_013)");
   const dictMod = process.env.EAR_COACH_DICT_MODULE
     ? await import(path.resolve(process.env.EAR_COACH_DICT_MODULE))
-    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl, lemmaVariants, phraseCandidates };
+    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl, lemmaVariants, phraseCandidates, phraseCandidatesAround };
   const dictDir = path.resolve("tests/fixtures/dictionary");
   const norm = JSON.parse(fs.readFileSync(path.join(dictDir, "_normalize.json"), "utf8"));
   for (const [raw, want] of norm.cases) {
@@ -434,7 +434,10 @@ async function runAllTests() {
   const phr = JSON.parse(fs.readFileSync(path.join(dictDir, "_phrases.json"), "utf8"));
   for (const [w, want] of phr.lemma) assert.deepEqual(dictMod.lemmaVariants(w), want, `lemmaVariants(${JSON.stringify(w)})`);
   for (const [[t, f], want] of phr.phrases) assert.deepEqual(dictMod.phraseCandidates(t, f), want, `phraseCandidates(${JSON.stringify(t)}, ${JSON.stringify(f)})`);
-  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons, ${phr.lemma.length} lemma + ${phr.phrases.length} phrase cases`);
+  // SPEC_019: 앞 낱말에서 시작하는 구 + 앞 낱말이 없으면 phraseCandidates와 같음(불변식)
+  for (const [[t, pre, f], want] of phr.around) assert.deepEqual(dictMod.phraseCandidatesAround(t, pre, f), want, `phraseCandidatesAround(${JSON.stringify(t)}, ${JSON.stringify(pre)}, ${JSON.stringify(f)})`);
+  for (const [[t, f]] of phr.phrases) assert.deepEqual(dictMod.phraseCandidatesAround(t, [], f), dictMod.phraseCandidates(t, f), `phraseCandidatesAround(${JSON.stringify(t)}, [], …) == phraseCandidates`);
+  log(`  -> PASS: ${norm.cases.length} normalize cases, ${dictCount} response fixtures, provider cache/404, ${commonsCases.length} commons cases, audio → Commons, ${phr.lemma.length} lemma + ${phr.phrases.length} phrase + ${phr.around.length} around cases`);
   log("");
 
   // 12. Anki (SPEC_015) — data in tests/fixtures/anki/. EAR_COACH_ANKI_MODULE로 대상 모듈을 바꿀 수 있다(변이 시험용).

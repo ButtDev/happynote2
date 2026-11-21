@@ -1,6 +1,6 @@
 import { App, Modal, Notice } from "obsidian";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
-import { normalizeLookupWord, phraseCandidates } from "../services/dictionary";
+import { normalizeLookupWord, phraseCandidatesAround } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
 import { ANKI_MESSAGES, addNoteIfNew, inlineAudio, resolveAnkiTarget, ankiSettingsReady, ankiStatusMessage, buildAnkiNote, snapshotFilename, storeSnapshot } from "../services/anki";
 
@@ -29,17 +29,19 @@ export class DictionaryModal extends Modal {
   private readonly word: string;
   private readonly rawWord: string;
   private readonly following: string[];
+  private readonly preceding: string[];
   private readonly provider: DictionaryProvider;
   private audio: HTMLAudioElement | null = null;
   private readonly anki: DictionaryAnkiContext | null;
 
-  constructor(app: App, rawWord: string, provider: DictionaryProvider, following: string[] = [], anki: DictionaryAnkiContext | null = null) {
+  constructor(app: App, rawWord: string, provider: DictionaryProvider, following: string[] = [], anki: DictionaryAnkiContext | null = null, preceding: string[] = []) {
     super(app);
     this.anki = anki;
     this.rawWord = rawWord;
     this.word = normalizeLookupWord(rawWord) || rawWord.trim();
     this.provider = provider;
     this.following = following;
+    this.preceding = preceding;
   }
 
   public onOpen(): void {
@@ -74,7 +76,7 @@ export class DictionaryModal extends Modal {
 
   /** 후보를 동시에 조회하고, 후보 순서대로 처음 결과가 있는 구. 없거나 오류면 null. */
   private async lookupPhrase(): Promise<DictionaryEntry | null> {
-    const cands = phraseCandidates(this.rawWord, this.following);
+    const cands = phraseCandidatesAround(this.rawWord, this.preceding, this.following);
     if (cands.length === 0) return null;
     const results = await Promise.all(cands.map((c) => this.provider.lookup(c).catch(() => null)));
     return results.find((r) => !!r) ?? null;
