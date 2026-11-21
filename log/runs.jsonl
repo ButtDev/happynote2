@@ -62,3 +62,4 @@
 {"ts":"2026-11-21T00:12:35.698Z","cmd":"/spec-run","spec":"SPEC_017","status":"DONE","evidence":"confirmation 9 메모 잘동작함"}
 {"ts":"2026-11-21T00:47:04.079Z","cmd":"/spec-new","spec":"SPEC_018","result":"READY","questions":0}
 {"ts":"2026-11-21T00:50:26.080Z","cmd":"/spec-run","spec":"SPEC_018","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 14 TED ASR 70->311 cards max 18w, manual 273 same, rick same; mutations fail"}
+{"ts":"2026-11-21T01:27:25.037Z","cmd":"/spec-run","spec":"SPEC_018","status":"DONE","evidence":"human 9 OK"}

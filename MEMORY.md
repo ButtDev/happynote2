@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_018(자동 자막 쉼 기준 끊기) IMPLEMENTED, ⏳ 9 실기기 대기. 최신 배포 BRAT **1.0.24**.
+- 진행 중인 SPEC 없음(SPEC_001~018 DONE/DROPPED). 최신 배포 BRAT **1.0.24**.
 - 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini) · 구동사 앞 낱말부터(forward → look forward to). 자막 품질 남은 것: 트랙 선택·um/uh·대소문자 복원(SPEC_018 범위 밖).
 
 ## 열린 질문 (사람에게)

@@ -1,7 +1,7 @@
 ---
 id: SPEC_018
 title: 자동 자막(ASR) 카드 끊기 — 단어 시각·쉼으로 짧은 덩어리
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -62,3 +62,4 @@ OVERVIEW 7.3 「자막 품질」 첫 조각. 2026-11-21 실제 자막으로 재�
 
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ Test 14 `ted-asr.srv3.xml 70->311 cards, max 18w`(4단어+ 비율 ≥0.9 단언 통과) · 2 ✅ 같은 Test 14 단어 순서·첫 단어 시각 단언 통과 · 3 ✅ 카드 안 쉼 단언 통과 · 4 ✅ `ted-manual.srv3.xml 273 sentences`(이전 273) · 5 ✅ `rick-asr.srv3.xml unchanged (43)` 글자 비교 · 6 ✅ parser 3사례 통과 · 7 ✅ 변이: 쉼 상수 999 → `seg 0 has 1.88s pause inside` 실패, words 안 넣음 → `parseCaptionPayload: srv3 ASR <s> word times` 실패 · 8 ✅ `verify.mjs --set regression` ok(harness·build·test·ui, ui overlap 0) · 9 ⏳ 실기기
+- 2026-11-21 사람 확인: DONE — 9 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_018 9 OK]」
