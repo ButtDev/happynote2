@@ -204,7 +204,7 @@ export class PlayerBar {
     this.lastSeekVideoTime = 0;
     this.seekLockUntil = 0;
     this.pendingStartSec = null;
-    this.statusLabelEl?.setText("⏱ 00:00");
+    this.statusLabelEl?.setText(this.statusText(0));
 
     if (this.thumbnailEl) {
       this.thumbnailEl.style.backgroundImage = `url("https://i.ytimg.com/vi/${videoId}/hqdefault.jpg")`;
@@ -596,9 +596,15 @@ export class PlayerBar {
     }, 80);
   }
 
+  /** 모바일은 시계 아이콘 없이 시각만(컨트롤 한 줄 자리, SPEC_024) */
+  private statusText(timeSec: number): string {
+    const t = formatSecondsToTimestamp(timeSec);
+    return isMobileApp() ? t : `⏱ ${t}`;
+  }
+
   private onTimeTick(timeSec: number): void {
     if (this.statusLabelEl) {
-      this.statusLabelEl.setText(`⏱ ${formatSecondsToTimestamp(timeSec)}`);
+      this.statusLabelEl.setText(this.statusText(timeSec));
     }
     this.callbacks.onTimeUpdate(timeSec);
   }

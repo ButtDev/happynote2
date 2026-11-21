@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_024(세로 공통 컨트롤·필터 툴바 알약 모양) IMPLEMENTED 1/3 — ⏳ 6 실기기 버튼 대기(`SPEC_024 6 OK|NG|메모`), BRAT 1.0.33. 세로 컨트롤 줄 여유 0(시각 끝 404 = 컨테이너 끝) — 버튼·글자 늘리면 시각이 둘째 줄로. 스타일은 `styles.css` 끝 SPEC_024 `@media (orientation: portrait)` 블록, 화면 검사 `expect.minRadius`.
+- SPEC_024(세로 공통 컨트롤·필터 툴바 알약 모양) IMPLEMENTED 2/3 — ⏳ 6 실기기 버튼 대기(`SPEC_024 6 OK|NG|메모`), BRAT 1.0.34. 회차 2 = 사람 NG 「시각이 두 줄」 → 모바일 시각에서 ⏱ 뺌, 화면 검사 `rowSlack` 시각 앞 24px 이상(지금 27). 실기기 글꼴이 화면 검사보다 넓음 — 여유 0으로 맞추지 말 것. 남은 회차 1번.
 - 「대기」 목록 비어 있음. 자막 트랙 선택은 보류(2026-11-21, `memory/backlog.md`).
 
 ## 열린 질문 (사람에게)

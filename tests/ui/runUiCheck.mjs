@@ -157,6 +157,10 @@ function evaluateExpect(vp, m, nums) {
     const o = m.overflowX?.[sel];
     add(`noOverflowX:${sel}`, o && o.scrollWidth <= o.clientWidth + 1, o ? `${o.scrollWidth} <= ${o.clientWidth}` : "element missing");
   }
+  if (e.rowSlack) {
+    const rsl = m.rowSlack;
+    add(`rowSlack:${e.rowSlack.selector}`, !!rsl && rsl.oneRow && rsl.slack >= e.rowSlack.min, rsl ? `oneRow=${rsl.oneRow} slack=${rsl.slack} >= ${e.rowSlack.min} last=${JSON.stringify(rsl.lastText)}` : "element missing");
+  }
   for (const [sel, min] of Object.entries(e.minRadius ?? {})) {
     const r = m.radii?.[sel];
     add(`minRadius:${sel}`, typeof r === "number" && r >= min, r === null || r === undefined ? "element missing" : `${r} >= ${min}`);
@@ -343,6 +347,18 @@ for (const vp of cases.viewports) {
       const el = document.querySelector(sel);
       heights[sel] = el ? Math.round(el.getBoundingClientRect().height * 10) / 10 : null;
     }
+    // SPEC_024: 컨트롤 줄 — 모든 자식이 한 줄인지, 마지막 자식(시각) 앞 빈 폭
+    let rowSlack = null;
+    if (selectors.__rowSlack) {
+      const row = document.querySelector(selectors.__rowSlack);
+      const kids = row ? [...row.children].filter((k) => k.getBoundingClientRect().width > 0) : [];
+      if (kids.length >= 2) {
+        const rs = kids.map((k) => k.getBoundingClientRect());
+        const oneRow = rs.every((r) => Math.abs((r.top + r.bottom) / 2 - (rs[0].top + rs[0].bottom) / 2) <= 4);
+        const last = rs[rs.length - 1], prev = rs[rs.length - 2];
+        rowSlack = { oneRow, slack: Math.round(last.left - prev.right), lastText: kids[kids.length - 1].textContent };
+      }
+    }
     // SPEC_024: 첫 요소의 계산된 border-top-left-radius(px)
     const radii = {};
     for (const sel of selectors.__minRadius ?? []) {
@@ -352,8 +368,8 @@ for (const vp of cases.viewports) {
     // SPEC_007: 플레이어 요소(유튜브 iframe/자리)와 영상 상자
     const playerEl = videoEl?.querySelector(':scope > [id^="ear-coach-player-"]');
     const player = playerEl ? rectOf(playerEl) : null;
-    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, player };
-  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}) }, overlayExclude: cases.overlayExclude ?? [] } : {});
+    return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, rowSlack, player };
+  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}), __rowSlack: vp.expect?.rowSlack?.selector ?? null }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   // SPEC_009: YT 버튼을 누르면 플레이어를 다시 만들고 자르기를 푼다, 다시 누르면 원래대로.
   m.overlayToggle = null;
