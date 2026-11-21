@@ -85,3 +85,4 @@
 {"ts":"2026-11-21T13:44:54.718Z","cmd":"release","spec":"SPEC_024","status":"IMPLEMENTED","evidence":"BRAT 1.0.33 push+tag, release assets main.js,manifest.json,styles.css"}
 {"ts":"2026-11-21T13:49:54.713Z","cmd":"/spec-run","spec":"SPEC_024","iteration":2,"status":"IMPLEMENTED","evidence":"6 NG 시각 두 줄 → 모바일 ⏱ 제거, rowSlack 27>=24, 변이 11 실패, regression ok"}
 {"ts":"2026-11-21T13:51:06.880Z","cmd":"release","spec":"SPEC_024","status":"IMPLEMENTED","evidence":"BRAT 1.0.34 release assets main.js,manifest.json,styles.css"}
+{"ts":"2026-11-21T13:53:17.625Z","cmd":"/spec-run","spec":"SPEC_024","iteration":2,"status":"DONE","evidence":"사람확인 6 OK (1.0.34)"}

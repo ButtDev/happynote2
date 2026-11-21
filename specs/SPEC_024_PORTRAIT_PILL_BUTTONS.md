@@ -1,7 +1,7 @@
 ---
 id: SPEC_024
 title: 세로 화면 공통 컨트롤·필터 툴바를 가로와 같은 알약·세그먼트 버튼으로
-status: IMPLEMENTED
+status: DONE
 iterations: 2
 max_iterations: 3
 depends_on: []
@@ -32,7 +32,7 @@ depends_on: []
 4. [x] 변이: SPEC_024 블록을 뺀 `styles.css`로 화면 검사 세로 `minRadius` 실패 [자동]
 5. [x] `verify.mjs --set regression` ok, `portrait.png`를 열어 버튼이 가로처럼 둥근지 확인 [자동]
 7. [x] (회차 2, 사람 NG: 「시간이 아슬하게 두줄」) 모바일 시각은 ⏱ 없이 `00:00`만(재생 중에도), 화면 검사 세로 `rowSlack`: 컨트롤 한 줄 + 시각 앞 빈 폭 24px 이상 [자동]
-6. [ ] Android 실기기: BRAT 새 버전에서 세로 화면 공통 컨트롤·필터 버튼이 가로처럼 둥글고 깔끔한지 보고 버튼 [수동]
+6. [x] Android 실기기: BRAT 새 버전에서 세로 화면 공통 컨트롤·필터 버튼이 가로처럼 둥글고 깔끔한지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 - 1·2·3: `node tests/ui/runUiCheck.mjs --fail-on-overlap`(regression `ui`) 출력. 4: `.scratch/`에 블록 뺀 사본으로 같은 검사. 5: `verify.mjs --set regression --json`, 스크린샷 열어 봄.
@@ -47,3 +47,4 @@ depends_on: []
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ 화면 검사 세로 minRadius 4개 모두 999 ≥ 14 · 2 ✅ 세로 maxHeight 컨트롤 ≤44·툴바 ≤48, noOverflowX 컨트롤·툴바 ok(컨트롤 줄 여유 0: 상태 시각 끝 404 = 컨테이너 끝, 반복 글자 ∞ 45px·×3 50px·OFF 60px 모두 높이 34 한 줄) · 3 ✅ 가로 기존 규칙 + minRadius 모두 ok · 4 ✅ 변이: SPEC_024 블록 뺀 css(`--css .scratch/mut_024.css`) → 세로 minRadius 4개(4·4·0·0 ≥ 14)·툴바 높이 52>48 실패 · 5 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok, `portrait.png` 열어 봄: 재생·OFF·⇅·배속 세그먼트·YT·시각이 둥근 알약 한 줄, 필터 세그먼트+블라인드·공개 알약 — 가로와 같은 모양, `landscape.png` 바뀌지 않음 · 6 ⏳ 실기기
 - 가결정(회차 1): 세로 여백을 가로보다 줄임(알약 0 8px, 재생 0 10px, 배속 0 5px, 시각 11px) · 세로 폭 396에 시각까지 한 줄로 넣으려고 · 대안: 시각을 둘째 줄로 — 컨트롤 높이가 늘어 영상이 작아짐
 - 2026-11-21 회차 2: IMPLEMENTED — 사람 6 NG(사진: 실기기에서 시각이 둘째 줄). 원인: 모바일 첫 글자는 「00:00」인데 `onTimeTick`·`loadVideo`가 「⏱ 」을 다시 붙임 + 화면 검사 여유 0이라 실기기 글꼴에서 넘침. 고침: `PlayerBar.statusText`(모바일은 시각만). 7 ✅ 화면 검사 세로 rowSlack 「oneRow=true slack=27 >= 24 last="00:00"」, 변이(⏱ 다시 붙임) → 「slack=11 >= 24」 실패 · 1~5 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok(이번 실행), `portrait.png` 열어 봄: 시각 앞에 빈칸이 생기고 한 줄 · 6 ⏳ 실기기 다시
+- 2026-11-21 사람확인(회차 세지 않음): DONE — 6 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_024 6 OK]」(1.0.34) · 1~5·7 ✅ 회차 2 근거 그대로(제품 파일 변경 없음)
