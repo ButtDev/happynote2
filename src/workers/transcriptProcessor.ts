@@ -1,5 +1,6 @@
 import type {
   ListeningTrapType,
+  RawCueWord,
   RawTranscriptCue,
   SegmentPhoneticAnalysis,
   TranscriptSegment,
@@ -257,11 +258,13 @@ function normalizeRawCues(cues: RawTranscriptCue[]): RawTranscriptCue[] {
     const raw = cues[i];
     const text = cleanCaptionText(raw.text);
     if (!text || /^\[.*\]$/.test(text) || /^\(.*\)$/.test(text)) continue;
-    cleaned.push({
+    const cue: RawTranscriptCue = {
       start: Math.max(0, raw.start),
       duration: Math.max(0.35, raw.duration || 2.0),
       text,
-    });
+    };
+    if (Array.isArray(raw.words) && raw.words.length >= 2) cue.words = raw.words.slice();
+    cleaned.push(cue);
   }
 
   if (cleaned.length <= 1) return cleaned;
@@ -271,6 +274,11 @@ function normalizeRawCues(cues: RawTranscriptCue[]): RawTranscriptCue[] {
 
   // Deduplicate rolling caption overlap (e.g. prev ends with "how are you", next starts with "how are you doing")
   for (let i = 1; i < cleaned.length; i++) {
+    // Word-timed ASR cues that do not overlap in time are not rolling captions: a repeated
+    // phrase there is real speech ("do you do you"), so keep it (SPEC_018).
+    const prevTimed = cleaned[i - 1].words;
+    const currTimed = cleaned[i].words;
+    if (prevTimed && currTimed && currTimed[0].start > prevTimed[prevTimed.length - 1].start) continue;
     const prevWords = cleaned[i - 1].text.split(/\s+/);
     const currWords = cleaned[i].text.split(/\s+/);
     const maxOverlap = Math.min(prevWords.length, currWords.length, 6);
@@ -286,6 +294,11 @@ function normalizeRawCues(cues: RawTranscriptCue[]): RawTranscriptCue[] {
     if (overlapLen > 0) {
       const trimmedText = currWords.slice(overlapLen).join(" ").trim();
       cleaned[i].text = trimmedText;
+      const cueWords = cleaned[i].words;
+      if (cueWords) {
+        const keep = currWords.length - overlapLen;
+        cleaned[i].words = keep > 0 ? cueWords.slice(Math.max(0, cueWords.length - keep)) : undefined;
+      }
     }
   }
 
@@ -332,8 +345,12 @@ export function mergeCuesIntoSegments(
 
   // Detect whether this transcript carries real sentence punctuation vs punctuation-free auto-captions (ASR)
   const hasSentencePunctuation =
-    punctuatedFragmentsCount >= 2 ||
-    (fragments.length > 0 && punctuatedFragmentsCount / fragments.length >= 0.1);
+    fragments.length > 0 && punctuatedFragmentsCount / fragments.length >= 0.1;
+
+  // Punctuation-free ASR with word-level timings: cut at natural speech pauses (SPEC_018)
+  if (!hasSentencePunctuation && hasWordTimings(normalizedCues)) {
+    return mergeTimedWords(normalizedCues, options);
+  }
 
   const maxWords =
     options.maxWordsPerSegment ?? (hasSentencePunctuation ? 55 : 26);
@@ -444,4 +461,123 @@ export function mergeCuesIntoSegments(
   }
 
   return merged;
+}
+
+export const ASR_PAUSE_SEC = 0.25;
+export const ASR_HARD_PAUSE_SEC = 1.2;
+export const ASR_MIN_WORDS = 4;
+export const ASR_MAX_WORDS = 18;
+const ASR_WORD_MAX_SEC = 0.6;
+const ASR_SPLIT_MIN_INDEX = 5; // split after the 6th word at the earliest
+
+const isBracketToken = (t: string) => /^\[.*\]$/.test(t) || /^\(.*\)$/.test(t);
+
+function hasWordTimings(cues: RawTranscriptCue[]): boolean {
+  const speech = cues.filter((c) => !isBracketToken(c.text));
+  if (speech.length === 0) return false;
+  const timed = speech.filter((c) => Array.isArray(c.words) && c.words.length >= 2).length;
+  return timed / speech.length >= 0.8;
+}
+
+interface TimedWord extends RawCueWord {
+  end: number;
+}
+
+function collectTimedWords(cues: RawTranscriptCue[]): TimedWord[] {
+  const raw: Array<RawCueWord & { cueEnd: number }> = [];
+  for (const cue of cues) {
+    const cueEnd = cue.start + cue.duration;
+    const list: RawCueWord[] =
+      cue.words && cue.words.length > 0
+        ? cue.words
+        : cue.text.split(/\s+/).filter(Boolean).map((text, i, arr) => ({
+            start: cue.start + (cue.duration * i) / arr.length,
+            text,
+          }));
+    for (const w of list) {
+      const text = cleanCaptionText(w.text);
+      if (!text || isBracketToken(text)) continue;
+      raw.push({ start: w.start, text, cueEnd });
+    }
+  }
+  raw.sort((a, b) => a.start - b.start);
+  return raw.map((w, i) => {
+    const next = raw[i + 1];
+    const limit = w.start + ASR_WORD_MAX_SEC;
+    const end = next ? Math.min(next.start, limit) : Math.min(Math.max(w.cueEnd, w.start + 0.2), limit);
+    return { start: w.start, text: w.text, end: Math.max(w.start, end) };
+  });
+}
+
+function buildSegment(
+  text: string,
+  start: number,
+  end: number,
+  index: number,
+  options: TranscriptProcessOptions
+): TranscriptSegment {
+  const pinnedList = options.pinnedTimestamps ?? [];
+  const duration = Math.max(0.6, Number((end - start).toFixed(2)));
+  const words = text.split(/\s+/).filter(Boolean);
+  const wpm = Math.round((words.length / duration) * 60);
+  const segment: TranscriptSegment = {
+    id: `seg-${index}-${Math.round(start * 10)}`,
+    index,
+    start: Number(start.toFixed(2)),
+    end: Number(end.toFixed(2)),
+    duration,
+    text,
+    words,
+    wpm,
+    isSpeedSpike: wpm >= options.speedSpikeWpmThreshold,
+    isPinned: pinnedList.some((pinSec) => pinSec >= start - 1.5 && pinSec <= end + 1.5),
+    unlockStep: options.defaultUnlockStep,
+  };
+  segment.analysis = computeFallbackAnalysis(segment);
+  return segment;
+}
+
+/**
+ * Cuts punctuation-free ASR captions into short listening chunks at natural speech pauses
+ * using word-level start times (SPEC_018).
+ */
+export function mergeTimedWords(
+  cues: RawTranscriptCue[],
+  options: TranscriptProcessOptions
+): TranscriptSegment[] {
+  const words = collectTimedWords(cues);
+  const pauseAfter = (i: number) => (i + 1 < words.length ? words[i + 1].start - words[i].end : Infinity);
+
+  const chunks: TimedWord[][] = [];
+  let buf: number[] = [];
+  for (let i = 0; i < words.length; i++) {
+    buf.push(i);
+    const pause = pauseAfter(i);
+    if (pause >= ASR_HARD_PAUSE_SEC || (pause >= ASR_PAUSE_SEC && buf.length >= ASR_MIN_WORDS)) {
+      chunks.push(buf.map((k) => words[k]));
+      buf = [];
+    } else if (buf.length >= ASR_MAX_WORDS) {
+      let splitAt = buf.length - 1;
+      let best = -Infinity;
+      for (let j = ASR_SPLIT_MIN_INDEX; j <= buf.length - 2; j++) {
+        const p = pauseAfter(buf[j]);
+        if (p >= best) {
+          best = p;
+          splitAt = j;
+        }
+      }
+      chunks.push(buf.slice(0, splitAt + 1).map((k) => words[k]));
+      buf = buf.slice(splitAt + 1);
+    }
+  }
+  if (buf.length > 0) chunks.push(buf.map((k) => words[k]));
+
+  return chunks.map((chunk, index) => {
+    const first = chunk[0];
+    const last = chunk[chunk.length - 1];
+    const nextStart = index + 1 < chunks.length ? chunks[index + 1][0].start : Infinity;
+    const end = Math.max(last.end, Math.min(last.end + 0.15, nextStart - 0.02));
+    const text = chunk.map((w) => w.text).join(" ");
+    return buildSegment(text, first.start, end, index, options);
+  });
 }

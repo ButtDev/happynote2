@@ -3,8 +3,8 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 진행 중인 SPEC 없음(SPEC_001~017 DONE/DROPPED, 다시 열지 않음). 최신 배포 BRAT **1.0.23**.
-- 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini) · 자막 품질 · 구동사 앞 낱말부터(forward → look forward to). 사람이 고르지 않으면 OVERVIEW 로드맵 순서대로 자막 품질 → AI 번역.
+- SPEC_018(자동 자막 쉼 기준 끊기) IMPLEMENTED, ⏳ 9 실기기 대기. 최신 배포 BRAT **1.0.24**.
+- 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini) · 구동사 앞 낱말부터(forward → look forward to). 자막 품질 남은 것: 트랙 선택·um/uh·대소문자 복원(SPEC_018 범위 밖).
 
 ## 열린 질문 (사람에게)
 - Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2(코드 변경 없음). 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 설정 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
@@ -23,3 +23,4 @@
 - AnkiConnect Android: `createDeck`·`createModel` 없음(지원: version·deckNames·modelNames·modelFieldNames·findNotes·canAddNotes·addNote(audio/picture url·data)·storeMediaFile·notesInfo·updateNoteFields·guiBrowse·multi). CORS 헤더 없음 → `requestUrl`로.
 - Anki: `src/services/anki.ts`(obsidian import 없음, 요청 함수 주입, Test 12 + `tests/fixtures/anki/`, 변이용 `EAR_COACH_ANKI_MODULE`), 플러그인 `plugin.anki`(`invoke`), 화면 검사 `expect.anki`(가짜 클라이언트 `window.__ankiCalls`·`__ankiDuplicate`, `anki-<뷰>.png`). AnkiConnect Android는 외부 미디어 url(upload.wikimedia.org)을 못 받음 — 그림도 data(base64)로 보낼 것 → `inlineAudio`로 requestUrl 받아 data(base64). 실기기 AnkiDroid엔 「Default」 덱이 없을 수 있음 → `resolveAnkiTarget`이 저장 전에 확인·안내. 기본 노트 타입 `Basic (and reversed card)`, Front=문장·그림·뜻 / Back=단어·IPA·발음·출처. node strip-types는 생성자 매개변수 속성(`constructor(private x)`)을 못 읽음.
 - 장면 그림(SPEC_017): `src/services/storyboard.ts`(스펙 파싱·칸 계산, Test 13 + `tests/fixtures/storyboard/` 실제 스펙, 변이용 `EAR_COACH_STORYBOARD_MODULE`), 자르기 `src/ui/snapshot.ts`(캔버스, requestUrl 바이트라 오염 없음), `plugin.storyboard(videoId)` 시청 페이지 L3 320×180 → Android innertube L2 160×90. 저장 순서 deckNames→modelNames→modelFieldNames→storeMediaFile→canAddNotes→addNote, Front에 `<img>`. 실제 스토리보드 격자는 모두 정사각(3×3·5×5·10×10) — 열/행 시험엔 비정사각 사례 필요. 화면 검사 합성 시트 `tests/ui/fixtures/storyboard-sheet.png`(esbuild binary 로더 + `tests/ui/png.d.ts`).
+- 자막(SPEC_018): 파서 `src/services/captionPayload.ts` `parseCaptionPayload`(srv3 `<s t>`·json3 `tOffsetMs` → `cue.words`), 구두점 없음+단어 시각 80%↑이면 `mergeTimedWords`(쉼 0.25s·4~18단어). 시험 Test 14 + `tests/fixtures/transcript/`(실제 srv3: TED ASR·수동, Rick 구두점 ASR). 변이용 `EAR_COACH_TRANSCRIPT_MODULE`·`EAR_COACH_TRANSCRIPT_SERVICE_MODULE`. 실제 자막 받기는 Android innertube player(`clientName ANDROID 20.10.38`) baseUrl(이미 `fmt=srv3`).

@@ -25,6 +25,15 @@ export interface RawTranscriptCue {
   start: number;    // Start time in seconds
   duration: number; // Duration in seconds
   text: string;     // Raw caption text
+  words?: RawCueWord[]; // Word-level start times (ASR srv3 <s t> / json3 tOffsetMs), only when >= 2 words
+}
+
+/**
+ * Single word inside an auto-generated (ASR) caption cue with its absolute start time.
+ */
+export interface RawCueWord {
+  start: number; // Absolute start time in seconds
+  text: string;
 }
 
 /**

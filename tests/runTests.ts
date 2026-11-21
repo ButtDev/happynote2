@@ -24,6 +24,8 @@ import type { RawTranscriptCue } from "../src/types/transcript.ts";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer } from "../src/utils/landscapeSplit.ts";
 import * as ankiSrc from "../src/services/anki.ts";
 import * as storyboardSrc from "../src/services/storyboard.ts";
+import * as captionPayloadSrc from "../src/services/captionPayload.ts";
+import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -587,6 +589,61 @@ async function runAllTests() {
   assert.equal(sbMod.storyboardFromWatchHtml("<html>no player</html>"), null, "html without storyboard");
   assert.equal(sbMod.storyboardFromPlayerResponse({ videoDetails: {} }), null, "player response without storyboard");
   log(`  -> PASS: ${watchLevels.length} watch levels, ${frames.cases.length} frame cases, html + player response extraction`);
+  log("");
+
+  // ---------------------------------------------------------------------------
+  log("[Test 14] Caption quality: ASR word timings & pause-based chunks (data-driven, SPEC_018)");
+  const cpMod = process.env.EAR_COACH_TRANSCRIPT_SERVICE_MODULE ? await import(path.resolve(process.env.EAR_COACH_TRANSCRIPT_SERVICE_MODULE)) : captionPayloadSrc;
+  const tpMod = process.env.EAR_COACH_TRANSCRIPT_MODULE ? await import(path.resolve(process.env.EAR_COACH_TRANSCRIPT_MODULE)) : transcriptProcSrc;
+  const trDir = path.resolve("tests/fixtures/transcript");
+  const trCases = JSON.parse(fs.readFileSync(path.join(trDir, "cases.json"), "utf8"));
+  for (const pc of trCases.parser) {
+    const got = cpMod.parseCaptionPayload(pc.payload).map((c: RawTranscriptCue) => ({
+      text: c.text,
+      words: c.words ? c.words.map((w) => [w.start, w.text]) : null,
+    }));
+    assert.deepEqual(got, pc.expect, `parseCaptionPayload: ${pc.name}`);
+  }
+  const trOpts = { speedSpikeWpmThreshold: 180, defaultUnlockStep: 0 as const };
+  const fixtureSummary: string[] = [];
+  for (const fc of trCases.fixtures) {
+    const cues: RawTranscriptCue[] = cpMod.parseCaptionPayload(fs.readFileSync(path.join(trDir, fc.file), "utf8"));
+    const segs = tpMod.mergeCuesIntoSegments(cues, trOpts);
+    if (fc.mode === "timed") {
+      const isBracket = (t: string) => /^\[.*\]$/.test(t) || /^\(.*\)$/.test(t);
+      const src = cues
+        .filter((c) => !isBracket(c.text.trim()))
+        .flatMap((c) => (c.words ?? [{ start: c.start, text: c.text.trim() }]))
+        .filter((w) => w.text && !isBracket(w.text))
+        .sort((a, b) => a.start - b.start)
+        .flatMap((w) => w.text.split(/\s+/).filter(Boolean).map((text) => ({ start: w.start, text })));
+      const wc = segs.map((s: { words: string[] }) => s.words.length);
+      assert.ok(Math.max(...wc) <= fc.maxWords, `${fc.file}: max words ${Math.max(...wc)} > ${fc.maxWords}`);
+      const ratio = wc.filter((n: number) => n >= fc.minWords).length / wc.length;
+      assert.ok(ratio >= fc.minWordsRatio, `${fc.file}: >=${fc.minWords}-word ratio ${ratio.toFixed(2)}`);
+      assert.ok(segs.length >= fc.beforeSegments * fc.minSegmentsFactor, `${fc.file}: ${segs.length} segments < ${fc.beforeSegments}x${fc.minSegmentsFactor}`);
+      const joined = segs.flatMap((s: { words: string[] }) => s.words);
+      assert.deepEqual(joined, src.map((w) => w.text), `${fc.file}: words preserved in order`);
+      let k = 0;
+      for (const s of segs) {
+        assert.ok(Math.abs(s.start - src[k].start) <= 0.01, `${fc.file}: seg ${s.index} start ${s.start} != first word ${src[k].start}`);
+        for (let j = k + 1; j < k + s.words.length; j++) {
+          assert.ok(src[j].start - src[j - 1].start < fc.hardPauseSec + 0.6, `${fc.file}: seg ${s.index} has ${(src[j].start - src[j - 1].start).toFixed(2)}s pause inside`);
+        }
+        k += s.words.length;
+      }
+      fixtureSummary.push(`${fc.file} ${fc.beforeSegments}->${segs.length} cards, max ${Math.max(...wc)}w`);
+    } else if (fc.mode === "punct") {
+      assert.equal(segs.length, fc.segments, `${fc.file}: segment count unchanged`);
+      const ends = segs.filter((s: { text: string }) => /[.?!]["')\]]*$/.test(s.text)).length / segs.length;
+      assert.ok(ends >= fc.punctEndRatio, `${fc.file}: punctuation end ratio ${ends.toFixed(2)}`);
+      fixtureSummary.push(`${fc.file} ${segs.length} sentences`);
+    } else {
+      assert.deepEqual(segs.map((s: { text: string }) => s.text), fc.texts, `${fc.file}: punctuated ASR unchanged`);
+      fixtureSummary.push(`${fc.file} unchanged (${segs.length})`);
+    }
+  }
+  log(`  -> PASS: ${trCases.parser.length} parser cases; ${fixtureSummary.join("; ")}`);
   log("");
 
   log("==============================================================");
