@@ -3,12 +3,12 @@
 ## 대기
 
 ## 끝남
-- SPEC_022 자동 자막 대소문자·구두점 복원(AI 칸) — IMPLEMENTED 2026-11-21, ⏳ 실기기
+- SPEC_022 자동 자막 대소문자·구두점 복원(AI 칸) — DONE 2026-11-21
 - SPEC_021 모바일 AI 번역·분석(Gemini/Groq) — DONE 2026-11-21
 - SPEC_020 자동 자막 글자 다듬기(um/uh·I·첫 글자) — DONE 2026-11-21
 - SPEC_019 구동사 앞 낱말부터 — DONE 2026-11-21
 - SPEC_018 자동 자막 쉼 기준 끊기 — DONE 2026-11-21
-- SPEC_017 장면 그림(스토리보드) — IMPLEMENTED 2026-11-21, ⏳ 실기기
+- SPEC_017 장면 그림(스토리보드) — DONE 2026-11-21
 - SPEC_015 AnkiConnect Android 카드 저장 · SPEC_016 기본 덱 happynote2 (2026-11-21 DONE)
 - SPEC_013 단어 탭 → 사전 창 (DONE 2026-11-21, 발음 Commons ogg)
 - iframe 안 유튜브 overlay 줄이기(SPEC_007·009 DONE)
