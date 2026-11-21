@@ -87,3 +87,4 @@
 {"ts":"2026-11-21T13:51:06.880Z","cmd":"release","spec":"SPEC_024","status":"IMPLEMENTED","evidence":"BRAT 1.0.34 release assets main.js,manifest.json,styles.css"}
 {"ts":"2026-11-21T13:53:17.625Z","cmd":"/spec-run","spec":"SPEC_024","iteration":2,"status":"DONE","evidence":"사람확인 6 OK (1.0.34)"}
 {"ts":"2026-11-21T16:05:37.931Z","cmd":"/night-run","id":"NIGHT-anki-ff","status":"DONE","evidence":"docs/review/anki-fluent-forever.md + SPEC_025~027 DRAFT, regression ok"}
+{"ts":"2026-11-21T18:05:20.213Z","id":"NIGHT-ui-ux","date":"2026-11-22","result":"docs/review/ui-ux.md + img 4장 + SPEC_028 DRAFT, 화면 무변경","verify":"regression ok"}
