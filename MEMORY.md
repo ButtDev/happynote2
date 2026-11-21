@@ -3,14 +3,12 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_021(모바일 AI 번역·분석, Gemini Flash-Lite/Groq) IMPLEMENTED — ⏳ 9 실기기 버튼 대기(사람이 키 발급·입력 필요). 최신 배포 BRAT **1.0.27**.
-- 자막 품질 다음 조각: 트랙 고르기(사람이 자막 트랙 선택, 화면 변경 → 취향 질문 필요).
-- 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini). 자막 품질 남은 것: 트랙 선택·um/uh·대소문자 복원(SPEC_018 범위 밖).
+- SPEC_021(모바일 AI 번역·분석, Gemini Flash-Lite/Groq) IMPLEMENTED — ⏳ 9 실기기 버튼 대기(`SPEC_021 9 OK|NG|메모`). 그 밖의 SPEC은 모두 DONE/DROPPED. 최신 배포 BRAT **1.0.27**.
+- 다음 후보(`memory/backlog.md` 「대기」): 자막 트랙 고르기(화면 방식 질문 필요: 카드 위 메뉴 / 열 때 고르는 창), 고유명사 대문자·구두점 복원(AI 경로로).
 
 ## 열린 질문 (사람에게)
-- SPEC_021 ⏳ 9: 키 넣고 🔌 연결 확인 → 노트 열어 카드 3단계 해석 품질 → OK면 DONE. 실제 AI 응답은 아직 한 번도 못 봄(저장소에 키 없음) — NG면 응답 모양부터 의심.
-- 다음 후보: 자막 트랙 고르기(화면 방식 질문 필요).
-- Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2(코드 변경 없음). 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 설정 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
+- SPEC_021 ⏳ 9: 사람이 Gemini 키 발급·입력 → 🔌 연결 확인 → 노트 열어 카드 3단계 해석 품질 → OK면 DONE 커밋. 실제 AI 응답은 아직 한 번도 못 봄(저장소에 키 없음) — NG면 응답 모양·모델 이름(`gemini-3.5-flash-lite`)부터 의심.
+- Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록(SPEC_017 9 메모 「잘동작함」 → OK 처리).
 
 ## 주의
