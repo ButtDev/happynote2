@@ -437,6 +437,27 @@
      }
     ]
    }
+  },
+  {
+   "name": "503 high demand -> busy",
+   "provider": "openai",
+   "status": 503,
+   "json": {
+    "error": {
+     "code": 503,
+     "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+     "status": "UNAVAILABLE"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "busy"
+   }
   }
  ],
  "runs": [
@@ -556,6 +577,62 @@
     "analyzed": 5,
     "total": 5,
     "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "503,503 then ok -> wait 10000+20000, same batch continues",
+   "segments": 25,
+   "analyzedAt": [],
+   "replies": [
+    503,
+    503,
+    "ok",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     20,
+     5
+    ],
+    "sleeps": [
+     10000,
+     20000,
+     4000
+    ],
+    "analyzed": 25,
+    "total": 25,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "ok then 503 x3 -> stop busy, first batch kept",
+   "segments": 45,
+   "analyzedAt": [],
+   "replies": [
+    "ok",
+    503,
+    503,
+    503
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     20,
+     20
+    ],
+    "sleeps": [
+     4000,
+     10000,
+     20000
+    ],
+    "analyzed": 20,
+    "total": 45,
+    "stoppedBy": "busy",
     "sentAnalyzed": 0
    }
   }

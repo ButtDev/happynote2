@@ -71,3 +71,4 @@
 {"ts":"2026-11-21T03:53:23.101Z","cmd":"/spec-run","spec":"SPEC_020","iteration":1,"status":"DONE","evidence":"사람확인 8 OK (Button pressed), 자동 1~7 회차1 ✅"}
 {"ts":"2026-11-21T04:27:09.333Z","cmd":"/spec-new","spec":"SPEC_021","result":"READY","questions":0}
 {"ts":"2026-11-21T04:31:01.083Z","cmd":"/spec-run","spec":"SPEC_021","iteration":1,"status":"IMPLEMENTED","evidence":"Test 15 2 req+11 resp+5 batching PASS; mutations fail; grep ok; regression ok; 9 ⏳ (no key, no real AI output)"}
+{"ts":"2026-11-21T06:43:42.119Z","id":"ai-busy-retry","spec":"SPEC_021","kind":"간이","what":"AI 502/503/504(high demand)를 busy로 분류, 같은 묶음 10s·20s 기다려 2회 재시도, 연결 확인도 재시도","evidence":"verify.mjs --set regression ok; Test 15 12 response + 7 batching cases; 변이(BUSY_STATUSES 비움) → 503 case 실패","decision":"고른 것 502·503·504 재시도·대기 10s/20s · 이유 Gemini 503 UNAVAILABLE 일시 과부하 · 대안 500도 포함/모델 자동 교체"}

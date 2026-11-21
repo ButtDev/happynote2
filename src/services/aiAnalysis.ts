@@ -27,7 +27,7 @@ export interface AiHttpResponse {
   json: unknown;
 }
 
-export type AiErrorKind = "auth" | "quota" | "format" | "network";
+export type AiErrorKind = "auth" | "quota" | "busy" | "format" | "network";
 
 export interface AiError {
   kind: AiErrorKind;
@@ -54,6 +54,9 @@ export interface AiRunResult {
 export const AI_BATCH_SEGMENTS = 20;
 export const AI_REQUEST_GAP_MS = 4000;
 export const AI_RETRY_WAIT_MS = 30000;
+/** 서버 과부하(502·503·504, "high demand") 때 같은 묶음을 다시 보내기 전 기다림 — 길이만큼 다시 시도 */
+export const AI_BUSY_WAITS_MS = [10000, 20000];
+const BUSY_STATUSES = [502, 503, 504];
 export const AI_PENDING_PREFIX = "(AI 정밀 해석 대기 중";
 
 const TRAPS: ListeningTrapType[] = ["LINKING", "FLAP_T", "WEAK_FORM", "ELISION", "SLANG", "SPEED_SPIKE"];
@@ -220,6 +223,7 @@ export function parseAiResponse(
   const detail = errorMessage(json);
   if (status === 401 || status === 403) return { error: { kind: "auth", message: detail || `HTTP ${status}` } };
   if (status === 429) return { error: { kind: "quota", message: detail || "HTTP 429" } };
+  if (BUSY_STATUSES.includes(status)) return { error: { kind: "busy", message: detail || `HTTP ${status}` } };
   if (status !== 200) return { error: { kind: "network", message: detail || `HTTP ${status}` } };
   const text = responseText(provider, json);
   if (text === null || !text.trim()) return { error: { kind: "format", message: "empty AI response" } };
@@ -236,7 +240,8 @@ export function parseAiResponse(
 
 /**
  * Analyzes pending segments in batches of AI_BATCH_SEGMENTS, writing results into seg.analysis
- * as they arrive. Stops on auth/network errors, on a second quota error, or a second format error.
+ * as they arrive. Stops on auth/network errors, on a second quota error, a second format error,
+ * or when the server is still busy after AI_BUSY_WAITS_MS retries.
  */
 export async function runAiAnalysis(
   segments: TranscriptSegment[],
@@ -252,6 +257,7 @@ export async function runAiAnalysis(
     if (start > 0) await deps.sleep(AI_REQUEST_GAP_MS);
     const req = buildAiRequest(config, buildAnalysisPrompt(deps.title ?? "", batch));
     let result: { items: AiItem[] } | { error: AiError } | null = null;
+    let busyRetries = 0;
     for (let attempt = 0; attempt < 2; attempt++) {
       let res: AiHttpResponse;
       try {
@@ -261,6 +267,11 @@ export async function runAiAnalysis(
       }
       result = parseAiResponse(config.provider, res.status, res.json, batch);
       if ("items" in result) break;
+      if (result.error.kind === "busy" && busyRetries < AI_BUSY_WAITS_MS.length) {
+        await deps.sleep(AI_BUSY_WAITS_MS[busyRetries++]);
+        attempt--;
+        continue;
+      }
       if (result.error.kind === "quota" && attempt === 0) {
         await deps.sleep(AI_RETRY_WAIT_MS);
         continue;
@@ -297,6 +308,7 @@ export const AI_MESSAGES = {
   start: (n: number) => `🤖 AI 번역·분석 시작 (대기 ${n}장)`,
   done: (n: number) => `✅ AI 번역·분석 완료 (${n}장)`,
   quota: (n: number, m: number) => `⏸️ AI 무료 한도에 걸려 멈췄습니다 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 합니다.`,
+  busy: (n: number, m: number) => `⏳ AI 서버가 붐벼서 멈췄습니다 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 합니다.`,
   auth: "❌ AI 키가 거부되었습니다. 설정에서 키를 확인하세요.",
   failed: (msg: string) => `❌ AI 분석 실패: ${msg}`,
 };
@@ -306,13 +318,15 @@ export function aiResultMessage(result: AiRunResult): string {
   if (!err) return AI_MESSAGES.done(result.analyzed);
   if (err.kind === "quota") return AI_MESSAGES.quota(result.analyzed, result.total);
   if (err.kind === "auth") return AI_MESSAGES.auth;
+  if (err.kind === "busy") return AI_MESSAGES.busy(result.analyzed, result.total);
   return AI_MESSAGES.failed(err.message);
 }
 
 /** SPEC_021: 설정 화면 🔌 연결 확인 — 짧은 문장 하나로 요청하고 알림 문구를 돌려줌 */
 export async function testAiConnection(
   config: AiConfig | null,
-  fetch: (req: AiHttpRequest) => Promise<AiHttpResponse>
+  fetch: (req: AiHttpRequest) => Promise<AiHttpResponse>,
+  sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms))
 ): Promise<string> {
   if (!config) return "API 키를 먼저 넣어 주세요.";
   const text = "I'm looking forward to it.";
@@ -321,9 +335,17 @@ export async function testAiConnection(
     wpm: 150, isSpeedSpike: false, isPinned: false, unlockStep: 0,
   } as TranscriptSegment;
   try {
-    const res = await fetch(buildAiRequest(config, buildAnalysisPrompt("connection test", [seg])));
-    const parsed = parseAiResponse(config.provider, res.status, res.json, [seg]);
+    const req = buildAiRequest(config, buildAnalysisPrompt("connection test", [seg]));
+    let res = await fetch(req);
+    let parsed = parseAiResponse(config.provider, res.status, res.json, [seg]);
+    for (const wait of AI_BUSY_WAITS_MS) {
+      if (!("error" in parsed) || parsed.error.kind !== "busy") break;
+      await sleep(wait);
+      res = await fetch(req);
+      parsed = parseAiResponse(config.provider, res.status, res.json, [seg]);
+    }
     if ("error" in parsed) {
+      if (parsed.error.kind === "busy") return `⏳ AI 서버가 붐빕니다 (다시 시도 ${AI_BUSY_WAITS_MS.length}회 실패): ${parsed.error.message}`;
       if (parsed.error.kind === "auth") return AI_MESSAGES.auth;
       if (parsed.error.kind === "quota") return `⏸️ AI 무료 한도에 걸렸습니다: ${parsed.error.message}`;
       return `❌ AI 연결 실패: ${parsed.error.message}`;
