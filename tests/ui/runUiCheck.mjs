@@ -801,6 +801,64 @@ for (const vp of cases.viewports) {
     await page.evaluate(() => [...document.querySelectorAll(".ear-coach-mobile-toolbar button")].find((b) => /^전체/.test(b.textContent ?? ""))?.click());
   }
 
+  // SPEC_029: 세로 받아쓰기 입력 중 — 키보드가 덮든(높이 그대로) 줄이든(480·380) 입력칸·컨트롤이 보이고 세로 배치 유지
+  if (vp.expect?.typing) {
+    const t = vp.expect.typing;
+    const probe = () =>
+      page.evaluate(() => {
+        const r = (s) => {
+          const e = typeof s === "string" ? document.querySelector(s) : s;
+          if (!e) return null;
+          const b = e.getBoundingClientRect();
+          return { top: Math.round(b.top), bottom: Math.round(b.bottom), h: Math.round(b.height), w: Math.round(b.width) };
+        };
+        const c = document.querySelector(".ear-coach-mobile-container");
+        const a = document.activeElement;
+        return {
+          typing: !!c?.classList.contains("is-typing"),
+          focused: a?.tagName === "INPUT",
+          input: a?.tagName === "INPUT" ? r(a) : null,
+          controls: r(".ear-coach-mobile-top-player .ear-coach-player-controls"),
+          video: r(".ear-coach-mobile-top-player .ear-coach-video-box"),
+          list: r(".ear-coach-mobile-list-wrapper"),
+          toolbarShown: (r(".ear-coach-mobile-toolbar")?.h ?? 0) > 0,
+          vh: window.innerHeight,
+        };
+      });
+    await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+    await page.locator('.ear-coach-mobile-list-wrapper .ear-coach-step-btn[data-step="1"]').first().click();
+    await page.waitForTimeout(250);
+    await page.locator(".ear-coach-mobile-list-wrapper .ear-coach-segment-card input").first().focus();
+    await page.waitForTimeout(500);
+    const res = { overlay: await probe() };
+    await page.screenshot({ path: path.join(outDir, `typing-${vp.name}.png`) });
+    const o = res.overlay;
+    if (!o.typing) errors.push(`${vp.name}: typing class missing after focus`);
+    if (!o.input || o.input.bottom > vp.height * t.overlayMaxBottom)
+      errors.push(`${vp.name}: typing overlay input bottom=${o.input?.bottom} > ${Math.round(vp.height * t.overlayMaxBottom)}`);
+    if (o.toolbarShown) errors.push(`${vp.name}: typing toolbar still shown`);
+    for (const h of t.heights) {
+      await page.setViewportSize({ width: vp.width, height: h });
+      await page.waitForTimeout(500);
+      const k = await probe();
+      res[h] = k;
+      await page.screenshot({ path: path.join(outDir, `typing-${vp.name}-${h}.png`) });
+      if (!k.focused || !k.input) errors.push(`${vp.name}: typing h=${h} input lost focus`);
+      else if (k.input.top < 0 || k.input.bottom > h) errors.push(`${vp.name}: typing h=${h} input outside ${k.input.top}..${k.input.bottom}`);
+      if (!k.controls || k.controls.top < 0 || k.controls.bottom > h || k.controls.h <= 0)
+        errors.push(`${vp.name}: typing h=${h} controls hidden ${JSON.stringify(k.controls)}`);
+      if (k.list && k.controls && k.list.top < k.controls.bottom - 1)
+        errors.push(`${vp.name}: typing h=${h} not stacked (list.top=${k.list.top} < controls.bottom=${k.controls.bottom})`);
+    }
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.waitForTimeout(500);
+    res.after = await probe();
+    if (res.after.typing) errors.push(`${vp.name}: typing class stays after blur`);
+    if ((res.after.video?.h ?? 0) < 60) errors.push(`${vp.name}: video not back after blur h=${res.after.video?.h}`);
+    m.typing = res;
+  }
+
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);
   for (const key of ["video", "controls"]) {
     const r = m[key];

@@ -1366,3 +1366,49 @@
 .ear-coach-mobile-list-wrapper .ear-coach-blind-box {
   padding: 6px 10px;
 }
+
+/* --------------------------------------------------------------------------
+   SPEC_029: 세로 받아쓰기 입력 중(is-typing) — 영상 상자·툴바·조절 바를 접고
+   재생 컨트롤 한 줄 + 목록만. 키보드로 높이가 폭보다 작아져 orientation이
+   landscape로 바뀌어도 세로 배치를 유지한다(!important로 가로 규칙을 누름).
+   -------------------------------------------------------------------------- */
+.ear-coach-mobile-container.is-typing {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-top-pane {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-top-player {
+  flex: 0 0 auto !important;
+  container-type: normal !important;
+  border-right: none !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-top-player .ear-coach-player-wrapper,
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-top-player .ear-coach-player-section {
+  flex: 0 0 auto !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-top-player .ear-coach-video-box {
+  flex: 0 0 0px !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  overflow: hidden !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-toolbar,
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-resizer {
+  display: none !important;
+}
+
+.ear-coach-mobile-container.is-typing .ear-coach-mobile-list-wrapper {
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
