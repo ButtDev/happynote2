@@ -1,6 +1,7 @@
 # 백로그
 
 ## 대기
+- [야간] Anki 카드·사전 설계 점검 (사람 요청 2026-11-21: 「anki 덱이 fluent forever를 충분히 잘 따르게 설계된건지, 사전 활용도는 높게 설계됐는지 등등 고민해보고 더 나은 방향 모색」). 할 일: 지금 카드(`src/services/anki.ts` Front/Back·노트 타입·그림·발음)와 사전 창(`src/services/dictionary.ts`·`DictionaryModal.ts`)을 Fluent Forever 원칙(그림·소리 우선, 모국어 번역 지양, 개인 연결, 최소쌍·발음 먼저, 한 카드 한 사실, 문맥 문장 cloze 등)과 대조 → 차이·개선안을 `docs/review/anki-fluent-forever.md`에 정리(근거 `파일:줄`, 실제 카드 예 2~3개). 개선안은 SPEC DRAFT로만 쓰고 구현·콘텐츠 변경·카드 모양 결정은 하지 않음(아침에 사람이 고름).
 
 ## 끝남
 - SPEC_022 자동 자막 대소문자·구두점 복원(AI 칸) — DONE 2026-11-21
