@@ -1,8 +1,8 @@
 ---
 id: SPEC_021
 title: 모바일 AI 번역·분석 — Gemini Flash-Lite / OpenAI 호환(Groq) 묶음 요청
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -38,14 +38,14 @@ OVERVIEW 로드맵 4번. 사람 선택 「추천대로 (Gemini Flash-Lite + Groq
 - 데스크톱 `agy` 경로·사운드 닥터 바꾸기, 모바일 사운드 닥터(1:1 질문), 툴바 버튼 추가, 고유명사·구두점 복원, 유료 모델, 키를 저장소·시험 데이터에 넣기, 하루 한도 계산·표시.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] 요청 만들기: gemini·openai 사례에서 URL·헤더·본문 핵심(키 위치, `responseMimeType`/`response_format`, 모델)이 기대값과 같고 gemini URL에 키가 없음 (`npm test` Test 15) [자동]
-2. [ ] 응답 읽기: gemini·openai 정상, 울타리 ```json, 여러 parts, 401→auth, 429→quota, 500→network, items 없음→format 사례 통과 [자동]
-3. [ ] 항목 검사: 묶음 밖 번호 버림, 잘못된 trap 걸러짐·빈 traps → LINKING, 범위 밖 낱말 번호 버림, 빈 번역 항목 버림 [자동]
-4. [ ] 묶음 실행(가짜 요청 함수): 대기 45장+분석된 5장 → 요청 3번(20·20·5), 분석된 카드는 안 보냄, 요청 사이 잠 4000ms; 429→200이면 30000ms 쉬고 이어감; 429→429면 앞 묶음 결과는 남고 `stoppedBy.kind = "quota"`; 401이면 1번에 멈춤 [자동]
-5. [ ] `aiAnalysis.ts`에 `from "obsidian"`·`child_process`·`fs` import 없음, `main.ts`의 AI 요청은 `requestUrl`만 (grep) [자동]
-6. [ ] 시험 데이터·저장소에 실제 키 모양(`AIza[0-9A-Za-z_-]{30,}`, `gsk_[0-9A-Za-z]{20,}`) 없음 (grep) [자동]
-7. [ ] 변이: 묶음 밖 번호 검사를 끈 사본, quota 재시도를 끈 사본으로 각각 Test 15 실패 [자동]
-8. [ ] `verify.mjs --set regression` ok(빌드·시험·화면 검사, 데스크톱 경로 그대로) [자동]
+1. [x] 요청 만들기: gemini·openai 사례에서 URL·헤더·본문 핵심(키 위치, `responseMimeType`/`response_format`, 모델)이 기대값과 같고 gemini URL에 키가 없음 (`npm test` Test 15) [자동]
+2. [x] 응답 읽기: gemini·openai 정상, 울타리 ```json, 여러 parts, 401→auth, 429→quota, 500→network, items 없음→format 사례 통과 [자동]
+3. [x] 항목 검사: 묶음 밖 번호 버림, 잘못된 trap 걸러짐·빈 traps → LINKING, 범위 밖 낱말 번호 버림, 빈 번역 항목 버림 [자동]
+4. [x] 묶음 실행(가짜 요청 함수): 대기 45장+분석된 5장 → 요청 3번(20·20·5), 분석된 카드는 안 보냄, 요청 사이 잠 4000ms; 429→200이면 30000ms 쉬고 이어감; 429→429면 앞 묶음 결과는 남고 `stoppedBy.kind = "quota"`; 401이면 1번에 멈춤 [자동]
+5. [x] `aiAnalysis.ts`에 `from "obsidian"`·`child_process`·`fs` import 없음, `main.ts`의 AI 요청은 `requestUrl`만 (grep) [자동]
+6. [x] 시험 데이터·저장소에 실제 키 모양(`AIza[0-9A-Za-z_-]{30,}`, `gsk_[0-9A-Za-z]{20,}`) 없음 (grep) [자동]
+7. [x] 변이: 묶음 밖 번호 검사를 끈 사본, quota 재시도를 끈 사본으로 각각 Test 15 실패 [자동]
+8. [x] `verify.mjs --set regression` ok(빌드·시험·화면 검사, 데스크톱 경로 그대로) [자동]
 9. [ ] Android 실기기: 설정 「🤖 AI 번역·분석」에 Gemini 키를 넣고 🔌 연결 확인 → 자동 자막 영상 노트를 열어 잠시 뒤 카드 3단계에 한국어 해석·연음 설명이 뜨는지, 학습에 쓸 만한지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -65,5 +65,7 @@ OVERVIEW 로드맵 4번. 사람 선택 「추천대로 (Gemini Flash-Lite + Groq
 - Gemini는 네이티브 `responseSchema`, Groq는 `json_object` + 검사: Gemini OpenAI 호환 층은 스키마를 무시한다는 보고, gpt-oss의 json_schema 무시 보고가 있어서.
 - 모델 기본값 `gemini-3.5-flash-lite`·`openai/gpt-oss-120b`(2026-11 문서 목록): 설정에서 바꿀 수 있음.
 - 설정은 볼트 동기화로 기기 간에 같이 갈 수 있음 — 키는 `data.json`(플러그인 설정)에만, 저장소엔 없음.
+- (실행 중 추가) 알림 문구(`AI_MESSAGES`·`aiResultMessage`)와 연결 확인(`testAiConnection`)을 `aiAnalysis.ts`에 둠 — `main.ts` 900줄 한도 시험(918줄)에 걸려서. `main.ts`는 얇게 부르기만. 대안: 새 파일 — 파일 목록이 늘어서 안 씀.
 
 ## 실행 기록
+- 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 15 `2 request` 사례(gemini URL·`x-goog-api-key`·responseMimeType·responseSchema, openai `/chat/completions`·Bearer·json_object, URL에 키 없음) · 2 ✅ 같은 Test 15 `11 response` 사례(정상 2·울타리·parts 여럿·401/403 auth·429 quota·500 network·items 없음/JSON 아님 format) · 3 ✅ 같은 Test 15 sanitize 사례(묶음 밖 99 버림·BOGUS 걸러짐·NOPE→LINKING·낱말 번호 [0,4,5,-1,1.5]→[0,4]·빈 번역 버림) · 4 ✅ 같은 Test 15 `5 batching` 사례(20/20/5·잠 4000·429→30000 뒤 이어감·429×2 멈춤 앞 묶음 남음·401 즉시 멈춤·형식 오류 1회 재시도) · 5 ✅ grep: `aiAnalysis.ts`에 obsidian·fs·child_process import 없음, `main.ts` AI 요청은 `requestUrl`(main.ts:58) · 6 ✅ grep: git 파일에 `AIza…`·`gsk_…` 키 모양 없음 · 7 ✅ 변이: 묶음 밖 번호 허용 사본 → `parseAiResponse sanitize … items` 실패, quota 재시도 끈 사본 → `runAiAnalysis 429 then ok … batch sizes` 실패 · 8 ✅ `verify.mjs --set regression --json` ok(harness·build·test·ui) · 9 ⏳ 실기기(키가 없어 실제 AI 응답·번역 예는 이번에 못 받음 — 실기기 확인에서 봄)

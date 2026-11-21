@@ -1,0 +1,563 @@
+{
+ "_about": "SPEC_021: mobile AI (Gemini generateContent / OpenAI-compatible). Response bodies follow the documented API shapes (synthetic: no API key in repo). Keys here are fake placeholders.",
+ "requests": [
+  {
+   "name": "gemini",
+   "config": {
+    "provider": "gemini",
+    "apiKey": "TEST-KEY-G",
+    "model": "gemini-3.5-flash-lite"
+   },
+   "expect": {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+    "headers": {
+     "x-goog-api-key": "TEST-KEY-G",
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "generationConfig.responseMimeType": "application/json",
+     "generationConfig.temperature": 0.2,
+     "generationConfig.responseSchema.type": "OBJECT",
+     "contents.0.parts.0.text": "PROMPT"
+    },
+    "urlMustNotContain": "TEST-KEY-G"
+   }
+  },
+  {
+   "name": "openai groq trailing slash",
+   "config": {
+    "provider": "openai",
+    "apiKey": "TEST-KEY-O",
+    "model": "openai/gpt-oss-120b",
+    "baseUrl": "https://api.groq.com/openai/v1/"
+   },
+   "expect": {
+    "url": "https://api.groq.com/openai/v1/chat/completions",
+    "headers": {
+     "Authorization": "Bearer TEST-KEY-O"
+    },
+    "body": {
+     "model": "openai/gpt-oss-120b",
+     "response_format.type": "json_object",
+     "temperature": 0.2,
+     "messages.1.content": "PROMPT",
+     "messages.0.role": "system"
+    },
+    "urlMustNotContain": "TEST-KEY-O"
+   }
+  }
+ ],
+ "responses": [
+  {
+   "name": "gemini ok",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "role": "model",
+       "parts": [
+        {
+         "text": "{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}"
+        }
+       ]
+      },
+      "finishReason": "STOP"
+     }
+    ],
+    "usageMetadata": {
+     "promptTokenCount": 10
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
+  },
+  {
+   "name": "openai ok",
+   "provider": "openai",
+   "status": 200,
+   "json": {
+    "id": "chatcmpl-x",
+    "object": "chat.completion",
+    "choices": [
+     {
+      "index": 0,
+      "message": {
+       "role": "assistant",
+       "content": "{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}"
+      },
+      "finish_reason": "stop"
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
+  },
+  {
+   "name": "openai fenced json",
+   "provider": "openai",
+   "status": 200,
+   "json": {
+    "id": "chatcmpl-x",
+    "object": "chat.completion",
+    "choices": [
+     {
+      "index": 0,
+      "message": {
+       "role": "assistant",
+       "content": "```json\n{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}\n```"
+      },
+      "finish_reason": "stop"
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
+  },
+  {
+   "name": "gemini multiple parts",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "parts": [
+        {
+         "text": "{\"summaryKr\": \"요약\", \"keyListeningPoints\""
+        },
+        {
+         "text": ": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}"
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
+  },
+  {
+   "name": "401 auth",
+   "provider": "gemini",
+   "status": 401,
+   "json": {
+    "error": {
+     "code": 401,
+     "message": "API key not valid"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "auth"
+   }
+  },
+  {
+   "name": "403 auth",
+   "provider": "openai",
+   "status": 403,
+   "json": {
+    "error": {
+     "message": "forbidden"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "auth"
+   }
+  },
+  {
+   "name": "429 quota",
+   "provider": "gemini",
+   "status": 429,
+   "json": {
+    "error": {
+     "code": 429,
+     "message": "Resource has been exhausted",
+     "status": "RESOURCE_EXHAUSTED"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "quota"
+   }
+  },
+  {
+   "name": "500 network",
+   "provider": "openai",
+   "status": 500,
+   "json": null,
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "network"
+   }
+  },
+  {
+   "name": "no items -> format",
+   "provider": "openai",
+   "status": 200,
+   "json": {
+    "id": "chatcmpl-x",
+    "object": "chat.completion",
+    "choices": [
+     {
+      "index": 0,
+      "message": {
+       "role": "assistant",
+       "content": "{\"summaryKr\":\"x\"}"
+      },
+      "finish_reason": "stop"
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "name": "not json -> format",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "role": "model",
+       "parts": [
+        {
+         "text": "Sorry, I cannot"
+        }
+       ]
+      },
+      "finishReason": "STOP"
+     }
+    ],
+    "usageMetadata": {
+     "promptTokenCount": 10
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "name": "sanitize: out-of-batch index, bad traps, out-of-range word idx, empty translation",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "role": "model",
+       "parts": [
+        {
+         "text": "{\"summaryKr\": \"\", \"keyListeningPoints\": [], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"BOGUS\", \"LINKING\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [0, 4, 5, -1, 1.5], \"dictationBlankIndices\": [9], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}, {\"segmentIndex\": 99, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"묶음 밖\"}, {\"segmentIndex\": 8, \"traps\": [\"NOPE\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"  \"}, {\"segmentIndex\": 9, \"traps\": [\"NOPE\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"그거 집어 들어.\"}]}"
+        }
+       ]
+      },
+      "finishReason": "STOP"
+     }
+    ],
+    "usageMetadata": {
+     "promptTokenCount": 10
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    },
+    {
+     "index": 8,
+     "text": "showed up late"
+    },
+    {
+     "index": 9,
+     "text": "pick it up"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING"
+      ],
+      "skeletonWordIndices": [
+       0,
+       4
+      ],
+      "dictationBlankIndices": [],
+      "translationKr": "정말 기대돼요."
+     },
+     {
+      "segmentIndex": 9,
+      "traps": [
+       "LINKING"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2
+      ],
+      "dictationBlankIndices": [],
+      "translationKr": "그거 집어 들어."
+     }
+    ]
+   }
+  }
+ ],
+ "runs": [
+  {
+   "name": "45 pending + 5 analyzed -> 20/20/5",
+   "segments": 50,
+   "analyzedAt": [
+    0,
+    10,
+    20,
+    30,
+    40
+   ],
+   "replies": [
+    "ok",
+    "ok",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     5
+    ],
+    "sleeps": [
+     4000,
+     4000
+    ],
+    "analyzed": 45,
+    "total": 45,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "429 then ok -> wait 30000 and continue",
+   "segments": 25,
+   "analyzedAt": [],
+   "replies": [
+    429,
+    "ok",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     5
+    ],
+    "sleeps": [
+     30000,
+     4000
+    ],
+    "analyzed": 25,
+    "total": 25,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "ok then 429,429 -> stop, first batch kept",
+   "segments": 45,
+   "analyzedAt": [],
+   "replies": [
+    "ok",
+    429,
+    429
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     20
+    ],
+    "sleeps": [
+     4000,
+     30000
+    ],
+    "analyzed": 20,
+    "total": 45,
+    "stoppedBy": "quota",
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "401 -> stop at once",
+   "segments": 30,
+   "analyzedAt": [],
+   "replies": [
+    401
+   ],
+   "expect": {
+    "batchSizes": [
+     20
+    ],
+    "sleeps": [],
+    "analyzed": 0,
+    "total": 30,
+    "stoppedBy": "auth",
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "bad json then ok -> retry same batch",
+   "segments": 5,
+   "analyzedAt": [],
+   "replies": [
+    "bad",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     5,
+     5
+    ],
+    "sleeps": [],
+    "analyzed": 5,
+    "total": 5,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  }
+ ]
+}

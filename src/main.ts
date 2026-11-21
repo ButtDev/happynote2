@@ -16,6 +16,7 @@ import { DictionaryApiDevProvider, DictionaryProvider } from "./services/diction
 import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker, migrateAnkiDeck } from "./services/anki";
 import { StoryboardInfo, storyboardFromPlayerResponse, storyboardFromWatchHtml } from "./services/storyboard";
 import { AgyCliService } from "./services/AgyCliService";
+import { AI_MESSAGES, AiConfig, AiHttpRequest, AiHttpResponse, aiResultMessage, needsAiAnalysis, runAiAnalysis, testAiConnection } from "./services/aiAnalysis";
 import { NoteGenerator } from "./services/NoteGenerator";
 import { WeaknessTracker } from "./services/WeaknessTracker";
 import { EarCoachView, VIEW_TYPE_EAR_COACH } from "./ui/EarCoachView";
@@ -52,6 +53,18 @@ export default class EarCoachPlugin extends Plugin {
     }
     return { status: r.status, json };
   });
+  /** SPEC_021: 모바일 AI 요청 (requestUrl) */
+  public aiFetch = async (req: AiHttpRequest): Promise<AiHttpResponse> => {
+    const r = await requestUrl({ url: req.url, method: req.method, headers: req.headers, body: req.body, throw: false });
+    let json: unknown = null;
+    try {
+      json = r.json;
+    } catch {
+      json = null;
+    }
+    return { status: r.status, json };
+  };
+  private aiRunning = new Set<string>();
   /** SPEC_015: 발음 파일 바이트(Anki addNote data용) */
   public fetchBytes = async (url: string): Promise<ArrayBuffer> => {
     const r = await requestUrl({ url, throw: false });
@@ -186,6 +199,31 @@ export default class EarCoachPlugin extends Plugin {
         if (!activeFile) return false;
         if (!checking) {
           void this.openEarCoachForNoteFile(activeFile);
+        }
+        return true;
+      },
+    });
+
+    this.addCommand({
+      id: "ear-coach-mobile-ai-continue",
+      name: "현재 노트 AI 번역·분석 이어서 하기 (모바일)",
+      checkCallback: (checking: boolean) => {
+        if (!isMobileApp()) return false;
+        const activeFile = this.getActiveEarCoachFile();
+        if (!activeFile) return false;
+        if (!checking) {
+          void (async () => {
+            const session = await this.loadOrRecoverSession(activeFile);
+            if (!session) {
+              new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없습니다.");
+              return;
+            }
+            if (!this.getAiConfig()) {
+              new Notice("설정 → 🤖 AI 번역·분석에 API 키를 넣어 주세요.");
+              return;
+            }
+            await this.runMobileAiEnrichment(session, activeFile);
+          })();
         }
         return true;
       },
@@ -778,6 +816,58 @@ export default class EarCoachPlugin extends Plugin {
     workspace.revealLeaf(leaf);
     if (leaf.view instanceof EarCoachView) {
       await leaf.view.loadSession(session, noteFile, focusTimestampSec);
+    }
+
+    // SPEC_021: 모바일 — 해석이 없는 카드를 AI로 채움(키가 있을 때만, 백그라운드)
+    if (isMobileApp() && this.getAiConfig() && session.segments.some(needsAiAnalysis)) {
+      void this.runMobileAiEnrichment(session, noteFile);
+    }
+  }
+
+  /** SPEC_021: 설정에서 지금 쓸 AI 설정. 키가 없으면 null */
+  public getAiConfig(): AiConfig | null {
+    const st = this.settings;
+    if (st.aiProvider === "openai") {
+      if (!st.openaiApiKey) return null;
+      return { provider: "openai", apiKey: st.openaiApiKey, model: st.openaiModel, baseUrl: st.openaiBaseUrl };
+    }
+    if (!st.geminiApiKey) return null;
+    return { provider: "gemini", apiKey: st.geminiApiKey, model: st.geminiModel };
+  }
+
+  /** SPEC_021: 설정 화면 🔌 연결 확인 */
+  public testAiConnection(): Promise<string> {
+    return testAiConnection(this.getAiConfig(), this.aiFetch);
+  }
+
+  /** SPEC_021: 모바일 AI 번역·분석 (대기 카드만, 20장씩, 묶음마다 저장·다시 그림) */
+  public async runMobileAiEnrichment(session: ListeningSessionData, noteFile: TFile | null): Promise<void> {
+    const config = this.getAiConfig();
+    if (!config || this.aiRunning.has(session.videoId)) return;
+    const pending = session.segments.filter(needsAiAnalysis).length;
+    if (pending === 0) return;
+    this.aiRunning.add(session.videoId);
+    new Notice(AI_MESSAGES.start(pending));
+    const refresh = () => {
+      for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_EAR_COACH)) {
+        if (leaf.view instanceof EarCoachView) leaf.view.refreshSegments();
+      }
+    };
+    try {
+      const result = await runAiAnalysis(session.segments, config, {
+        fetch: this.aiFetch,
+        sleep: (ms) => new Promise((resolve) => window.setTimeout(resolve, ms)),
+        title: session.title,
+        onBatch: async () => {
+          if (noteFile) await this.noteGenerator.saveSessionToNote(session, noteFile);
+          refresh();
+        },
+      });
+      new Notice(aiResultMessage(result), result.stoppedBy ? 10000 : 5000);
+    } catch (err) {
+      new Notice(AI_MESSAGES.failed(err instanceof Error ? err.message : String(err)), 10000);
+    } finally {
+      this.aiRunning.delete(session.videoId);
     }
   }
 

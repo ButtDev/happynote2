@@ -695,6 +695,11 @@ export class EarCoachView extends ItemView {
     return actionGroup;
   }
 
+  /** SPEC_021: 바깥(AI 분석)에서 카드 내용을 다시 그릴 때 */
+  public refreshSegments(): void {
+    this.updateVirtualListSegments();
+  }
+
   private updateVirtualListSegments(): void {
     if (!this.virtualList || !this.session) return;
     const filtered = this.session.segments.filter((seg) => {

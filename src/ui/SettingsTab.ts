@@ -43,6 +43,7 @@ export class EarCoachSettingTab extends PluginSettingTab {
       this.displayMobileGuideBanner(containerEl);
       this.displayCommonSettings(containerEl);
       this.displayAnkiSettings(containerEl);
+      this.displayMobileAiSettings(containerEl);
     } else {
       containerEl.createEl("h2", {
         text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
@@ -207,6 +208,98 @@ export class EarCoachSettingTab extends PluginSettingTab {
   }
 
   /** SPEC_015: AnkiConnect Android — 덱·노트 타입·필드 대응·태그 */
+  /** SPEC_021: 모바일 AI 번역·분석 (Gemini / OpenAI 호환) */
+  private displayMobileAiSettings(containerEl: HTMLElement): void {
+    containerEl.createEl("h3", { text: "🤖 AI 번역·분석" });
+    const st = this.plugin.settings;
+    const save = async () => this.plugin.saveSettings();
+    const password = (input: HTMLInputElement) => {
+      input.type = "password";
+      input.autocomplete = "off";
+    };
+
+    new Setting(containerEl)
+      .setName("제공자")
+      .setDesc("노트를 열면 아직 해석이 없는 카드를 20장씩 묶어 자동으로 번역·분석합니다. 무료 키로 충분합니다.")
+      .addDropdown((d) =>
+        d
+          .addOption("gemini", "Gemini (Google AI Studio)")
+          .addOption("openai", "OpenAI 호환 (Groq 등)")
+          .setValue(st.aiProvider)
+          .onChange(async (v) => {
+            st.aiProvider = v === "openai" ? "openai" : "gemini";
+            await save();
+            this.display();
+          })
+      );
+
+    if (st.aiProvider === "gemini") {
+      new Setting(containerEl)
+        .setName("Gemini API 키")
+        .setDesc("aistudio.google.com/apikey 에서 Google 로그인 후 「API 키 만들기」 (카드 등록 없음)")
+        .addText((t) => {
+          password(t.inputEl);
+          t.setPlaceholder("AIza...").setValue(st.geminiApiKey).onChange(async (v) => {
+            st.geminiApiKey = v.trim();
+            await save();
+          });
+        });
+      new Setting(containerEl)
+        .setName("Gemini 모델")
+        .setDesc("기본 gemini-3.5-flash-lite (무료 하루 약 500회)")
+        .addText((t) =>
+          t.setPlaceholder("gemini-3.5-flash-lite").setValue(st.geminiModel).onChange(async (v) => {
+            st.geminiModel = v.trim() || "gemini-3.5-flash-lite";
+            await save();
+          })
+        );
+    } else {
+      new Setting(containerEl)
+        .setName("API 주소")
+        .setDesc("기본 Groq: https://api.groq.com/openai/v1")
+        .addText((t) =>
+          t.setPlaceholder("https://api.groq.com/openai/v1").setValue(st.openaiBaseUrl).onChange(async (v) => {
+            st.openaiBaseUrl = v.trim() || "https://api.groq.com/openai/v1";
+            await save();
+          })
+        );
+      new Setting(containerEl)
+        .setName("API 키")
+        .setDesc("Groq: console.groq.com/keys 에서 발급 (카드 등록 없음)")
+        .addText((t) => {
+          password(t.inputEl);
+          t.setPlaceholder("gsk_...").setValue(st.openaiApiKey).onChange(async (v) => {
+            st.openaiApiKey = v.trim();
+            await save();
+          });
+        });
+      new Setting(containerEl)
+        .setName("모델")
+        .setDesc("기본 openai/gpt-oss-120b")
+        .addText((t) =>
+          t.setPlaceholder("openai/gpt-oss-120b").setValue(st.openaiModel).onChange(async (v) => {
+            st.openaiModel = v.trim() || "openai/gpt-oss-120b";
+            await save();
+          })
+        );
+    }
+
+    new Setting(containerEl)
+      .setName("연결 확인")
+      .setDesc("짧은 문장 하나로 키와 모델을 시험합니다.")
+      .addButton((btn) =>
+        btn.setButtonText("🔌 연결 확인").onClick(async () => {
+          btn.setDisabled(true);
+          try {
+            const msg = await this.plugin.testAiConnection();
+            new Notice(msg, 8000);
+          } finally {
+            btn.setDisabled(false);
+          }
+        })
+      );
+  }
+
   private displayAnkiSettings(containerEl: HTMLElement): void {
     containerEl.createEl("h3", { text: "🗂️ Anki 카드 저장 (AnkiConnect Android)" });
     const st = this.plugin.settings;

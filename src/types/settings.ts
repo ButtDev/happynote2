@@ -1,5 +1,6 @@
 import type { UnlockStep } from "./transcript";
 import type { AnkiRole } from "../services/anki";
+import type { AiProvider } from "../services/aiAnalysis";
 
 /**
  * User-configurable settings for the Obsidian Ear-Coach plugin.
@@ -26,6 +27,13 @@ export interface EarCoachSettings {
   ankiNoteType: string;
   ankiFieldMap: Record<AnkiRole, string>;
   ankiTags: string;
+  /** SPEC_021: 모바일 AI 번역·분석 */
+  aiProvider: AiProvider;
+  geminiApiKey: string;
+  geminiModel: string;
+  openaiBaseUrl: string;
+  openaiApiKey: string;
+  openaiModel: string;
 }
 
 export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
@@ -56,4 +64,10 @@ export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
     source: "Back",
   },
   ankiTags: "ear-coach",
+  aiProvider: "gemini",
+  geminiApiKey: "",
+  geminiModel: "gemini-3.5-flash-lite",
+  openaiBaseUrl: "https://api.groq.com/openai/v1",
+  openaiApiKey: "",
+  openaiModel: "openai/gpt-oss-120b",
 };

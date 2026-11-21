@@ -70,3 +70,4 @@
 {"ts":"2026-11-21T03:46:02.288Z","cmd":"/spec-run","spec":"SPEC_020","iteration":1,"status":"IMPLEMENTED","evidence":"Test 14 9 tidy + ted-asr fillers 38->0, 312 cards max 18w; mutations fail; regression ok; 8 ⏳"}
 {"ts":"2026-11-21T03:53:23.101Z","cmd":"/spec-run","spec":"SPEC_020","iteration":1,"status":"DONE","evidence":"사람확인 8 OK (Button pressed), 자동 1~7 회차1 ✅"}
 {"ts":"2026-11-21T04:27:09.333Z","cmd":"/spec-new","spec":"SPEC_021","result":"READY","questions":0}
+{"ts":"2026-11-21T04:31:01.083Z","cmd":"/spec-run","spec":"SPEC_021","iteration":1,"status":"IMPLEMENTED","evidence":"Test 15 2 req+11 resp+5 batching PASS; mutations fail; grep ok; regression ok; 9 ⏳ (no key, no real AI output)"}

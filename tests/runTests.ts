@@ -26,6 +26,7 @@ import * as ankiSrc from "../src/services/anki.ts";
 import * as storyboardSrc from "../src/services/storyboard.ts";
 import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
+import * as aiSrc from "../src/services/aiAnalysis.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -667,6 +668,81 @@ async function runAllTests() {
     }
   }
   log(`  -> PASS: ${trCases.parser.length} parser cases; ${trCases.tidy.length} tidy cases; ${fixtureSummary.join("; ")}`);
+  log("");
+
+  log("[Test 15] Mobile AI translation: requests, responses, batching (data-driven, SPEC_021)");
+  const aiMod = process.env.EAR_COACH_AI_MODULE ? await import(path.resolve(process.env.EAR_COACH_AI_MODULE)) : aiSrc;
+  const aiCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/ai/cases.json"), "utf8"));
+  const dig = (obj: unknown, key: string): unknown =>
+    key.split(".").reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string, unknown>)[k]), obj);
+  const mkSeg = (index: number, text: string, analyzed = false) => {
+    const words = text.split(/\s+/).filter(Boolean);
+    const seg = { id: `s${index}`, index, start: index, end: index + 1, duration: 1, text, words, wpm: 150, isSpeedSpike: false, isPinned: false, unlockStep: 0 as const } as any;
+    seg.analysis = transcriptProcSrc.computeFallbackAnalysis(seg);
+    if (analyzed) seg.analysis = { ...seg.analysis, translationKr: `이미 분석 ${index}` };
+    return seg;
+  };
+  for (const rc of aiCases.requests) {
+    const req = aiMod.buildAiRequest(rc.config, "PROMPT");
+    assert.equal(req.url, rc.expect.url, `buildAiRequest ${rc.name}: url`);
+    assert.equal(req.method, "POST", `buildAiRequest ${rc.name}: method`);
+    assert.ok(!req.url.includes(rc.expect.urlMustNotContain), `buildAiRequest ${rc.name}: key must not be in URL`);
+    for (const [k, v] of Object.entries(rc.expect.headers)) assert.equal(req.headers[k], v, `buildAiRequest ${rc.name}: header ${k}`);
+    const body = JSON.parse(req.body);
+    for (const [k, v] of Object.entries(rc.expect.body)) assert.deepEqual(dig(body, k), v, `buildAiRequest ${rc.name}: body ${k}`);
+  }
+  const pickItem = (it: Record<string, unknown>) => ({
+    segmentIndex: it.segmentIndex, traps: it.traps, skeletonWordIndices: it.skeletonWordIndices,
+    dictationBlankIndices: it.dictationBlankIndices, translationKr: it.translationKr,
+  });
+  for (const pc of aiCases.responses) {
+    const segs = pc.segments.map((x: { index: number; text: string }) => mkSeg(x.index, x.text));
+    const got = aiMod.parseAiResponse(pc.provider, pc.status, pc.json, segs);
+    if (pc.expect.error) {
+      assert.ok("error" in got, `parseAiResponse ${pc.name}: expected error ${pc.expect.error}`);
+      assert.equal(got.error.kind, pc.expect.error, `parseAiResponse ${pc.name}: error kind`);
+    } else {
+      assert.ok("items" in got, `parseAiResponse ${pc.name}: ${JSON.stringify((got as any).error)}`);
+      assert.deepEqual(got.items.map(pickItem), pc.expect.items, `parseAiResponse ${pc.name}: items`);
+    }
+  }
+  const okReply = (req: { body: string }) => {
+    const prompt = JSON.parse(req.body).contents[0].parts[0].text as string;
+    const sent = JSON.parse(prompt.split("Segments JSON:\n")[1]) as Array<{ index: number; text: string }>;
+    const items = sent.map((x) => ({ segmentIndex: x.index, traps: ["LINKING"], phoneticKr: "p", trapExplanation: "e", skeletonWordIndices: [0], dictationBlankIndices: [1], rhythmGuide: x.text, translationKr: `번역 ${x.index}` }));
+    return { status: 200, json: { candidates: [{ content: { parts: [{ text: JSON.stringify({ summaryKr: "", keyListeningPoints: [], items }) }] } }] } };
+  };
+  for (const run of aiCases.runs) {
+    const segs = Array.from({ length: run.segments }, (_, i) => mkSeg(i, `word one two three ${i}`, run.analyzedAt.includes(i)));
+    const batchSizes: number[] = [];
+    const sleeps: number[] = [];
+    let sentAnalyzed = 0;
+    let call = 0;
+    const result = await aiMod.runAiAnalysis(segs, { provider: "gemini", apiKey: "TEST", model: "m" }, {
+      title: "t",
+      sleep: async (ms: number) => { sleeps.push(ms); },
+      fetch: async (req: { body: string }) => {
+        const prompt = JSON.parse(req.body).contents[0].parts[0].text as string;
+        const sent = JSON.parse(prompt.split("Segments JSON:\n")[1]) as Array<{ index: number }>;
+        batchSizes.push(sent.length);
+        sentAnalyzed += sent.filter((x) => run.analyzedAt.includes(x.index)).length;
+        const reply = run.replies[call++];
+        if (reply === "ok") return okReply(req);
+        if (reply === "bad") return { status: 200, json: { candidates: [{ content: { parts: [{ text: "not json" }] } }] } };
+        return { status: reply, json: { error: { message: `HTTP ${reply}` } } };
+      },
+    });
+    assert.deepEqual(batchSizes, run.expect.batchSizes, `runAiAnalysis ${run.name}: batch sizes`);
+    assert.deepEqual(sleeps, run.expect.sleeps, `runAiAnalysis ${run.name}: sleeps`);
+    assert.equal(result.analyzed, run.expect.analyzed, `runAiAnalysis ${run.name}: analyzed`);
+    assert.equal(result.total, run.expect.total, `runAiAnalysis ${run.name}: total`);
+    assert.equal(result.stoppedBy?.kind ?? null, run.expect.stoppedBy, `runAiAnalysis ${run.name}: stoppedBy`);
+    assert.equal(sentAnalyzed, run.expect.sentAnalyzed, `runAiAnalysis ${run.name}: already-analyzed segments sent`);
+    const filled = segs.filter((sg: any) => /^번역 \d+$/.test(sg.analysis.translationKr)).length;
+    assert.equal(filled, run.expect.analyzed, `runAiAnalysis ${run.name}: analysis written into segments`);
+    for (const i of run.analyzedAt) assert.equal(segs[i].analysis.translationKr, `이미 분석 ${i}`, `runAiAnalysis ${run.name}: analyzed seg ${i} untouched`);
+  }
+  log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching cases`);
   log("");
 
   log("==============================================================");
