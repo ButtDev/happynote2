@@ -1,7 +1,7 @@
 ---
 id: SPEC_023
 title: 공통 컨트롤 반복 버튼 — 지금 재생 위치 기준 켜기·끄기 + 반복 모드(무한/N번씩 다음 문장) + 카드 목록 자동 따라가기
-status: IMPLEMENTED
+status: DONE
 iterations: 2
 max_iterations: 3
 depends_on: []
@@ -60,7 +60,7 @@ depends_on: []
 8. [x] 데스크톱 글자·동작은 위 정의대로(`loopButtonText` 데스크톱 사례), 설정 3개 기본값 `src/types/settings.ts`에 있음 [자동]
 9. [x] `verify.mjs --set regression` ok, `main.ts` 900줄 한도 통과 [자동]
 11. [x] (회차 2, 사람 메모) 반복 중 따라가기: 재생 시각이 반복 문장 끝을 넘어 다음 문장에 들어가도 하이라이트·스크롤은 반복 문장에 머묾(`followTargetIndex`, Test 16 `followTarget` 4사례 + 화면 검사 `follow.loopFollow`), 반복을 끄면 다음 문장으로 따라감 [자동]
-10. [ ] Android 실기기: BRAT 새 버전에서 영상을 재생하다 반복 버튼을 눌러 지금 문장이 반복되는지, 다시 눌러 「×3」에서 3번 듣고 다음 문장으로 넘어가는지, 재생 중 카드 목록이 지금 문장을 따라오는지(⇅로 끄면 멈추는지) 보고 버튼 [수동]
+10. [x] Android 실기기: BRAT 새 버전에서 영상을 재생하다 반복 버튼을 눌러 지금 문장이 반복되는지, 다시 눌러 「×3」에서 3번 듣고 다음 문장으로 넘어가는지, 재생 중 카드 목록이 지금 문장을 따라오는지(⇅로 끄면 멈추는지) 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 - 1~3, 8: `verify.mjs --set regression`의 `test`(Test 16 출력).
@@ -86,3 +86,4 @@ depends_on: []
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 16 「3 cycle + 8 text」 · 2 ✅ 같은 시험 11 tick 사례(off·끝 전·pad 0.35·one 무한·count 1/2번째 repeat·3번째 advance·gap resumeAtMs 2500·쉼 중 none·쉼 끝 repeat/advance) · 3 ✅ 4 follow 사례 · 4 ✅ 변이 3개 각각 실패: count 비교 제거 → 「decideLoopTick count third end advances」, 쉼 무시 → 「gap starts at end」, follow 늘 true → 「shouldAutoFollow disabled」 · 5 ✅ 화면 검사 loopCycle 세로·가로: 대상 2번 카드, `🔂 ∞`[2] → `🔂 ×3`[2] → `🔁 OFF`[] · 6 ✅ follow 세로: aria-pressed true, scrollTop 0→3560, 마지막 카드 보임, 끈 뒤 false·설정 false, 첫 문장으로 가도 3560 그대로 · 7 ✅ 화면 검사 기존 규칙 모두 ok(가로 컨트롤 noOverflowX 500≤500), `portrait.png`·`landscape.png` 열어 봄: 컨트롤 줄 `⏯ 재생 · 🔁 OFF · ⇅(보라=켜짐) · 배속 4 · YT · 시각`이 한 줄에 들어감 · 8 ✅ 데스크톱 글자 사례 4개(Test 16), 기본값 `src/types/settings.ts` 3/0/true(Test 16 단언) · 9 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok, main.ts 891줄 · 10 ⏳ 실기기
 - 2026-11-21 회차 2: IMPLEMENTED — 사람 메모(10): 「기본동작은함. 단 스크롤on 반복되어있을때, 현재재생의 끝에서 카드가 다음으로 이동했다가, 다시 올라옴」 → 반복 중엔 하이라이트·따라가기 대상을 반복 문장에 고정(`src/utils/loopControl.ts` `followTargetIndex`, `EarCoachView.handlePlaybackTimeUpdate`). 11 ✅ Test 16 「4 followTarget」 + 화면 검사 follow `loopFollow` {k:10, 반복 중·끝 넘어서도 하이라이트 [10]·scrollTop 그대로, 반복 끈 뒤 [11]} · 변이: `followTargetIndex`가 반복 무시 → Test 16 「followTargetIndex loop past its end stays on loop card」 실패, 화면 검사에선 pastEndHi [11]·scrollTop 1869→2063(사람이 본 증상 재현) · 1~9 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok(이번 실행) · 10 ⏳ 실기기 다시 확인
+- 2026-11-21 사람확인(회차 세지 않음): DONE — 10 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_023 10 OK]」(1.0.32, 반복 중 따라가기 고정 확인) · 1~9·11 ✅ 회차 2 근거 그대로(제품 파일 변경 없음)
