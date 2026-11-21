@@ -1,7 +1,7 @@
 ---
 id: SPEC_017
 title: 영상 장면(스토리보드 프레임) → Anki 카드 그림
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_015, SPEC_016]
@@ -69,3 +69,4 @@ depends_on: [SPEC_015, SPEC_016]
 
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ Test 13 「4 watch levels」(L3 320/180/108/3/3/2000), android 3단 · 2 ✅ Test 13 「12 frame cases」(0초·시트 경계 18초·끝 넘김 M11·음수·L0+길이 213·길이 없음 null·빈 스펙 null·5×2 비정사각 2건) · 3 ✅ Test 13 html·player response 추출 · 4 ✅ Test 12 「3 note fixtures」(`note-picture.json` Front 문장<br><img src="ear-coach-dQw4w9WgXcQ-77.jpg"><br>뜻) · 5 ✅ Test 12 「6 snapshot store cases」 · 6 ✅ ui 세로·가로 anki ok: calls [deckNames, modelNames, modelFieldNames, storeMediaFile, canAddNotes, addNote], picture 320×180 rgb [32,64,207](기대 [32,64,208]), 시트 L0/M0, Front `<img src="ear-coach-uiCheck0001-4.jpg">`; 스토리보드 없음 → storeMediaFile 없음 + 「Anki에 저장했습니다 (그림 없음)」; `anki-portrait.png` 열어 봄(「Anki에 저장했습니다」) · 7 ✅ `.scratch/mut/storyboard-swap.ts`(열·행 바꿈) → 「storyboardFrame: 5열×2행…」 AssertionError(처음엔 정사각 사례뿐이라 통과 → 비정사각 사례 추가) · 8 ✅ verify regression harness/build/test/ui ok(build는 1차 TS2307 → `tests/ui/png.d.ts`로 고침) · 실제 응답 확인: dQw4w9WgXcQ 10/43/100초 → L3 M0/M2/M5 칸을 우리 자르기 코드로 320×180 JPEG 9~12KB, 43초 그림 열어 봄(인물 한 장면, 옆 칸 섞임 없음) · 9 ⏳
+- 2026-11-21 사람 확인: DONE — 9 ✅ `[Button pressed: SPEC_017 9 메모] 잘동작함, …`(log/confirmations.jsonl) — 메모 버튼이지만 「잘동작함」으로 판정. 함께 온 버그(Basic (and reversed card)의 2번째 카드가 「기본」 덱 자동 생성 후 그 안에 저장)는 SPEC_015·016 덱 문제로 따로 다룸. 1~8은 회차 1 근거.
