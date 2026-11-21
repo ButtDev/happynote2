@@ -1,7 +1,7 @@
 ---
 id: SPEC_021
 title: 모바일 AI 번역·분석 — Gemini Flash-Lite / OpenAI 호환(Groq) 묶음 요청
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -46,7 +46,7 @@ OVERVIEW 로드맵 4번. 사람 선택 「추천대로 (Gemini Flash-Lite + Groq
 6. [x] 시험 데이터·저장소에 실제 키 모양(`AIza[0-9A-Za-z_-]{30,}`, `gsk_[0-9A-Za-z]{20,}`) 없음 (grep) [자동]
 7. [x] 변이: 묶음 밖 번호 검사를 끈 사본, quota 재시도를 끈 사본으로 각각 Test 15 실패 [자동]
 8. [x] `verify.mjs --set regression` ok(빌드·시험·화면 검사, 데스크톱 경로 그대로) [자동]
-9. [ ] Android 실기기: 설정 「🤖 AI 번역·분석」에 Gemini 키를 넣고 🔌 연결 확인 → 자동 자막 영상 노트를 열어 잠시 뒤 카드 3단계에 한국어 해석·연음 설명이 뜨는지, 학습에 쓸 만한지 보고 버튼 [수동]
+9. [x] Android 실기기: 설정 「🤖 AI 번역·분석」에 Gemini 키를 넣고 🔌 연결 확인 → 자동 자막 영상 노트를 열어 잠시 뒤 카드 3단계에 한국어 해석·연음 설명이 뜨는지, 학습에 쓸 만한지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 - 1~4: `npm test` Test 15 (`tests/fixtures/ai/cases.json`, 응답 모양은 공식 문서 형식으로 만든 합성 데이터 — 키가 없어 실제 응답은 못 받음).
@@ -69,3 +69,4 @@ OVERVIEW 로드맵 4번. 사람 선택 「추천대로 (Gemini Flash-Lite + Groq
 
 ## 실행 기록
 - 2026-11-21 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 15 `2 request` 사례(gemini URL·`x-goog-api-key`·responseMimeType·responseSchema, openai `/chat/completions`·Bearer·json_object, URL에 키 없음) · 2 ✅ 같은 Test 15 `11 response` 사례(정상 2·울타리·parts 여럿·401/403 auth·429 quota·500 network·items 없음/JSON 아님 format) · 3 ✅ 같은 Test 15 sanitize 사례(묶음 밖 99 버림·BOGUS 걸러짐·NOPE→LINKING·낱말 번호 [0,4,5,-1,1.5]→[0,4]·빈 번역 버림) · 4 ✅ 같은 Test 15 `5 batching` 사례(20/20/5·잠 4000·429→30000 뒤 이어감·429×2 멈춤 앞 묶음 남음·401 즉시 멈춤·형식 오류 1회 재시도) · 5 ✅ grep: `aiAnalysis.ts`에 obsidian·fs·child_process import 없음, `main.ts` AI 요청은 `requestUrl`(main.ts:58) · 6 ✅ grep: git 파일에 `AIza…`·`gsk_…` 키 모양 없음 · 7 ✅ 변이: 묶음 밖 번호 허용 사본 → `parseAiResponse sanitize … items` 실패, quota 재시도 끈 사본 → `runAiAnalysis 429 then ok … batch sizes` 실패 · 8 ✅ `verify.mjs --set regression --json` ok(harness·build·test·ui) · 9 ⏳ 실기기(키가 없어 실제 AI 응답·번역 예는 이번에 못 받음 — 실기기 확인에서 봄)
+- 2026-11-21 사람확인: DONE — 1~8 ✅ 회차 1 근거 그대로(그 뒤 제품 변경 1.0.28 busy 재시도·1.0.29 복원 화면 자동 시작은 `verify.mjs --set regression` ok, Test 15 12 response + 7 batching) · 9 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_021 9 OK]」(1.0.29 실기기, 1차 NG 원인 Gemini 503 high demand·2차 메모 복원 화면 미시작 → 둘 다 고친 뒤 OK)

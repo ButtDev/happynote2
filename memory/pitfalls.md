@@ -8,3 +8,4 @@
 - dictionaryapi.dev 발음 mp3(`/media/pronunciations/`)는 2026-11 기준 404 — 발음은 phonetics `sourceUrl` curid → Commons imageinfo ogg로 (SPEC_013 회차 2).
 - `npm run build`의 tsc는 `tests/ui/`도 검사 — 화면 검사 entry에 새 확장자(.png 등) import를 넣으면 `tests/ui/*.d.ts` 선언이 필요(SPEC_017).
 - 유튜브 srv3 자동 자막은 롤링 자막이 아님(단어 시각이 안 겹침) → 글자만 보는 롤링 중복 제거가 실제 반복 말("do you do you")을 지움. 시각으로 판단(SPEC_018).
+- 화면 열 때 하는 일은 `activateWorkspaceView`만으론 부족 — 앱 재시작 시 Obsidian이 복원하는 화면은 `EarCoachView.setState → restoreSessionForView`로 들어옴(SPEC_021 AI 자동 시작 누락). 모바일 사람은 명령 팔레트를 잘 못 찾음 — 명령에 기대는 안내 금지.
