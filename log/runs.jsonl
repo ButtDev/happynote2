@@ -66,3 +66,4 @@
 {"ts":"2026-11-21T01:29:50.210Z","cmd":"/spec-new","spec":"SPEC_019","result":"READY","questions":0}
 {"ts":"2026-11-21T01:31:53.693Z","cmd":"/spec-run","spec":"SPEC_019","iteration":1,"status":"IMPLEMENTED","evidence":"regression ok; Test 11 9 around cases; ui phraseBefore ok; real: forward→look forward to, up→pick up/show up"}
 {"ts":"2026-11-21T03:25:58.662Z","cmd":"/spec-run","spec":"SPEC_019","iteration":1,"status":"DONE","evidence":"사람확인 6 OK (Button pressed), 자동 1~5 회차1 ✅"}
+{"ts":"2026-11-21T03:44:31.047Z","cmd":"/spec-new","spec":"SPEC_020","result":"READY","questions":0}
