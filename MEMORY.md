@@ -3,12 +3,12 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 최신 배포 BRAT **1.0.23**(SPEC_017, 릴리스 3파일 확인). 가로모드(SPEC_002~012)·사전(SPEC_013·014)·Anki 저장(SPEC_015·016) 모두 DONE — 다시 열지 않음.
-- SPEC_017 장면 그림 DONE. 다음 후보는 `memory/backlog.md`.
+- 진행 중인 SPEC 없음(SPEC_001~017 DONE/DROPPED, 다시 열지 않음). 최신 배포 BRAT **1.0.23**.
+- 다음 SPEC 후보(`memory/backlog.md` 「대기」): 모바일 AI 번역(Gemini) · 자막 품질 · 구동사 앞 낱말부터(forward → look forward to). 사람이 고르지 않으면 OVERVIEW 로드맵 순서대로 자막 품질 → AI 번역.
 
 ## 열린 질문 (사람에게)
-- 2번째 카드 「기본」 덱 버그: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2, 코드 변경 없음. 여전히 「기본」으로 가면 알려 달라고 함(AnkiConnect Android엔 덱 옮기기 액션 없음 → 다음 대안은 노트 타입 `Basic`).
-- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록. 같은 확인을 두 SPEC에 쓸 땐 보고에 미리 적어 둠.
+- Anki 2번째 카드 덱: 사람 결정 「덱 덮어쓰기로 해결」(2026-11-21) — AnkiDroid에서 `Basic (and reversed card)` Card 2 덱 덮어쓰기=happynote2(코드 변경 없음). 결과 보고 대기. 여전히 「기본」 덱으로 가면 대안은 설정 노트 타입 `Basic`(카드 1장) — AnkiConnect Android엔 카드 덱 옮기는 액션 없음.
+- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함 — 내용으로 판단해 기록(SPEC_017 9 메모 「잘동작함」 → OK 처리).
 
 ## 주의
 - 실기기 ⏳ 요청 문구엔 사람이 할 준비 단계(설정·덱 만들기 등)를 빠뜨리지 않는다(SPEC_015에서 빠뜨려 회차 낭비).
