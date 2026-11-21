@@ -154,3 +154,5 @@
 {"ts":"2026-11-21T13:57:44.637Z","source":"chat","raw":"버튼 아이콘 배치 및 표현에 군더더기 없는지, 더 간결할수 있는지 등"}
 {"ts":"2026-11-21T13:59:38.449Z","source":"button","question":"추천은 1·2·4번이에요. 실제 문제를 바로 찾을 수 있어서요. 3·5번은 앞서 넣은 UI·UX, 학습 아이디어 문서에 한 절씩 덧붙이는 정도면 충분해요.","answer":"5개 전부 추가","messageId":482}
 {"ts":"2026-11-21T14:00:58.840Z","source":"chat","question":"야간 후보 5건 추가 보고 + Anki 덱 덮어쓰기 결과 문의","answer":"모두 ok","interpretation":"야간 12건 계획 승인 + Anki 덱 덮어쓰기 결과 정상(2번째 카드도 지정 덱)","raw":"모두 ok"}
+{"ts":"2026-11-21T21:34:30.824Z","source":"button","question":"[send-file:/Users/hyeongseopshim/AgentWork/happynote2/docs/review/img/ui-before-portrait.png]\n[send-file:/Users/hyeongseopshim/AgentWork/happynote2/docs/review/img/ui-mock-portrait.png]\n[send-file:/Users/hyeongseopshim/AgentWork/happynote2/docs/review/img/ui-before-landscape.png]\n[send-file:/Users/hyeongseopshim/AgentWork/happynote2/docs/review/img/ui-mock-landscape.png]","answer":"사진 안 왔어","messageId":490}
+{"ts":"2026-11-21T21:34:44.411Z","source":"button","answer":"사진 안 왔어","raw":"[Button pressed: 사진 안 왔어]"}

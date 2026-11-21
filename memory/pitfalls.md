@@ -10,3 +10,4 @@
 - 유튜브 srv3 자동 자막은 롤링 자막이 아님(단어 시각이 안 겹침) → 글자만 보는 롤링 중복 제거가 실제 반복 말("do you do you")을 지움. 시각으로 판단(SPEC_018).
 - 화면 열 때 하는 일은 `activateWorkspaceView`만으론 부족 — 앱 재시작 시 Obsidian이 복원하는 화면은 `EarCoachView.setState → restoreSessionForView`로 들어옴(SPEC_021 AI 자동 시작 누락). 모바일 사람은 명령 팔레트를 잘 못 찾음 — 명령에 기대는 안내 금지.
 - 세로·가로 컨트롤 줄을 화면 검사에서 여유 0으로 맞추면 실기기(Android 글꼴)에서 넘친다 — 24px 이상 여유(`rowSlack`).
+- 채팅 첨부 `[send-file:경로]`가 사람에게 안 닿음(2026-11-22) → 그림은 `.scratch/review-site/`에 복사 후 `run-detached.mjs start review-site -- python3 -m http.server 8001 --bind 0.0.0.0 --directory .scratch/review-site`, 주소 http://nofailed.iptime.org:8001/ (그 폴더만 공개).
