@@ -43,6 +43,7 @@
           "tap": "to",
           "title": "go to"
         },
+        "reviewQueue": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening"
         },
@@ -146,6 +147,7 @@
           "tap": "to",
           "title": "go to"
         },
+        "reviewQueue": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening"
         },

@@ -148,6 +148,11 @@ function evaluateExpect(vp, m, nums) {
     const okDefault = ce === undefined || (!!np?.note && meaningCount(np.note) === 1 && (np.note.fields.Front ?? "").includes(esc(np.firstDef)));
     add("anki", okAdded && okDup && okNoDeck && okNoPic && okChosen && okDefault, JSON.stringify({ okAdded, okPicture, okDup, okNoDeck, okNoPic, okChosen, okDefault, ...m.anki }));
   }
+  if (e.reviewQueue) {
+    const r = m.reviewQueue;
+    const ok = !!r && !r.error && r.pinned >= 2 && r.due.length === r.pinned - 1 && r.label === `⏰ ${r.due.length}` && JSON.stringify(r.shown) === JSON.stringify(r.due) && r.blind && Array.isArray(r.reviews) && r.reviews.length === 1 && r.reviews[0].ok === false;
+    add("reviewQueue", ok, JSON.stringify(r));
+  }
   // SPEC_026: 핀 카드에만 「➕ Anki」 → 문장 듣기 카드 addNote 1회
   if (e.sentenceAnki) {
     const sa = m.sentenceAnki;
@@ -759,6 +764,37 @@ for (const vp of cases.viewports) {
     const noPic = await run(false, null, true);
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
     m.anki = { added, dup, noDeck, noPic };
+  }
+
+  // SPEC_027: 「⏰ 오늘」 — 차례인 핀만(오늘 켠 핀은 빠짐), 블라인드부터, 정답을 직접 열면 실패 기록 1개
+  m.reviewQueue = null;
+  if (vp.expect?.reviewQueue) {
+    m.reviewQueue = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      const segs = window.__earCoachView?.session?.segments ?? [];
+      const pinned = segs.filter((s) => s.isPinned);
+      const due = pinned.filter((s) => !s.pinnedAt).map((s) => s.index);
+      const findBtn = (re) => [...document.querySelectorAll(".ear-coach-mobile-toolbar button")].find((b) => re.test(b.textContent ?? ""));
+      const dueBtn = document.querySelector('.ear-coach-mobile-toolbar button[data-filter="DUE"]');
+      if (!dueBtn) return { error: "due filter missing", pinned: pinned.length };
+      const label = dueBtn.textContent;
+      dueBtn.click();
+      await wait(300);
+      const cards = [...document.querySelectorAll(".ear-coach-segment-card")];
+      const shown = cards.map((c) => Number(c.dataset.segmentIndex));
+      const card = cards[0];
+      const blind = !!card?.querySelector(".ear-coach-step-btn.is-current-step") && /블라인드|듣기/.test(card.querySelector(".ear-coach-step-btn.is-current-step").textContent);
+      const seg = segs[shown[0]];
+      const stepBtns = card ? [...card.querySelectorAll(".ear-coach-step-btn")] : [];
+      stepBtns[3]?.click();
+      await wait(200);
+      const reviews = seg?.reviews ?? null;
+      const activeLabel = document.querySelector(".ear-coach-mobile-toolbar .ear-coach-btn.is-active")?.textContent ?? null;
+      return { label, due, shown, blind, reviews, activeLabel, pinned: pinned.length };
+    });
+    await page.screenshot({ path: path.join(outDir, `review-${vp.name}.png`) });
+    await page.evaluate(() => [...document.querySelectorAll(".ear-coach-mobile-toolbar button")].find((b) => /^전체/.test(b.textContent ?? ""))?.click());
   }
 
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);

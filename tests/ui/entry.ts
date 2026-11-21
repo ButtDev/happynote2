@@ -32,6 +32,10 @@ async function main(): Promise<void> {
     pinnedTimestamps: fixture.pinnedTimestamps,
   });
 
+  // SPEC_027: 첫 핀은 오늘 켠 것(아직 차례 아님), 나머지 핀은 시각 모름(바로 차례)
+  const firstPinned = segments.find((s) => s.isPinned);
+  if (firstPinned) firstPinned.pinnedAt = new Date().toISOString();
+
   const fakePlugin = {
     settings,
     saveSettings: async () => {},

@@ -29,6 +29,7 @@ import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
 import * as aiSrc from "../src/services/aiAnalysis.ts";
 import * as loopSrc from "../src/utils/loopControl.ts";
 import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
+import * as reviewSrc from "../src/utils/reviewQueue.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -812,6 +813,18 @@ async function runAllTests() {
   for (const [code, want] of trapCases.label) assert.equal(trapMod.trapLabel(code), want, `trapLabel ${code}`);
   for (const [codes, want] of trapCases.list) assert.deepEqual(trapMod.trapLabelList(codes), want, `trapLabelList ${JSON.stringify(codes)}`);
   log(`  -> PASS: ${trapCases.label.length} label + ${trapCases.list.length} list cases`);
+  log("");
+
+  log("[Test 18] Pin review queue — 1·3·7·14일, 달력 날짜, 졸업 (data-driven, SPEC_027)");
+  const reviewMod = process.env.EAR_COACH_REVIEW_MODULE ? await import(path.resolve(process.env.EAR_COACH_REVIEW_MODULE)) : reviewSrc;
+  const rc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/review/cases.json"), "utf8"));
+  const recs = (oks: boolean[]) => oks.map((ok, i) => ({ at: `2026-11-${String(i + 1).padStart(2, "0")}T09:00:00+09:00`, ok }));
+  for (const c of rc.due) assert.equal(reviewMod.isReviewDue(c.s, Date.parse(c.now), rc.tz), c.expect, `isReviewDue: ${c.name}`);
+  for (const c of rc.days) assert.equal(reviewMod.reviewIntervalDays({ isPinned: true, reviews: recs(c.reviews) }), c.expect, `reviewIntervalDays ${JSON.stringify(c.reviews)}`);
+  for (const c of rc.graduate) assert.equal(reviewMod.shouldGraduate({ ...c.s, reviews: recs(c.s.reviews) }), c.expect, `shouldGraduate ${JSON.stringify(c.s)}`);
+  assert.deepEqual(reviewMod.dueIndices(rc.queue.segments, Date.parse(rc.queue.now), rc.tz), rc.queue.expect, "dueIndices");
+  assert.deepEqual(reviewMod.withReview(undefined, true, "t"), [{ at: "t", ok: true }], "withReview");
+  log(`  -> PASS: ${rc.due.length} due + ${rc.days.length} interval + ${rc.graduate.length} graduate cases + queue`);
   log("");
 
   log("==============================================================");

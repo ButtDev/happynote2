@@ -14,6 +14,8 @@ export interface SegmentCardCallbacks {
   onLookupWord?: (word: string, segment: TranscriptSegment, following: string[], preceding: string[]) => void;
   /** SPEC_026: 핀 문장 → Anki 듣기 카드(저장 뒤 보일 문구) */
   onAddSentenceToAnki?: (segment: TranscriptSegment) => Promise<string>;
+  /** SPEC_027: 받아쓰기를 다 맞힘(ok) / 힌트·정답을 직접 엶(실패) — 「오늘」 복습 기록용 */
+  onReviewResult?: (segment: TranscriptSegment, ok: boolean) => void;
 }
 
 /**
@@ -143,6 +145,7 @@ export class SegmentCard {
         text: def.label,
       });
       btn.addEventListener("click", () => {
+        if (def.step >= 2 && this.segment.unlockStep < 2) this.callbacks.onReviewResult?.(this.segment, false);
         this.segment.unlockStep = def.step;
         this.callbacks.onUnlockStepChange(this.segment, def.step);
         this.render();
@@ -212,6 +215,7 @@ export class SegmentCard {
       const dictContainer = bodyEl.createDiv();
       const dictBox = new MicroDictationBox(dictContainer, this.segment, {
         onDictationSolved: () => {
+          this.callbacks.onReviewResult?.(this.segment, true);
           this.segment.unlockStep = 3;
           this.callbacks.onUnlockStepChange(this.segment, 3);
           this.render();

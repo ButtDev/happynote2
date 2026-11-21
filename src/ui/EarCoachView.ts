@@ -7,6 +7,7 @@ import {
 import { SegmentTimeIndex } from "../utils/binarySearch";
 import { followTargetIndex, shouldAutoFollow, USER_SCROLL_PAUSE_MS } from "../utils/loopControl";
 import { isMobileApp } from "../utils/platform";
+import { isReviewDue, shouldGraduate, withReview } from "../utils/reviewQueue";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
@@ -18,7 +19,7 @@ import type EarCoachPlugin from "../main";
 
 export const VIEW_TYPE_EAR_COACH = "ear-coach-listening-view";
 
-type FilterMode = "ALL" | "PINNED" | "SPEED_SPIKE";
+type FilterMode = "ALL" | "PINNED" | "DUE" | "SPEED_SPIKE";
 
 /**
  * Main interactive workspace view inside Obsidian.
@@ -513,6 +514,14 @@ export class EarCoachView extends ItemView {
         return this.playerBar?.isSegmentLooping(s) ?? false;
       },
       onTogglePin: async (s) => {
+        // SPEC_027: 핀 켠 날부터 간격 재청취, 풀면 기록도 지움
+        if (s.isPinned) {
+          s.pinnedAt = new Date().toISOString();
+          s.reviews = [];
+        } else {
+          delete s.pinnedAt;
+          delete s.reviews;
+        }
         await this.persistCurrentSession(false);
         if (s.isPinned && this.activeNoteFile && this.session) {
           await this.plugin.weaknessTracker.recordWeakSegment({
@@ -522,6 +531,13 @@ export class EarCoachView extends ItemView {
             segment: s,
           });
         }
+      },
+      onReviewResult: (s, ok) => {
+        // SPEC_027: 「오늘」 목록에서 차례인 핀 문장만 기록(하루 한 번 — 기록하면 다음 차례로 넘어감)
+        if (this.filterMode !== "DUE" || !isReviewDue(s, Date.now(), new Date().getTimezoneOffset())) return;
+        s.reviews = withReview(s.reviews, ok, new Date().toISOString());
+        if (shouldGraduate(s)) new Notice("📌 이 문장을 두 번 연달아 맞혔어요 — 이제 핀을 풀어도 돼요");
+        void this.persistCurrentSession(false);
       },
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
@@ -687,28 +703,32 @@ export class EarCoachView extends ItemView {
     if (!this.session) return null;
 
     const filterGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
-    const filters: Array<{ mode: FilterMode; label: string }> = [
-      { mode: "ALL", label: `전체 (${this.session.segments.length})` },
-      {
-        mode: "PINNED",
-        label: compact
-          ? `📌 핀 (${this.session.segments.filter((s) => s.isPinned).length})`
-          : `📌 안 들림 핀 (${this.session.segments.filter((s) => s.isPinned).length})`,
-      },
-      {
-        mode: "SPEED_SPIKE",
-        label: compact
-          ? `🚀 과속 (${this.session.segments.filter((s) => s.isSpeedSpike).length})`
-          : `🚀 과속 구간 (${this.session.segments.filter((s) => s.isSpeedSpike).length})`,
-      },
+    const now = Date.now();
+    const tz = new Date().getTimezoneOffset();
+    const dueCount = this.session.segments.filter((s) => isReviewDue(s, now, tz)).length;
+    // SPEC_027: 모바일은 아이콘+숫자만(가로 목록 362px에 「⏰ 오늘」까지 들어가게), 뜻은 aria-label
+    const pinCount = this.session.segments.filter((s) => s.isPinned).length;
+    const spikeCount = this.session.segments.filter((s) => s.isSpeedSpike).length;
+    const total = this.session.segments.length;
+    const filters: Array<{ mode: FilterMode; label: string; aria: string }> = [
+      { mode: "ALL", label: compact ? `전체 ${total}` : `전체 (${total})`, aria: "전체 문장" },
+      { mode: "PINNED", label: compact ? `📌 ${pinCount}` : `📌 안 들림 핀 (${pinCount})`, aria: "안 들림 핀 문장" },
+      // 오늘 다시 들을 핀 문장(차례인 것이 있거나 보고 있을 때만)
+      ...(dueCount > 0 || this.filterMode === "DUE"
+        ? [{ mode: "DUE" as FilterMode, label: compact ? `⏰ ${dueCount}` : `⏰ 오늘 다시 듣기 (${dueCount})`, aria: "오늘 다시 들을 핀 문장" }]
+        : []),
+      { mode: "SPEED_SPIKE", label: compact ? `🚀 ${spikeCount}` : `🚀 과속 구간 (${spikeCount})`, aria: "과속 구간" },
     ];
 
     for (const f of filters) {
       const btn = filterGroup.createEl("button", {
         cls: `ear-coach-btn ${this.filterMode === f.mode ? "is-active" : ""}`,
         text: f.label,
+        attr: { "aria-label": f.aria, "data-filter": f.mode },
       });
       btn.addEventListener("click", () => {
+        // SPEC_027: 오늘 다시 들을 문장은 블라인드(0단계)부터
+        if (f.mode === "DUE" && this.session) for (const s of this.session.segments) if (isReviewDue(s, now, tz)) s.unlockStep = 0;
         this.filterMode = f.mode;
         this.updateVirtualListSegments();
         toolbar.empty();
@@ -740,8 +760,11 @@ export class EarCoachView extends ItemView {
 
   private updateVirtualListSegments(): void {
     if (!this.virtualList || !this.session) return;
+    const now = Date.now();
+    const tz = new Date().getTimezoneOffset();
     const filtered = this.session.segments.filter((seg) => {
       if (this.filterMode === "PINNED") return seg.isPinned;
+      if (this.filterMode === "DUE") return isReviewDue(seg, now, tz);
       if (this.filterMode === "SPEED_SPIKE") return seg.isSpeedSpike;
       return true;
     });

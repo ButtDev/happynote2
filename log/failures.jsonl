@@ -6,3 +6,4 @@
 {"ts":"2026-11-20T23:10:58.196Z","signature":"실기기: addNote Couldn't get deck ID (설정 덱 Default 없음)","spec":"SPEC_015","tried":"기본 덱 Default로 바로 addNote","avoid":"저장 전 deckNames·modelNames·modelFieldNames로 대상 확인, 없으면 설정 안내"}
 {"ts":"2026-11-20T23:11:58.497Z","signature":"ui: page.evaluate ReferenceError decks is not defined","spec":"SPEC_015","tried":"evaluate 인자 객체에만 decks 추가","avoid":"evaluate 함수 매개변수 구조 분해에도 추가"}
 {"ts":"2026-11-20T23:40:45.212Z","signature":"build: TS2307 Cannot find module ./fixtures/storyboard-sheet.png","spec":"SPEC_017","tried":"esbuild binary 로더만 추가","avoid":"tsc가 tests/ui도 검사 — 새 확장자 import엔 tests/ui/*.d.ts 선언"}
+{"ts":"2026-11-21T21:54:37.533Z","signature":"ui: noOverflowX:.ear-coach-mobile-toolbar failed (435 <= 362)","spec":"SPEC_027","tried":"⏰ 오늘 필터 추가","avoid":"가로 목록 툴바 여유 6px — 필터 추가 시 아이콘+숫자"}

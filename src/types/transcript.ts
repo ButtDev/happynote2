@@ -79,6 +79,9 @@ export interface TranscriptSegment {
   userDictationAttempts?: Record<number, string>;
   analysis?: SegmentPhoneticAnalysis;
   tutorNotes?: SegmentTutorNote[];
+  /** SPEC_027: 핀을 켠 시각(ISO), 간격 재청취 기록 */
+  pinnedAt?: string;
+  reviews?: { at: string; ok: boolean }[];
 }
 
 /**

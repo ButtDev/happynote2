@@ -1,0 +1,42 @@
+{
+  "comment": "SPEC_027 reviewQueue: tz = getTimezoneOffset(KST -540). now는 ISO. due = isReviewDue, days = reviewIntervalDays",
+  "tz": -540,
+  "due": [
+    { "name": "핀 시각 모르는 옛 핀 → 바로", "s": { "isPinned": true }, "now": "2026-11-22T09:00:00+09:00", "expect": true },
+    { "name": "핀 안 됨 → 아님", "s": { "isPinned": false, "pinnedAt": "2026-11-01T09:00:00+09:00" }, "now": "2026-11-22T09:00:00+09:00", "expect": false },
+    { "name": "오늘 핀 → 아님", "s": { "isPinned": true, "pinnedAt": "2026-11-22T08:00:00+09:00" }, "now": "2026-11-22T23:00:00+09:00", "expect": false },
+    { "name": "어제 밤 11시 핀 → 오늘 아침 차례(달력 날짜)", "s": { "isPinned": true, "pinnedAt": "2026-11-21T23:00:00+09:00" }, "now": "2026-11-22T07:00:00+09:00", "expect": true },
+    { "name": "UTC로는 같은 날이어도 KST로 다음 날", "s": { "isPinned": true, "pinnedAt": "2026-11-21T14:30:00Z" }, "now": "2026-11-21T15:30:00Z", "expect": true },
+    { "name": "1번 성공 뒤 2일 → 아직(3일)", "s": { "isPinned": true, "pinnedAt": "2026-11-18T09:00:00+09:00", "reviews": [{ "at": "2026-11-20T09:00:00+09:00", "ok": true }] }, "now": "2026-11-22T09:00:00+09:00", "expect": false },
+    { "name": "1번 성공 뒤 3일 → 차례", "s": { "isPinned": true, "pinnedAt": "2026-11-18T09:00:00+09:00", "reviews": [{ "at": "2026-11-19T09:00:00+09:00", "ok": true }] }, "now": "2026-11-22T09:00:00+09:00", "expect": true },
+    { "name": "성공 2번 뒤 6일 → 아직(7일)", "s": { "isPinned": true, "reviews": [{ "at": "2026-11-10T09:00:00+09:00", "ok": true }, { "at": "2026-11-16T09:00:00+09:00", "ok": true }] }, "now": "2026-11-22T09:00:00+09:00", "expect": false },
+    { "name": "실패 뒤 1일 → 차례(처음부터)", "s": { "isPinned": true, "reviews": [{ "at": "2026-11-10T09:00:00+09:00", "ok": true }, { "at": "2026-11-21T09:00:00+09:00", "ok": false }] }, "now": "2026-11-22T09:00:00+09:00", "expect": true },
+    { "name": "깨진 날짜 → 바로", "s": { "isPinned": true, "pinnedAt": "nope" }, "now": "2026-11-22T09:00:00+09:00", "expect": true }
+  ],
+  "days": [
+    { "reviews": [], "expect": 1 },
+    { "reviews": [true], "expect": 3 },
+    { "reviews": [true, true], "expect": 7 },
+    { "reviews": [true, true, true], "expect": 14 },
+    { "reviews": [true, true, true, true, true], "expect": 14 },
+    { "reviews": [true, true, false], "expect": 1 },
+    { "reviews": [false, true], "expect": 3 }
+  ],
+  "graduate": [
+    { "s": { "isPinned": true, "reviews": [true, true] }, "expect": true },
+    { "s": { "isPinned": true, "reviews": [true, false, true] }, "expect": false },
+    { "s": { "isPinned": true, "reviews": [false, true, true] }, "expect": true },
+    { "s": { "isPinned": true, "reviews": [true] }, "expect": false },
+    { "s": { "isPinned": false, "reviews": [true, true] }, "expect": false }
+  ],
+  "queue": {
+    "now": "2026-11-22T09:00:00+09:00",
+    "segments": [
+      { "index": 0, "isPinned": false },
+      { "index": 1, "isPinned": true, "pinnedAt": "2026-11-22T08:00:00+09:00" },
+      { "index": 2, "isPinned": true },
+      { "index": 3, "isPinned": true, "pinnedAt": "2026-11-20T08:00:00+09:00" }
+    ],
+    "expect": [2, 3]
+  }
+}
