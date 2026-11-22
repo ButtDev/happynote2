@@ -1,8 +1,8 @@
 ---
 id: SPEC_043
 title: 노래방식 낱말 하이라이트 — 재생 중 정답 문장 낱말을 단어 시각대로 차례로 강조
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_018]
 ---
@@ -26,7 +26,7 @@ depends_on: [SPEC_018]
 
 ## 3. 정의 — 공개 이름·데이터 구조·문구·수치를 글자 그대로
 - `TranscriptSegment.wordStarts?: number[]` — 길이 = `words.length`, 초 단위 절대 시각, 줄지 않음.
-- `attachWordStarts(segments: TranscriptSegment[], cues: RawTranscriptCue[]): void` — 원본 낱말 흐름 = `cue.words`(없으면 붙이지 않음)를 공백으로 나눠 시각순으로. 카드 낱말을 `bareWord`(소문자, 앞뒤 구두점 뺌) 비교로 앞에서부터 찾고, 사이에 원본 낱말을 최대 `KARAOKE_MAX_SKIP = 3`개 건너뛸 수 있음(군말 빠짐). 찾는 범위는 `seg.start - 0.5` ~ `seg.end + 0.5`. 하나라도 못 찾으면 그 카드엔 붙이지 않음.
+- `attachWordStarts(segments: TranscriptSegment[], cues: RawTranscriptCue[]): void` — 원본 낱말 흐름 = `cue.words`(없는 cue는 글자가 낱말 하나일 때만 그 낱말 @ `cue.start`, 그 밖엔 넣지 않음. 어느 cue에도 `words`가 없으면 흐름이 비어 아무 카드에도 붙이지 않음)를 공백으로 나눠 시각순으로. 카드 낱말을 `bareWord`(소문자, 앞뒤 구두점 뺌) 비교로 앞에서부터 찾고, 사이에 원본 낱말을 최대 `KARAOKE_MAX_SKIP = 3`개 건너뛸 수 있음(군말 빠짐). 찾는 범위는 `seg.start - 0.5` ~ `seg.end + 0.5`. 하나라도 못 찾으면 그 카드엔 붙이지 않음.
 - `activeWordIndex(seg, t): number` — `wordStarts`가 없거나 `t < seg.start` 또는 `t >= seg.end`면 `-1`, 아니면 `wordStarts[i] <= t`인 마지막 `i`(첫 낱말 전이면 `-1`).
 - 강조 클래스 `is-karaoke`: 배경 `var(--text-highlight-bg)`, 글자 굵기·크기 그대로(줄바꿈이 바뀌지 않게).
 - 강조는 3단계 카드의 `.ear-coach-full-script` 안 `.ear-coach-word[data-wi]`에만 붙는다. 한 번에 최대 1개.
@@ -38,11 +38,11 @@ depends_on: [SPEC_018]
 - 학습 기록 연결.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] Test 29 `activeWordIndex` 사례(시각 없음·문장 전·첫 낱말 전·가운데·마지막 낱말·문장 끝) 기대값과 같음 + 변이 실패 [자동]
-2. [ ] Test 29 `attachWordStarts` 합성 사례(군말 빠짐·구두점·대문자 I·못 찾음 → 없음·cue.words 없음 → 없음) 기대값과 같음 + 변이 실패 [자동]
-3. [ ] Test 29 실제 자막 불변식: `ted-asr`·`rick-asr`를 `mergeCuesIntoSegments`로 처리하면 카드 90% 이상에 `wordStarts`가 붙고, 붙은 카드는 모두 길이 = `words.length`, 줄지 않음, `[start-0.5, end+0.5]` 안. `ted-manual`은 0장 [자동]
-4. [ ] 화면 검사 `expect.karaoke`(세로·가로): 3단계 카드에 시각을 넣고 재생 위치를 낱말 2개에 차례로 두면 `.is-karaoke`가 1개씩, 그 낱말 글자와 같음, 다른 문장으로 가면 0개. 카드 높이가 강조 전후 같음. `karaoke-<뷰>.png` 열어 봄 [자동]
-5. [ ] 회귀 `verify.mjs --set regression` [자동]
+1. [x] Test 29 `activeWordIndex` 사례(시각 없음·문장 전·첫 낱말 전·가운데·마지막 낱말·문장 끝) 기대값과 같음 + 변이 실패 [자동]
+2. [x] Test 29 `attachWordStarts` 합성 사례(군말 빠짐·구두점·대문자 I·못 찾음 → 없음·cue.words 없음 → 없음) 기대값과 같음 + 변이 실패 [자동]
+3. [x] Test 29 실제 자막 불변식: `ted-asr`·`rick-asr`를 `mergeCuesIntoSegments`로 처리하면 카드 90% 이상에 `wordStarts`가 붙고, 붙은 카드는 모두 길이 = `words.length`, 줄지 않음, `[start-0.5, end+0.5]` 안. `ted-manual`은 0장 [자동]
+4. [x] 화면 검사 `expect.karaoke`(세로·가로): 3단계 카드에 시각을 넣고 재생 위치를 낱말 2개에 차례로 두면 `.is-karaoke`가 1개씩, 그 낱말 글자와 같음, 다른 문장으로 가면 0개. 카드 높이가 강조 전후 같음. `karaoke-<뷰>.png` 열어 봄 [자동]
+5. [x] 회귀 `verify.mjs --set regression` [자동]
 6. [ ] 실기기: BRAT 업데이트 뒤 **새 영상**(자동 자막)을 열고 한 문장을 3단계로 펼친 채 재생하면 낱말이 소리에 맞춰 차례로 칠해지는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -62,3 +62,4 @@ depends_on: [SPEC_018]
 - 강조 모양 = 배경색만 · 굵게 하면 폭이 바뀌어 줄이 흔들림 · 대안: 밑줄·글자색.
 
 ## 실행 기록
+- 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 29 「8 active cases」 PASS, 변이 m1(끝 시각 검사 뺌) → 「activeWordIndex: 문장 끝(끝 시각은 밖)」 실패 · 2 ✅ Test 29 「7 attach cases」 PASS, 변이 m2(건너뛰기 99) → 「건너뛰기 한도」, m3(한 낱말 cue 무시) → 「낱말 하나뿐인 cue」, m4(범위 무시) → 「범위 밖 낱말은 안 씀」 실패 · 3 ✅ Test 29 real: ted-asr 312/312, rick-asr 39/43(0.907), ted-manual 0/273, 길이·줄지 않음·범위 불변식 통과(처음엔 낱말 하나뿐인 cue에 words가 없어 ted 272/312 → 그 낱말을 cue 시작 시각으로 넣어 고침) · 4 ✅ ui `karaoke` 세로·가로 ok: first [{wi:1,"I"}], last [{wi:9,"trip."}], away 0, 높이 293→293; 변이(setPlaybackTime 빈 함수) → first [] 세로·가로 실패. `karaoke-portrait/landscape.png` 열어 봄: 3단계 문장에서 「trip.」만 노란 배경, 줄바꿈·카드 그대로 · 5 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(변이 뒤 원복하고 다시 돌림) · 6 ⏳ 실기기.

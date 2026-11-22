@@ -4,6 +4,7 @@ import { trapLabel } from "../../utils/trapLabels";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
 import { ensureSegmentPronunciations, segmentSoundHint } from "../../services/cmudictLite";
+import { activeWordIndex } from "../../utils/karaoke";
 
 export interface SegmentCardCallbacks {
   onPlaySegment: (segment: TranscriptSegment, loop: boolean) => void;
@@ -28,6 +29,7 @@ export class SegmentCard {
   private cardEl: HTMLElement;
   private loopBtnEl: HTMLButtonElement | null = null;
   private isActivePlaying = false;
+  private karaokeIdx = -1;
 
   constructor(
     parentEl: HTMLElement,
@@ -51,7 +53,20 @@ export class SegmentCard {
       this.cardEl.addClass("is-active-playing");
     } else {
       this.cardEl.removeClass("is-active-playing");
+      this.setKaraokeWord(-1);
     }
+  }
+
+  /** SPEC_043: 재생 시각에 맞는 정답 문장 낱말 하나를 칠함(3단계 + 단어 시각 있을 때만) */
+  public setPlaybackTime(t: number): void {
+    this.setKaraokeWord(this.segment.unlockStep === 3 ? activeWordIndex(this.segment, t) : -1);
+  }
+
+  private setKaraokeWord(idx: number): void {
+    if (idx === this.karaokeIdx) return;
+    this.karaokeIdx = idx;
+    this.cardEl.querySelectorAll(".ear-coach-word.is-karaoke").forEach((el) => el.removeClass("is-karaoke"));
+    if (idx >= 0) this.cardEl.querySelector(`.ear-coach-full-script .ear-coach-word[data-wi="${idx}"]`)?.addClass("is-karaoke");
   }
 
   /** SPEC_031: CMUdict + 이어 말하기 규칙으로 계산한 소리 힌트, 사전에 없으면 AI phoneticKr */
@@ -80,6 +95,7 @@ export class SegmentCard {
 
   public render(): void {
     this.cardEl.empty();
+    this.karaokeIdx = -1;
     this.cardEl.toggleClass("is-pinned", this.segment.isPinned);
     this.cardEl.toggleClass("is-active-playing", this.isActivePlaying);
 
@@ -218,7 +234,7 @@ export class SegmentCard {
       }
       const following = tokens.slice(ti + 1, ti + 3);
       const preceding = tokens.slice(Math.max(0, ti - 2), ti);
-      const w = el.createSpan({ cls: "ear-coach-word", text: part });
+      const w = el.createSpan({ cls: "ear-coach-word", text: part, attr: { "data-wi": String(ti) } });
       w.addEventListener("click", (ev) => {
         ev.stopPropagation();
         onLookup(part, this.segment, following, preceding);

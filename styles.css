@@ -1141,6 +1141,10 @@
   text-decoration: underline dotted var(--interactive-accent);
   text-underline-offset: 3px;
 }
+/* SPEC_043: 노래방식 — 지금 소리 나는 낱말(배경만, 폭 그대로) */
+.ear-coach-word.is-karaoke {
+  background-color: var(--text-highlight-bg, rgba(255, 208, 0, 0.4));
+}
 .ear-coach-dictionary-modal .ear-coach-dict-head {
   display: flex;
   flex-wrap: wrap;

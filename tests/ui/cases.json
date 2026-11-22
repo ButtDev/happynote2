@@ -5,6 +5,7 @@
       "width": 412,
       "height": 915,
       "expect": {
+        "karaoke": true,
         "maxOverlapVideoControlsPx2": 0,
         "maxOverlayOnVideoPx2": 0,
         "insideViewport": [
@@ -104,6 +105,7 @@
       "width": 891,
       "height": 411,
       "expect": {
+        "karaoke": true,
         "maxOverlapVideoControlsPx2": 0,
         "maxOverlayOnVideoPx2": 0,
         "insideViewport": [

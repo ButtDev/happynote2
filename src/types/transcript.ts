@@ -74,6 +74,8 @@ export interface TranscriptSegment {
   duration: number;    // Duration in seconds
   text: string;        // Clean sentence text
   words: string[];     // Tokenized words
+  /** SPEC_043: words[i]의 시작 시각(초, 자동 자막 단어 시각이 모두 맞을 때만) */
+  wordStarts?: number[];
   wpm: number;         // Words per minute for this sentence
   isSpeedSpike: boolean;
   isPinned: boolean;   // Marked by user or URI ?t= trigger as "Unclear Spot"

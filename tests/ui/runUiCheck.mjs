@@ -252,6 +252,13 @@ function evaluateExpect(vp, m, nums) {
       st[2].text === "🔁 OFF" && !st[2].active && st[2].loopingCards.length === 0;
     add("loopCycle", !!ok, JSON.stringify(z));
   }
+  if (e.karaoke) {
+    const k = m.karaoke;
+    const ok = k && !k.error && k.first.length === 1 && k.first[0].wi === 1 && k.first[0].text === k.words[1] &&
+      k.last.length === 1 && k.last[0].wi === k.n - 1 && k.last[0].text === k.words[k.n - 1] &&
+      k.away === 0 && Math.abs(k.h1 - k.h0) <= 0.5;
+    add("karaoke", !!ok, JSON.stringify(k));
+  }
   if (e.follow) {
     const f = m.follow;
     const ok = f && !f.error && f.pressedBefore === "true" && f.top1 > f.top0 + 50 && f.lastVisible &&
@@ -598,6 +605,54 @@ for (const vp of cases.viewports) {
       await wait(300);
       return { pressedBefore, top0, top1, lastVisible, pressedAfter, saved, top2, loopFollow };
     });
+  }
+
+  // SPEC_043: 노래방식 — 첫 카드를 3단계로 펼치고 합성 단어 시각을 넣은 뒤 재생 위치를 옮기면 낱말 하나만 칠해짐.
+  m.karaoke = null;
+  if (vp.expect?.karaoke) {
+    m.karaoke = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const seg = view?.session?.segments?.[0];
+      const other = view?.session?.segments?.[2];
+      if (!seg || !other) return { error: "segments missing" };
+      const n = seg.words.length;
+      // 낱말 1은 start+0.01부터, 마지막 두 칸 앞까지 몰아 두고 낱말 2부터는 start+1.5 뒤(재생 시각이 흘러도 칸 안에 머물게)
+      seg.wordStarts = seg.words.map((_, i) => (i <= 1 ? seg.start + i * 0.01 : seg.start + 1.5 + (i - 2) * 0.01));
+      const step3 = document.querySelector(`.ear-coach-segment-card[data-segment-index="${seg.index}"] .ear-coach-step-btn[data-step="3"]`);
+      if (!step3) return { error: "step3 button missing" };
+      step3.click();
+      await wait(200);
+      const card = () => document.querySelector(`.ear-coach-segment-card[data-segment-index="${seg.index}"]`);
+      const lit = () => [...document.querySelectorAll(".ear-coach-word.is-karaoke")].map((w) => ({ wi: Number(w.getAttribute("data-wi")), text: w.textContent }));
+      const h0 = card()?.getBoundingClientRect().height ?? 0;
+      view.playerBar.seekTo(seg.start + 0.3);
+      await wait(350);
+      const first = lit();
+      const h1 = card()?.getBoundingClientRect().height ?? 0;
+      view.playerBar.seekTo(seg.wordStarts[n - 1] + 0.05);
+      await wait(350);
+      const last = lit();
+      return { n, words: seg.words, first, last, h0, h1, otherIndex: other.index };
+    });
+    if (m.karaoke && !m.karaoke.error) {
+      // 스크린샷은 마지막 낱말이 칠해진 채로
+      await page.screenshot({ path: path.join(outDir, `karaoke-${vp.name}.png`) });
+      m.karaoke.away = await page.evaluate(async () => {
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+        const view = window.__earCoachView;
+        const other = view.session.segments[2];
+        view.playerBar.seekTo((other.start + other.end) / 2);
+        await wait(350);
+        const away = document.querySelectorAll(".ear-coach-word.is-karaoke").length;
+        const seg = view.session.segments[0];
+        delete seg.wordStarts;
+        document.querySelector(`.ear-coach-segment-card[data-segment-index="${seg.index}"] .ear-coach-step-btn[data-step="0"]`)?.click();
+        view.playerBar.seekTo(0);
+        await wait(300);
+        return away;
+      });
+    }
   }
 
   // SPEC_013: 첫 카드를 3단계로 → 첫 단어 누름 → 사전 창(단어·뜻) + 영상 멈춤. 기본 스크린샷 뒤에 한다.

@@ -1,0 +1,77 @@
+{
+  "_doc": "SPEC_043 노래방식 낱말 하이라이트. active: activeWordIndex(seg, t) 기대값. attach: attachWordStarts 뒤 wordStarts(null = 안 붙음). real: 실제 자막을 mergeCuesIntoSegments로 처리했을 때 붙는 비율 하한.",
+  "active": [
+    { "name": "시각 없음", "seg": { "start": 1, "end": 3 }, "t": 2, "expect": -1 },
+    { "name": "문장 전", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 2] }, "t": 0.9, "expect": -1 },
+    { "name": "첫 낱말 전(문장 안)", "seg": { "start": 1, "end": 3, "wordStarts": [1.2, 1.5, 2] }, "t": 1.1, "expect": -1 },
+    { "name": "첫 낱말 시작 그 순간", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 2] }, "t": 1, "expect": 0 },
+    { "name": "가운데", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 2] }, "t": 1.7, "expect": 1 },
+    { "name": "마지막 낱말", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 2] }, "t": 2.9, "expect": 2 },
+    { "name": "문장 끝(끝 시각은 밖)", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 2] }, "t": 3, "expect": -1 },
+    { "name": "같은 시각 낱말 둘 → 뒤 것", "seg": { "start": 1, "end": 3, "wordStarts": [1, 1.5, 1.5, 2] }, "t": 1.6, "expect": 2 }
+  ],
+  "attach": [
+    {
+      "name": "군말 빠짐·구두점·대문자 I",
+      "cues": [
+        { "start": 10, "duration": 2, "text": "so um i think", "words": [{ "start": 10, "text": "so" }, { "start": 10.3, "text": "um" }, { "start": 10.6, "text": "i" }, { "start": 10.9, "text": "think" }] },
+        { "start": 12, "duration": 1, "text": "yes.", "words": [{ "start": 12, "text": "yes." }, { "start": 12.4, "text": "ok" }] }
+      ],
+      "segs": [{ "start": 10, "end": 12.8, "words": ["So", "I", "think", "yes,"] }],
+      "expect": [[10, 10.6, 10.9, 12]]
+    },
+    {
+      "name": "낱말 하나뿐인 cue(words 없음)도 그 시각",
+      "cues": [
+        { "start": 5, "duration": 1, "text": "human creative", "words": [{ "start": 5, "text": "human" }, { "start": 5.4, "text": "creative" }] },
+        { "start": 6, "duration": 1, "text": "minds" }
+      ],
+      "segs": [{ "start": 5, "end": 7, "words": ["Human", "creative", "minds"] }],
+      "expect": [[5, 5.4, 6]]
+    },
+    {
+      "name": "s 하나에 두 낱말",
+      "cues": [{ "start": 1, "duration": 2, "text": "from what i'm", "words": [{ "start": 1, "text": "from what" }, { "start": 1.5, "text": "i'm" }] }],
+      "segs": [{ "start": 1, "end": 3, "words": ["from", "what", "I'm"] }],
+      "expect": [[1, 1, 1.5]]
+    },
+    {
+      "name": "못 찾음 → 안 붙음(다른 카드는 붙음)",
+      "cues": [
+        { "start": 1, "duration": 2, "text": "we are here", "words": [{ "start": 1, "text": "we" }, { "start": 1.5, "text": "are" }, { "start": 2, "text": "here" }] },
+        { "start": 3, "duration": 2, "text": "go now", "words": [{ "start": 3, "text": "go" }, { "start": 3.5, "text": "now" }] }
+      ],
+      "segs": [
+        { "start": 1, "end": 3, "words": ["We", "were", "here"] },
+        { "start": 3, "end": 5, "words": ["Go", "now"] }
+      ],
+      "expect": [null, [3, 3.5]]
+    },
+    {
+      "name": "건너뛰기 한도(원본 4개 건너뛰어야 함) → 안 붙음",
+      "cues": [{ "start": 1, "duration": 3, "text": "a b c d e f", "words": [{ "start": 1, "text": "a" }, { "start": 1.2, "text": "b" }, { "start": 1.4, "text": "c" }, { "start": 1.6, "text": "d" }, { "start": 1.8, "text": "e" }, { "start": 2, "text": "f" }] }],
+      "segs": [{ "start": 1, "end": 4, "words": ["a", "f"] }],
+      "expect": [null]
+    },
+    {
+      "name": "범위 밖 낱말은 안 씀",
+      "cues": [
+        { "start": 1, "duration": 1, "text": "hello there", "words": [{ "start": 1, "text": "hello" }, { "start": 1.5, "text": "there" }] },
+        { "start": 9, "duration": 1, "text": "hello there", "words": [{ "start": 9, "text": "hello" }, { "start": 9.5, "text": "there" }] }
+      ],
+      "segs": [{ "start": 9, "end": 10, "words": ["Hello", "there"] }],
+      "expect": [[9, 9.5]]
+    },
+    {
+      "name": "cue.words 없음(수동 자막) → 안 붙음",
+      "cues": [{ "start": 1, "duration": 2, "text": "Good." }, { "start": 3, "duration": 2, "text": "How are you?" }],
+      "segs": [{ "start": 1, "end": 3, "words": ["Good."] }, { "start": 3, "end": 5, "words": ["How", "are", "you?"] }],
+      "expect": [null, null]
+    }
+  ],
+  "real": [
+    { "file": "ted-asr.srv3.xml", "minRatio": 0.9 },
+    { "file": "rick-asr.srv3.xml", "minRatio": 0.9 },
+    { "file": "ted-manual.srv3.xml", "maxCount": 0 }
+  ]
+}

@@ -6,6 +6,7 @@ import type {
   TranscriptSegment,
   UnlockStep,
 } from "../types/transcript";
+import { attachWordStarts } from "../utils/karaoke.ts";
 
 export interface TranscriptProcessOptions {
   speedSpikeWpmThreshold: number;
@@ -349,7 +350,9 @@ export function mergeCuesIntoSegments(
 
   // Punctuation-free ASR with word-level timings: cut at natural speech pauses (SPEC_018)
   if (!hasSentencePunctuation && hasWordTimings(normalizedCues)) {
-    return mergeTimedWords(normalizedCues, options);
+    const timed = mergeTimedWords(normalizedCues, options);
+    attachWordStarts(timed, normalizedCues); // SPEC_043
+    return timed;
   }
 
   const maxWords =
@@ -460,6 +463,7 @@ export function mergeCuesIntoSegments(
     flushBuffer();
   }
 
+  attachWordStarts(merged, normalizedCues); // SPEC_043
   return merged;
 }
 

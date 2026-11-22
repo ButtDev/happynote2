@@ -40,6 +40,7 @@ import * as audioClipSrc from "../src/services/audioClip.ts";
 import * as learningSrc from "../src/services/learningStore.ts";
 import * as httpSrc from "../src/services/http.ts";
 import * as noticesSrc from "../src/services/notices.ts";
+import * as karaokeSrc from "../src/utils/karaoke.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1262,6 +1263,39 @@ async function runAllTests() {
     retrySites += cnt;
   }
   log(`  -> PASS: ${nt.cause.length} cause cases, ${nt.notice.length} notice cases, ${polite.length} message constants 해요체, ${noticeSites} Notice sites scanned, ${retrySites} retry sites.`);
+  log("");
+
+  log("[Test 29] Karaoke — 낱말 시작 시각 붙이기·재생 시각 → 칠할 낱말 (data-driven, SPEC_043)");
+  const kaMod = process.env.EAR_COACH_KARAOKE_MODULE ? await import(path.resolve(process.env.EAR_COACH_KARAOKE_MODULE)) : karaokeSrc;
+  const ka = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/karaoke/cases.json"), "utf8"));
+  for (const c of ka.active) {
+    assert.equal(kaMod.activeWordIndex(c.seg, c.t), c.expect, `activeWordIndex: ${c.name}`);
+  }
+  for (const c of ka.attach) {
+    const segs = c.segs.map((s: any, i: number) => ({ ...s, index: i, text: s.words.join(" ") }));
+    kaMod.attachWordStarts(segs, c.cues);
+    assert.deepEqual(segs.map((s: any) => s.wordStarts ?? null), c.expect, `attachWordStarts: ${c.name}`);
+  }
+  // 실제 자막: 문장 나누기 뒤 붙는 비율 + 불변식(길이·줄지 않음·범위 안). 붙이기는 변이 모듈로 다시 한다.
+  const kaSummary: string[] = [];
+  for (const r of ka.real) {
+    const cues: RawTranscriptCue[] = captionPayloadSrc.parseCaptionPayload(fs.readFileSync(path.resolve("tests/fixtures/transcript", r.file), "utf8"));
+    const segs = mergeCuesIntoSegments(cues, { speedSpikeWpmThreshold: 180, defaultUnlockStep: 0 });
+    kaMod.attachWordStarts(segs, cues);
+    const timed = segs.filter((s) => s.wordStarts);
+    for (const s of timed) {
+      const ws = s.wordStarts!;
+      assert.equal(ws.length, s.words.length, `${r.file} #${s.index}: wordStarts 길이`);
+      for (let i = 0; i < ws.length; i++) {
+        assert.ok(ws[i] >= s.start - 0.5 && ws[i] <= s.end + 0.5, `${r.file} #${s.index}: ${s.words[i]}@${ws[i]} 범위 밖 [${s.start}, ${s.end}]`);
+        if (i > 0) assert.ok(ws[i] >= ws[i - 1], `${r.file} #${s.index}: 시각이 줄어듦 (${s.words[i]})`);
+      }
+    }
+    if (r.minRatio !== undefined) assert.ok(timed.length / segs.length >= r.minRatio, `${r.file}: 붙은 카드 ${timed.length}/${segs.length} < ${r.minRatio}`);
+    if (r.maxCount !== undefined) assert.ok(timed.length <= r.maxCount, `${r.file}: 붙은 카드 ${timed.length} > ${r.maxCount}`);
+    kaSummary.push(`${r.file} ${timed.length}/${segs.length}`);
+  }
+  log(`  -> PASS: ${ka.active.length} active cases, ${ka.attach.length} attach cases, real: ${kaSummary.join(", ")}.`);
   log("");
 
   log("==============================================================");

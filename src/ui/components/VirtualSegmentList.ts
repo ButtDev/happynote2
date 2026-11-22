@@ -163,6 +163,11 @@ export class VirtualSegmentList {
     }
   }
 
+  /** SPEC_043: 지금 문장 카드에 재생 시각 전달(노래방식 낱말 칠하기) */
+  public setPlaybackTime(segmentIdx: number, t: number): void {
+    if (segmentIdx >= 0) this.mountedCards.get(segmentIdx)?.setPlaybackTime(t);
+  }
+
   public setLoopStateForSegment(segmentIdx: number, isLooping: boolean): void {
     this.mountedCards.get(segmentIdx)?.setLoopState(isLooping);
   }

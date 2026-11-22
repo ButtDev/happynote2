@@ -773,6 +773,7 @@ export class EarCoachView extends ItemView {
   private handlePlaybackTimeUpdate(timeSec: number): void {
     if (performance.now() < this.manualLockUntil && this.manualLockSegmentIdx >= 0) {
       this.setActiveHighlightSegment(this.manualLockSegmentIdx);
+      this.virtualList?.setPlaybackTime(this.manualLockSegmentIdx, timeSec); // SPEC_043
       return;
     }
     const activeIdx = followTargetIndex(
@@ -781,6 +782,7 @@ export class EarCoachView extends ItemView {
     );
     const changed = activeIdx >= 0 && activeIdx !== this.lastActiveSegmentIdx;
     this.setActiveHighlightSegment(activeIdx);
+    this.virtualList?.setPlaybackTime(activeIdx, timeSec); // SPEC_043
     // SPEC_023: 재생 시점으로 지금 문장이 바뀌면 카드 목록을 따라가게 한다(사람이 손댄 지 4초 안이면 쉼).
     if (changed && this.virtualList) {
       const follow = shouldAutoFollow({
