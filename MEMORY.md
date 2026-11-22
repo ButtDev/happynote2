@@ -3,16 +3,17 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.41 배포(숫자 읽기 30 → 썰리 + SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). 1.0.42: 받아쓰기 빈칸을 설명 덩어리 안으로(새 분석부터). ⏳ 실기기 버튼 대기: 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름).
-- 사람 AnkiDroid에 노트 유형 `happynote2 Listening` 만들어졌고 문장 카드 저장·AnkiWeb 전체 동기화(AnkiDroid 쪽 유지 안내)까지 됨(11-22). 문장 카드도 덱은 `happynote2`.
+- 배포 최신 BRAT 1.0.42(11-22): 소리 힌트 숫자 읽기(30-minute → 썰리 미넛), 힌트 덩어리 = AI 설명 영어 구(SPEC_032), 받아쓰기 빈칸 = 설명 덩어리 안(새 분석부터). SPEC_026·031·032 DONE.
+- ⏳ 실기기 버튼 대기: 025 5(고른 뜻 하나만 앞면) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘) — 다음에 몰아서 물을 것. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- 다음 후보: 사전에 없는 낱말 → dictionaryapi IPA 대체, 축약 규칙(going to → gonna; 지금 계산은 [고잉 터]), 소리 규칙 어색한 곳(walking → 워낑, finishing → 퓌니슁, at six → 엇 찍스, nineteen 끝 n 빠짐) — 사람이 안 짚었으니 고치기 전 물을 것.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
-- 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
+- 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 끄자고 제안할 것.
 
 ## 열린 질문 (사람에게)
-- `docs/review/ui-ux.md` H(과속 기준 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준으로?)·I(Lucide 아이콘 교체) — 아직 안 물음, SPEC_028 확인 뒤 물을 것.
-- 사람이 버튼을 다른 SPEC 행·메모로 누르거나 사진만 보내기도 함 — 내용·시각으로 판단해 기록(메모가 늦게 와 이미 처리한 내용일 수 있음).
+- `docs/review/ui-ux.md` H(과속 기준 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준으로?)·I(Lucide 아이콘 교체) — SPEC_028 확인 뒤 물을 것.
 
 ## 주의
+- 사람이 버튼을 다른 SPEC 행·메모로 누르거나 사진만 보내기도 함 — 내용·시각으로 판단해 기록. 메모에 「잘동작함」처럼 판정이 분명하면 OK로 기록.
 - 옛 데이터 호환 작업·확인을 하지 않는다(사람 11-22: 「어차피 영상하나뿐인데, 호환작업을 하는건 낭비야」). 확인은 새 영상으로.
 - 사람 기기 AI: Gemini 키 사용 중(503 high demand 겪음 → 1.0.28 busy 재시도). Groq는 대안(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
 - 실기기 ⏳ 요청 문구엔 사람이 할 준비 단계(설정·덱 만들기 등)를 빠뜨리지 않는다(SPEC_015에서 빠뜨려 회차 낭비).
@@ -33,4 +34,4 @@
 - 세로 입력 중 배치(SPEC_029): `src/ui/mobileTypingMode.ts` — 목록 입력칸 포커스 → `is-typing`(영상 상자 높이 0·툴바/조절 바 숨김) + 컨테이너 `position:fixed`(헤더 아래 ~ visualViewport 끝, 조상 transform 해제). 실기기 Obsidian은 키보드 때 앱 영역을 헤더 밑 ~30px까지 줄임. 입력칸이 가려지면 `[Ear-Coach 진단]` 알림. 화면 검사 `expect.typing`(heights·squeeze·advance). `EarCoachView.ts`에도 900줄 한도 시험 있음(지금 ~830).
 - 빈칸 채점(SPEC_030): `src/utils/dictationMatch.ts` `dictationMatches`(아포스트로피·구두점 무시, 같은 말 묶음 `DICTATION_SAME_WORDS`), Test 19 + `tests/fixtures/dictation/cases.json`, 변이용 `EAR_COACH_DICTATION_MODULE`. 맞히면 `MicroDictationBox.focusNextBlank`.
 - 셸 한 줄에 한국어·따옴표 JSON을 길게 넣으면 zsh 파싱 실패로 통째로 안 돎 → 긴 기록·버전 올림은 `.scratch/` 파이썬 스크립트로.
-- 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말.
+- 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말. 숫자는 `expandHintWord`로 영어 낱말(0~9999·연도·쉼표, 서수·5자리는 계산 포기). AI 빈칸은 `alignBlanksToChunk`(aiAnalysis `sanitizeItems`)로 덩어리 안만.
