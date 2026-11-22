@@ -861,12 +861,13 @@ async function runAllTests() {
   for (const [phrase, want] of shRules.ipa) assert.equal(shMod.soundHintForWords(phrase.split(" "), cmu)?.ipa, want, `ipa(${phrase})`);
   for (const [phrase, note] of shRules.missing) assert.equal(shMod.soundHintForWords(phrase.split(" "), cmu), null, note);
   for (const [seg, want, note] of shRules.chunk) assert.deepEqual(shMod.pickHintChunk(seg), want, `pickHintChunk ${note}`);
+  for (const [seg, want, note] of shRules.blanks) assert.deepEqual(shMod.dictationBlanksFor(seg), want, `dictationBlanksFor ${note}`);
   for (const sentence of shRules.coverage) {
     const words = sentence.split(" ");
     const idx = shMod.pickHintChunk({ words });
     assert.ok(shMod.soundHintForWords(idx.map((i: number) => words[i]), cmu), `사전에 모든 낱말: ${sentence}`);
   }
-  log(`  -> PASS: ${cmu.size} words, ${shRules.hangul.length} hangul + ${shRules.ipa.length} ipa + ${shRules.chunk.length} chunk + ${shRules.coverage.length} coverage`);
+  log(`  -> PASS: ${cmu.size} words, ${shRules.hangul.length} hangul + ${shRules.ipa.length} ipa + ${shRules.chunk.length} chunk + ${shRules.blanks.length} blanks + ${shRules.coverage.length} coverage`);
   const blog = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/sound-hint/blog.json"), "utf8"));
   let ours = 0;
   let base = 0;

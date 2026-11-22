@@ -8,3 +8,4 @@
 {"ts":"2026-11-20T23:40:45.212Z","signature":"build: TS2307 Cannot find module ./fixtures/storyboard-sheet.png","spec":"SPEC_017","tried":"esbuild binary 로더만 추가","avoid":"tsc가 tests/ui도 검사 — 새 확장자 import엔 tests/ui/*.d.ts 선언"}
 {"ts":"2026-11-21T21:54:37.533Z","signature":"ui: noOverflowX:.ear-coach-mobile-toolbar failed (435 <= 362)","spec":"SPEC_027","tried":"⏰ 오늘 필터 추가","avoid":"가로 목록 툴바 여유 6px — 필터 추가 시 아이콘+숫자"}
 {"ts":"2026-11-22T04:56:50.031Z","signature":"실기기: 세로 키보드 시 헤더 밑 검정 덮임","spec":"SPEC_029","tried":"1.0.36 is-typing(영상 접기) — 영상은 접혔으나 헤더 밑 ~30px 아래 검정","avoid":"앱 영역 높이에 기대지 말 것 → 회차 2 position:fixed + visualViewport"}
+{"ts":"2026-11-22T13:32:03.955Z","signature":"ui: typing advance did not move to next blank","spec":"SPEC_037","tried":"빈칸을 그릴 때 정렬","avoid":"화면 검사가 저장된 dictationBlankIndices로 빈칸 낱말을 추정하지 말 것 — 그린 입력칸 aria-label로"}

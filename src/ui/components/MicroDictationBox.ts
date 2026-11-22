@@ -1,6 +1,7 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform";
 import { dictationMatches } from "../../utils/dictationMatch";
+import { dictationBlanksFor } from "../../services/soundHint";
 
 export interface MicroDictationCallbacks {
   onDictationSolved: (segment: TranscriptSegment) => void;
@@ -22,9 +23,8 @@ export class MicroDictationBox {
     this.containerEl.empty();
     this.containerEl.addClass("ear-coach-dictation-box");
 
-    const blankIndices = new Set(
-      this.segment.analysis?.dictationBlankIndices ?? [0]
-    );
+    // SPEC_037: 힌트 덩어리와 같은 낱말을 비움
+    const blankIndices = new Set(dictationBlanksFor(this.segment));
     const skeletonIndices = new Set(
       this.segment.analysis?.skeletonWordIndices ?? []
     );

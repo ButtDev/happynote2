@@ -125,3 +125,4 @@
 {"ts":"2026-11-22T12:06:43.884Z","cmd":"/spec-new","spec":"SPEC_036","result":"READY","questions":0}
 {"ts":"2026-11-22T12:13:23.738Z","cmd":"/spec-run","spec":"SPEC_036","iteration":1,"status":"IMPLEMENTED","evidence":"Test 23·12 통과+변이 실패, ui sentenceAnki.audio/noAudio/decode ok, regression ok"}
 {"ts":"2026-11-22T12:23:37.257Z","cmd":"/spec-run","spec":"SPEC_036","iteration":1,"status":"DONE","evidence":"사람확인 6 OK, 제품 변경 없음"}
+{"ts":"2026-11-22T13:32:03.912Z","cmd":"/spec-run","spec":"SPEC_037","iteration":1,"status":"IMPLEMENTED","evidence":"Test 20 blanks 5 PASS+변이 실패, regression ok(ui 첫 실패는 검사 추정 방식 고침)"}

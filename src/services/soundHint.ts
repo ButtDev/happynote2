@@ -578,6 +578,19 @@ export function pickHintChunk(seg: HintSegmentLike): number[] {
   return range(0, 5);
 }
 
+/** 빈칸 받아쓰기 낱말 번호 — 힌트 덩어리(pickHintChunk)와 항상 같은 곳. SPEC_037. */
+export function dictationBlanksFor(seg: HintSegmentLike): number[] {
+  const n = seg.words.length;
+  const chunk = pickHintChunk(seg);
+  const given = (seg.analysis?.dictationBlankIndices ?? []).filter((i) => Number.isInteger(i) && i >= 0 && i < n);
+  const blanks = given.length > 0 ? given : [0];
+  if (chunk.length === 0) return blanks.slice(0, 4);
+  const lo = chunk[0];
+  const hi = chunk[chunk.length - 1];
+  const inside = Array.from(new Set(blanks.filter((i) => i >= lo && i <= hi))).sort((a, b) => a - b);
+  return (inside.length > 0 ? inside : chunk).slice(0, 4);
+}
+
 export function soundHintForSegment(seg: HintSegmentLike, dict: PronDict): (SoundHint & { text: string }) | null {
   const idx = pickHintChunk(seg);
   if (idx.length === 0) return null;

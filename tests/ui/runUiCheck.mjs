@@ -1010,8 +1010,10 @@ for (const vp of cases.viewports) {
       const info = await page.evaluate(() => {
         const card = document.activeElement?.closest(".ear-coach-segment-card");
         const seg = window.__earCoachView?.session?.segments?.find((x) => x.index === Number(card?.dataset.segmentIndex));
-        const blanks = [...(seg?.analysis?.dictationBlankIndices ?? [0])].sort((a, b) => a - b).filter((i) => /[a-z0-9]/i.test(seg?.words?.[i] ?? ""));
-        return { n: card?.querySelectorAll("input.ear-coach-blank-input").length ?? 0, word: seg?.words?.[blanks[0]] ?? null };
+        // SPEC_037: 실제로 그린 첫 빈칸(aria-label "Blank word N")의 낱말
+        const inputs = [...(card?.querySelectorAll("input.ear-coach-blank-input") ?? [])];
+        const first = Number((inputs[0]?.getAttribute("aria-label") ?? "").replace(/\D+/g, "")) - 1;
+        return { n: inputs.length, word: first >= 0 ? (seg?.words?.[first] ?? null) : null };
       });
       const where = () => page.evaluate(() => {
         const a = document.activeElement;

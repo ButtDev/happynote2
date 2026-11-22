@@ -510,5 +510,12 @@
     "I want to go there tomorrow",
     "What are you going to do",
     "Let me get a lot of water"
+  ],
+  "blanks": [
+    [{"words": ["I", "haven't", "sprinted", "in", "a", "long", "time", "and", "and", "all", "of", "a", "sudden", "became", "incredibly", "nervous", "and", "I'm", "looking", "at", "my", "daughter", "and", "she's", "like,", "you've", "got", "to", "win,", "dad."], "analysis": {"dictationBlankIndices": [1, 2, 3, 4, 5], "trapExplanation": "all of a sudden이 [올러브어써든]으로 빠르게 연음됩니다."}}, [9, 10, 11, 12], "사진 문장(11-22): chunk 없음 → 설명 속 all of a sudden 4칸"],
+    [{"words": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], "analysis": {"chunkWordIndices": [3, 4, 5], "dictationBlankIndices": [4, 5]}}, [4, 5], "chunk 안 빈칸은 유지"],
+    [{"words": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], "analysis": {"chunkWordIndices": [1, 2, 3, 4, 5, 6], "dictationBlankIndices": [6, 1, 2, 3, 4, 5]}}, [1, 2, 3, 4], "5개 이상은 정렬 뒤 앞 4개"],
+    [{"words": ["a", "b", "c"]}, [0], "빈칸·분석 없음 + 짧은 문장 → [0]"],
+    [{"words": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], "analysis": {"chunkWordIndices": [2, 3, 4, 5, 6, 7], "dictationBlankIndices": [0, 9]}}, [2, 3, 4, 5], "chunk 밖 빈칸 → chunk 앞 4개"]
   ]
 }
