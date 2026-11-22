@@ -1,0 +1,349 @@
+{
+  "_note": "SPEC_040 학습 기록 저장소. 시계는 2026-11-23T00:00:00Z부터 호출마다 1초씩. op 이름은 LearningStore 메서드, args 그대로.",
+  "scenarios": [
+    {
+      "name": "핀 켜기·같은 핀·끄기",
+      "file": null,
+      "ops": [
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          12.0,
+          "I'm gonna go",
+          true
+        ],
+        [
+          "setPin",
+          "vidBBBBBBBB",
+          3.2,
+          "what do you mean",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          12.3,
+          "I'm gonna go now",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          40.0,
+          "kind of",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          40.4,
+          "kind of",
+          false
+        ],
+        [
+          "setPin",
+          "vidCCCCCCCC",
+          1.0,
+          "never pinned",
+          false
+        ]
+      ],
+      "expect": {
+        "pins": [
+          {
+            "videoId": "vidAAAAAAAA",
+            "start": 12.0,
+            "text": "I'm gonna go now",
+            "pinnedAt": "2026-11-23T00:00:02.000Z"
+          },
+          {
+            "videoId": "vidBBBBBBBB",
+            "start": 3.2,
+            "text": "what do you mean",
+            "pinnedAt": "2026-11-23T00:00:01.000Z"
+          }
+        ],
+        "writes": 5
+      }
+    },
+    {
+      "name": "0.5초 떨어진 핀은 다른 핀",
+      "file": null,
+      "ops": [
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          10.0,
+          "a",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          10.5,
+          "b",
+          true
+        ]
+      ],
+      "expect": {
+        "pinCount": 2
+      }
+    },
+    {
+      "name": "빈칸은 가장 최근 결과로",
+      "file": null,
+      "ops": [
+        [
+          "recordBlank",
+          "vidAAAAAAAA",
+          5.0,
+          "gonna",
+          false
+        ],
+        [
+          "recordBlank",
+          "vidAAAAAAAA",
+          5.0,
+          "Gonna",
+          true
+        ],
+        [
+          "recordBlank",
+          "vidAAAAAAAA",
+          9.0,
+          "kinda",
+          true
+        ],
+        [
+          "recordBlank",
+          "vidAAAAAAAA",
+          9.0,
+          "kinda",
+          false
+        ],
+        [
+          "recordBlank",
+          "vidBBBBBBBB",
+          1.0,
+          "wanna",
+          false
+        ]
+      ],
+      "expect": {
+        "wrongBlanks": [
+          [
+            "vidBBBBBBBB",
+            "wanna"
+          ],
+          [
+            "vidAAAAAAAA",
+            "kinda"
+          ]
+        ],
+        "wrongBlanksSince": {
+          "since": "2026-11-23T00:00:04.000Z",
+          "expect": [
+            [
+              "vidBBBBBBBB",
+              "wanna"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "재생 위치는 영상 200개까지(오래된 것부터 버림)",
+      "file": null,
+      "repeat": {
+        "op": "setPosition",
+        "count": 205,
+        "videoIdPrefix": "v",
+        "seconds": 7.5,
+        "step": 2,
+        "_ids": "v1..v205"
+      },
+      "ops": [
+        [
+          "setPosition",
+          "v0",
+          99,
+          null
+        ]
+      ],
+      "expect": {
+        "positionCount": 200,
+        "positionMissing": [
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v5",
+          "v6"
+        ],
+        "position": {
+          "videoId": "v0",
+          "value": {
+            "seconds": 99,
+            "at": "2026-11-23T00:03:25.000Z"
+          }
+        },
+        "positionKept": {
+          "videoId": "v7",
+          "value": {
+            "seconds": 7.5,
+            "step": 2,
+            "at": "2026-11-23T00:00:06.000Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "빈칸 2000·퀴즈 500 상한",
+      "file": null,
+      "repeat": {
+        "op": "recordBlankAndQuiz",
+        "count": 2003
+      },
+      "ops": [],
+      "expect": {
+        "blankCount": 2000,
+        "firstBlankWord": "w3",
+        "quizCount": 500,
+        "firstQuizCorrect": 1503
+      }
+    },
+    {
+      "name": "퀴즈는 영상별로 골라 봄",
+      "file": null,
+      "ops": [
+        [
+          "recordQuiz",
+          "vidAAAAAAAA",
+          3,
+          2
+        ],
+        [
+          "recordQuiz",
+          "vidBBBBBBBB",
+          3,
+          3
+        ],
+        [
+          "recordQuiz",
+          "vidAAAAAAAA",
+          3,
+          1
+        ]
+      ],
+      "expect": {
+        "quizzes": {
+          "videoId": "vidAAAAAAAA",
+          "correct": [
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "깨진 파일은 빈 기록에서 시작",
+      "file": "{not json",
+      "ops": [
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          1.0,
+          "hi",
+          true
+        ]
+      ],
+      "expect": {
+        "pinCount": 1,
+        "writes": 1,
+        "savedSchemaVersion": 1
+      }
+    },
+    {
+      "name": "칸 하나가 깨지면 그 항목만 버림",
+      "file": "{\"schemaVersion\":1,\"pins\":[{\"videoId\":\"vidAAAAAAAA\",\"start\":1,\"text\":\"ok\",\"pinnedAt\":\"2026-11-01T00:00:00.000Z\"},{\"videoId\":\"x\"}],\"blanks\":\"oops\",\"positions\":{\"vidAAAAAAAA\":{\"seconds\":\"bad\"},\"vidBBBBBBBB\":{\"seconds\":4,\"at\":\"2026-11-01T00:00:00.000Z\"}},\"quizzes\":null}",
+      "ops": [],
+      "expect": {
+        "pinCount": 1,
+        "positionMissing": [
+          "vidAAAAAAAA"
+        ],
+        "position": {
+          "videoId": "vidBBBBBBBB",
+          "value": {
+            "seconds": 4,
+            "at": "2026-11-01T00:00:00.000Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "새 판(schemaVersion 2) 파일은 읽기만 하고 덮지 않음",
+      "file": "{\"schemaVersion\":2,\"pins\":[{\"videoId\":\"vidAAAAAAAA\",\"start\":1,\"text\":\"future\",\"pinnedAt\":\"2026-12-01T00:00:00.000Z\"}],\"blanks\":[],\"positions\":{},\"quizzes\":[],\"newField\":true}",
+      "ops": [
+        [
+          "setPin",
+          "vidBBBBBBBB",
+          2.0,
+          "now",
+          true
+        ],
+        [
+          "recordQuiz",
+          "vidBBBBBBBB",
+          3,
+          3
+        ]
+      ],
+      "expect": {
+        "writes": 0,
+        "readOnly": true,
+        "fileUnchanged": true
+      }
+    },
+    {
+      "name": "느린 첫 쓰기가 나중 상태를 덮지 않음",
+      "file": null,
+      "writeDelaysMs": [
+        40,
+        0,
+        0
+      ],
+      "concurrent": true,
+      "ops": [
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          1.0,
+          "one",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          2.0,
+          "two",
+          true
+        ],
+        [
+          "setPin",
+          "vidAAAAAAAA",
+          3.0,
+          "three",
+          true
+        ]
+      ],
+      "expect": {
+        "savedPinTexts": [
+          "one",
+          "two",
+          "three"
+        ]
+      }
+    }
+  ]
+}

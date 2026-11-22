@@ -26,7 +26,7 @@
     "aiFetch", "fetchBytes", "storyboard", "audioClip"
   ],
   "publicObjects": [
-    "settings", "dictionary", "anki", "workerManager", "transcriptService", "agyService", "noteGenerator", "weaknessTracker"
+    "settings", "dictionary", "anki", "workerManager", "transcriptService", "agyService", "noteGenerator", "weaknessTracker", "learning"
   ],
   "aiConfig": [
     { "settings": { "aiProvider": "gemini", "geminiApiKey": "" }, "expect": null },

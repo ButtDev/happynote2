@@ -20,6 +20,7 @@ import { createSessionLoader, handleYouTubeTrigger, runAgyBatchEnrichment } from
 import { activateWorkspaceView, isEarCoachNoteFast, registerAutoOpen, restoreSessionForView } from "./features/workspaceView";
 import { aiConfigFromSettings, createMobileAiRunner } from "./features/mobileAi";
 import { registerEntryPoints } from "./features/commands";
+import { createLearningStore } from "./features/learning";
 
 /**
  * Main Obsidian Plugin class for Ear-Coach (YouTube + Obsidian + agy CLI).
@@ -45,6 +46,8 @@ export default class EarCoachPlugin extends Plugin {
   public audioClip = createAudioClip();
   /** SPEC_017: 영상 스토리보드 스펙, 영상별 캐시 */
   public storyboard = createStoryboard();
+  /** SPEC_040: 영상을 가로지르는 학습 기록(learning.json) */
+  public learning = createLearningStore(this);
 
   private sessionLoader = createSessionLoader(this);
   private mobileAiRunner = createMobileAiRunner(this);

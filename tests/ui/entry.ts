@@ -52,6 +52,7 @@ async function main(): Promise<void> {
     agyService: {},
     noteGenerator: { saveSessionToNote: async () => {}, appendTutorCalloutToNote: async () => {} },
     weaknessTracker: { recordWeakSegment: async () => {} },
+    learning: { setPin: async (...a: unknown[]) => { ((window as any).__learningPins ??= []).push(a); } }, // SPEC_040
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
     // SPEC_015 회차 2: 발음 바이트(가짜, 3바이트)
     // SPEC_017: 스토리보드 시트 주소면 합성 시트 바이트

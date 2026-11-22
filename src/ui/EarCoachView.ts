@@ -531,6 +531,7 @@ export class EarCoachView extends ItemView {
           delete s.reviews;
         }
         await this.persistCurrentSession(false);
+        if (this.session) void this.plugin.learning.setPin(this.session.videoId, s.start, s.text, s.isPinned); // SPEC_040
         if (s.isPinned && this.activeNoteFile && this.session) {
           await this.plugin.weaknessTracker.recordWeakSegment({
             videoId: this.session.videoId,

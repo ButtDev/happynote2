@@ -37,6 +37,7 @@ import * as videoDataSrc from "../src/services/videoData.ts";
 import * as videoTrashSrc from "../src/services/videoTrash.ts";
 import * as diagnosticsSrc from "../src/services/diagnostics.ts";
 import * as audioClipSrc from "../src/services/audioClip.ts";
+import * as learningSrc from "../src/services/learningStore.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1085,6 +1086,64 @@ async function runAllTests() {
   const wiring = spawnSync(process.execPath, wiringArgs, { encoding: "utf8" });
   assert.equal(wiring.status, 0, `wiring check failed:\n${wiring.stdout}${wiring.stderr}`);
   log(`  -> PASS: ${wiring.stdout.trim()}`);
+  log("");
+
+  log("[Test 26] Learning store — 핀·빈칸·재생 위치·퀴즈 한 파일, 상한·깨진 파일·새 판 읽기 전용·쓰기 줄 세움 (data-driven, SPEC_040)");
+  const lsMod = process.env.EAR_COACH_LEARNING_MODULE ? await import(path.resolve(process.env.EAR_COACH_LEARNING_MODULE)) : learningSrc;
+  const ls = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/learning/cases.json"), "utf8"));
+  for (const sc of ls.scenarios) {
+    let tick = 0;
+    const clock = () => new Date(Date.UTC(2026, 10, 23, 0, 0, tick++)).toISOString();
+    const file = { text: sc.file as string | null, writes: 0, n: 0 };
+    const delays: number[] = sc.writeDelaysMs ?? [];
+    const store = new lsMod.LearningStore(
+      {
+        read: async () => file.text,
+        write: async (t: string) => {
+          const d = delays[file.n++] ?? 0;
+          if (d) await new Promise((r) => setTimeout(r, d));
+          file.text = t;
+          file.writes++;
+        },
+      },
+      clock
+    );
+    const args = (a: any[]) => a.map((x) => (x === null ? undefined : x));
+    if (sc.repeat?.op === "setPosition") {
+      for (let i = 1; i <= sc.repeat.count; i++) await store.setPosition(`${sc.repeat.videoIdPrefix}${i}`, sc.repeat.seconds, sc.repeat.step);
+    } else if (sc.repeat?.op === "recordBlankAndQuiz") {
+      for (let i = 0; i < sc.repeat.count; i++) {
+        await store.recordBlank("vidAAAAAAAA", i, `w${i}`, false);
+        await store.recordQuiz("vidAAAAAAAA", 10, i);
+      }
+    }
+    if (sc.concurrent) await Promise.all(sc.ops.map(([op, ...a]: any[]) => store[op](...args(a))));
+    else for (const [op, ...a] of sc.ops) await store[op](...args(a));
+    await store.flush();
+    await new Promise((r) => setTimeout(r, 60));
+    const e = sc.expect, tag = `[${sc.name}]`;
+    const saved = file.text && !e.fileUnchanged ? JSON.parse(file.text) : null;
+    if (e.pins) assert.deepEqual(await store.pins(), e.pins, `${tag} pins`);
+    if (e.pinCount !== undefined) assert.equal((await store.pins()).length, e.pinCount, `${tag} pinCount`);
+    if (e.writes !== undefined) assert.equal(file.writes, e.writes, `${tag} writes`);
+    if (e.wrongBlanks) assert.deepEqual((await store.wrongBlanks()).map((b: any) => [b.videoId, b.word]), e.wrongBlanks, `${tag} wrongBlanks`);
+    if (e.wrongBlanksSince) assert.deepEqual((await store.wrongBlanks(e.wrongBlanksSince.since)).map((b: any) => [b.videoId, b.word]), e.wrongBlanksSince.expect, `${tag} wrongBlanks since`);
+    if (e.positionCount !== undefined) assert.equal(Object.keys(saved.positions).length, e.positionCount, `${tag} positionCount`);
+    for (const id of e.positionMissing ?? []) assert.equal(await store.position(id), null, `${tag} position ${id} 버려짐`);
+    for (const k of ["position", "positionKept"]) if (e[k]) assert.deepEqual(await store.position(e[k].videoId), e[k].value, `${tag} ${k}`);
+    if (e.blankCount !== undefined) {
+      assert.equal(saved.blanks.length, e.blankCount, `${tag} blankCount`);
+      assert.equal(saved.blanks[0].word, e.firstBlankWord, `${tag} 오래된 빈칸부터 버림`);
+      assert.equal(saved.quizzes.length, e.quizCount, `${tag} quizCount`);
+      assert.equal(saved.quizzes[0].correct, e.firstQuizCorrect, `${tag} 오래된 퀴즈부터 버림`);
+    }
+    if (e.quizzes) assert.deepEqual((await store.quizzes(e.quizzes.videoId)).map((q: any) => q.correct), e.quizzes.correct, `${tag} quizzes`);
+    if (e.savedSchemaVersion !== undefined) assert.equal(saved.schemaVersion, e.savedSchemaVersion, `${tag} schemaVersion`);
+    if (e.readOnly !== undefined) assert.equal(store.isReadOnly(), e.readOnly, `${tag} readOnly`);
+    if (e.fileUnchanged) assert.equal(file.text, sc.file, `${tag} 새 판 파일을 덮음`);
+    if (e.savedPinTexts) assert.deepEqual(saved.pins.map((p: any) => p.text), e.savedPinTexts, `${tag} 마지막 상태가 파일에`);
+  }
+  log(`  -> PASS: ${ls.scenarios.length} scenarios (same pin <0.5s, latest blank result, caps 2000/500/200, broken file, schema 2 read-only, serialized writes).`);
   log("");
 
   log("==============================================================");
