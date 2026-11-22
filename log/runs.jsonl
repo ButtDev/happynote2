@@ -129,3 +129,4 @@
 {"ts":"2026-11-22T16:09:45.047Z","cmd":"/night-run","spec":"SPEC_038","iteration":1,"status":"IMPLEMENTED","evidence":"Test 24 PASS+변이 4·UI 변이 1 실패 확인, runUiCheck diagnostics 세로·가로, worktree 회귀 harness·build·test·ui ok, main ff 5976fc0, BRAT 1.0.48 릴리스 3파일"}
 {"ts":"2026-11-22T18:06:58.547Z","spec":"SPEC_039","mode":"night","result":"DONE","commit":"b3392bd","evidence":"main.ts 898->150; wiring check Test 25 passes new+old main; 4 mutations fail; verify regression ok"}
 {"ts":"2026-11-22T20:05:27.322Z","spec":"SPEC_040","mode":"night","result":"DONE","commit":"42bf00e","evidence":"Test 26 10 scenarios; 4 mutations fail; wiring OK learning; verify regression ok"}
+{"ts":"2026-11-22T21:03:52.302Z","cmd":"/spec-run","spec":"SPEC_037","iteration":1,"status":"DONE","evidence":"사람확인 4 OK, 제품 변경 없음"}

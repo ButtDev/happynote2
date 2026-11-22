@@ -1,7 +1,7 @@
 ---
 id: SPEC_037
 title: 빈칸 받아쓰기 낱말을 소리 힌트 덩어리와 항상 맞추기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_032]
@@ -36,7 +36,7 @@ depends_on: [SPEC_032]
 1. [x] Test 20 `blanks`: 사진 문장(chunk 없음, 설명 "all of a sudden…", AI 빈칸 1~5) → all of a sudden 4칸, chunk 안 빈칸은 유지, 5개 이상은 4개, 빈칸 없음+짧은 문장 → [0], chunk 있음+빈칸 밖 → chunk 앞 4개 + 변이(정렬 안 함 사본 → 사진 문장 실패) [자동]
 2. [x] `MicroDictationBox.ts`가 `dictationBlanksFor`를 쓰고 `dictationBlankIndices ?? [0]`이 남지 않음(grep) [자동]
 3. [x] 회귀 `verify.mjs --set regression` [자동]
-4. [ ] 실기기: BRAT 업데이트 뒤 사진의 「1등이 전부가 아니라더니」 영상 00:35 카드에서 「빈칸」 칸과 「힌트」의 덩어리(all of a sudden)가 같은 낱말인지 보고 버튼 [수동]
+4. [x] 실기기: BRAT 업데이트 뒤 사진의 「1등이 전부가 아니라더니」 영상 00:35 카드에서 「빈칸」 칸과 「힌트」의 덩어리(all of a sudden)가 같은 낱말인지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1 → `npm test` Test 20 + 변이 `EAR_COACH_SOUNDHINT_MODULE`. 2 → grep. 3 → `verify.mjs --set regression`.
@@ -51,3 +51,4 @@ depends_on: [SPEC_032]
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 20 「35 hangul + 5 ipa + 10 chunk + 5 blanks + 5 coverage」 PASS(사진 문장 → [9,10,11,12] = all of a sudden), 변이(.scratch/mut 정렬 안 함 `return blanks`) → 「dictationBlanksFor 사진 문장(11-22)…」 AssertionError · 2 ✅ `src/ui/components/MicroDictationBox.ts:27` `new Set(dictationBlanksFor(this.segment))`, `dictationBlankIndices ?? [0]` grep 0건 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok — 처음 ui 실패 「portrait: typing advance did not move to next blank (at 0, word=So, n=2)」: 화면 검사가 저장된 `dictationBlankIndices`로 첫 빈칸 낱말을 추정해서, 실제 그린 첫 빈칸(aria-label)으로 읽게 고침(`tests/ui/runUiCheck.mjs:1013`, 검사 약화 아님 — 틀린 답 머묾·맞힌 답 이동 판정 그대로) · 4 ⏳ 실기기
+- 2026-11-23 사람 확인: DONE — 4 ✅ log/confirmations.jsonl 「[Button pressed: SPEC_037 4 OK]」(실기기 빈칸·힌트 일치). 1~3은 회차 1 근거, 제품 파일 변경 없음(회차 안 셈).
