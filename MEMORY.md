@@ -9,7 +9,6 @@
 
 ## 열린 질문 (사람에게)
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
-- SPEC_042 가결정을 보고함(답 없음): Anki 연결 문구 「앱에서」 유지(초안 「AnkiDroid 앱에서」 아님), 모르는 원인은 「❌ … — 알 수 없는 오류 — 🩺 진단 복사로 보내 주세요」(— 두 번). 사람이 고치라 하면 `src/services/notices.ts`·`ANKI_MESSAGES`만.
 
 ## 주의
 - 네트워크(SPEC_041): 모든 요청은 `src/features/network.ts` `send(opts, HTTP_POLICIES.x)` → `src/services/http.ts` `sendWithPolicy`(Test 27, 변이 `EAR_COACH_HTTP_MODULE`). 새 요청도 `requestUrl` 직접 말고 `send`로. Anki는 재시도 0(카드 두 번 방지).
