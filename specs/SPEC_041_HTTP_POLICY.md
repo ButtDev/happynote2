@@ -1,7 +1,7 @@
 ---
 id: SPEC_041
 title: 네트워크 요청 계층 — 시간 제한·잠깐 실패 재시도·오프라인 구분을 한 곳에서
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_039]
@@ -34,7 +34,7 @@ depends_on: [SPEC_039]
 1. [x] Test 27: 16 시나리오(성공·503/429/5xx 재시도·404 안 함·연결 실패·응답 없음·오프라인 처음/중간/복귀·throw 404/503·AI·Anki 재시도 없음·대기 목록) 통과 + 변이 4개(재시도 없음·시간 제한 없음·404 재시도·오프라인 확인 없음) 모두 실패 [자동]
 2. [x] `src/` 안 `requestUrl(` 호출은 `src/features/network.ts` `send` 한 곳뿐(TranscriptService는 `send as requestUrl` import) — grep [자동]
 3. [x] 회귀 `verify.mjs --set regression`(Test 25 연결 검사·화면 검사 포함) [자동]
-4. [ ] 실기기: BRAT 업데이트 뒤 비행기 모드에서 자막 단어를 눌러 사전을 열면 「인터넷 연결이 없어요」가 보이고(매달리지 않음), 비행기 모드를 끄고 다시 누르면 뜻이 나오는지 보고 버튼 [수동]
+4. [x] 실기기: BRAT 업데이트 뒤 비행기 모드에서 자막 단어를 눌러 사전을 열면 「인터넷 연결이 없어요」가 보이고(매달리지 않음), 비행기 모드를 끄고 다시 누르면 뜻이 나오는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1 → `npm test` Test 27 + `EAR_COACH_HTTP_MODULE` 변이. 2 → `grep -rn "requestUrl(" src`. 3 → `verify.mjs --set regression --json`(worktree, main merge 뒤 다시).
@@ -50,3 +50,4 @@ depends_on: [SPEC_039]
 
 ## 실행 기록
 - 2026-11-23 회차 1(야간): IMPLEMENTED — 1 ✅ Test 27 「16 scenarios (retry 408/429/5xx, no retry 404·AI·Anki, timeout, offline, backoff)」 PASS, 변이 m1(재시도 없음) → 「[503 뒤 성공…] status」, m2(race 뺌) → 처음엔 node가 exit 0으로 조용히 끝나 안 잡힘 → 러너에 2초 감시 추가 뒤 「[응답 없음 뒤 성공] 시간 제한이 걸리지 않음」, m3(404 재시도) → 「[404는 다시 안 함] status」, m4(오프라인 확인 없음) → 「[처음부터 오프라인…] 실패해야 함」 · 2 ✅ `grep -rn "requestUrl(" src` → 실제 호출은 `src/features/network.ts:21` 한 곳, TranscriptService 113·155·181은 `src/services/TranscriptService.ts:1` `import { send as requestUrl }` · 3 ✅ worktree `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기
+- 2026-11-23 사람 확인: DONE — 4 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_041 4 OK]」(실기기 1.0.49 비행기 모드 안내·복귀 뒤 뜻). 1~3은 회차 1 근거 그대로.
