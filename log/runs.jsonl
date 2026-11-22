@@ -119,3 +119,4 @@
 {"ts":"2026-11-22T11:16:53.508Z","cmd":"/spec-run","spec":"SPEC_027","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
 {"ts":"2026-11-22T11:16:53.550Z","cmd":"/spec-run","spec":"SPEC_028","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
 {"ts":"2026-11-22T11:16:53.592Z","cmd":"/spec-run","spec":"SPEC_033","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
+{"ts":"2026-11-22T11:27:28.536Z","cmd":"/spec-new","spec":"SPEC_035","result":"READY","questions":0}
