@@ -1,0 +1,22 @@
+{
+  "comment": "dictationMatches(user, expected) — 아포스트로피·구두점 무시, 같은 말 줄임 정답. SPEC_030",
+  "match": [
+    ["cause", "'Cause", true, "사람 사례"],
+    ["because", "'Cause", true, "사람 사례"],
+    ["'cause", "'Cause", true, ""],
+    ["Cause", "'cause", true, ""],
+    ["cuz", "because", true, ""],
+    ["because", "because,", true, "끝 구두점"],
+    ["lot", "Lot", true, "대문자"],
+    ["them", "'em", true, ""],
+    ["till", "until", true, ""],
+    ["goin", "goin'", true, ""],
+    ["going", "goin'", true, ""],
+    ["don't", "don’t", true, "굽은 따옴표"],
+    ["dont", "don't", true, "모바일 키보드 아포스트로피 생략"],
+    ["cause", "case", false, ""],
+    ["becuase", "because", false, "철자 틀림"],
+    ["", "'Cause", false, "빈칸"],
+    ["them", "then", false, ""]
+  ]
+}

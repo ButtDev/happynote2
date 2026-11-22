@@ -1,5 +1,6 @@
 import { TranscriptSegment } from "../../types/transcript";
 import { isMobileApp } from "../../utils/platform";
+import { dictationMatches } from "../../utils/dictationMatch";
 
 export interface MicroDictationCallbacks {
   onDictationSolved: (segment: TranscriptSegment) => void;
@@ -56,7 +57,8 @@ export class MicroDictationBox {
             this.segment.userDictationAttempts = {};
           }
           this.segment.userDictationAttempts[idx] = inputEl.value;
-          this.validateSingleInput(inputEl, cleanExpected);
+          const solved = this.validateSingleInput(inputEl, cleanExpected);
+          if (solved) this.focusNextBlank(inputs, inputEl);
           this.checkAllSolved(inputs);
         });
 
@@ -109,15 +111,13 @@ export class MicroDictationBox {
   }
 
   private validateSingleInput(inputEl: HTMLInputElement, expected: string): boolean {
-    const normalizedUser = inputEl.value.trim().toLowerCase().replace(/[^a-z0-9']/g, "");
-    const normalizedExpected = expected.toLowerCase().replace(/[^a-z0-9']/g, "");
-
-    if (!normalizedUser) {
+    if (!inputEl.value.trim()) {
       inputEl.removeClass("is-correct", "is-wrong");
       return false;
     }
 
-    if (normalizedUser === normalizedExpected) {
+    // SPEC_030: 아포스트로피 무시 + 같은 말 줄임('cause=because) 정답
+    if (dictationMatches(inputEl.value, expected)) {
       inputEl.addClass("is-correct");
       inputEl.removeClass("is-wrong");
       return true;
@@ -126,6 +126,16 @@ export class MicroDictationBox {
       inputEl.removeClass("is-correct");
       return false;
     }
+  }
+
+  /** SPEC_030: 맞히면 같은 카드의 다음 안 맞힌 빈칸으로 커서 이동(없으면 그대로) */
+  private focusNextBlank(
+    inputs: Array<{ idx: number; expected: string; inputEl: HTMLInputElement }>,
+    current: HTMLInputElement
+  ): void {
+    const at = inputs.findIndex((item) => item.inputEl === current);
+    const next = inputs.slice(at + 1).find((item) => !item.inputEl.hasClass("is-correct"));
+    if (next) next.inputEl.focus();
   }
 
   private checkAllSolved(

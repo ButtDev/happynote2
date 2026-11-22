@@ -30,6 +30,7 @@ import * as aiSrc from "../src/services/aiAnalysis.ts";
 import * as loopSrc from "../src/utils/loopControl.ts";
 import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
 import * as reviewSrc from "../src/utils/reviewQueue.ts";
+import * as dictationSrc from "../src/utils/dictationMatch.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -825,6 +826,13 @@ async function runAllTests() {
   assert.deepEqual(reviewMod.dueIndices(rc.queue.segments, Date.parse(rc.queue.now), rc.tz), rc.queue.expect, "dueIndices");
   assert.deepEqual(reviewMod.withReview(undefined, true, "t"), [{ at: "t", ok: true }], "withReview");
   log(`  -> PASS: ${rc.due.length} due + ${rc.days.length} interval + ${rc.graduate.length} graduate cases + queue`);
+  log("");
+
+  log("[Test 19] Dictation match — 아포스트로피 무시·같은 말 줄임 (data-driven, SPEC_030)");
+  const dictationMod = process.env.EAR_COACH_DICTATION_MODULE ? await import(path.resolve(process.env.EAR_COACH_DICTATION_MODULE)) : dictationSrc;
+  const dc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/dictation/cases.json"), "utf8"));
+  for (const [user, expected, want, note] of dc.match) assert.equal(dictationMod.dictationMatches(user, expected), want, `dictationMatches(${JSON.stringify(user)}, ${JSON.stringify(expected)}) ${note}`);
+  log(`  -> PASS: ${dc.match.length} cases`);
   log("");
 
   log("==============================================================");

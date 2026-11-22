@@ -89,7 +89,8 @@
           ],
           "squeeze": [
             480
-          ]
+          ],
+          "advance": true
         }
       }
     },

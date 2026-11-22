@@ -837,6 +837,31 @@ for (const vp of cases.viewports) {
     if (!o.input || o.input.bottom > vp.height * t.overlayMaxBottom)
       errors.push(`${vp.name}: typing overlay input bottom=${o.input?.bottom} > ${Math.round(vp.height * t.overlayMaxBottom)}`);
     if (o.toolbarShown) errors.push(`${vp.name}: typing toolbar still shown`);
+    // SPEC_030: 첫 빈칸 오답이면 그대로, 정답(아포스트로피 빼고 대문자로)이면 다음 빈칸으로 커서 이동
+    if (t.advance) {
+      const info = await page.evaluate(() => {
+        const card = document.activeElement?.closest(".ear-coach-segment-card");
+        const seg = window.__earCoachView?.session?.segments?.find((x) => x.index === Number(card?.dataset.segmentIndex));
+        const blanks = [...(seg?.analysis?.dictationBlankIndices ?? [0])].sort((a, b) => a - b).filter((i) => /[a-z0-9]/i.test(seg?.words?.[i] ?? ""));
+        return { n: card?.querySelectorAll("input.ear-coach-blank-input").length ?? 0, word: seg?.words?.[blanks[0]] ?? null };
+      });
+      const where = () => page.evaluate(() => {
+        const a = document.activeElement;
+        return [...(a?.closest(".ear-coach-segment-card")?.querySelectorAll("input.ear-coach-blank-input") ?? [])].indexOf(a);
+      });
+      if (info.n < 2 || !info.word) errors.push(`${vp.name}: typing advance needs 2+ blanks (n=${info.n} word=${info.word})`);
+      else {
+        await page.keyboard.type("zzz");
+        const afterWrong = await where();
+        await page.locator(":focus").fill("");
+        await page.keyboard.type(info.word.replace(/[^a-z0-9]/gi, "").toUpperCase());
+        await page.waitForTimeout(150);
+        const afterRight = await where();
+        res.advance = { word: info.word, afterWrong, afterRight };
+        if (afterWrong !== 0) errors.push(`${vp.name}: typing advance moved on wrong answer (at ${afterWrong})`);
+        if (afterRight !== 1) errors.push(`${vp.name}: typing advance did not move to next blank (at ${afterRight}, word=${info.word}, n=${info.n})`);
+      }
+    }
     for (const h of t.heights) {
       await page.setViewportSize({ width: vp.width, height: h });
       await page.waitForTimeout(500);

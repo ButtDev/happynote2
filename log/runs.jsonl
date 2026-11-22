@@ -96,3 +96,4 @@
 {"ts":"2026-11-21T21:59:15.223Z","cmd":"release","spec":"SPEC_025,SPEC_026,SPEC_027,SPEC_028","status":"IMPLEMENTED","evidence":"BRAT 1.0.35 push+tag, release assets main.js,manifest.json,styles.css"}
 {"ts":"2026-11-21T22:31:51.459Z","spec":"SPEC_029","result":"IMPLEMENTED","evidence":"ui-check typing ok, mutation fails, regression ok","pending":"3 실기기"}
 {"ts":"2026-11-22T04:56:50.172Z","spec":"SPEC_029","result":"IMPLEMENTED","iteration":2,"evidence":"ui-check typing.squeeze ok, mutation fails, regression ok","pending":"3 실기기"}
+{"ts":"2026-11-22T05:46:46.620Z","spec":"SPEC_030","result":"IMPLEMENTED","evidence":"Test19 17 cases, ui typing.advance ok, mutations fail, regression ok","pending":"4 실기기"}
