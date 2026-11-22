@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.40 배포(SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). ⏳ 실기기 버튼 대기: 032 7(Miss Earth 문장 정답 단계) · 031 8(새 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA — 026 4도 함께) · 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름), 옛 분석 재분석 버튼.
+- BRAT 1.0.40 배포(SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). ⏳ 실기기 버튼 대기: 031 8(새 영상에서 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA — 026 4도 함께) · 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름).
 - 사람 AnkiDroid에 노트 유형 `happynote2 Listening` 만들어졌고 문장 카드 저장·AnkiWeb 전체 동기화(AnkiDroid 쪽 유지 안내)까지 됨(11-22). 문장 카드도 덱은 `happynote2`.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
@@ -13,6 +13,7 @@
 - 사람이 버튼을 다른 SPEC 행·메모로 누르거나 사진만 보내기도 함 — 내용·시각으로 판단해 기록(메모가 늦게 와 이미 처리한 내용일 수 있음).
 
 ## 주의
+- 옛 데이터 호환 작업·확인을 하지 않는다(사람 11-22: 「어차피 영상하나뿐인데, 호환작업을 하는건 낭비야」). 확인은 새 영상으로.
 - 사람 기기 AI: Gemini 키 사용 중(503 high demand 겪음 → 1.0.28 busy 재시도). Groq는 대안(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
 - 실기기 ⏳ 요청 문구엔 사람이 할 준비 단계(설정·덱 만들기 등)를 빠뜨리지 않는다(SPEC_015에서 빠뜨려 회차 낭비).
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → 릴리스 확인은 `curl` GitHub API, `gh` 없음) 후 ⏳ 요청. 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.

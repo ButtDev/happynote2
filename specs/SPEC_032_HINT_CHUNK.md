@@ -1,7 +1,7 @@
 ---
 id: SPEC_032
 title: 소리 힌트 덩어리를 AI 설명과 맞추기 + 덩어리 영어 글자 표시
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_031]
@@ -38,7 +38,7 @@ after_implemented: true
 4. [x] 프롬프트에 한글 발음 표기 금지 문구 — Test 15 `promptMustContain` [자동]
 5. [x] 화면 검사: 3단계 「🔊 발음 포인트: <덩어리> → [」, 2단계에는 덩어리 영어가 없음. 세로·가로 모두, 스크린샷을 열어 확인 [자동]
 6. [x] 회귀 `verify.mjs --set regression` [자동]
-7. [ ] 실기기에서 사진 속 문장(Miss Earth) 카드를 정답 단계까지 열고, 「🔊 발음 포인트」가 「did a lot of → [..]」로 설명과 맞는지 보고 버튼 [수동]
+7. [x] 실기기에서 사진 속 문장(Miss Earth) 카드를 정답 단계까지 열고, 「🔊 발음 포인트」가 「did a lot of → [..]」로 설명과 맞는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1·2 → `npm test` Test 20 + `EAR_COACH_SOUNDHINT_MODULE` 변이 사본. 3 → Test 12. 4 → Test 15. 5 → `runUiCheck.mjs` + 스크린샷. 6 → verify.
@@ -55,3 +55,4 @@ BRAT 업데이트 → 사진 속 영상 열기 → Miss Earth 문장 카드를 3
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 20 「17 hangul + 4 ipa + 10 chunk + 5 coverage」 통과(사진 문장+설명 → [7,8,9,10] did a lot of, 낱말 하나 exactly → [2], 영어 없음 → 빈칸 대체, chunkWordIndices 우선, 홀로 나온 the 무시, 따옴표 'going to' → [3,4]), 변이(②단계 뺀 사본) → 「pickHintChunk SPEC_032 사람 사진: 설명 속 did a lot of」 실패 · 2 ✅ 실제 출력 「did a lot of → [디 러 라 러브] /ˈdɪɾ ə ˈlɑɾ əv/」, 「submit a lot of → [썹미 러 라 러브] /səbˈmɪɾ ə ˈlɑɾ əv/」, 「exactly → [익재끌리] /ɪɡˈzækli/」 · 3 ✅ Test 12 Source 「🔊 Did you ever → [디 쥬 에벌] …」 + 화면 검사 `sentenceAnki.soundOnBack` 「🔊 We got up early and went → [위 가 러 펄리 언 웬트] …」 · 4 ✅ Test 15 `promptMustContain` 「never write Korean phonetic spellings in this field」 · 5 ✅ 화면 검사 `soundHintStep3` 세로·가로 「🔊 발음 포인트: going to → [고잉 터] /ˈɡoʊɪŋ tə/ — 'going to'가 …」(고치기 전엔 「So I was going → …」으로 어긋남), `soundHintStep2NoChunk` 「🔊 실제 발음 힌트: [고잉 터] /ˈɡoʊɪŋ tə/」, `sound-hint-portrait.png`·`sound-hint-landscape.png` 열어 봄(정답 단계 보라 글자, 가로 오른쪽 목록 안에서 줄바꿈 정상) · 6 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 7 ⏳ 실기기
+- 2026-11-22 사람확인: 7 생략 — 「그럴필요없어, 어차피 영상하나뿐인데, 호환작업을 하는건 낭비야.」(log/confirmations.jsonl) → DONE
