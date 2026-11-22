@@ -208,3 +208,4 @@
 {"ts":"2026-11-22T12:22:59.648Z","spec":null,"item":"decision","result":"OK","raw":"영상은 말고 지금처럼하자. 그게 취지에 맞겠다. Ok","note":"영상 클립 카드 안 함 — 원음+그림(SPEC_036) 유지"}
 {"ts":"2026-11-22T12:23:23.920Z","source":"button","question":"**확인할 것 (6번):** BRAT에서 1.0.46으로 업데이트한 뒤 AnkiDroid 노트 타입 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>`을 지워 주세요. 그다음 핀 문장에서 「➕ Anki」로 카드를 하나 만들고, 카드 앞면에서 영상 속 원래 목소리가 나오는지 들어 보시면 돼요. OK가 오면 SPEC_036을 DONE으로 바꿀게요.","answer":"SPEC_036 6 OK","messageId":567}
 {"ts":"2026-11-22T12:23:37.211Z","spec":"SPEC_036","item":"6","result":"OK","raw":"[Button pressed: SPEC_036 6 OK]"}
+{"ts":"2026-11-22T13:14:48.981Z","spec":null,"item":"decision","result":"OK","raw":"2, 10, 4 버려","note":"밤 아이디어 14개 중 2 속도 사다리·10 Anki 대기열·4 빈칸 난이도 자동 조절 버림, 나머지 11개 백로그 대기에"}
