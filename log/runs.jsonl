@@ -127,3 +127,4 @@
 {"ts":"2026-11-22T12:23:37.257Z","cmd":"/spec-run","spec":"SPEC_036","iteration":1,"status":"DONE","evidence":"사람확인 6 OK, 제품 변경 없음"}
 {"ts":"2026-11-22T13:32:03.912Z","cmd":"/spec-run","spec":"SPEC_037","iteration":1,"status":"IMPLEMENTED","evidence":"Test 20 blanks 5 PASS+변이 실패, regression ok(ui 첫 실패는 검사 추정 방식 고침)"}
 {"ts":"2026-11-22T16:09:45.047Z","cmd":"/night-run","spec":"SPEC_038","iteration":1,"status":"IMPLEMENTED","evidence":"Test 24 PASS+변이 4·UI 변이 1 실패 확인, runUiCheck diagnostics 세로·가로, worktree 회귀 harness·build·test·ui ok, main ff 5976fc0, BRAT 1.0.48 릴리스 3파일"}
+{"ts":"2026-11-22T18:06:58.547Z","spec":"SPEC_039","mode":"night","result":"DONE","commit":"b3392bd","evidence":"main.ts 898->150; wiring check Test 25 passes new+old main; 4 mutations fail; verify regression ok"}
