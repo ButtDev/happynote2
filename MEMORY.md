@@ -3,14 +3,14 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.38(SPEC_030 빈칸 채점 'cause=because·아포스트로피 무시 + 맞히면 다음 빈칸). ⏳ 버튼 대기: 030 4 · 025 5 · 026 4 · 027 4 · 028 4.
-- 026 확인 전 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내는 이미 보냄.
+- BRAT 1.0.38 배포됨. ⏳ 실기기 버튼 대기: SPEC_030 4(빈칸 'Cause←cause/because 정답·다음 빈칸 이동) · 025 5(고른 뜻 하나만 앞면) · 026 4(핀 문장 카드 소리·그림·힌트) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘 — 전 NG는 키보드 문제였고 SPEC_029로 해결, 다시 물음). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- 026 확인엔 사람이 AnkiDroid 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내 보냄.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
-- 이미지 서버 8001(`run-detached.mjs status review-site`)이 켜져 있음 — 사람이 끄라고 하면 끔.
+- 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
 
 ## 열린 질문 (사람에게)
 - `docs/review/ui-ux.md` H(과속 기준 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준으로?)·I(Lucide 아이콘 교체) — 아직 안 물음, SPEC_028 확인 뒤 물을 것.
-- 사람이 버튼을 다른 SPEC 행·메모로 누르기도 함(예: `SPEC_024 6 메모`로 새 요청) — 내용으로 판단해 기록.
+- 사람이 버튼을 다른 SPEC 행·메모로 누르거나 사진만 보내기도 함 — 내용·시각으로 판단해 기록(메모가 늦게 와 이미 처리한 내용일 수 있음).
 
 ## 주의
 - 사람 기기 AI: Gemini 키 사용 중(503 high demand 겪음 → 1.0.28 busy 재시도). Groq는 대안(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
@@ -29,3 +29,7 @@
 - 자막(SPEC_018): 파서 `src/services/captionPayload.ts` `parseCaptionPayload`(srv3 `<s t>`·json3 `tOffsetMs` → `cue.words`), 구두점 없음+단어 시각 80%↑이면 `mergeTimedWords`(쉼 0.25s·4~18단어). 시험 Test 14 + `tests/fixtures/transcript/`(실제 srv3: TED ASR·수동, Rick 구두점 ASR). 변이용 `EAR_COACH_TRANSCRIPT_MODULE`·`EAR_COACH_TRANSCRIPT_SERVICE_MODULE`. 시각 모드 카드 글자는 `tidyAsrWords`(군말 `ASR_FILLER_WORDS` 빼기·I·첫 글자 대문자, SPEC_020, cases.json `tidy`), srv3 `<s>` 한 개에 두 낱말이 들기도 함 → 낱말별로 나눔. 실제 자막 받기는 Android innertube player(`clientName ANDROID 20.10.38`) baseUrl(이미 `fmt=srv3`).
 - 모바일 AI(SPEC_021): `src/services/aiAnalysis.ts`(obsidian import 없음, fetch·sleep 주입, Test 15 + `tests/fixtures/ai/cases.json` 합성 응답, 변이용 `EAR_COACH_AI_MODULE`), `plugin.aiFetch`·`runMobileAiEnrichment`(모바일 `activateWorkspaceView` 끝 자동, 대기 = translationKr이 `(AI 정밀 해석 대기 중`로 시작). `main.ts`는 900줄 한도 시험이 있음(지금 891). SPEC_022: `needsTextRestore`(구두점 없음+2낱말↑)·`acceptRestoredText`(낱말 같을 때만) → `seg.text`·`words` 교체, 시험 `cases.json` `restore`·`needsRestore`·`promptMustContain`.
 - 반복·따라가기(SPEC_023): 순수 함수 `src/utils/loopControl.ts`(Test 16 + `tests/fixtures/loop/cases.json`, 변이용 `EAR_COACH_LOOP_MODULE`), PlayerBar `cycleLoopMode`·콜백 `getSegmentAt/getNextSegment/getLoopOptions/isFollowOn/onFollowToggle`, 설정 `loopRepeatCount`·`loopGapSeconds`·`autoFollowPlayback`. 화면 검사 `expect.loopCycle`·`follow`는 `window.__earCoachView.playerBar.seekTo(t)`로 재생 시각 흉내(폴링 타이머가 시각을 흘려 줌). 반복 중 하이라이트·따라가기는 반복 문장 고정(`followTargetIndex`). 가상 목록 먼 카드 스크롤은 추정 높이로 빗나감 → `scheduleScrollCorrection`. 가로 영상 컨트롤 줄 여유 51px(화면 검사 `rowSlack` ≥24, 세로는 27px). 가로 상단 툴바는 여유 6px — 버튼 더 넣으면 넘침(SPEC_028 때 고침).
+- 세로 입력 중 배치(SPEC_029): `src/ui/mobileTypingMode.ts` — 목록 입력칸 포커스 → `is-typing`(영상 상자 높이 0·툴바/조절 바 숨김) + 컨테이너 `position:fixed`(헤더 아래 ~ visualViewport 끝, 조상 transform 해제). 실기기 Obsidian은 키보드 때 앱 영역을 헤더 밑 ~30px까지 줄임. 입력칸이 가려지면 `[Ear-Coach 진단]` 알림. 화면 검사 `expect.typing`(heights·squeeze·advance). `EarCoachView.ts`에도 900줄 한도 시험 있음(지금 ~830).
+- 빈칸 채점(SPEC_030): `src/utils/dictationMatch.ts` `dictationMatches`(아포스트로피·구두점 무시, 같은 말 묶음 `DICTATION_SAME_WORDS`), Test 19 + `tests/fixtures/dictation/cases.json`, 변이용 `EAR_COACH_DICTATION_MODULE`. 맞히면 `MicroDictationBox.focusNextBlank`.
+- 셸 한 줄에 한국어·따옴표 JSON을 길게 넣으면 zsh 파싱 실패로 통째로 안 돎 → 긴 기록·버전 올림은 `.scratch/` 파이썬 스크립트로.
+
