@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.36 배포(SPEC_029 세로 받아쓰기 키보드 배치, 릴리스 3파일 확인) — ⏳ 버튼 대기: 029 3(빈칸 입력 중 카드 보임) · 025 5 · 026 4 · 027 4 · 028 4. 028 4는 사람이 NG + 키보드 사진(글 없음) → 029로 고침, 029 OK 오면 028 4도 다시 물을 것. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- BRAT 1.0.37 배포(SPEC_029 회차 2: 입력 중 컨테이너 position:fixed, 릴리스 3파일 확인) — ⏳ 버튼 대기: 029 3 · 025 5 · 026 4 · 027 4 · 028 4. 1.0.36은 실기기 실패(헤더 밑 검정, `log/failures.jsonl`) — 또 실패하면 같은 시그니처 2회째 → STOPPED, 사람이 보낼 `[Ear-Coach 진단]` 알림 사진으로 원인 파악. 029 OK 오면 028 4도 다시 물을 것.
 - 026 확인 전 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내는 이미 보냄.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 켜져 있음 — 사람이 끄라고 하면 끔.

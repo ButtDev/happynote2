@@ -12,3 +12,4 @@
 - 세로·가로 컨트롤 줄을 화면 검사에서 여유 0으로 맞추면 실기기(Android 글꼴)에서 넘친다 — 24px 이상 여유(`rowSlack`).
 - 채팅 첨부 `[send-file:경로]`가 사람에게 안 닿음(2026-11-22) → 그림은 `.scratch/review-site/`에 복사 후 `run-detached.mjs start review-site -- python3 -m http.server 8001 --bind 0.0.0.0 --directory .scratch/review-site`, 주소 http://nofailed.iptime.org:8001/ (그 폴더만 공개).
 - 세로 웹뷰에서 키보드가 뜨면 높이가 폭보다 작아져 `orientation: landscape` 미디어 쿼리가 켜질 수 있음 → 입력 중엔 `is-typing` 클래스로 세로 배치 고정, 판단은 `screen.orientation`(SPEC_029, 2026-11-22)
+- Obsidian 모바일은 키보드가 뜨면 웹뷰가 줄어든 데다 앱 영역을 또 줄여 뷰가 헤더 밑 ~30px만 남음(검정) → 입력 중엔 컨테이너를 position:fixed + visualViewport로(SPEC_029 회차 2, 2026-11-22)
