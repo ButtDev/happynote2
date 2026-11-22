@@ -1,7 +1,7 @@
 ---
 id: SPEC_034
 title: 「🗑 저장된 영상」에 휴지통 비우기 — Ear-Coach가 옮긴 파일만 영구 삭제
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_033]
@@ -53,3 +53,4 @@ Obsidian엔 `.trash`를 비우는 화면이 없다. SPEC_033 「지우기」로 
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 22 `tests/fixtures/video-trash/cases.json` PASS(diff 2·safe 7, 기록 6개 중 있는 .trash 파일 4개 602058B, 비우기 3개 삭제·잠긴 1개 기록에 남음·`.trash/My diary.md`·`.trash` 밖 `keep.md` 그대로), 변이 vt1(`.trash/` → `.trash` 접두) → 「isSafeTrashPath(.trash)」, vt2(실패 경로 버림) → 「실패한 경로는 기록에 남음」, vt3(안전 검사 빼기) → 「emptyVideoTrash removed」 실패 · 2 ✅ `runUiCheck` 세로·가로 videoTrash: 처음 「휴지통에 Ear-Coach 파일이 없어요.」 disabled → 지우기 뒤 「Ear-Coach가 옮긴 파일 3개 · 1.6 MB」(기록 = `.trash/…[abcDEF12345].md`, `.trash/abcDEF12345.json`, `.trash/abcDEF12345 1.json` — 같은 이름 충돌도 잡음) → 확인 창 제목·안내·영구 삭제|취소 → remove 3개 = 기록, diary 안 지움 → 다시 0개, 알림 「🧹 파일 3개를 영구 삭제했어요」, 넘침 0. `video-trash-portrait.png`·`video-trash-confirm-portrait.png` 열어 봄: 목록 아래 굵은 구분선 뒤 「🧹 휴지통 비우기」 줄, 아래 시트에 경로 3줄+안내. UI 변이(기록 저장 빼기) → 「videoTrash afterDelete … 없어요」 실패 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기. 참고: SPEC_033 조건 3 grep(videoData.ts·videoDataSection.ts) 여전히 0건 — 영구 삭제 `adapter.remove`는 SettingsTab의 비우기 저장소에만.
+- 2026-11-22 사람 확인: DONE — 4 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_034 4 OK]」(1.0.44 실기기). 1·2·3은 회차 1 근거 그대로.
