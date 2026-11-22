@@ -1,7 +1,7 @@
 ---
 id: SPEC_031
 title: 미국 발음 기준 한글 소리 힌트 (CMUdict + 이어 말하기 규칙) + Anki 앞면에서 한글 힌트 빼기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -50,7 +50,7 @@ dictionaryapi IPA 대체 경로(사전에 없는 낱말 → 다음 SPEC 후보 S
 5. [x] Anki 문장 노트: Hint에 한글 없음(함정 유형만), Source 맨 앞에 `🔊 [` 한글 `] /` IPA `/` — Test 12 + 화면 검사 `expect.sentenceAnki` 필드 확인 [자동]
 6. [x] 화면 검사: 정답 단계 「🔊 발음 포인트」에 계산값이 나옴(시험 데이터 문장) [자동]
 7. [x] 회귀 `verify.mjs --set regression` [자동]
-8. [ ] 실기기에서 핀 문장 「➕ Anki」로 새 카드를 만들어, 앞면에 한글이 없고 뒷면 맨 위 한글·IPA가 실제 소리에 가까운지 보고 버튼 [수동]
+8. [x] 실기기에서 핀 문장 「➕ Anki」로 새 카드를 만들어, 앞면에 한글이 없고 뒷면 맨 위 한글·IPA가 실제 소리에 가까운지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1·2·3·4 → `npm test`(Test 20·15) + 변이는 `EAR_COACH_SOUNDHINT_MODULE` 사본으로. 3의 크기 → `wc -c`. 5 → Test 12 + `runUiCheck.mjs`. 6 → `runUiCheck.mjs`(스크린샷 열어 봄). 7 → verify.
@@ -68,3 +68,4 @@ BRAT 업데이트 → 핀 문장 「➕ Anki」 → AnkiDroid 동기화 없이 �
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 20 「17 hangul + 4 ipa + 4 chunk + 5 coverage」 통과(exactly → 익재끌리, water → 워럴, want to go → 와 너 고, did you eat → 디 쥬 잇, 사람 사진 문장 → 「이 테이스 식재끌리 라익 핏쩌」), 변이(플랩 뺀 사본) → 「soundHint("water") actual 워털」 실패 · 2 ✅ 블로그 근접도 평균 0.709(철자식 0.603, 기준 0.65; 일치 world 월얼드·harm 핢·calm 캄, 낮음 apple 0.38·bird 0.40), 변이(규칙·된소리·r 둥글림 끈 철자식 사본) → 0.686(규칙 시험에서 「익잭틀리」로 실패) · 3 ✅ cmudict-lite 30,000 낱말·450,311 B, `main.js` 643,685 B, coverage 문장 5개 통과 · 4 ✅ Test 15 「15 response」(범위 밖 9 버림·전부 범위 밖이면 칸 없음), 변이(범위 필터 뺀 사본) → 「chunkWordIndices (범위 밖 9 버림)」 실패 · 5 ✅ Test 12 sentence 4사례(Hint 「연음 · 플랩 t」, Source 「🔊 [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a …」, 계산 없으면 AI 값 뒷면) + 화면 검사 `sentenceAnki.soundOnBack` 세로·가로 ok(Source 「🔊 [위 가 러 펄리 언 웬트] /ˈwi ˈɡɑɾ ˈʌp ˈɝli ən ˈwɛnt/」), 변이(soundHint null 사본) → 실패 · 6 ✅ 화면 검사 `soundHintStep3` 세로·가로 ok 「🔊 발음 포인트: [쏘 아이 워즈 고잉] /ˈsoʊ ˈaɪ wəz ˈɡoʊɪŋ/ — …」, `sentence-anki-portrait.png` 열어 봄(카드 위 보라 글자로 보임), 변이 → 「going to -> [거너 / 아머너]」로 실패 · 7 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 8 ⏳ 실기기
+- 2026-11-22 사람확인: 8 OK — 「잘동작함, 개선필요부분 : 문제 출제되는 단어가 카드의 설명하는 포인트와 동떨어졌음.」(log/confirmations.jsonl) → DONE

@@ -80,7 +80,7 @@ export function buildAnalysisPrompt(title: string, segments: PromptSegment[]): s
     "2. phoneticKr: Realistic Korean phonetic approximation of the linked/reduced chunk as heard in American speech, not from spelling (e.g. 'did you eat -> [디쥬잇]', 'bought a -> [바러]', 'exactly -> [익재끌리]').",
     "3. trapExplanation: Concise Korean explanation of the sound change. Quote English words in English as written (e.g. 'did a lot of'); never write Korean phonetic spellings in this field.",
     "4. skeletonWordIndices: 0-based word indices of stressed content words.",
-    "5. dictationBlankIndices: 0-based word indices (2-3 words max) of the trickiest linked/reduced words for micro-dictation.",
+    "5. dictationBlankIndices: 0-based word indices (2-3 words max) of the trickiest linked/reduced words for micro-dictation. They must be inside chunkWordIndices (the same sound change that phoneticKr and trapExplanation describe).",
     "6. rhythmGuide: Sentence with stressed words capitalized/bolded and '/' for natural pauses.",
     "7. translationKr: Natural Korean meaning.",
     '8. restoredText: the SAME words in the SAME order, only fixing capitalization (proper nouns, sentence starts, "I") and adding punctuation (. , ? !). Never add, remove, merge, split or respell words. Use "" if the segment already has punctuation.',
@@ -213,6 +213,16 @@ export function acceptRestoredText(words: string[], restored: unknown): string |
   return text;
 }
 
+/** 받아쓰기 빈칸을 설명 덩어리 안으로: 겹치는 것만 남기고, 겹치는 게 없으면 덩어리 앞 3낱말. 덩어리가 없으면 그대로. */
+export function alignBlanksToChunk(blanks: number[], chunk: number[]): number[] {
+  if (chunk.length === 0) return blanks;
+  const lo = Math.min(...chunk);
+  const hi = Math.max(...chunk);
+  const inside = blanks.filter((i) => i >= lo && i <= hi);
+  if (inside.length > 0) return inside;
+  return Array.from({ length: Math.min(3, hi - lo + 1) }, (_, k) => lo + k);
+}
+
 export function sanitizeItems(rawItems: unknown[], segments: TranscriptSegment[]): AiItem[] {
   const byIndex = new Map(segments.map((s) => [s.index, s]));
   const out: AiItem[] = [];
@@ -228,14 +238,16 @@ export function sanitizeItems(rawItems: unknown[], segments: TranscriptSegment[]
       : [];
     const n = seg.words.length;
     const restoredText = needsTextRestore(seg) ? acceptRestoredText(seg.words, r.restoredText) : null;
+    const chunk = Array.isArray(r.chunkWordIndices) ? intList(r.chunkWordIndices, n) : [];
     out.push({
       segmentIndex: seg.index,
       traps: traps.length > 0 ? Array.from(new Set(traps)) : ["LINKING"],
       phoneticKr: typeof r.phoneticKr === "string" ? r.phoneticKr : "",
       trapExplanation: typeof r.trapExplanation === "string" ? r.trapExplanation : "",
       skeletonWordIndices: intList(r.skeletonWordIndices, n),
-      dictationBlankIndices: intList(r.dictationBlankIndices, n),
-      ...(Array.isArray(r.chunkWordIndices) && intList(r.chunkWordIndices, n).length > 0 ? { chunkWordIndices: intList(r.chunkWordIndices, n) } : {}),
+      // 출제 낱말이 설명 포인트와 동떨어지지 않게(사람 11-22)
+      dictationBlankIndices: alignBlanksToChunk(intList(r.dictationBlankIndices, n), chunk),
+      ...(chunk.length > 0 ? { chunkWordIndices: chunk } : {}),
       rhythmGuide: typeof r.rhythmGuide === "string" && r.rhythmGuide ? r.rhythmGuide : seg.text,
       translationKr,
       ...(restoredText ? { restoredText } : {}),

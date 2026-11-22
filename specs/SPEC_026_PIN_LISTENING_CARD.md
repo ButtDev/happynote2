@@ -1,7 +1,7 @@
 ---
 id: SPEC_026
 title: 안 들림 핀 문장 → Anki 듣기 카드
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -32,7 +32,7 @@ depends_on: []
 - [ ] 1. `buildSentenceNote` 데이터 시험(빈칸·소리 힌트·함정·출처) [자동]
 - [ ] 2. 핀 카드에만 「➕ Anki」, 누르면 가짜 클라이언트에 addNote 1회(화면 검사) [자동]
 - [ ] 3. 회귀 통과 [자동]
-- [ ] 4. 실기기에서 핀 문장 「➕ Anki」 → AnkiDroid 카드 앞면 소리·그림·빈칸 보고 버튼 [수동]
+- [x] 4. 실기기에서 핀 문장 「➕ Anki」 → AnkiDroid 카드 앞면 소리·그림·빈칸 보고 버튼 [수동]
 
 ## 6. 자동 검증
 Test 12 사례 + 변이, `runUiCheck` `expect.anki` 확장(`anki-portrait.png`), `verify.mjs --set regression`.
@@ -54,3 +54,4 @@ Test 12 사례 + 변이, `runUiCheck` `expect.anki` 확장(`anki-portrait.png`),
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 12 `_sentence.json` 노트 3·빈칸 4·대상 확인 4 사례 통과(틀린 낱말 「Did ____ ever … at ____?」, 힌트 「[디쥬 …]<br>연음 · 플랩 t」, SPEED_SPIKE 빠짐), 변이(빈칸 없을 때 원문) → 「buildSentenceNote: 받아쓰기·분석·영상 없음…」 실패, 변이(SPEED_SPIKE 안 뺌) → 실패 · Test 17 trapLabel 7+6 · 2 ✅ 화면 검사 `expect.sentenceAnki` 세로·가로 ok: 핀 2장에만 버튼(btnOnUnpinned 0), 호출 deckNames→modelNames→modelFieldNames→storeMediaFile→canAddNotes→addNote, modelName happynote2 Listening, Picture <img>, 알림 「Anki에 저장했습니다」, 버튼이 카드 안(inside) — 변이(모든 카드에 버튼) → ui exit 1 btnOnUnpinned 5, 변이(줄바꿈 없음) → 가로 inside false · `sentence-anki-portrait.png`·`-landscape.png` 열어 봄: 세로는 한 줄, 가로는 「➕ Anki」가 둘째 줄 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기
 - 2026-11-22 사람확인(회차 세지 않음): 4 NG 「발음 포인트가 스펠링 기반 한글이라 실제 발음과 다름」 — 카드 앞면 소리·그림·힌트·함정은 나옴(사진). 후속 SPEC_031(한글 힌트 계산·뒷면으로)이 고침, 4는 SPEC_031 8과 함께 다시 물음(⏳)
+- 2026-11-22 사람확인: 4 OK (SPEC_031 8로 함께 확인) — 「잘동작함, 개선필요부분 : 문제 출제되는 단어가 카드의 설명하는 포인트와 동떨어졌음.」(log/confirmations.jsonl) → DONE

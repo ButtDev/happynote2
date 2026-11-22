@@ -103,7 +103,7 @@
    }
   },
   {
-   "name": "gemini chunkWordIndices (범위 밖 9 버림, SPEC_031)",
+   "name": "gemini chunkWordIndices (범위 밖 9 버림, SPEC_031) · 빈칸은 덩어리 안만 [3,4]→[3]",
    "provider": "gemini",
    "status": 200,
    "json": {
@@ -144,8 +144,63 @@
        3
       ],
       "dictationBlankIndices": [
-       3,
-       4
+       3
+      ],
+      "translationKr": "정말 기대돼요.",
+      "chunkWordIndices": [
+       1,
+       2,
+       3
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "gemini 빈칸이 덩어리와 안 겹침 → 덩어리 앞 3낱말 (사람 11-22: 출제 낱말이 설명과 동떨어짐)",
+   "provider": "gemini",
+   "status": 200,
+   "json": {
+    "candidates": [
+     {
+      "content": {
+       "role": "model",
+       "parts": [
+        {
+         "text": "{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [0], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\", \"chunkWordIndices\": [1, 2, 3, 9]}]}"
+        }
+       ]
+      },
+      "finishReason": "STOP"
+     }
+    ],
+    "usageMetadata": {
+     "promptTokenCount": 10
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       1,
+       2,
+       3
       ],
       "translationKr": "정말 기대돼요.",
       "chunkWordIndices": [
@@ -862,7 +917,8 @@
   "Never add, remove, merge, split or respell words",
   "9. chunkWordIndices",
   "never write Korean phonetic spellings in this field",
-  "plus the 9 fields above"
+  "plus the 9 fields above",
+  "They must be inside chunkWordIndices"
  ],
  "restore": [
   {

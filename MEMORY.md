@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.41 배포(숫자 읽기 30 → 썰리 + SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). ⏳ 실기기 버튼 대기: 031 8(새 영상에서 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA — 026 4도 함께) · 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름).
+- BRAT 1.0.41 배포(숫자 읽기 30 → 썰리 + SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). 1.0.42: 받아쓰기 빈칸을 설명 덩어리 안으로(새 분석부터). ⏳ 실기기 버튼 대기: 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름).
 - 사람 AnkiDroid에 노트 유형 `happynote2 Listening` 만들어졌고 문장 카드 저장·AnkiWeb 전체 동기화(AnkiDroid 쪽 유지 안내)까지 됨(11-22). 문장 카드도 덱은 `happynote2`.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
