@@ -3,7 +3,8 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.45(11-22, 릴리스 3파일 확인): SPEC_035 소리 힌트 다듬기(DONE, 11-22 실기기 OK) — 규칙 고침(워킹·엇 씩스·나인틴 나이니)·축약(gonna 등)·사전에 없는 낱말은 dictionaryapi IPA.
+- 배포 최신 BRAT 1.0.46(11-22, 릴리스 3파일 확인): SPEC_036 핀 문장 Anki 카드 소리 = 유튜브 원음 구간(IMPLEMENTED). SPEC_035 DONE.
+- ⏳ SPEC_036 6(실기기: AnkiDroid 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>` 지운 뒤 핀 문장 「➕ Anki」 카드 앞면에서 원래 목소리 나오는지) — 11-22 버튼 보냄. OK면 `/spec-run SPEC_036 사람확인: 6 OK` → DONE. NG면 실기기 innertube 403·웹뷰 디코드 실패 가능성부터.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 
 ## 열린 질문 (사람에게)
@@ -35,3 +36,4 @@
 - 영상 데이터 지우기(SPEC_033): 순수 `src/services/videoData.ts`(저장소 주입, Test 21 + `tests/fixtures/video-data/`, 변이 `EAR_COACH_VIDEODATA_MODULE`), 화면 `src/ui/videoDataSection.ts`(설정 맨 아래, 화면 검사 `expect.videoData` → `video-data-<뷰>.png`). 지우기 = `vault.trash(file,false)`/`adapter.trashLocal`(볼트 `.trash`, 영구 삭제 안 함). `NoteGenerator.forgetSession`은 지운 시각 전 `createdAt` 세션 저장을 막음. 자동 정리·전부 지우기는 안 함(사람이 원하면 새 SPEC).
 - 휴지통 비우기(SPEC_034): `src/services/videoTrash.ts`(Test 22 + `tests/fixtures/video-trash/`, 변이 `EAR_COACH_VIDEOTRASH_MODULE`). 지우기 전후 `.trash` 목록 차이를 설정 `videoDataTrash`에 기록 → 비우기는 기록 + `.trash/` 밑만 `adapter.remove`. 1.0.43으로 이미 휴지통에 간 파일은 안 잡음(호환 안 함). 화면 검사 `expect.videoTrash`.
 - 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
+- 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`(지금 896줄 — 한도 900 거의 참). 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
