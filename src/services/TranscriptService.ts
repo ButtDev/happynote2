@@ -1,4 +1,4 @@
-import { requestUrl } from "obsidian";
+import { send as requestUrl } from "../features/network"; // SPEC_041: 시간 제한·재시도
 import type { RawTranscriptCue } from "../types/transcript";
 import { parseCaptionPayload } from "./captionPayload.ts";
 import { isMobileApp, requireDesktopModule } from "../utils/platform.ts";

@@ -38,6 +38,7 @@ import * as videoTrashSrc from "../src/services/videoTrash.ts";
 import * as diagnosticsSrc from "../src/services/diagnostics.ts";
 import * as audioClipSrc from "../src/services/audioClip.ts";
 import * as learningSrc from "../src/services/learningStore.ts";
+import * as httpSrc from "../src/services/http.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1144,6 +1145,56 @@ async function runAllTests() {
     if (e.savedPinTexts) assert.deepEqual(saved.pins.map((p: any) => p.text), e.savedPinTexts, `${tag} 마지막 상태가 파일에`);
   }
   log(`  -> PASS: ${ls.scenarios.length} scenarios (same pin <0.5s, latest blank result, caps 2000/500/200, broken file, schema 2 read-only, serialized writes).`);
+  log("");
+
+  log("[Test 27] HTTP policy — 시간 제한·잠깐 실패 재시도·오프라인 구분 (data-driven, SPEC_041)");
+  const httpMod = process.env.EAR_COACH_HTTP_MODULE ? await import(path.resolve(process.env.EAR_COACH_HTTP_MODULE)) : httpSrc;
+  const hc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/http/cases.json"), "utf8"));
+  for (const sc of hc.scenarios) {
+    const tag = `[${sc.name}]`;
+    const policy = typeof sc.policy === "string" ? httpMod.HTTP_POLICIES[sc.policy] : sc.policy;
+    assert.ok(policy, `${tag} policy ${sc.policy}`);
+    let attempts = 0;
+    const sleeps: number[] = [];
+    const online = [...(sc.online ?? [])];
+    const request = () => {
+      const st = sc.steps[Math.min(attempts++, sc.steps.length - 1)];
+      if (st.hang) return new Promise(() => {});
+      if (st.throw) return Promise.reject(new Error(st.throw));
+      if (st.throwStatus) return Promise.reject(Object.assign(new Error(st.msg), { status: st.throwStatus }));
+      return Promise.resolve({ status: st.status });
+    };
+    const deps = { sleep: async (ms: number) => void sleeps.push(ms), isOnline: () => (online.length > 0 ? online.shift() : true) };
+    let got: any = null;
+    let err: any = null;
+    try {
+      // 시간 제한이 안 걸리면 매달린 약속만 남아 node가 조용히 끝나므로, 2초 감시로 실패시킨다
+      let guard: ReturnType<typeof setTimeout> | undefined;
+      const watchdog = new Promise((_, rej) => (guard = setTimeout(() => rej(new Error("WATCHDOG: 2초 안에 끝나지 않음")), 2000)));
+      try {
+        got = await Promise.race([httpMod.sendWithPolicy(request, policy, deps), watchdog]);
+      } finally {
+        clearTimeout(guard);
+      }
+    } catch (e) {
+      err = e;
+    }
+    assert.ok(!String(err?.message ?? "").startsWith("WATCHDOG"), `${tag} 시간 제한이 걸리지 않음`);
+    const e = sc.expect;
+    if (e.error) {
+      assert.ok(err, `${tag} 실패해야 함 (받은 응답 ${JSON.stringify(got)})`);
+      assert.equal(err.name, "HttpFailure", `${tag} HttpFailure`);
+      assert.equal(err.kind, e.error, `${tag} kind`);
+      if (e.message !== undefined) assert.equal(err.message, e.message, `${tag} message`);
+      if (e.errStatus !== undefined) assert.equal(err.status, e.errStatus, `${tag} status`);
+    } else {
+      assert.ok(!err, `${tag} 실패하면 안 됨: ${err?.message}`);
+      assert.equal(got.status, e.status, `${tag} status`);
+    }
+    assert.equal(attempts, e.attempts, `${tag} attempts`);
+    assert.deepEqual(sleeps, e.sleeps, `${tag} sleeps`);
+  }
+  log(`  -> PASS: ${hc.scenarios.length} scenarios (retry 408/429/5xx, no retry 404·AI·Anki, timeout, offline, backoff).`);
   log("");
 
   log("==============================================================");

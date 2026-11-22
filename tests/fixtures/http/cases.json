@@ -1,0 +1,21 @@
+{
+  "_note": "SPEC_041 sendWithPolicy 시나리오. steps = 시도마다 요청 결과({status}·{throw}·{throwStatus,msg}·{hang}), online = isOnline() 호출마다 값(모자라면 true), policy = HTTP_POLICIES 이름 또는 객체. expect: status(돌려준 응답) 또는 error(HttpFailure kind)·message·errStatus, attempts = 요청 함수 호출 수, sleeps = 대기 ms 목록.",
+  "scenarios": [
+    { "name": "첫 시도 성공", "policy": "fetch", "steps": [{ "status": 200 }], "expect": { "status": 200, "attempts": 1, "sleeps": [] } },
+    { "name": "503 뒤 성공 — fetch는 800ms 쉬고 한 번 더", "policy": "fetch", "steps": [{ "status": 503 }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [800] } },
+    { "name": "429 두 번 — 재시도 끝나면 마지막 응답 그대로(부르는 쪽이 상태로 판단)", "policy": "fetch", "steps": [{ "status": 429 }, { "status": 429 }], "expect": { "status": 429, "attempts": 2, "sleeps": [800] } },
+    { "name": "404는 다시 안 함", "policy": "fetch", "steps": [{ "status": 404 }, { "status": 200 }], "expect": { "status": 404, "attempts": 1, "sleeps": [] } },
+    { "name": "연결 실패 뒤 성공", "policy": "fetch", "steps": [{ "throw": "net::ERR_CONNECTION_RESET" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [800] } },
+    { "name": "연결 실패 두 번 → network, 원래 글", "policy": "fetch", "steps": [{ "throw": "net::ERR_CONNECTION_RESET" }, { "throw": "net::ERR_CONNECTION_RESET" }], "expect": { "error": "network", "message": "net::ERR_CONNECTION_RESET", "attempts": 2, "sleeps": [800] } },
+    { "name": "응답 없음 뒤 성공", "policy": { "timeoutMs": 30, "retries": 1, "backoffMs": [5] }, "steps": [{ "hang": true }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [5] } },
+    { "name": "응답 없음 두 번 → timeout", "policy": { "timeoutMs": 30, "retries": 1, "backoffMs": [5] }, "steps": [{ "hang": true }, { "hang": true }], "expect": { "error": "timeout", "message": "응답이 없어요 (0초)", "attempts": 2, "sleeps": [5] } },
+    { "name": "처음부터 오프라인 → 요청 안 보냄", "policy": "fetch", "online": [false, false], "steps": [{ "status": 200 }], "expect": { "error": "offline", "message": "인터넷 연결이 없어요", "attempts": 0, "sleeps": [800] } },
+    { "name": "오프라인이었다가 돌아옴", "policy": "fetch", "online": [false, true], "steps": [{ "status": 200 }], "expect": { "status": 200, "attempts": 1, "sleeps": [800] } },
+    { "name": "보내는 중 끊김(던진 뒤 오프라인) → offline", "policy": "anki", "online": [true, false], "steps": [{ "throw": "net::ERR_INTERNET_DISCONNECTED" }], "expect": { "error": "offline", "message": "인터넷 연결이 없어요", "attempts": 1, "sleeps": [] } },
+    { "name": "requestUrl이 던진 404 → status, 원래 글 유지, 다시 안 함", "policy": "fetch", "steps": [{ "throwStatus": 404, "msg": "Request failed, status 404" }, { "status": 200 }], "expect": { "error": "status", "errStatus": 404, "message": "Request failed, status 404", "attempts": 1, "sleeps": [] } },
+    { "name": "requestUrl이 던진 503 뒤 성공", "policy": "fetch", "steps": [{ "throwStatus": 503, "msg": "Request failed, status 503" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [800] } },
+    { "name": "AI는 여기서 재시도 안 함(aiAnalysis busy 재시도가 맡음)", "policy": "ai", "steps": [{ "status": 503 }, { "status": 200 }], "expect": { "status": 503, "attempts": 1, "sleeps": [] } },
+    { "name": "Anki는 연결 실패도 재시도 안 함(카드 두 번 방지)", "policy": "anki", "steps": [{ "throw": "net::ERR_CONNECTION_REFUSED" }, { "status": 200 }], "expect": { "error": "network", "message": "net::ERR_CONNECTION_REFUSED", "attempts": 1, "sleeps": [] } },
+    { "name": "대기 목록이 짧으면 마지막 값", "policy": { "timeoutMs": 1000, "retries": 2, "backoffMs": [5] }, "steps": [{ "status": 502 }, { "status": 500 }, { "status": 200 }], "expect": { "status": 200, "attempts": 3, "sleeps": [5, 5] } }
+  ]
+}
