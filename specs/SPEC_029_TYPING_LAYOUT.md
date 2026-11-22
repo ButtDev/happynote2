@@ -2,7 +2,7 @@
 id: SPEC_029
 title: 세로 화면 받아쓰기 입력 중 키보드 배치 (영상 접고 카드 보이기)
 status: IMPLEMENTED
-iterations: 1
+iterations: 2
 max_iterations: 3
 depends_on: []
 ---
@@ -15,7 +15,8 @@ depends_on: []
 세로 화면에서 카드 「빈칸」 단계 입력칸(받아쓰기)을 눌러 키보드가 뜨면, 영상 상자·필터 툴바·조절 바를 접고 재생 컨트롤 한 줄 + 자막 목록만 남겨 입력칸이 키보드 위에 보이게 한다. 입력을 마치면(포커스가 목록 입력칸을 떠나면) 원래대로. Obsidian이 웹뷰 높이를 줄이든(resize) 키보드가 덮든(overlay) 입력칸이 보여야 한다. 키보드 때문에 높이가 폭보다 작아져 `orientation: landscape`가 켜져도 세로 배치를 유지한다.
 
 ## 2. 파일
-- `src/ui/EarCoachView.ts`: 모바일 목록 `focusin`/`focusout` → 컨테이너 `is-typing` 클래스, 입력칸을 목록 위쪽으로 스크롤.
+- `src/ui/EarCoachView.ts`: 모바일 목록에 입력 모드 연결.
+- `src/ui/mobileTypingMode.ts`(회차 2 새): `focusin`/`focusout` → `is-typing`, 자리(fixed top·height) 계산, 카드 스크롤, 실패 때 진단 알림.
 - `styles.css`: `.ear-coach-mobile-container.is-typing` 블록.
 - `tests/ui/runUiCheck.mjs`·`cases.json`: `expect.typing`.
 
@@ -44,5 +45,10 @@ BRAT 업데이트 → 리스닝 노트 세로 → 카드 「빈칸」 → 입력
 - 스크롤은 입력칸이 든 카드 머리를 목록 맨 위에 · 이유: 카드 ▶ 로 문장 다시 듣기 · 대안: 입력칸만 보이게.
 - 가로에서 입력할 때는 그대로(범위 밖) — 포커스 시점 `screen.orientation`이 세로일 때만.
 
+- (회차 2) 1.0.36 실기기 사진: 영상은 접혔지만 헤더 밑 ~30px 아래가 여전히 검정, 잘리는 높이가 첫 사진과 같음 → 키보드 때 Obsidian이 앱 영역 자체를 줄인다고 판단. 입력 중엔 컨테이너를 `position:fixed`(헤더 아래 ~ `visualViewport` 끝, 조상 transform 해제) · 이유: 앱 영역 높이에 기대지 않음 · 대안: 실기기 진단 먼저(회차 낭비라, 실패할 때만 뜨는 진단 알림을 같이 넣음).
+- 진단 알림: 입력 1.2초 뒤 입력칸이 가려졌거나 화면 밖이면 `[Ear-Coach 진단] in=… vv=… box=… hit=… | 조상 높이` 알림(20초). 성공하면 안 뜸.
+- `EarCoachView.ts` 900줄 한도 → 입력 모드를 `src/ui/mobileTypingMode.ts`로 분리.
+
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ 화면 검사 `expect.typing`: 수정 전 4개 실패(클래스 없음·입력칸 bottom=614>503·툴바 보임·h=380에서 가로 배치로 뒤집힘) → 수정 뒤 `ui-check: ok`, 변이(SPEC_029 CSS 블록 뺀 `--css` 사본) → 「input bottom=614 > 503」「toolbar still shown」「h=380 not stacked」 실패 · `typing-portrait.png`·`-480.png`·`-380.png` 열어 봄: 재생 컨트롤 한 줄 + 빈칸 카드(▶ 00:03·단계·입력칸·메모칸)가 맨 위, 380에서도 세로 배치 · 2 ✅ `verify.mjs --set regression` ok · 3 ⏳ 실기기
+- 2026-11-22 회차 2: IMPLEMENTED — 사람 1.0.36 사진 「해결안됨」. 1 ✅ 화면 검사에 `typing.squeeze`(#app 아래 여백 += 키보드 높이, 실기기 이중 축소 흉내) 추가 → 수정 전 「squeeze h=480 list too small h=0」「input covered」 실패(스크린샷도 헤더만 남음) → 수정 뒤 `ui-check: ok`, 변이(fixed 줄 뺀 CSS 사본) → 같은 2개 실패 · `typing-portrait-squeeze480.png` 열어 봄: 재생 줄 + 빈칸 카드·입력칸 보임 · 2 ✅ `verify.mjs --set regression` ok(EarCoachView 900줄 시험 포함) · 3 ⏳ 실기기

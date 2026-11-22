@@ -1375,6 +1375,26 @@
 .ear-coach-mobile-container.is-typing {
   display: flex !important;
   flex-direction: column !important;
+  /* 회차 2: Obsidian이 키보드 때 앱 영역을 줄여도 헤더 아래 ~ 보이는 화면 끝을 채움(top·height는 JS) */
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  z-index: var(--layer-cover, 5);
+  background-color: var(--background-primary);
+}
+
+/* fixed가 조상 transform·contain에 갇히지 않게(가로 SPEC_004와 같은 방식) */
+body.is-mobile .workspace-leaf.mod-active:has(.ear-coach-mobile-container.is-typing),
+body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typing)
+  :has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typing) {
+  transform: none !important;
+  translate: none !important;
+  filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+  container-type: normal !important;
+  will-change: auto !important;
 }
 
 .ear-coach-mobile-container.is-typing .ear-coach-mobile-top-pane {

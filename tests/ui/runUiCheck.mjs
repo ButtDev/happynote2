@@ -850,6 +850,28 @@ for (const vp of cases.viewports) {
       if (k.list && k.controls && k.list.top < k.controls.bottom - 1)
         errors.push(`${vp.name}: typing h=${h} not stacked (list.top=${k.list.top} < controls.bottom=${k.controls.bottom})`);
     }
+    // 실기기 1.0.36 사진: 웹뷰가 줄어든 데다 Obsidian이 앱 영역을 키보드 높이만큼 또 줄여 화면이 헤더 밑 ~30px만 남음.
+    // #app 아래 여백에 키보드 높이를 더해 흉내 낸다(squeeze).
+    for (const h of t.squeeze ?? []) {
+      await page.setViewportSize({ width: vp.width, height: h });
+      await page.evaluate((kb) => { document.getElementById("app").style.paddingBottom = `${24 + kb}px`; }, vp.height - h);
+      await page.waitForTimeout(600);
+      const k = await probe();
+      res[`squeeze${h}`] = k;
+      await page.screenshot({ path: path.join(outDir, `typing-${vp.name}-squeeze${h}.png`) });
+      if (!k.focused || !k.input) errors.push(`${vp.name}: typing squeeze h=${h} input lost focus`);
+      else if (k.input.top < 0 || k.input.bottom > h) errors.push(`${vp.name}: typing squeeze h=${h} input outside ${k.input.top}..${k.input.bottom}`);
+      if (!k.list || k.list.h < h * 0.4) errors.push(`${vp.name}: typing squeeze h=${h} list too small ${JSON.stringify(k.list)}`);
+      const topEl = await page.evaluate(() => {
+        const a = document.activeElement;
+        if (!a) return null;
+        const b = a.getBoundingClientRect();
+        const e = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+        return e === a || a.contains(e);
+      });
+      if (!topEl) errors.push(`${vp.name}: typing squeeze h=${h} input covered`);
+      await page.evaluate(() => { document.getElementById("app").style.paddingBottom = ""; });
+    }
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await page.evaluate(() => document.activeElement?.blur());
     await page.waitForTimeout(500);

@@ -10,6 +10,7 @@ import { isMobileApp } from "../utils/platform";
 import { isReviewDue, shouldGraduate, withReview } from "../utils/reviewQueue";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
+import { setupMobileTypingMode } from "./mobileTypingMode";
 import { VirtualSegmentList } from "./components/VirtualSegmentList";
 import { AgyTutorPanel } from "./components/AgyTutorPanel";
 import { captureSnapshot } from "./snapshot";
@@ -103,6 +104,8 @@ export class EarCoachView extends ItemView {
 
   public async onClose(): Promise<void> {
     this.containerEl.removeEventListener("keydown", this.boundKeyHandler, { capture: true });
+    this.typingCleanup?.();
+    this.typingCleanup = null;
     this.virtualList?.destroy();
     this.virtualList = null;
     this.playerBar?.destroy();
@@ -327,7 +330,8 @@ export class EarCoachView extends ItemView {
     });
 
     this.setupMobileTouchResizer(resizerEl, listWrapper, mobileContainer);
-    this.setupMobileTypingMode(mobileContainer, listWrapper);
+    this.typingCleanup?.();
+    this.typingCleanup = setupMobileTypingMode(mobileContainer, listWrapper);
 
     this.virtualList = this.createVirtualSegmentList(
       listWrapper,
@@ -344,53 +348,7 @@ export class EarCoachView extends ItemView {
     this.playerBar?.render(this.session.videoId);
   }
 
-  /**
-   * SPEC_029: 세로에서 목록 입력칸(받아쓰기)에 포커스가 가면 영상·툴바를 접고(is-typing)
-   * 입력칸 카드를 목록 맨 위로 올려 키보드에 가리지 않게 한다. 포커스가 떠나면 원래대로.
-   */
-  private setupMobileTypingMode(container: HTMLElement, listWrapper: HTMLElement): void {
-    const isText = (el: unknown): el is HTMLElement =>
-      el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
-    const isPortrait = (): boolean => {
-      const type = window.screen?.orientation?.type;
-      return type ? type.startsWith("portrait") : window.matchMedia("(orientation: portrait)").matches;
-    };
-    let leaveTimer: number | null = null;
-    const reveal = (el: HTMLElement) => {
-      if (!el.isConnected || document.activeElement !== el) return;
-      // 카드 머리(▶ 문장 재생)까지 보이게 카드 위쪽을 목록 위에 맞춘다
-      const target = el.closest<HTMLElement>(".ear-coach-segment-card") ?? el;
-      const delta = target.getBoundingClientRect().top - listWrapper.getBoundingClientRect().top - 4;
-      if (Math.abs(delta) > 4) listWrapper.scrollTop += delta;
-    };
-    listWrapper.addEventListener("focusin", (ev: FocusEvent) => {
-      if (!isText(ev.target)) return;
-      if (leaveTimer !== null) {
-        window.clearTimeout(leaveTimer);
-        leaveTimer = null;
-      }
-      if (!container.hasClass("is-typing") && !isPortrait()) return;
-      container.addClass("is-typing");
-      const el = ev.target;
-      window.requestAnimationFrame(() => reveal(el));
-      window.setTimeout(() => reveal(el), 350);
-    });
-    listWrapper.addEventListener("focusout", () => {
-      if (leaveTimer !== null) window.clearTimeout(leaveTimer);
-      leaveTimer = window.setTimeout(() => {
-        leaveTimer = null;
-        const active = document.activeElement;
-        if (!(isText(active) && listWrapper.contains(active))) container.removeClass("is-typing");
-      }, 150);
-    });
-    // 키보드가 웹뷰 높이를 줄이면(resize) 줄어든 뒤에 한 번 더 올린다
-    window.visualViewport?.addEventListener("resize", () => {
-      const active = document.activeElement;
-      if (container.hasClass("is-typing") && isText(active) && listWrapper.contains(active)) {
-        window.setTimeout(() => reveal(active), 50);
-      }
-    });
-  }
+  private typingCleanup: (() => void) | null = null;
 
   private setupMobileTouchResizer(
     resizerEl: HTMLElement,
