@@ -5,6 +5,7 @@
  */
 import type { TranscriptSegment } from "../types/transcript";
 import type { AnkiInvoker, FetchBytes, SentenceSettingsLike } from "../services/anki";
+import { segmentSoundHint } from "../services/cmudictLite";
 import { ANKI_MESSAGES, addNoteIfNew, ankiStatusMessage, buildSentenceNote, resolveSentenceTarget, snapshotFilename, storeSnapshot } from "../services/anki";
 
 export interface SentenceAnkiDeps {
@@ -41,6 +42,7 @@ export async function saveSentenceCard(deps: SentenceAnkiDeps, seg: TranscriptSe
         videoTitle: deps.videoTitle,
         startSec: seg.start,
         pictureFilename,
+        soundHint: segmentSoundHint(seg),
       },
       settings
     );

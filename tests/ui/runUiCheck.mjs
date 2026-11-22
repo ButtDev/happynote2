@@ -35,7 +35,7 @@ const bundle = await esbuild.build({
   format: "iife",
   target: "es2022",
   alias: { obsidian: stubPath },
-  loader: { ".json": "json", ".png": "binary" },
+  loader: { ".json": "json", ".png": "binary", ".txt": "text" },
   define: { __INLINE_WORKER_CODE__: '""' },
   logLevel: "silent",
 });
@@ -154,6 +154,17 @@ function evaluateExpect(vp, m, nums) {
     add("reviewQueue", ok, JSON.stringify(r));
   }
   // SPEC_026: 핀 카드에만 「➕ Anki」 → 문장 듣기 카드 addNote 1회
+  // SPEC_031: 정답 단계 「🔊 발음 포인트」 = 계산한 [한글] /IPA/
+  if (e.soundHintStep3) {
+    const ph = m.dictionary?.phonetic ?? "";
+    add("soundHintStep3", /^🔊 발음 포인트: \[[가-힣 ]+\] \/[^/]+\/ — /.test(ph), JSON.stringify(ph));
+  }
+  // SPEC_031: 문장 카드 앞면 Hint엔 한글 소리 없음, 뒷면 Source 맨 앞에 🔊 [한글] /IPA/
+  if (e.sentenceAnki?.soundOnBack) {
+    const f = m.sentenceAnki?.note?.fields ?? {};
+    const ok = !String(f.Hint ?? "").includes("[") && /^🔊 \[[가-힣 ]+\] \/[^/]+\/<br><a /.test(String(f.Source ?? ""));
+    add("sentenceAnki.soundOnBack", ok, JSON.stringify({ Hint: f.Hint, Source: f.Source }));
+  }
   if (e.sentenceAnki) {
     const sa = m.sentenceAnki;
     const n = sa?.note;
@@ -588,6 +599,7 @@ for (const vp of cases.viewports) {
       const c2 = document.querySelector(".ear-coach-segment-card");
       const script = c2?.querySelector(".ear-coach-full-script");
       if (!script) return { error: "full-script missing" };
+      const phonetic = c2.querySelector(".ear-coach-full-reveal-box .ear-coach-phonetic-kr")?.textContent ?? null; // SPEC_031
       const tokens = script.textContent.split(/\s+/).filter((t) => /[A-Za-z]/.test(t));
       const words = [...script.querySelectorAll(".ear-coach-word")];
       const before = window.__pauseCalls ?? 0;
@@ -608,6 +620,7 @@ for (const vp of cases.viewports) {
         phraseOnFirst: !!modal?.querySelector(".ear-coach-dict-phrase"),
         pauseCalls: (window.__pauseCalls ?? 0) - before,
         lookups: window.__dictLookups ?? [],
+        phonetic,
       };
     });
     await page.screenshot({ path: path.join(outDir, `dictionary-${vp.name}.png`) });

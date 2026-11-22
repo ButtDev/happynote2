@@ -1,0 +1,226 @@
+{
+  "_note": "SPEC_031 규칙 시험 — 기대값은 우리가 정한 규칙의 결과(사람 표기 아님). [문구, 기대 한글, 규칙]",
+  "hangul": [
+    [
+      "exactly",
+      "익재끌리",
+      "t 탈락 + 된소리 + 파열음·L 묶음 (사람: 익제끌리에 가까움)"
+    ],
+    [
+      "water",
+      "워럴",
+      "플랩 t + 끝 r"
+    ],
+    [
+      "computer",
+      "컴퓨럴",
+      "플랩 t"
+    ],
+    [
+      "get up",
+      "게 럽",
+      "플랩 t (낱말 경계) + 연음"
+    ],
+    [
+      "it is",
+      "이 리즈",
+      "플랩 t (낱말 경계, 다음 모음 강세 무관)"
+    ],
+    [
+      "next day",
+      "넥스 데이",
+      "자음 사이 t 탈락"
+    ],
+    [
+      "stop",
+      "스땁",
+      "s 뒤 된소리"
+    ],
+    [
+      "apple",
+      "애뻘",
+      "강세 없는 모음 앞 p 된소리"
+    ],
+    [
+      "want to go",
+      "와 너 고",
+      "기능어 to 약화 + nt 탈락"
+    ],
+    [
+      "did you eat",
+      "디 쥬 잇",
+      "d+y → 쥬 + 기능어 you"
+    ],
+    [
+      "a lot of",
+      "어 라 러브",
+      "기능어 a·of 약화 + 플랩"
+    ],
+    [
+      "car",
+      "칼",
+      "끝 r → ㄹ 받침"
+    ],
+    [
+      "calendar",
+      "캘런덜",
+      "모음 사이 L → ㄹㄹ 없음(앞 받침 있음) + 끝 r"
+    ],
+    [
+      "world",
+      "월얼드",
+      "끝 r 뒤 L"
+    ],
+    [
+      "radio",
+      "뤠이리오",
+      "r 둥글림 + 플랩 d"
+    ],
+    [
+      "banana",
+      "브내너",
+      "강세 앞 약모음 → ㅡ"
+    ],
+    [
+      "It tastes exactly like pizza",
+      "이 테이스 식재끌리 라익 핏쩌",
+      "사람 사진 문장(같은 자음 겹침·t 탈락·연음·ts → ㅉ)"
+    ]
+  ],
+  "ipa": [
+    [
+      "exactly",
+      "ɪɡˈzækli"
+    ],
+    [
+      "water",
+      "ˈwɔɾɚ"
+    ],
+    [
+      "computer",
+      "kəmˈpjuɾɚ"
+    ],
+    [
+      "did you eat",
+      "ˈdɪdʒ ju ˈit"
+    ]
+  ],
+  "missing": [
+    [
+      "Seolgi is good",
+      "사전에 없는 낱말(Seolgi)이 있으면 null"
+    ]
+  ],
+  "chunk": [
+    [
+      {
+        "words": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h",
+          "i",
+          "j"
+        ],
+        "analysis": {
+          "chunkWordIndices": [
+            3,
+            5
+          ]
+        }
+      },
+      [
+        3,
+        4,
+        5
+      ],
+      "chunkWordIndices 범위"
+    ],
+    [
+      {
+        "words": [
+          "a",
+          "b",
+          "c"
+        ],
+        "analysis": {
+          "chunkWordIndices": [
+            9
+          ]
+        }
+      },
+      [
+        0,
+        1,
+        2
+      ],
+      "범위 밖 번호는 버리고 8낱말 이하면 전체"
+    ],
+    [
+      {
+        "words": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h",
+          "i",
+          "j"
+        ],
+        "analysis": {
+          "dictationBlankIndices": [
+            4,
+            6
+          ]
+        }
+      },
+      [
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "빈칸 최소−1 ~ 최대+1"
+    ],
+    [
+      {
+        "words": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h",
+          "i",
+          "j"
+        ]
+      },
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "분석 없음 → 앞 6낱말"
+    ]
+  ],
+  "coverage": [
+    "It tastes exactly like pizza",
+    "Did you eat yet",
+    "I want to go there tomorrow",
+    "What are you going to do",
+    "Let me get a lot of water"
+  ]
+}

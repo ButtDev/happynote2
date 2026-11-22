@@ -1,8 +1,8 @@
 ---
 id: SPEC_031
 title: 미국 발음 기준 한글 소리 힌트 (CMUdict + 이어 말하기 규칙) + Anki 앞면에서 한글 힌트 빼기
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -43,13 +43,13 @@ depends_on: []
 dictionaryapi IPA 대체 경로(사전에 없는 낱말 → 다음 SPEC 후보 SPEC_032), 블로그식 기호(「!」·영어 섞기), 영국 발음, 사람별 표기 설정, 이미 만든 Anki 카드 고치기, 노트 유형 템플릿 바꾸기.
 
 ## 5. 완료 조건
-1. [ ] Test 20 규칙 데이터(`rules.json`, 우리가 정한 기대값 — 플랩·t 탈락·된소리·연음·약화·끝 r/l 사례 각 1개 이상, exactly → 익재끌리) 전부 일치 + 변이(플랩 규칙 뺀 사본) 실패 [자동]
-2. [ ] Test 20 블로그 근접도(`blog.json`, 사람 사진 낱말 30개 + exactly 사람 표기): 평균 ≥ 0.65, 결과 표를 출력 + 변이(한글 표를 철자식으로 바꾼 사본)는 평균이 내려감 [자동]
-3. [ ] `cmudict-lite.txt` 30,000 낱말 이하, 빌드된 `main.js` 1.5 MB 이하, 시험용 문장 5개(사람 사진 문장 「It tastes exactly like pizza」 포함)의 덩어리 낱말이 모두 사전에 있음 [자동]
-4. [ ] AI 응답 `chunkWordIndices` 파싱(범위 밖 번호 버림) Test 15 사례 통과 [자동]
-5. [ ] Anki 문장 노트: Hint에 한글 없음(함정 유형만), Source 맨 앞에 `🔊 [` 한글 `] /` IPA `/` — Test 12 + 화면 검사 `expect.sentenceAnki` 필드 확인 [자동]
-6. [ ] 화면 검사: 정답 단계 「🔊 발음 포인트」에 계산값이 나옴(시험 데이터 문장) [자동]
-7. [ ] 회귀 `verify.mjs --set regression` [자동]
+1. [x] Test 20 규칙 데이터(`rules.json`, 우리가 정한 기대값 — 플랩·t 탈락·된소리·연음·약화·끝 r/l 사례 각 1개 이상, exactly → 익재끌리) 전부 일치 + 변이(플랩 규칙 뺀 사본) 실패 [자동]
+2. [x] Test 20 블로그 근접도(`blog.json`, 사람 사진 낱말 30개 + exactly 사람 표기): 평균 ≥ 0.65, 결과 표를 출력 + 변이(한글 표를 철자식으로 바꾼 사본)는 평균이 내려감 [자동]
+3. [x] `cmudict-lite.txt` 30,000 낱말 이하, 빌드된 `main.js` 1.5 MB 이하, 시험용 문장 5개(사람 사진 문장 「It tastes exactly like pizza」 포함)의 덩어리 낱말이 모두 사전에 있음 [자동]
+4. [x] AI 응답 `chunkWordIndices` 파싱(범위 밖 번호 버림) Test 15 사례 통과 [자동]
+5. [x] Anki 문장 노트: Hint에 한글 없음(함정 유형만), Source 맨 앞에 `🔊 [` 한글 `] /` IPA `/` — Test 12 + 화면 검사 `expect.sentenceAnki` 필드 확인 [자동]
+6. [x] 화면 검사: 정답 단계 「🔊 발음 포인트」에 계산값이 나옴(시험 데이터 문장) [자동]
+7. [x] 회귀 `verify.mjs --set regression` [자동]
 8. [ ] 실기기에서 핀 문장 「➕ Anki」로 새 카드를 만들어, 앞면에 한글이 없고 뒷면 맨 위 한글·IPA가 실제 소리에 가까운지 보고 버튼 [수동]
 
 ## 6. 자동 검증
@@ -62,6 +62,9 @@ BRAT 업데이트 → 핀 문장 「➕ Anki」 → AnkiDroid 동기화 없이 �
 - 사전에 없는 낱말 → 계산 포기, AI 값 표시 · 이유: 자막 빈도 상위 3만이면 대부분 덮음, IPA 대체는 네트워크·변환표가 더 듦 · 대안: dictionaryapi IPA(SPEC_032 후보).
 - 빈도 목록 = OpenSubtitles 기반 FrequencyWords en_50k(필터에만 쓰고 배포하지 않음) · 이유: 유튜브 말투와 가까움 · 대안: 위키 빈도.
 - 한글 힌트·IPA를 Source 칸 앞에 넣음 · 이유: 사람이 템플릿을 다시 고치지 않아도 뒷면에만 보임 · 대안: 새 필드(템플릿 수정 필요).
+- 반모음(Y·W)을 거친 연음은 같은 낱말 안에서만(단 d/t+you → 쥬·츄) · 이유: 화면 검사 실제 출력 「and went → 어 뉀트」가 어색 · 대안: 항상 연음.
+- 덩어리를 AI 응답 9번째 칸 `chunkWordIndices`로 받음, 프롬프트 phoneticKr 예시도 미국 발음으로(익재끌리) · 이유: 사전에 없는 낱말일 때 대체값도 덜 틀리게 · 대안: 프롬프트 그대로.
 - 기준 0.65 · 이유: 블로그는 모음을 늘여 적는 개인 표기(도억·피익)라 완전 일치는 목표가 아님, 철자식 표기와의 차이가 숫자로 보이면 됨 · 대안: 0.7.
 
 ## 실행 기록
+- 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 20 「17 hangul + 4 ipa + 4 chunk + 5 coverage」 통과(exactly → 익재끌리, water → 워럴, want to go → 와 너 고, did you eat → 디 쥬 잇, 사람 사진 문장 → 「이 테이스 식재끌리 라익 핏쩌」), 변이(플랩 뺀 사본) → 「soundHint("water") actual 워털」 실패 · 2 ✅ 블로그 근접도 평균 0.709(철자식 0.603, 기준 0.65; 일치 world 월얼드·harm 핢·calm 캄, 낮음 apple 0.38·bird 0.40), 변이(규칙·된소리·r 둥글림 끈 철자식 사본) → 0.686(규칙 시험에서 「익잭틀리」로 실패) · 3 ✅ cmudict-lite 30,000 낱말·450,311 B, `main.js` 643,685 B, coverage 문장 5개 통과 · 4 ✅ Test 15 「15 response」(범위 밖 9 버림·전부 범위 밖이면 칸 없음), 변이(범위 필터 뺀 사본) → 「chunkWordIndices (범위 밖 9 버림)」 실패 · 5 ✅ Test 12 sentence 4사례(Hint 「연음 · 플랩 t」, Source 「🔊 [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a …」, 계산 없으면 AI 값 뒷면) + 화면 검사 `sentenceAnki.soundOnBack` 세로·가로 ok(Source 「🔊 [위 가 러 펄리 언 웬트] /ˈwi ˈɡɑɾ ˈʌp ˈɝli ən ˈwɛnt/」), 변이(soundHint null 사본) → 실패 · 6 ✅ 화면 검사 `soundHintStep3` 세로·가로 ok 「🔊 발음 포인트: [쏘 아이 워즈 고잉] /ˈsoʊ ˈaɪ wəz ˈɡoʊɪŋ/ — …」, `sentence-anki-portrait.png` 열어 봄(카드 위 보라 글자로 보임), 변이 → 「going to -> [거너 / 아머너]」로 실패 · 7 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 8 ⏳ 실기기

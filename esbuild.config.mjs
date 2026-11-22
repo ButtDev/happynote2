@@ -49,6 +49,7 @@ const context = await esbuild.context({
   ],
   format: "cjs",
   target: "es2022",
+  loader: { ".txt": "text" }, // SPEC_031 cmudict-lite
   logLevel: "info",
   sourcemap: prod ? false : "inline",
   treeShaking: true,

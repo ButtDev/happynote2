@@ -31,6 +31,7 @@ import * as loopSrc from "../src/utils/loopControl.ts";
 import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
 import * as reviewSrc from "../src/utils/reviewQueue.ts";
 import * as dictationSrc from "../src/utils/dictationMatch.ts";
+import * as soundHintSrc from "../src/services/soundHint.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -735,6 +736,7 @@ async function runAllTests() {
     segmentIndex: it.segmentIndex, traps: it.traps, skeletonWordIndices: it.skeletonWordIndices,
     dictationBlankIndices: it.dictationBlankIndices, translationKr: it.translationKr,
     ...(it.restoredText !== undefined ? { restoredText: it.restoredText } : {}),
+    ...(it.chunkWordIndices !== undefined ? { chunkWordIndices: it.chunkWordIndices } : {}),
   });
   for (const pc of aiCases.responses) {
     const segs = pc.segments.map((x: { index: number; text: string }) => mkSeg(x.index, x.text));
@@ -833,6 +835,43 @@ async function runAllTests() {
   const dc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/dictation/cases.json"), "utf8"));
   for (const [user, expected, want, note] of dc.match) assert.equal(dictationMod.dictationMatches(user, expected), want, `dictationMatches(${JSON.stringify(user)}, ${JSON.stringify(expected)}) ${note}`);
   log(`  -> PASS: ${dc.match.length} cases`);
+  log("");
+
+  log("[Test 20] Sound hint — CMUdict + 이어 말하기 규칙 → 한글·IPA (data-driven, SPEC_031)");
+  const shMod = process.env.EAR_COACH_SOUNDHINT_MODULE ? await import(path.resolve(process.env.EAR_COACH_SOUNDHINT_MODULE)) : soundHintSrc;
+  const cmuText = fs.readFileSync(path.resolve("src/data/cmudict-lite.txt"), "utf8");
+  const cmu = shMod.parseCmudictLite(cmuText);
+  assert.ok(cmu.size > 20000 && cmu.size <= 30000, `cmudict-lite 낱말 수 ${cmu.size} (20,000 초과 ~ 30,000 이하)`);
+  const shRules = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/sound-hint/rules.json"), "utf8"));
+  for (const [phrase, want, note] of shRules.hangul) {
+    const got = shMod.soundHintForWords(phrase.split(" "), cmu)?.hangul;
+    assert.equal(got, want, `soundHint(${JSON.stringify(phrase)}) ${note}`);
+  }
+  for (const [phrase, want] of shRules.ipa) assert.equal(shMod.soundHintForWords(phrase.split(" "), cmu)?.ipa, want, `ipa(${phrase})`);
+  for (const [phrase, note] of shRules.missing) assert.equal(shMod.soundHintForWords(phrase.split(" "), cmu), null, note);
+  for (const [seg, want, note] of shRules.chunk) assert.deepEqual(shMod.pickHintChunk(seg), want, `pickHintChunk ${note}`);
+  for (const sentence of shRules.coverage) {
+    const words = sentence.split(" ");
+    const idx = shMod.pickHintChunk({ words });
+    assert.ok(shMod.soundHintForWords(idx.map((i: number) => words[i]), cmu), `사전에 모든 낱말: ${sentence}`);
+  }
+  log(`  -> PASS: ${cmu.size} words, ${shRules.hangul.length} hangul + ${shRules.ipa.length} ipa + ${shRules.chunk.length} chunk + ${shRules.coverage.length} coverage`);
+  const blog = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/sound-hint/blog.json"), "utf8"));
+  let ours = 0;
+  let base = 0;
+  for (const [word, expected, baseline] of blog.words) {
+    const got = shMod.soundHintForWords([word], cmu)?.hangul ?? "";
+    const sim = Math.max(...expected.map((e: string) => soundHintSrc.hangulSimilarity(got, e)));
+    const bsim = Math.max(...expected.map((e: string) => soundHintSrc.hangulSimilarity(baseline, e)));
+    ours += sim;
+    base += bsim;
+    log(`     ${word.padEnd(13)} ${got.padEnd(8)} ~ ${expected.join("/").padEnd(14)} ${sim.toFixed(2)} (철자식 ${baseline} ${bsim.toFixed(2)})`);
+  }
+  const meanOurs = ours / blog.words.length;
+  const meanBase = base / blog.words.length;
+  log(`  -> 블로그 근접도 평균 ${meanOurs.toFixed(3)} (철자식 ${meanBase.toFixed(3)}, 기준 ${blog.minMean})`);
+  assert.ok(meanOurs >= blog.minMean, `블로그 근접도 평균 ${meanOurs.toFixed(3)} < ${blog.minMean}`);
+  assert.ok(meanOurs > meanBase, `블로그 근접도 ${meanOurs.toFixed(3)}가 철자식 ${meanBase.toFixed(3)}보다 높아야 함`);
   log("");
 
   log("==============================================================");

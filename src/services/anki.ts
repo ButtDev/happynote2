@@ -401,6 +401,8 @@ export interface SentenceNoteInput {
   videoTitle: string | null;
   startSec: number;
   pictureFilename?: string | null;
+  /** SPEC_031: 계산한 소리 힌트(있으면 phoneticKr 대신) — 뒷면(Source 앞)에만 */
+  soundHint?: { hangul: string; ipa: string } | null;
 }
 
 export interface SentenceSettingsLike {
@@ -444,16 +446,22 @@ function sourceLink(videoId: string | null, videoTitle: string | null, startSec:
   return `<a href="https://youtu.be/${encodeURIComponent(videoId)}?t=${t}">${escapeHtml(videoTitle ?? "")} ${formatMmSs(t)}</a>`;
 }
 
-/** addNote용 문장 듣기 카드(순수). 앞면 = TTS 소리·장면·빈칸·소리 힌트·함정, 뒷면 = 원문·출처. */
+/** addNote용 문장 듣기 카드(순수). 앞면 = TTS 소리·장면·빈칸·함정, 뒷면 = 원문·소리 힌트(한글·IPA)·출처 (SPEC_031). */
 export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSettingsLike): AnkiNote {
   const blanks = sentenceBlankIndices(input.words, input.attempts);
-  const hintParts = [input.phoneticKr?.trim() ?? "", trapLabelList(input.traps).join(" · ")].filter(Boolean);
+  // SPEC_031: 앞면 Hint = 함정 유형만. 한글 소리·IPA는 뒷면(Source 앞)으로.
+  const sound = input.soundHint
+    ? `🔊 [${escapeHtml(input.soundHint.hangul)}] /${escapeHtml(input.soundHint.ipa)}/`
+    : input.phoneticKr?.trim()
+      ? `🔊 ${escapeHtml(input.phoneticKr.trim())}`
+      : "";
+  const link = sourceLink(input.videoId, input.videoTitle, input.startSec);
   const fields: Record<string, string> = {
     Sentence: escapeHtml(input.text.trim()),
     Cloze: escapeHtml(sentenceCloze(input.words, blanks)),
     Picture: input.pictureFilename ? `<img src="${escapeHtml(input.pictureFilename)}">` : "",
-    Hint: hintParts.map(escapeHtml).join("<br>"),
-    Source: sourceLink(input.videoId, input.videoTitle, input.startSec),
+    Hint: escapeHtml(trapLabelList(input.traps).join(" · ")),
+    Source: [sound, link].filter(Boolean).join("<br>"),
   };
   const tags = [...settings.ankiTags.split(/\s+/).filter(Boolean), "sentence"];
   return {

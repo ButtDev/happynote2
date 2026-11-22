@@ -1,9 +1,9 @@
 {
-  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답)",
+  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답) · SPEC_031: Hint=함정만, 소리 힌트는 Source 앞",
   "settings": { "ankiDeck": "happynote2", "ankiSentenceNoteType": "happynote2 Listening", "ankiTags": "ear-coach" },
   "notes": [
     {
-      "name": "틀린 낱말 빈칸 + 소리 힌트 + 함정(SPEED_SPIKE 빠짐) + 그림 + 출처",
+      "name": "틀린 낱말 빈칸 + 계산 소리 힌트(뒷면) + 함정(SPEED_SPIKE 빠짐) + 그림 + 출처",
       "input": {
         "text": "Did you ever try to catch a train at six?",
         "words": ["Did", "you", "ever", "try", "to", "catch", "a", "train", "at", "six?"],
@@ -13,7 +13,8 @@
         "videoId": "uiCheck0001",
         "videoTitle": "Trip <story>",
         "startSec": 10.07,
-        "pictureFilename": "ear-coach-uiCheck0001-11.jpg"
+        "pictureFilename": "ear-coach-uiCheck0001-11.jpg",
+        "soundHint": { "hangul": "디 쥬 에벌", "ipa": "ˈdɪdʒ ju ˈɛvɚ" }
       },
       "expect": {
         "deckName": "happynote2",
@@ -22,8 +23,35 @@
           "Sentence": "Did you ever try to catch a train at six?",
           "Cloze": "Did ____ ever try to catch a train at ____?",
           "Picture": "<img src=\"ear-coach-uiCheck0001-11.jpg\">",
-          "Hint": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]<br>연음 · 플랩 t",
-          "Source": "<a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
+          "Hint": "연음 · 플랩 t",
+          "Source": "🔊 [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
+        },
+        "tags": ["ear-coach", "sentence"],
+        "options": { "allowDuplicate": false, "duplicateScope": "deck" }
+      }
+    },
+    {
+      "name": "계산 힌트 없음 → AI phoneticKr를 뒷면으로(앞면 Hint엔 한글 없음, SPEC_031)",
+      "input": {
+        "text": "Did you ever try to catch a train at six?",
+        "words": ["Did", "you", "ever", "try", "to", "catch", "a", "train", "at", "six?"],
+        "attempts": null,
+        "phoneticKr": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]",
+        "traps": ["LINKING"],
+        "videoId": "uiCheck0001",
+        "videoTitle": "Trip",
+        "startSec": 10,
+        "pictureFilename": null
+      },
+      "expect": {
+        "deckName": "happynote2",
+        "modelName": "happynote2 Listening",
+        "fields": {
+          "Sentence": "Did you ever try to catch a train at six?",
+          "Cloze": "",
+          "Picture": "",
+          "Hint": "연음",
+          "Source": "🔊 [디쥬 에버 트라이러 캐취어 트레인 앳 식스]<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip 00:10</a>"
         },
         "tags": ["ear-coach", "sentence"],
         "options": { "allowDuplicate": false, "duplicateScope": "deck" }

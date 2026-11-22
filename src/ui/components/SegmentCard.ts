@@ -3,6 +3,7 @@ import { isDesktopApp, isMobileApp } from "../../utils/platform";
 import { trapLabel } from "../../utils/trapLabels";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
+import { segmentSoundHint } from "../../services/cmudictLite";
 
 export interface SegmentCardCallbacks {
   onPlaySegment: (segment: TranscriptSegment, loop: boolean) => void;
@@ -51,6 +52,13 @@ export class SegmentCard {
     } else {
       this.cardEl.removeClass("is-active-playing");
     }
+  }
+
+  /** SPEC_031: CMUdict + 이어 말하기 규칙으로 계산한 소리 힌트, 사전에 없으면 AI phoneticKr */
+  private soundHintText(): string {
+    const hint = segmentSoundHint(this.segment);
+    if (hint) return `[${hint.hangul}] /${hint.ipa}/`;
+    return this.segment.analysis?.phoneticKr ?? "";
   }
 
   public setLoopState(isLooping: boolean): void {
@@ -248,7 +256,7 @@ export class SegmentCard {
       const hintBox = bodyEl.createDiv({ cls: "ear-coach-sound-hint-box" });
       hintBox.createDiv({
         cls: "ear-coach-phonetic-kr",
-        text: `🔊 실제 발음 힌트: ${analysis?.phoneticKr || "분석 데이터 없음"}`,
+        text: `🔊 실제 발음 힌트: ${this.soundHintText() || "분석 데이터 없음"}`,
       });
       hintBox.createDiv({
         cls: "ear-coach-trap-explanation",
@@ -269,7 +277,7 @@ export class SegmentCard {
       });
       fullBox.createDiv({
         cls: "ear-coach-phonetic-kr",
-        text: `🔊 발음 포인트: ${analysis.phoneticKr} — ${analysis.trapExplanation}`,
+        text: `🔊 발음 포인트: ${this.soundHintText() || analysis.phoneticKr} — ${analysis.trapExplanation}`,
       });
       fullBox.createDiv({
         cls: "ear-coach-rhythm-guide",

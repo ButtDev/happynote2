@@ -45,8 +45,10 @@
         },
         "reviewQueue": true,
         "sentenceAnki": {
-          "modelName": "happynote2 Listening"
+          "modelName": "happynote2 Listening",
+          "soundOnBack": true
         },
+        "soundHintStep3": true,
         "anki": {
           "tap": "going",
           "chooseDef": 1,
@@ -161,8 +163,10 @@
         },
         "reviewQueue": true,
         "sentenceAnki": {
-          "modelName": "happynote2 Listening"
+          "modelName": "happynote2 Listening",
+          "soundOnBack": true
         },
+        "soundHintStep3": true,
         "anki": {
           "tap": "going",
           "chooseDef": 1,

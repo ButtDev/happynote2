@@ -42,6 +42,8 @@ export interface RawCueWord {
 export interface SegmentPhoneticAnalysis {
   traps: ListeningTrapType[];
   phoneticKr: string;           // Korean/phonetic sound approximation (e.g., "[바러 카]")
+  /** SPEC_031: 소리 힌트를 계산할 덩어리 낱말 번호(AI가 고름) */
+  chunkWordIndices?: number[];
   trapExplanation: string;      // Concise explanation of why this sounds muffled/linked
   skeletonWordIndices: number[]; // Indices of stressed content words shown in Step 1
   dictationBlankIndices: number[]; // Indices of linked/weak words used for Micro-Dictation
