@@ -905,6 +905,46 @@ for (const vp of cases.viewports) {
     });
   }
 
+  // SPEC_038: 「🩺 진단 복사」 — 처음 오류 없음 → 오류 2개(키·URL 쿼리 포함) → 다시 그리면 2개 → 복사 글은 가려짐
+  if (vp.expect?.diagnostics) {
+    await page.evaluate(() => {
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      window.__diagnostics.clear();
+      window.__renderDiagnostics();
+    });
+    const diagState = () =>
+      page.evaluate(() => {
+        const r = document.querySelector(".ear-coach-diagnostics");
+        return r ? { title: r.querySelector(".ear-coach-videodata-title")?.textContent ?? "", meta: r.querySelector(".ear-coach-videodata-meta")?.textContent ?? "", button: r.querySelector("button")?.textContent ?? "", overflow: r.scrollWidth - r.clientWidth, height: r.getBoundingClientRect().height } : null;
+      });
+    const start = await diagState();
+    await page.evaluate(() => {
+      window.__diagnostics.record("Anki 저장", new Error("Request failed, status 500"));
+      window.__diagnostics.record("AI 분석", new Error("fetch https://generativelanguage.googleapis.com/v1beta/x?key=ui-fake-secret-123456 failed"));
+      window.__renderDiagnostics();
+    });
+    const after = await diagState();
+    await page.screenshot({ path: path.join(outDir, `diagnostics-${vp.name}.png`) });
+    await page.locator(".ear-coach-diagnostics button").click();
+    await page.waitForTimeout(150);
+    const clip = await page.evaluate(() => window.__diagClip ?? "");
+    const notices = await page.evaluate(() => (window.__notices ?? []).filter((n) => n.startsWith("📋 진단")));
+    const res = { start, after, clip, notices };
+    console.log(`${vp.name} diagnostics: ${JSON.stringify(res)}`);
+    if (!start || start.title !== "🩺 진단 복사" || start.meta !== "기록된 오류가 없어요. 문제가 생기면 복사해서 보내 주세요." || start.button !== "복사") errors.push(`${vp.name}: diagnostics start ${JSON.stringify(start)}`);
+    if (!after || after.meta !== "최근 오류 2개 — 문제가 생기면 복사해서 보내 주세요.") errors.push(`${vp.name}: diagnostics after ${JSON.stringify(after)}`);
+    if (!clip.startsWith("Ear-Coach 진단 ") || !clip.includes("앱 9.9.9 · Obsidian 1.7.7 · android")) errors.push(`${vp.name}: diagnostics clip head ${clip.slice(0, 120)}`);
+    if (!clip.includes("] Anki 저장: Request failed, status 500") || !clip.includes("] AI 분석: fetch https://generativelanguage.googleapis.com/v1beta/x?… failed")) errors.push(`${vp.name}: diagnostics clip entries ${clip}`);
+    if (clip.includes("ui-fake-secret-123456") || clip.includes("key=")) errors.push(`${vp.name}: diagnostics clip leaks secret`);
+    if (notices.length !== 1 || notices[0] !== "📋 진단을 복사했어요 (오류 2개)") errors.push(`${vp.name}: diagnostics notice ${JSON.stringify(notices)}`);
+    if ((start?.overflow ?? 9) > 1 || (after?.overflow ?? 9) > 1) errors.push(`${vp.name}: diagnostics overflowX`);
+    m.diagnostics = { start, after, clipLines: clip.split("\n").length, notices };
+    await page.evaluate(() => {
+      window.__diagnostics.clear();
+      document.querySelector(".ear-coach-ui-settings-host")?.remove();
+    });
+  }
+
   // SPEC_034: 「🧹 휴지통 비우기」 — 처음 0개·disabled → 영상 지우기 → 3개 → 비우기 → 영구 삭제는 기록 3개만(남의 .trash 노트 그대로) → 0개
   if (vp.expect?.videoTrash) {
     await page.evaluate(() => {

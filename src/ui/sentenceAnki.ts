@@ -5,6 +5,7 @@
  * main.ts 900줄 한도 때문에 뷰 밖에 둔다.
  */
 import type { TranscriptSegment } from "../types/transcript";
+import { diagnostics } from "../services/diagnostics";
 import type { AnkiInvoker, FetchBytes, SentenceSettingsLike } from "../services/anki";
 import { ensureSegmentPronunciations, segmentSoundHint } from "../services/cmudictLite";
 import { ANKI_MESSAGES, addNoteIfNew, ankiStatusMessage, audioFilename, buildSentenceNote, resolveSentenceTarget, snapshotFilename, storeSnapshot } from "../services/anki";
@@ -35,7 +36,8 @@ export async function saveSentenceCard(deps: SentenceAnkiDeps, seg: TranscriptSe
     if (videoId && audioClip) {
       try {
         audioData = await audioClip(videoId, seg.start, seg.end);
-      } catch {
+      } catch (e) {
+        diagnostics.record("원음 받기", e);
         audioData = null;
       }
     }
@@ -66,6 +68,7 @@ export async function saveSentenceCard(deps: SentenceAnkiDeps, seg: TranscriptSe
     const r = await addNoteIfNew(client, note);
     return r === "added" && !pictureFilename ? ANKI_MESSAGES.addedNoPicture : ankiStatusMessage(r);
   } catch (e) {
+    diagnostics.record("Anki 저장", e);
     return ankiStatusMessage(e);
   }
 }

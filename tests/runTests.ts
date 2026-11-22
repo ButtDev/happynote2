@@ -35,6 +35,7 @@ import * as soundHintSrc from "../src/services/soundHint.ts";
 import * as pronFallbackSrc from "../src/services/pronFallback.ts";
 import * as videoDataSrc from "../src/services/videoData.ts";
 import * as videoTrashSrc from "../src/services/videoTrash.ts";
+import * as diagnosticsSrc from "../src/services/diagnostics.ts";
 import * as audioClipSrc from "../src/services/audioClip.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
@@ -1045,6 +1046,36 @@ async function runAllTests() {
   acFail = true;
   assert.equal(await acClip(ac.videoId, ac.clipper.start, ac.clipper.end), null, "조각 403 → null");
   log(`  -> PASS: sidx ${acSidx.fragments.length} fragments, ${ac.ranges.length} ranges, ${ac.windows.length} windows, ${ac.pick.length} picks, WAV header, clipper order+cache`);
+  log("");
+
+  log("[Test 24] Diagnostics — 최근 오류 링버퍼·연속 묶음·비밀 가리기·보고 글 (data-driven, SPEC_038)");
+  const dgMod = process.env.EAR_COACH_DIAGNOSTICS_MODULE ? await import(path.resolve(process.env.EAR_COACH_DIAGNOSTICS_MODULE)) : diagnosticsSrc;
+  const dg = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/diagnostics/cases.json"), "utf8"));
+  let dgTick = 0;
+  const dgClock = () => new Date(Date.UTC(2026, 10, 23, 0, 0, dgTick++)).toISOString();
+  const dgRing = new dgMod.DiagnosticsLog(dg.ring.max, dgClock);
+  for (let i = 0; i < dg.ring.push; i++) dgRing.record("단계", new Error(`오류 ${i}`));
+  const dgList = dgRing.list();
+  assert.equal(dgList.length, dg.ring.expectSize, "링버퍼 상한");
+  assert.equal(dgList[0].message, dg.ring.expectFirstMessage, "오래된 것부터 버림");
+  assert.equal(dgList[dgList.length - 1].message, dg.ring.expectLastMessage, "최신이 끝");
+  assert.ok(dgList[0].detail && dgList[0].detail.split("\n").length <= 3, "스택 앞 3줄까지");
+  const dgCol = new dgMod.DiagnosticsLog(50, dgClock);
+  for (const [st, m] of dg.collapse.records) dgCol.record(st, new Error(m));
+  assert.deepEqual(dgCol.list().map((e: any) => [e.stage, e.count]), dg.collapse.expect, "연달아 같은 오류만 묶음");
+  for (const c of dg.redact) assert.equal(dgMod.redactDiagnostics(c.in, c.secrets), c.out, `redact ${c.in}`);
+  for (const c of dg.describe) {
+    const v = c.kind === "error" ? new Error(c.value) : c.value;
+    assert.equal(dgMod.describeError(v).message, c.expect, `describeError ${c.kind}`);
+  }
+  const dgRep = new dgMod.DiagnosticsLog(50, dgClock);
+  for (const [st, m] of dg.report.records) dgRep.record(st, m);
+  const dgText = dgMod.formatDiagnosticsReport(dg.report.env, dgRep.list(), dg.report.secrets);
+  assert.ok(dgText.startsWith(dg.report.expectStartsWith), `보고 머리:\n${dgText}`);
+  for (const c of dg.report.expectContains) assert.ok(dgText.includes(c), `보고에 「${c}」:\n${dgText}`);
+  for (const c of dg.report.mustNotContain) assert.ok(!dgText.includes(c), `보고에 비밀 「${c}」가 남음:\n${dgText}`);
+  assert.equal(dgMod.formatDiagnosticsReport(dg.report.env, [], dg.report.secrets), dg.report.emptyExpect, "오류 없음 보고");
+  log(`  -> PASS: ring ${dgList.length}/${dg.ring.push}, ${dg.redact.length} redact, ${dg.describe.length} describe, report ${dgText.split("\n").length} lines`);
   log("");
 
   log("==============================================================");

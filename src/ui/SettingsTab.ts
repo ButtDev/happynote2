@@ -1,9 +1,11 @@
-import { App, normalizePath, Notice, PluginSettingTab, Setting, TFile } from "obsidian";
+import { apiVersion, App, normalizePath, Notice, PluginSettingTab, Setting, TFile } from "obsidian";
 import { isMobileApp } from "../utils/platform";
 import { generateBookmarkletCode } from "../utils/youtubeUrlParser";
 import { UnlockStep } from "../types/transcript";
 import type EarCoachPlugin from "../main";
 import { renderVideoDataSection } from "./videoDataSection";
+import { renderDiagnosticsSection } from "./diagnosticsSection";
+import { diagnostics } from "../services/diagnostics";
 import { VideoDataStore } from "../services/videoData";
 import { VIEW_TYPE_EAR_COACH } from "./EarCoachView";
 import { ANKI_MESSAGES, ANKI_ROLES, ANKI_SENTENCE_BACK_TEMPLATE, ANKI_SENTENCE_FIELDS, ANKI_SENTENCE_FRONT_TEMPLATE, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
@@ -48,6 +50,7 @@ export class EarCoachSettingTab extends PluginSettingTab {
       this.displayAnkiSettings(containerEl);
       this.displayMobileAiSettings(containerEl);
       this.displayVideoData(containerEl);
+      this.displayDiagnostics(containerEl);
     } else {
       containerEl.createEl("h2", {
         text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
@@ -57,7 +60,18 @@ export class EarCoachSettingTab extends PluginSettingTab {
       this.displayAnkiSettings(containerEl);
       this.displayDesktopAgyCliSettings(containerEl);
       this.displayVideoData(containerEl);
+      this.displayDiagnostics(containerEl);
     }
+  }
+
+  /** SPEC_038: 최근 오류를 가려서 클립보드로 */
+  private displayDiagnostics(containerEl: HTMLElement): void {
+    const st = this.plugin.settings;
+    renderDiagnosticsSection(containerEl, {
+      appVersion: this.plugin.manifest.version,
+      obsidianVersion: apiVersion,
+      secrets: () => [st.geminiApiKey, st.openaiApiKey],
+    });
   }
 
   /** SPEC_033: 영상별 저장 데이터 지우기(볼트 휴지통으로) */
@@ -401,6 +415,7 @@ export class EarCoachSettingTab extends PluginSettingTab {
             await this.loadAnkiFields();
             new Notice(`덱 ${this.ankiDecks?.length ?? 0}개, 노트 타입 ${this.ankiModels?.length ?? 0}개를 불러왔습니다`);
           } catch (e) {
+            diagnostics.record("Anki 불러오기", e);
             new Notice(e instanceof AnkiConnectError && e.kind === "connection" ? ANKI_MESSAGES.connection : `Anki 오류: ${String((e as Error)?.message ?? e)}`);
           }
           this.display();

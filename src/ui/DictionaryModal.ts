@@ -1,4 +1,5 @@
 import { App, Modal, Notice } from "obsidian";
+import { diagnostics } from "../services/diagnostics";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidatesAround } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
@@ -72,7 +73,8 @@ export class DictionaryModal extends Modal {
         }
         this.renderEntry(head, body, entry);
       })
-      .catch(() => {
+      .catch((e: unknown) => {
+        diagnostics.record("사전", e);
         body.empty();
         body.createDiv({ cls: "ear-coach-dict-status is-error", text: "사전을 불러오지 못했습니다" });
       });
@@ -178,6 +180,7 @@ export class DictionaryModal extends Modal {
         const r = await addNoteIfNew(ctx.client, note, (n) => inlineAudio(n, ctx.fetchBytes));
         show(r === "added" && !pictureFilename ? ANKI_MESSAGES.addedNoPicture : ankiStatusMessage(r), r === "added" ? "is-ok" : "is-dup");
       } catch (e) {
+        diagnostics.record("Anki 저장", e);
         show(ankiStatusMessage(e), "is-error");
         btn.disabled = false;
       }

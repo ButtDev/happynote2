@@ -1500,3 +1500,20 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   color: var(--text-muted);
   font-size: 0.9em;
 }
+
+/* SPEC_038: 설정 「🩺 진단 복사」 — 저장된 영상 아래 한 줄, 설명은 줄바꿈 */
+.ear-coach-diagnostics {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-top: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+.ear-coach-diagnostics .ear-coach-videodata-meta {
+  white-space: normal;
+}
+.ear-coach-diagnostics > button {
+  flex: 0 0 auto;
+}

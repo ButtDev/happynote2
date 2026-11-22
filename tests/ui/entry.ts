@@ -13,6 +13,8 @@ import phraseDict from "../fixtures/dictionary/look-forward-to.json";
 // SPEC_017: 합성 스토리보드 시트(960×540, 3×3 색 칸)
 import storyboardSheet from "./fixtures/storyboard-sheet.png";
 import { renderVideoDataSection } from "../../src/ui/videoDataSection.ts";
+import { renderDiagnosticsSection } from "../../src/ui/diagnosticsSection.ts";
+import { diagnostics } from "../../src/services/diagnostics.ts";
 // SPEC_036: 실제 유튜브 itag 140 초기화+조각 1(TED iG9CE55wbtY) — Chrome 디코드 검사
 import audioFixture from "../fixtures/audio-clip/itag140-frag1.m4a";
 import { decodeAudioClip } from "../../src/ui/audioDecode.ts";
@@ -195,6 +197,23 @@ async function main(): Promise<void> {
       },
       onDeleted: (item) => {
         w.__vdDeleted = [...(w.__vdDeleted ?? []), item.videoId];
+      },
+    });
+  };
+  // SPEC_038: 설정 「🩺 진단 복사」 — 공용 기록(window.__diagnostics), 복사 글은 window.__diagClip
+  (window as any).__diagnostics = diagnostics;
+  (window as any).__renderDiagnostics = () => {
+    document.querySelector(".ear-coach-ui-settings-host")?.remove();
+    const host = document.createElement("div");
+    host.className = "ear-coach-ui-settings-host vertical-tab-content";
+    host.style.cssText = "position:fixed;inset:88px 0 0 0;z-index:30;overflow:auto;box-sizing:border-box;padding:12px 16px;background:var(--background-primary)";
+    document.body.appendChild(host);
+    renderDiagnosticsSection(host, {
+      appVersion: "9.9.9",
+      obsidianVersion: "1.7.7",
+      secrets: () => ["ui-fake-secret-123456"],
+      writeClipboard: async (t: string) => {
+        (window as any).__diagClip = t;
       },
     });
   };

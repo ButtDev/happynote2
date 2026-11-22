@@ -25,6 +25,7 @@ import { WeaknessTracker } from "./services/WeaknessTracker";
 import { EarCoachView, VIEW_TYPE_EAR_COACH } from "./ui/EarCoachView";
 import { UrlInputModal } from "./ui/UrlInputModal";
 import { EarCoachSettingTab } from "./ui/SettingsTab";
+import { diagnostics, installDiagnosticsCapture } from "./ui/diagnosticsSection";
 
 /**
  * Main Obsidian Plugin class for Ear-Coach (YouTube + Obsidian + agy CLI).
@@ -124,6 +125,7 @@ export default class EarCoachPlugin extends Plugin {
   public async onload(): Promise<void> {
     setPronunciationFetcher(async (w) => { const e = await this.dictionary.lookup(w); return e?.ipaUs ?? e?.phonetic ?? null; }); // SPEC_035
     await this.loadSettings();
+    this.register(installDiagnosticsCapture(window)); // SPEC_038
 
     this.workerManager = new TranscriptWorkerManager(2);
     this.transcriptService = new TranscriptService(
@@ -286,7 +288,7 @@ export default class EarCoachPlugin extends Plugin {
               if (fullSession) {
                 await this.activateWorkspaceView(fullSession, file);
               } else {
-                new Notice("⚠️ 리스닝 세션을 불러오거나 복구하지 못했습니다.");
+                diagnostics.record("세션 불러오기", ctx.sourcePath); new Notice("⚠️ 리스닝 세션을 불러오거나 복구하지 못했습니다.");
               }
             } else if (!isSidecar) {
               await this.activateWorkspaceView(parsed as ListeningSessionData, null);
@@ -647,7 +649,7 @@ export default class EarCoachPlugin extends Plugin {
         });
       }
     } catch (err) {
-      new Notice(
+      diagnostics.record("노트 만들기", err); new Notice(
         `❌ 자막 추출 실패: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -747,7 +749,7 @@ export default class EarCoachPlugin extends Plugin {
       await this.activateWorkspaceView(updated, file);
       new Notice(`✅ 문장 단위 재정렬 완료 (${segments.length}문장)`);
     } catch (err) {
-      new Notice(
+      diagnostics.record("재정렬", err); new Notice(
         `❌ 재정렬 실패: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -870,9 +872,9 @@ export default class EarCoachPlugin extends Plugin {
           refresh();
         },
       });
-      new Notice(aiResultMessage(result), result.stoppedBy ? 10000 : 5000);
+      if (result.stoppedBy) diagnostics.record("AI 분석", `${result.stoppedBy.kind}: ${result.stoppedBy.message}`); new Notice(aiResultMessage(result), result.stoppedBy ? 10000 : 5000);
     } catch (err) {
-      new Notice(AI_MESSAGES.failed(err instanceof Error ? err.message : String(err)), 10000);
+      diagnostics.record("AI 분석", err); new Notice(AI_MESSAGES.failed(err instanceof Error ? err.message : String(err)), 10000);
     } finally {
       this.aiRunning.delete(session.videoId);
     }

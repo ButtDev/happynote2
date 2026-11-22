@@ -95,7 +95,8 @@
           "advance": true
         },
         "videoData": true,
-        "videoTrash": true
+        "videoTrash": true,
+        "diagnostics": true
       }
     },
     {
@@ -195,7 +196,8 @@
           "min": 24
         },
         "videoData": true,
-        "videoTrash": true
+        "videoTrash": true,
+        "diagnostics": true
       }
     }
   ],

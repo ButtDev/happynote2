@@ -1,4 +1,5 @@
 import { App, Modal, Notice } from "obsidian";
+import { diagnostics } from "../services/diagnostics";
 import {
   deleteVideoData,
   formatBytes,
@@ -94,6 +95,7 @@ export function renderVideoDataSection(containerEl: HTMLElement, opts: VideoData
             await t.setRecorded(r.remaining);
             new Notice(`🧹 파일 ${r.removed.length}개를 영구 삭제했어요`);
           } catch (e) {
+            diagnostics.record("휴지통 비우기", e);
             new Notice(`비우기 실패: ${String((e as Error)?.message ?? e)}`);
           }
           await renderTrash();
@@ -137,6 +139,7 @@ export function renderVideoDataSection(containerEl: HTMLElement, opts: VideoData
               await opts.onDeleted?.(item);
               new Notice(`🗑 ${item.title} — 파일 ${done.length}개를 휴지통으로 옮겼어요`);
             } catch (e) {
+              diagnostics.record("영상 지우기", e);
               new Notice(`지우기 실패: ${String((e as Error)?.message ?? e)}`);
             }
             await refresh();

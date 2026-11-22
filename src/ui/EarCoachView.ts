@@ -16,6 +16,7 @@ import { AgyTutorPanel } from "./components/AgyTutorPanel";
 import { captureSnapshot } from "./snapshot";
 import { DictionaryModal } from "./DictionaryModal";
 import { saveSentenceCard } from "./sentenceAnki";
+import { diagnostics } from "../services/diagnostics";
 import type EarCoachPlugin from "../main";
 
 export const VIEW_TYPE_EAR_COACH = "ear-coach-listening-view";
@@ -690,6 +691,7 @@ export class EarCoachView extends ItemView {
         this.updateVirtualListSegments();
         new Notice("agy CLI 정밀 연음·약화 분석이 완료되었습니다!");
       } catch (err) {
+        diagnostics.record("agy 분석", err);
         new Notice(
           `agy 배치 분석 실패: ${err instanceof Error ? err.message : String(err)}`
         );
