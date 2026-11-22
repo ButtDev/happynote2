@@ -4,7 +4,7 @@
 
 ## 지금 하는 일
 - 배포 최신 BRAT 1.0.43(11-22, 설정 「🗑 저장된 영상」 SPEC_033). 1.0.42: 소리 힌트 숫자 읽기(30-minute → 썰리 미넛), 힌트 덩어리 = AI 설명 영어 구(SPEC_032), 받아쓰기 빈칸 = 설명 덩어리 안(새 분석부터). SPEC_026·031·032 DONE.
-- ⏳ 실기기 버튼 대기: 025 5(고른 뜻 하나만 앞면) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘) · 033 5(설정 「🗑 저장된 영상」 지우기) — 다음에 몰아서 물을 것. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- ⏳ 실기기 버튼 대기: 025 5(고른 뜻 하나만 앞면) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘) · 033 5(설정 「🗑 저장된 영상」 지우기) · 034 4(🧹 휴지통 비우기) — 다음에 몰아서 물을 것. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
 - 다음 후보: 사전에 없는 낱말 → dictionaryapi IPA 대체, 축약 규칙(going to → gonna; 지금 계산은 [고잉 터]), 소리 규칙 어색한 곳(walking → 워낑, finishing → 퓌니슁, at six → 엇 찍스, nineteen 끝 n 빠짐) — 사람이 안 짚었으니 고치기 전 물을 것.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 끄자고 제안할 것.
@@ -36,3 +36,4 @@
 - 셸 한 줄에 한국어·따옴표 JSON을 길게 넣으면 zsh 파싱 실패로 통째로 안 돎 → 긴 기록·버전 올림은 `.scratch/` 파이썬 스크립트로.
 - 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말. 숫자는 `expandHintWord`로 영어 낱말(0~9999·연도·쉼표, 서수·5자리는 계산 포기). AI 빈칸은 `alignBlanksToChunk`(aiAnalysis `sanitizeItems`)로 덩어리 안만.
 - 영상 데이터 지우기(SPEC_033): 순수 `src/services/videoData.ts`(저장소 주입, Test 21 + `tests/fixtures/video-data/`, 변이 `EAR_COACH_VIDEODATA_MODULE`), 화면 `src/ui/videoDataSection.ts`(설정 맨 아래, 화면 검사 `expect.videoData` → `video-data-<뷰>.png`). 지우기 = `vault.trash(file,false)`/`adapter.trashLocal`(볼트 `.trash`, 영구 삭제 안 함). `NoteGenerator.forgetSession`은 지운 시각 전 `createdAt` 세션 저장을 막음. 자동 정리·전부 지우기는 안 함(사람이 원하면 새 SPEC).
+- 휴지통 비우기(SPEC_034): `src/services/videoTrash.ts`(Test 22 + `tests/fixtures/video-trash/`, 변이 `EAR_COACH_VIDEOTRASH_MODULE`). 지우기 전후 `.trash` 목록 차이를 설정 `videoDataTrash`에 기록 → 비우기는 기록 + `.trash/` 밑만 `adapter.remove`. 1.0.43으로 이미 휴지통에 간 파일은 안 잡음(호환 안 함). 화면 검사 `expect.videoTrash`.

@@ -87,6 +87,21 @@ export class EarCoachSettingTab extends PluginSettingTab {
         sessionsDir: ng.getPrimarySidecarDir(),
         legacyDir: ng.getLegacyPluginSidecarDir(),
       },
+      trash: {
+        store: {
+          listFiles: async (dir) => ((await vault.adapter.exists(dir)) ? (await vault.adapter.list(dir)).files : []),
+          stat: async (p) => {
+            const st = await vault.adapter.stat(p);
+            return st && st.type === "file" ? { size: st.size } : null;
+          },
+          remove: (p) => vault.adapter.remove(p),
+        },
+        getRecorded: () => [...(this.plugin.settings.videoDataTrash ?? [])],
+        setRecorded: async (paths) => {
+          this.plugin.settings.videoDataTrash = paths;
+          await this.plugin.saveSettings();
+        },
+      },
       onDeleted: (item) => {
         ng.forgetSession(item.videoId);
         for (const leaf of workspace.getLeavesOfType(VIEW_TYPE_EAR_COACH)) {

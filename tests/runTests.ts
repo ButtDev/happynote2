@@ -33,6 +33,7 @@ import * as reviewSrc from "../src/utils/reviewQueue.ts";
 import * as dictationSrc from "../src/utils/dictationMatch.ts";
 import * as soundHintSrc from "../src/services/soundHint.ts";
 import * as videoDataSrc from "../src/services/videoData.ts";
+import * as videoTrashSrc from "../src/services/videoTrash.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -909,6 +910,33 @@ async function runAllTests() {
   }
   for (const [n, want] of vd.bytes) assert.equal(vdMod.formatBytes(n), want, `formatBytes(${n})`);
   log(`  -> PASS: ${vdList.length} videos listed, ${done.length} trashed, ${vd.names.length} names + ${vd.bytes.length} sizes`);
+  log("");
+
+  log("[Test 22] Video trash — 지우기로 옮긴 파일만 기록·영구 삭제, .trash 밖 거부 (data-driven, SPEC_034)");
+  const vtMod = process.env.EAR_COACH_VIDEOTRASH_MODULE ? await import(path.resolve(process.env.EAR_COACH_VIDEOTRASH_MODULE)) : videoTrashSrc;
+  const vt = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/video-trash/cases.json"), "utf8"));
+  for (const [before, after, want] of vt.diff) assert.deepEqual(vtMod.newTrashEntries(before, after), want, `newTrashEntries ${JSON.stringify(after)}`);
+  for (const [rec, added, want] of vt.add) assert.deepEqual(vtMod.addTrashRecords(rec, added), want, "addTrashRecords: 중복·.trash 밖·.. 빼기");
+  for (const [p, want] of vt.safe) assert.equal(vtMod.isSafeTrashPath(p), want, `isSafeTrashPath(${p})`);
+  const vtFiles: Record<string, number> = { ...vt.files };
+  const vtRemoved: string[] = [];
+  const vtStore = {
+    listFiles: async (dir: string) => Object.keys(vtFiles).filter((p) => p.startsWith(dir + "/")),
+    stat: async (p: string) => (p in vtFiles ? { size: vtFiles[p] } : null),
+    remove: async (p: string) => {
+      if (vt.failRemove.includes(p)) throw new Error("locked");
+      vtRemoved.push(p);
+      delete vtFiles[p];
+    },
+  };
+  const vtSt = await vtMod.trashStatus(vtStore, vt.recorded);
+  assert.deepEqual({ count: vtSt.paths.length, size: vtSt.size }, vt.expectStatus, "trashStatus: 기록 중 있는 .trash 파일만");
+  const vtRes = await vtMod.emptyVideoTrash(vtStore, vt.recorded);
+  assert.deepEqual(vtRes.removed, vt.expectRemoved, "emptyVideoTrash removed");
+  assert.deepEqual(vtRemoved, vt.expectRemoved, "remove 호출은 기록·존재·.trash 밑만");
+  assert.deepEqual(vtRes.remaining, vt.expectRemaining, "실패한 경로는 기록에 남음");
+  assert.deepEqual(Object.keys(vtFiles).sort(), vt.expectLeft, "남의 휴지통 노트·.trash 밖 파일은 그대로");
+  log(`  -> PASS: ${vt.diff.length} diff + ${vt.safe.length} safe cases, removed ${vtRes.removed.length}, kept ${vt.expectLeft.length}`);
   log("");
 
   log("==============================================================");

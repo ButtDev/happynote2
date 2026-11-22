@@ -1,0 +1,33 @@
+{
+  "_doc": "SPEC_034 휴지통 비우기. files = 가짜 볼트(경로 → 크기). failRemove = remove가 실패하는 경로.",
+  "diff": [
+    [[".trash/old note.md"], [".trash/old note.md", ".trash/abc123XYZ.json", ".trash/abc123XYZ 1.json"], [".trash/abc123XYZ.json", ".trash/abc123XYZ 1.json"]],
+    [[], [], []]
+  ],
+  "add": [
+    [[".trash/a.json"], [".trash/a.json", ".trash/b.md", "YouTube Listening/x.md", ".trash/../secret.md"], [".trash/a.json", ".trash/b.md"]]
+  ],
+  "safe": [
+    [".trash/a.json", true],
+    [".trash/sub/a.json", true],
+    [".trash", false],
+    [".trashy/a.json", false],
+    ["YouTube Listening/a.md", false],
+    [".trash/../a.md", false],
+    ["../.trash/a.md", false]
+  ],
+  "files": {
+    ".trash/TED Talk [abcDEF12345].md": 2048,
+    ".trash/abcDEF12345.json": 300000,
+    ".trash/abcDEF12345 1.json": 300000,
+    ".trash/My diary.md": 900,
+    ".trash/locked.json": 10,
+    "YouTube Listening/keep.md": 50
+  },
+  "recorded": [".trash/TED Talk [abcDEF12345].md", ".trash/abcDEF12345.json", ".trash/abcDEF12345 1.json", ".trash/gone.json", "YouTube Listening/keep.md", ".trash/locked.json"],
+  "failRemove": [".trash/locked.json"],
+  "expectStatus": { "count": 4, "size": 602058 },
+  "expectRemoved": [".trash/TED Talk [abcDEF12345].md", ".trash/abcDEF12345.json", ".trash/abcDEF12345 1.json"],
+  "expectRemaining": [".trash/locked.json"],
+  "expectLeft": [".trash/My diary.md", ".trash/locked.json", "YouTube Listening/keep.md"]
+}

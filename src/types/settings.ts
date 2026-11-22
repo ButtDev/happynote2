@@ -7,6 +7,8 @@ import type { AiProvider } from "../services/aiAnalysis";
  */
 export interface EarCoachSettings {
   notesFolder: string;
+  /** SPEC_034: 「지우기」로 볼트 .trash에 옮긴 Ear-Coach 파일(비우기 대상) */
+  videoDataTrash: string[];
   weaknessDashboardPath: string;
   agyBinaryPath: string;
   agyModel: string;
@@ -44,6 +46,7 @@ export interface EarCoachSettings {
 
 export const DEFAULT_EAR_COACH_SETTINGS: EarCoachSettings = {
   notesFolder: "YouTube Listening",
+  videoDataTrash: [],
   weaknessDashboardPath: "YouTube Listening/My_Listening_Weakness.md",
   agyBinaryPath: "agy",
   agyModel: "gemini-3.8-flash",

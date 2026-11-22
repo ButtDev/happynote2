@@ -94,7 +94,8 @@
           ],
           "advance": true
         },
-        "videoData": true
+        "videoData": true,
+        "videoTrash": true
       }
     },
     {
@@ -193,7 +194,8 @@
           "selector": ".ear-coach-player-controls",
           "min": 24
         },
-        "videoData": true
+        "videoData": true,
+        "videoTrash": true
       }
     }
   ],

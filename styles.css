@@ -1482,3 +1482,21 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   gap: 8px;
   justify-content: flex-end;
 }
+
+/* SPEC_034: 「🧹 휴지통 비우기」 줄 — 목록 아래, 행과 같은 배치 */
+.ear-coach-videodata-trash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-top: 12px;
+  padding: 10px 0;
+  border-top: 2px solid var(--background-modifier-border);
+}
+.ear-coach-videodata-trash > button {
+  flex: 0 0 auto;
+}
+.ear-coach-videodata-note {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}

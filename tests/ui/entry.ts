@@ -135,18 +135,27 @@ async function main(): Promise<void> {
       "YouTube Listening/.ear-coach-sessions/abcDEF12345.json": { size: 812000, mtime: now },
       ".obsidian/plugins/obsidian-ear-coach/sessions/abcDEF12345.json": { size: 812000, mtime: now },
       "YouTube Listening/.ear-coach-sessions/xyzOnly0001.json": { size: 1600000, mtime: now - 86400000 * 3, content: '{"title":"Rick Song"}' },
+      // SPEC_034: 사람이 Obsidian에서 지운 다른 노트(비우기가 건드리면 안 됨)
+      ".trash/My diary.md": { size: 900, mtime: now },
     };
     const w = window as any;
     w.__vdTrash = [];
+    w.__vdRemove = [];
+    w.__vdRecorded = [];
     const store = {
       listFiles: async (dir: string) => Object.keys(files).filter((p) => p.startsWith(dir + "/")),
       stat: async (p: string) => (files[p] ? { size: files[p].size, mtime: files[p].mtime } : null),
       read: async (p: string) => files[p]?.content ?? "",
       trash: async (p: string) => {
         w.__vdTrash.push(p);
+        // 실제처럼 볼트 .trash로 옮김(같은 이름이면 「 1」을 붙임)
+        const base = p.slice(p.lastIndexOf("/") + 1);
+        let dest = `.trash/${base}`;
+        for (let i = 1; files[dest]; i++) dest = `.trash/${base.replace(/(\.[^.]+)$/, ` ${i}$1`)}`;
+        files[dest] = files[p];
         delete files[p];
       },
-      notes: async () => Object.keys(files).filter((p) => p.endsWith(".md")).map((path) => ({ path, videoId: null })),
+      notes: async () => Object.keys(files).filter((p) => p.endsWith(".md") && !p.startsWith(".trash/")).map((path) => ({ path, videoId: null })),
     };
     const host = document.createElement("div");
     host.className = "ear-coach-ui-settings-host vertical-tab-content";
@@ -157,6 +166,20 @@ async function main(): Promise<void> {
       app: {} as any,
       store,
       dirs: { notesDir: "YouTube Listening", sessionsDir: "YouTube Listening/.ear-coach-sessions", legacyDir: ".obsidian/plugins/obsidian-ear-coach/sessions" },
+      trash: {
+        store: {
+          listFiles: store.listFiles,
+          stat: store.stat,
+          remove: async (p: string) => {
+            w.__vdRemove.push(p);
+            delete files[p];
+          },
+        },
+        getRecorded: () => [...w.__vdRecorded],
+        setRecorded: async (paths: string[]) => {
+          w.__vdRecorded = paths;
+        },
+      },
       onDeleted: (item) => {
         w.__vdDeleted = [...(w.__vdDeleted ?? []), item.videoId];
       },

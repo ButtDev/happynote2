@@ -874,6 +874,70 @@ for (const vp of cases.viewports) {
     });
   }
 
+  // SPEC_034: 「🧹 휴지통 비우기」 — 처음 0개·disabled → 영상 지우기 → 3개 → 비우기 → 영구 삭제는 기록 3개만(남의 .trash 노트 그대로) → 0개
+  if (vp.expect?.videoTrash) {
+    await page.evaluate(() => {
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      window.__renderVideoData();
+    });
+    await page.waitForTimeout(200);
+    const trashState = () =>
+      page.evaluate(() => {
+        const r = document.querySelector(".ear-coach-videodata-trash");
+        return r ? { meta: r.querySelector(".ear-coach-videodata-meta")?.textContent ?? "", disabled: !!r.querySelector("button")?.disabled } : null;
+      });
+    const start = await trashState();
+    const firstId = await page.evaluate(() => document.querySelector(".ear-coach-videodata-row")?.dataset.videoId);
+    await page.locator(`.ear-coach-videodata-row[data-video-id="${firstId}"] button`).click();
+    await page.waitForTimeout(150);
+    await page.locator(".ear-coach-videodata-confirm button.mod-warning").click();
+    await page.waitForTimeout(300);
+    const afterDelete = await trashState();
+    const recorded = await page.evaluate(() => window.__vdRecorded);
+    await page.screenshot({ path: path.join(outDir, `video-trash-${vp.name}.png`) });
+    let modal = null;
+    if (afterDelete && !afterDelete.disabled) {
+      await page.locator(".ear-coach-videodata-trash button").click();
+      await page.waitForTimeout(150);
+      modal = await page.evaluate(() => {
+        const c = document.querySelector(".ear-coach-videotrash-confirm");
+        return c ? { title: c.querySelector("h3")?.textContent ?? "", paths: [...c.querySelectorAll("li")].map((l) => l.textContent), note: c.querySelector(".ear-coach-videodata-note")?.textContent ?? "", buttons: [...c.querySelectorAll("button")].map((b) => b.textContent) } : null;
+      });
+      await page.screenshot({ path: path.join(outDir, `video-trash-confirm-${vp.name}.png`) });
+      if (modal) await page.locator(".ear-coach-videotrash-confirm button.mod-warning").click();
+      await page.waitForTimeout(300);
+    }
+    const end = await trashState();
+    const removed = await page.evaluate(() => window.__vdRemove);
+    const notices = await page.evaluate(() => (window.__notices ?? []).filter((n) => n.startsWith("🧹")));
+    const overflow = await page.evaluate(() => {
+      const r = document.querySelector(".ear-coach-videodata-trash");
+      return r ? r.scrollWidth - r.clientWidth : -1;
+    });
+    const res = { start, afterDelete, recorded, modal, removed, end, notices, overflow };
+    console.log(`${vp.name} videoTrash: ${JSON.stringify(res)}`);
+    const EMPTY = "휴지통에 Ear-Coach 파일이 없어요.";
+    if (!start || start.meta !== EMPTY || !start.disabled) errors.push(`${vp.name}: videoTrash start ${JSON.stringify(start)}`);
+    if (!afterDelete || !/^Ear-Coach가 옮긴 파일 3개 · /.test(afterDelete.meta) || afterDelete.disabled) errors.push(`${vp.name}: videoTrash afterDelete ${JSON.stringify(afterDelete)}`);
+    if (recorded.length !== 3 || recorded.some((p) => !p.startsWith(".trash/") || p.includes("diary"))) errors.push(`${vp.name}: videoTrash recorded ${JSON.stringify(recorded)}`);
+    if (!modal) errors.push(`${vp.name}: videoTrash confirm modal missing`);
+    else {
+      if (modal.title !== "휴지통의 Ear-Coach 파일 3개를 영구 삭제할까요?") errors.push(`${vp.name}: videoTrash modal title ${modal.title}`);
+      if (modal.note !== "되돌릴 수 없어요. 다른 노트는 그대로예요.") errors.push(`${vp.name}: videoTrash modal note ${modal.note}`);
+      if (modal.buttons.join("|") !== "영구 삭제|취소") errors.push(`${vp.name}: videoTrash modal buttons ${modal.buttons.join("|")}`);
+    }
+    if (JSON.stringify([...removed].sort()) !== JSON.stringify([...recorded].sort())) errors.push(`${vp.name}: videoTrash removed ${JSON.stringify(removed)} != recorded`);
+    if (removed.some((p) => p.includes("diary"))) errors.push(`${vp.name}: videoTrash removed other note`);
+    if (!end || end.meta !== EMPTY || !end.disabled) errors.push(`${vp.name}: videoTrash end ${JSON.stringify(end)}`);
+    if (notices.length !== 1 || notices[0] !== "🧹 파일 3개를 영구 삭제했어요") errors.push(`${vp.name}: videoTrash notice ${JSON.stringify(notices)}`);
+    if (overflow > 1) errors.push(`${vp.name}: videoTrash overflowX ${overflow}`);
+    m.videoTrash = res;
+    await page.evaluate(() => {
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      document.querySelector(".ear-coach-ui-settings-host")?.remove();
+    });
+  }
+
   // SPEC_029: 세로 받아쓰기 입력 중 — 키보드가 덮든(높이 그대로) 줄이든(480·380) 입력칸·컨트롤이 보이고 세로 배치 유지
   if (vp.expect?.typing) {
     const t = vp.expect.typing;
