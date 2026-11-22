@@ -1,6 +1,7 @@
 import { send as requestUrl } from "../features/network"; // SPEC_041: 시간 제한·재시도
 import type { RawTranscriptCue } from "../types/transcript";
 import { parseCaptionPayload } from "./captionPayload.ts";
+import { KnownFailure } from "./notices.ts";
 import { isMobileApp, requireDesktopModule } from "../utils/platform.ts";
 
 export interface FetchedVideoTranscript {
@@ -44,14 +45,16 @@ export class TranscriptService {
     // Try Android Innertube player first (doesn't require PO-token on caption baseUrls),
     // then fall back to Watch Page ytInitialPlayerResponse.
     const playerResponses: Array<{ sourceLabel: string; data: Record<string, any> }> = [];
+    let playerErr: unknown = null;
 
     try {
       const androidData = await this.fetchPlayerResponseViaInnertubeAndroid(videoId);
       if (androidData) {
         playerResponses.push({ sourceLabel: "android-innertube", data: androidData });
       }
-    } catch {
+    } catch (e) {
       // Ignore and try watch page
+      playerErr = e;
     }
 
     try {
@@ -59,12 +62,15 @@ export class TranscriptService {
       if (watchData) {
         playerResponses.push({ sourceLabel: "watch-page", data: watchData });
       }
-    } catch {
+    } catch (e) {
       // Ignore
+      playerErr = e;
     }
 
     if (playerResponses.length === 0) {
-      throw new Error("유튜브 페이지에서 플레이어 데이터를 추출하지 못했습니다.");
+      // SPEC_042: 네트워크 실패(오프라인·시간 초과)는 그대로 — 알림이 원인을 고른다
+      if ((playerErr as { name?: string } | null)?.name === "HttpFailure") throw playerErr;
+      throw new KnownFailure("유튜브 페이지를 읽지 못했어요");
     }
 
     let lastError: Error | null = null;
@@ -139,14 +145,12 @@ export class TranscriptService {
     }
 
     if (!foundAnyTracklist) {
-      throw new Error("이 유튜브 영상에는 제공되는 자막(Captions)이 없습니다.");
+      throw new KnownFailure("이 영상에는 자막이 없어요");
     }
 
     throw (
       lastError ||
-      new Error(
-        "자막 트랙을 다운로드했으나 파싱 가능한 자막 문장이 발견되지 않았습니다 (0 cues)."
-      )
+      new KnownFailure("자막 문장을 찾지 못했어요")
     );
   }
 

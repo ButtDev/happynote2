@@ -82,10 +82,30 @@ proto.detach = function () {
 export const Platform = { isMobile: true, isMobileApp: true, isDesktop: false, isDesktopApp: false, isAndroidApp: true };
 
 export class Notice {
-  constructor(public message: string) {
-    (window as any).__notices = [...((window as any).__notices ?? []), message];
+  noticeEl: HTMLElement;
+  constructor(public message: string | DocumentFragment, public duration?: number) {
+    // SPEC_042: 조각(글 + 「다시」 버튼)도 그려 둔다 — __notices에는 버튼 글자를 뺀 글
+    this.noticeEl = document.createElement("div");
+    this.noticeEl.className = "notice";
+    this.noticeEl.style.pointerEvents = "auto";
+    if (typeof message === "string") this.noticeEl.textContent = message;
+    else this.noticeEl.appendChild(message);
+    let host = document.querySelector(".notice-container");
+    if (!host) {
+      host = document.createElement("div");
+      host.className = "notice-container";
+      // 실기기처럼 화면 위에 떠 있게(레이아웃을 밀지 않음)
+      (host as HTMLElement).style.cssText = "position:fixed;top:0;left:0;right:0;z-index:9999;pointer-events:none;";
+      document.body.appendChild(host);
+    }
+    host.appendChild(this.noticeEl);
+    const clone = this.noticeEl.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll("button").forEach((b) => b.remove());
+    (window as any).__notices = [...((window as any).__notices ?? []), clone.textContent ?? ""];
   }
-  hide(): void {}
+  hide(): void {
+    this.noticeEl.remove();
+  }
 }
 
 export class TFile {

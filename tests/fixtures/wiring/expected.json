@@ -47,6 +47,6 @@
     { "id": "ear-coach-mobile-ai-continue", "expect": false },
     { "id": "ear-coach-resegment-current-note", "expect": false }
   ],
-  "protocolWithoutUrlNotice": "Ear-Coach URI에 유튜브 url 파라미터가 없습니다.",
-  "invalidUrlNotice": "유효한 유튜브 URL이 아닙니다."
+  "protocolWithoutUrlNotice": "Ear-Coach 링크에 유튜브 주소가 없어요",
+  "invalidUrlNotice": "유튜브 링크가 아니에요"
 }

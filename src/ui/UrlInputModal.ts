@@ -75,7 +75,7 @@ export class UrlInputModal extends Modal {
         .onClick(async () => {
           const parsed = parseYouTubeUrl(this.urlValue);
           if (!parsed) {
-            new Notice("유효한 유튜브 URL을 입력해 주세요!");
+            new Notice("유튜브 링크를 넣어 주세요");
             return;
           }
           const manualSec = parseTimestampToSeconds(this.timestampRaw);

@@ -3,12 +3,11 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.49(11-23, 릴리스 3파일 확인). 남은 ⏳ 없음(SPEC_038·041 11-23 OK → DONE).
-- 백로그 「대기」(`memory/backlog.md`): 맨 위 [사람 결정] 알림 문구 표·재시도 버튼, 그다음 야간 순서 노래방식 하이라이트 → 오늘의 5문장 → 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
+- 배포 최신 BRAT 1.0.50(SPEC_042 알림 정리). ⏳ SPEC_042 7(비행기 모드에서 핀 문장 「➕ Anki」 → 「원음을 받지 못해 저장하지 않았어요」 + 「다시」) 버튼 보냄. OK면 `/spec-run SPEC_042 사람확인: 7 OK` → DONE.
+- 백로그 「대기」(`memory/backlog.md`): 야간 순서 노래방식 하이라이트 → 오늘의 5문장 → 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
 - 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
-- 알림 문구 표·「다시」 버튼을 할지(SPEC_041 범위 밖으로 남김) — 아직 안 물음.
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
 
 ## 주의
@@ -42,5 +41,6 @@
 - 휴지통 비우기(SPEC_034): `src/services/videoTrash.ts`(Test 22 + `tests/fixtures/video-trash/`, 변이 `EAR_COACH_VIDEOTRASH_MODULE`). 지우기 전후 `.trash` 목록 차이를 설정 `videoDataTrash`에 기록 → 비우기는 기록 + `.trash/` 밑만 `adapter.remove`. 1.0.43으로 이미 휴지통에 간 파일은 안 잡음(호환 안 함). 화면 검사 `expect.videoTrash`.
 - 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
 - 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`. 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
+- 알림(SPEC_042): 실패 알림은 `failureNotice("<무엇>", err)`(`src/services/notices.ts`, 원인 4가지·`KnownFailure`), 다시 할 수 있으면 `notifyRetry(text, retry)`(`src/ui/notify.ts`, 10초). 알림·문구 상수는 해요체 — Test 28이 `new Notice(` 줄의 「니다」·원문(`.message`)을 잡음. 화면 검사 가짜 Notice는 `.notice-container`에 그려 버튼을 누를 수 있음.
 - 진단(SPEC_038): `src/services/diagnostics.ts`(순수, 공용 `diagnostics`, Test 24 + `tests/fixtures/diagnostics/`, 변이 `EAR_COACH_DIAGNOSTICS_MODULE`), 설정 줄·전역 잡기 `src/ui/diagnosticsSection.ts`. 새 오류 catch 자리엔 `diagnostics.record("<단계>", err)` 한 줄. 화면 검사 `expect.diagnostics`(`__diagnostics`·`__diagClip`). 메모리만(앱 다시 켜면 비워짐).
 - 학습 기록(SPEC_040): `src/services/learningStore.ts`(순수, 파일 주입, Test 26 + `tests/fixtures/learning/cases.json`, 변이 `EAR_COACH_LEARNING_MODULE`), `plugin.learning`(`src/features/learning.ts` → `<manifest.dir>/learning.json`). 지금 연결은 핀 토글뿐(`EarCoachView` onTogglePin) — 빈칸 `recordBlank`·위치 `setPosition`·퀴즈 `recordQuiz`는 쓰는 기능 SPEC에서 연결. schemaVersion>1 파일은 읽기 전용. 화면 검사 가짜 플러그인 `tests/ui/entry.ts`에도 `learning` 있음.

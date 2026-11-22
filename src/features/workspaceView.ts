@@ -118,7 +118,7 @@ export function getActiveEarCoachFile(plugin: EarCoachPlugin): TFile | null {
 export async function openEarCoachForNoteFile(plugin: EarCoachPlugin, file: TFile): Promise<void> {
   const session = await plugin.loadOrRecoverSession(file);
   if (!session) {
-    new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없습니다.");
+    new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없어요");
     return;
   }
   await plugin.activateWorkspaceView(session, file);

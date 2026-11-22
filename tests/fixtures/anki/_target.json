@@ -18,7 +18,7 @@
       },
       "settings": "default",
       "expect": {
-        "message": "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
+        "message": "Anki에 「happynote2」 덱이 없어요 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
       },
       "calls": [
         "deckNames"
@@ -41,7 +41,7 @@
       },
       "settings": "default",
       "expect": {
-        "message": "Anki에 「Basic (and reversed card)」 노트 타입이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
+        "message": "Anki에 「Basic (and reversed card)」 노트 타입이 없어요 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
       },
       "calls": [
         "deckNames",
@@ -128,7 +128,7 @@
       },
       "settings": "default",
       "expect": {
-        "message": "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
+        "message": "Anki에 「happynote2」 덱이 없어요 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
       },
       "calls": [
         "deckNames"

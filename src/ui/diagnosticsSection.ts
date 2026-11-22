@@ -55,7 +55,7 @@ export function renderDiagnosticsSection(containerEl: HTMLElement, opts: Diagnos
       await write(text);
       new Notice(`📋 진단을 복사했어요 (오류 ${count}개)`);
     } catch (e) {
-      new Notice(`복사하지 못했어요: ${String((e as Error)?.message ?? e)}`);
+      new Notice("📋 복사하지 못했어요");
     }
   });
   return row;

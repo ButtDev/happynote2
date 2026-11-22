@@ -3,6 +3,7 @@
  * OpenAI-compatible endpoint (Groq by default). No obsidian import — the HTTP function and
  * sleep are injected so the logic is testable in Node.
  */
+import { failureCause } from "./notices.ts";
 import type { ListeningTrapType, SegmentPhoneticAnalysis, TranscriptSegment } from "../types/transcript";
 
 export type AiProvider = "gemini" | "openai";
@@ -354,10 +355,11 @@ export async function runAiAnalysis(
 export const AI_MESSAGES = {
   start: (n: number) => `🤖 AI 번역·분석 시작 (대기 ${n}장)`,
   done: (n: number) => `✅ AI 번역·분석 완료 (${n}장)`,
-  quota: (n: number, m: number) => `⏸️ AI 무료 한도에 걸려 멈췄습니다 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 합니다.`,
-  busy: (n: number, m: number) => `⏳ AI 서버가 붐벼서 멈췄습니다 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 합니다.`,
-  auth: "❌ AI 키가 거부되었습니다. 설정에서 키를 확인하세요.",
-  failed: (msg: string) => `❌ AI 분석 실패: ${msg}`,
+  quota: (n: number, m: number) => `⏸️ AI 무료 한도에 걸려 멈췄어요 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 해요.`,
+  busy: (n: number, m: number) => `⏳ AI 서버가 붐벼서 멈췄어요 (${n}/${m}장). 나중에 노트를 다시 열면 이어서 해요.`,
+  auth: "❌ AI 키가 거부됐어요 — 설정에서 키를 확인해 주세요",
+  /** SPEC_042: 원인 한 줄(failureCause) */
+  failed: (cause: string) => `❌ AI 번역을 못 했어요 — ${cause}`,
 };
 
 export function aiResultMessage(result: AiRunResult): string {
@@ -366,7 +368,7 @@ export function aiResultMessage(result: AiRunResult): string {
   if (err.kind === "quota") return AI_MESSAGES.quota(result.analyzed, result.total);
   if (err.kind === "auth") return AI_MESSAGES.auth;
   if (err.kind === "busy") return AI_MESSAGES.busy(result.analyzed, result.total);
-  return AI_MESSAGES.failed(err.message);
+  return AI_MESSAGES.failed(failureCause(err));
 }
 
 /** SPEC_021: 설정 화면 🔌 연결 확인 — 짧은 문장 하나로 요청하고 알림 문구를 돌려줌 */
@@ -375,7 +377,7 @@ export async function testAiConnection(
   fetch: (req: AiHttpRequest) => Promise<AiHttpResponse>,
   sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms))
 ): Promise<string> {
-  if (!config) return "API 키를 먼저 넣어 주세요.";
+  if (!config) return "API 키를 먼저 넣어 주세요";
   const text = "I'm looking forward to it.";
   const seg = {
     id: "test", index: 0, start: 0, end: 2, duration: 2, text, words: text.split(" "),
@@ -392,13 +394,13 @@ export async function testAiConnection(
       parsed = parseAiResponse(config.provider, res.status, res.json, [seg]);
     }
     if ("error" in parsed) {
-      if (parsed.error.kind === "busy") return `⏳ AI 서버가 붐빕니다 (다시 시도 ${AI_BUSY_WAITS_MS.length}회 실패): ${parsed.error.message}`;
+      if (parsed.error.kind === "busy") return `⏳ AI 서버가 붐벼요 (다시 시도 ${AI_BUSY_WAITS_MS.length}회 실패): ${parsed.error.message}`;
       if (parsed.error.kind === "auth") return AI_MESSAGES.auth;
-      if (parsed.error.kind === "quota") return `⏸️ AI 무료 한도에 걸렸습니다: ${parsed.error.message}`;
+      if (parsed.error.kind === "quota") return `⏸️ AI 무료 한도에 걸렸어요: ${parsed.error.message}`;
       return `❌ AI 연결 실패: ${parsed.error.message}`;
     }
     const first = parsed.items[0];
-    return first ? `✅ AI 연결 성공 — ${text} → ${first.translationKr}` : "❌ AI 연결 실패: 응답에 해석이 없습니다";
+    return first ? `✅ AI 연결 성공 — ${text} → ${first.translationKr}` : "❌ AI 연결 실패: 응답에 해석이 없어요";
   } catch (err) {
     return `❌ AI 연결 실패: ${err instanceof Error ? err.message : String(err)}`;
   }

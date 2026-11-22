@@ -15,12 +15,12 @@ export const ANKI_ROLES: AnkiRole[] = [...ANKI_FRONT_ROLES, ...ANKI_BACK_ROLES];
 export const ANKI_MESSAGES = {
   button: "➕ Anki",
   saving: "Anki에 저장 중…",
-  added: "Anki에 저장했습니다",
-  addedNoPicture: "Anki에 저장했습니다 (그림 없음)",
-  duplicate: "이미 Anki에 있는 카드입니다",
-  connection: "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요",
+  added: "Anki에 저장했어요",
+  addedNoPicture: "Anki에 저장했어요 (그림 없음)",
+  duplicate: "이미 Anki에 있는 카드예요",
+  connection: "AnkiConnect Android에 연결하지 못했어요 — 앱에서 서비스를 켜 주세요",
   noSettings: "설정에서 Anki 덱·노트 타입을 골라 주세요",
-  noAudio: "원음을 받지 못해 저장하지 않았습니다 (네트워크·영상 확인)",
+  noAudio: "원음을 받지 못해 저장하지 않았어요",
 } as const;
 
 export interface AnkiSettingsLike {
@@ -339,8 +339,8 @@ export function migrateAnkiDeck(saved: string | undefined | null): string {
 
 /** 덱·노트 타입이 없을 때 문구 (SPEC_015 회차 3, 덱 문구는 SPEC_016) */
 export function ankiMissingMessage(kind: "deck" | "model", name: string): string {
-  if (kind === "deck") return `Anki에 「${name}」 덱이 없습니다 — AnkiDroid에서 「${name}」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
-  return `Anki에 「${name}」 노트 타입이 없습니다 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
+  if (kind === "deck") return `Anki에 「${name}」 덱이 없어요 — AnkiDroid에서 「${name}」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
+  return `Anki에 「${name}」 노트 타입이 없어요 — 설정에서 「덱·노트 타입 불러오기」로 골라 주세요`;
 }
 
 export type AnkiTarget = { ok: true; settings: AnkiSettingsLike } | { ok: false; message: string };
@@ -486,8 +486,8 @@ export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSe
 /** 문장 카드 노트 타입 없음·필드 모자람 안내 */
 export function sentenceModelMessage(name: string, missing: string[] | null): string {
   const how = `AnkiDroid에서 노트 타입 「${name}」을 만들고 필드 ${ANKI_SENTENCE_FIELDS.join("·")}를 넣어 주세요`;
-  if (missing === null) return `Anki에 「${name}」 노트 타입이 없습니다 — ${how}`;
-  return `「${name}」 노트 타입에 필드 ${missing.join("·")}가 없습니다 — ${how}`;
+  if (missing === null) return `Anki에 「${name}」 노트 타입이 없어요 — ${how}`;
+  return `「${name}」 노트 타입에 필드 ${missing.join("·")}가 없어요 — ${how}`;
 }
 
 /** 저장 전 확인: 덱 → 노트 타입 → 필드 5개. */

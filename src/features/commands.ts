@@ -15,7 +15,7 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
   plugin.registerObsidianProtocolHandler("ear-coach", async (params) => {
     const rawUrl = params.url;
     if (!rawUrl) {
-      new Notice("Ear-Coach URI에 유튜브 url 파라미터가 없습니다.");
+      new Notice("Ear-Coach 링크에 유튜브 주소가 없어요");
       return;
     }
     const pinSec = parseTimestampToSeconds(params.t);
@@ -44,7 +44,7 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
         const clip = await navigator.clipboard.readText();
         const parsed = parseYouTubeUrl(clip);
         if (!parsed) {
-          new Notice("클립보드에 유효한 유튜브 URL이 없습니다. 입력창을 엽니다.");
+          new Notice("클립보드에 유튜브 링크가 없어요 — 입력 창을 열게요");
           plugin.openUrlInputModal();
           return;
         }
@@ -79,7 +79,7 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
         void (async () => {
           const session = await plugin.loadOrRecoverSession(activeFile);
           if (!session) {
-            new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없습니다.");
+            new Notice("이 노트에는 Ear-Coach 리스닝 세션 데이터가 없어요");
             return;
           }
           if (!plugin.getAiConfig()) {
@@ -142,7 +142,7 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
             await plugin.activateWorkspaceView(fullSession, file);
           } else {
             diagnostics.record("세션 불러오기", ctx.sourcePath);
-            new Notice("⚠️ 리스닝 세션을 불러오거나 복구하지 못했습니다.");
+            new Notice("⚠️ 리스닝 세션을 불러오거나 복구하지 못했어요");
           }
         } else if (!isSidecar) {
           await plugin.activateWorkspaceView(parsed as ListeningSessionData, null);

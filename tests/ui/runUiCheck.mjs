@@ -134,12 +134,12 @@ function evaluateExpect(vp, m, nums) {
     const pe = e.anki.picture;
     const pic = a?.picture;
     const okPicture = !!pe && !!pic && !pic.error && pic.filename === pe.filename && pic.w === pe.width && pic.h === pe.height && pic.rgb.every((v, i) => Math.abs(v - pe.rgb[i]) <= 24) && a.sbUrls?.length === 1 && a.sbUrls[0].includes(pe.sheet) && (a.note?.fields?.Front ?? "").includes(`<img src="${pe.filename}">`);
-    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했습니다" && a.note?.deckName === "happynote2" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]) && okPicture;
-    const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes"]) && d.status === "이미 Anki에 있는 카드입니다";
+    const okAdded = !!a && !a.error && a.phraseBtn === "➕ Anki" && a.wordBtn === "➕ Anki" && JSON.stringify(a.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes", "addNote"]) && a.status === "Anki에 저장했어요" && a.note?.deckName === "happynote2" && a.note?.options?.allowDuplicate === false && a.note?.audio?.[0]?.data === "AQID" && !("url" in a.note.audio[0]) && okPicture;
+    const okDup = !!d && !d.error && JSON.stringify(d.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes"]) && d.status === "이미 Anki에 있는 카드예요";
     const np = m.anki?.noPic;
-    const okNoPic = !!np && !np.error && JSON.stringify(np.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && np.status === "Anki에 저장했습니다 (그림 없음)" && !(np.note?.fields?.Front ?? "").includes("<img");
+    const okNoPic = !!np && !np.error && JSON.stringify(np.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "canAddNotes", "addNote"]) && np.status === "Anki에 저장했어요 (그림 없음)" && !(np.note?.fields?.Front ?? "").includes("<img");
     const n = m.anki?.noDeck;
-    const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
+    const okNoDeck = !!n && !n.error && JSON.stringify(n.calls) === JSON.stringify(["deckNames"]) && n.status === "Anki에 「happynote2」 덱이 없어요 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요";
     // SPEC_025: 앞면 뜻은 하나(<i>품사</i> 한 번) — 고른 뜻(added) / 안 고르면 첫 뜻(noPic)
     const meaningCount = (note) => ((note?.fields?.Front ?? "").match(/<i>/g) ?? []).length;
     const esc = (t) => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -171,14 +171,17 @@ function evaluateExpect(vp, m, nums) {
   if (e.sentenceAnki) {
     const sa = m.sentenceAnki;
     const n = sa?.note;
-    const ok = !!sa && !sa.error && sa.inside === true && sa.pinned >= 1 && sa.btnOnPinned === sa.pinned && sa.btnOnUnpinned === 0 && JSON.stringify(sa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "storeMediaFile", "canAddNotes", "addNote"]) && n?.modelName === e.sentenceAnki.modelName && n?.deckName === "happynote2" && n?.fields?.Sentence === sa.text && /^\[sound:happynote2_[^\]]+\.wav\]<img /.test(n?.fields?.Picture ?? "") && n?.tags?.includes("sentence") && sa.notice === "Anki에 저장했습니다";
+    const ok = !!sa && !sa.error && sa.inside === true && sa.pinned >= 1 && sa.btnOnPinned === sa.pinned && sa.btnOnUnpinned === 0 && JSON.stringify(sa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "storeMediaFile", "canAddNotes", "addNote"]) && n?.modelName === e.sentenceAnki.modelName && n?.deckName === "happynote2" && n?.fields?.Sentence === sa.text && /^\[sound:happynote2_[^\]]+\.wav\]<img /.test(n?.fields?.Picture ?? "") && n?.tags?.includes("sentence") && sa.notice === "Anki에 저장했어요";
     add("sentenceAnki", ok, JSON.stringify(sa));
     // SPEC_036: 원음 — storeMediaFile(.wav, WAV base64)이 canAddNotes 앞, 원음 실패면 addNote 0회 + 문구
     const media = sa?.media ?? [];
     const wav = media.find((x) => /\.wav$/.test(x?.filename ?? ""));
     add("sentenceAnki.audio", !!wav && String(wav.data ?? "").startsWith("UklGR") && (n?.fields?.Picture ?? "").includes(`[sound:${wav.filename}]`) && sa.clipArgs?.length === 1, JSON.stringify({ media: media.map((x) => x.filename), clipArgs: sa?.clipArgs }));
     const fa = sa?.fail;
-    add("sentenceAnki.noAudio", !!fa && JSON.stringify(fa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames"]) && fa.notes === 0 && fa.notice === "원음을 받지 못해 저장하지 않았습니다 (네트워크·영상 확인)", JSON.stringify(fa));
+    add("sentenceAnki.noAudio", !!fa && JSON.stringify(fa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames"]) && fa.notes === 0 && fa.notice === "원음을 받지 못해 저장하지 않았어요", JSON.stringify(fa));
+    // SPEC_042: 「다시」 버튼 1개·글·누르면 닫힘 + Anki 호출 다시 + 같은 알림 다시
+    const rt = sa?.retry;
+    add("sentenceAnki.retry", !!rt && JSON.stringify(rt.buttons) === JSON.stringify(["다시"]) && rt.text === "원음을 받지 못해 저장하지 않았어요" && rt.closed === true && rt.callsAfter?.length > 0 && rt.newNotice?.includes("원음을 받지 못해 저장하지 않았어요"), JSON.stringify(rt));
     // SPEC_036: Chrome에서 실제 조각 디코드 → 창 길이 ±0.05초
     const dc = sa?.decode;
     add("sentenceAnki.decode", !!dc && !dc.error && Math.abs(dc.sec - dc.want) <= 0.05 && dc.peak > 0.01 && dc.wavHead === "RIFF", JSON.stringify(dc));
@@ -720,6 +723,23 @@ for (const vp of cases.viewports) {
       card.querySelector(".ear-coach-sentence-anki").click();
       await wait(400);
       const fail = { calls: window.__ankiCalls, notes: window.__ankiNotes.length, notice: (window.__notices ?? []).at(-1) ?? null };
+      // SPEC_042: 원음 실패 알림의 「다시」 — 누르면 알림이 닫히고 같은 저장을 다시 함
+      const notes = [...document.querySelectorAll(".notice-container .notice")];
+      const failEl = notes.at(-1);
+      const btns = failEl ? [...failEl.querySelectorAll("button")] : [];
+      const rect = failEl?.getBoundingClientRect();
+      window.__ankiCalls = [];
+      const noticesBefore = (window.__notices ?? []).length;
+      btns[0]?.click();
+      await wait(400);
+      const retry = {
+        buttons: btns.map((x) => x.textContent),
+        text: failEl?.querySelector(".ear-coach-notice-text")?.textContent ?? null,
+        width: rect ? Math.round(rect.width) : null,
+        closed: !!failEl && !failEl.isConnected,
+        callsAfter: window.__ankiCalls,
+        newNotice: (window.__notices ?? []).slice(noticesBefore),
+      };
       window.__audioNone = false;
       // SPEC_036: 실제 조각(초기화+조각 1, 9.98초) 1.0~4.0초 디코드
       let decode;
@@ -732,7 +752,7 @@ for (const vp of cases.viewports) {
       } catch (err) {
         decode = { error: String(err) };
       }
-      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, ...okRun, text: seg?.text ?? null, fail, decode };
+      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, ...okRun, text: seg?.text ?? null, fail, retry, decode };
     });
     await page.screenshot({ path: path.join(outDir, `sentence-anki-${vp.name}.png`) });
   }

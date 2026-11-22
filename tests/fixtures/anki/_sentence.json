@@ -372,7 +372,7 @@
       },
       "expect": {
         "ok": false,
-        "message": "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
+        "message": "Anki에 「happynote2」 덱이 없어요 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
       },
       "calls": [
         "deckNames"
@@ -390,7 +390,7 @@
       },
       "expect": {
         "ok": false,
-        "message": "Anki에 「happynote2 Listening」 노트 타입이 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
+        "message": "Anki에 「happynote2 Listening」 노트 타입이 없어요 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
       },
       "calls": [
         "deckNames",
@@ -414,7 +414,7 @@
       },
       "expect": {
         "ok": false,
-        "message": "「happynote2 Listening」 노트 타입에 필드 Cloze·Hint가 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
+        "message": "「happynote2 Listening」 노트 타입에 필드 Cloze·Hint가 없어요 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
       },
       "calls": [
         "deckNames",

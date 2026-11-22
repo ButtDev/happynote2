@@ -16,6 +16,8 @@ import { AgyTutorPanel } from "./components/AgyTutorPanel";
 import { captureSnapshot } from "./snapshot";
 import { DictionaryModal } from "./DictionaryModal";
 import { saveSentenceCard } from "./sentenceAnki";
+import { notifyRetry } from "./notify";
+import { ANKI_MESSAGES } from "../services/anki";
 import { diagnostics } from "../services/diagnostics";
 import type EarCoachPlugin from "../main";
 
@@ -574,27 +576,7 @@ export class EarCoachView extends ItemView {
           : null;
         new DictionaryModal(this.app, word, provider, following ?? [], anki, preceding ?? []).open();
       },
-      onAddSentenceToAnki: async (segment) => {
-        const anki = this.plugin.anki;
-        const msg = !anki
-          ? "Anki 연결이 없습니다"
-          : await saveSentenceCard(
-              {
-                client: anki,
-                fetchBytes: this.plugin.fetchBytes,
-                settings: this.plugin.settings,
-                videoId: this.session?.videoId ?? null,
-                videoTitle: this.session?.title ?? null,
-                snapshot: this.plugin.storyboard
-                  ? (videoId: string, sec: number) => captureSnapshot(this.plugin.storyboard, this.plugin.fetchBytes, videoId, sec)
-                  : null,
-                audioClip: this.plugin.audioClip ?? null, // SPEC_036
-              },
-              segment
-            );
-        new Notice(msg);
-        return msg;
-      },
+      onAddSentenceToAnki: (segment) => this.addSentenceToAnki(segment),
       onOpenTutor: (s, heardText) => {
         if (!enableTutor || !this.tutorPanel) return;
         if (heardText) {
@@ -690,7 +672,7 @@ export class EarCoachView extends ItemView {
       try {
         await this.plugin.runAgyBatchEnrichment(this.session, this.activeNoteFile);
         this.updateVirtualListSegments();
-        new Notice("agy CLI 정밀 연음·약화 분석이 완료되었습니다!");
+        new Notice("agy CLI 정밀 연음·약화 분석을 마쳤어요");
       } catch (err) {
         diagnostics.record("agy 분석", err);
         new Notice(
@@ -831,5 +813,30 @@ export class EarCoachView extends ItemView {
       this.activeNoteFile,
       sidecarOnly
     );
+  }
+
+  /** SPEC_026: 핀 문장 → Anki. SPEC_042: 연결·원음 실패는 「다시」 */
+  private async addSentenceToAnki(segment: TranscriptSegment): Promise<string> {
+    const anki = this.plugin.anki;
+    const msg = !anki
+      ? "Anki 연결이 없어요"
+      : await saveSentenceCard(
+          {
+            client: anki,
+            fetchBytes: this.plugin.fetchBytes,
+            settings: this.plugin.settings,
+            videoId: this.session?.videoId ?? null,
+            videoTitle: this.session?.title ?? null,
+            snapshot: this.plugin.storyboard
+              ? (videoId: string, sec: number) => captureSnapshot(this.plugin.storyboard, this.plugin.fetchBytes, videoId, sec)
+              : null,
+            audioClip: this.plugin.audioClip ?? null, // SPEC_036
+          },
+          segment
+        );
+    // SPEC_042: 연결·원음 실패는 「다시」
+    if (msg === ANKI_MESSAGES.connection || msg === ANKI_MESSAGES.noAudio) notifyRetry(msg, () => this.addSentenceToAnki(segment));
+    else new Notice(msg);
+    return msg;
   }
 }

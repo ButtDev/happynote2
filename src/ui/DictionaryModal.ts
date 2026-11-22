@@ -1,5 +1,7 @@
-import { App, Modal, Notice } from "obsidian";
+import { App, Modal } from "obsidian";
 import { diagnostics } from "../services/diagnostics";
+import { failureCause } from "../services/notices";
+import { notifyRetry } from "./notify";
 import type { DictionaryEntry, DictionaryProvider } from "../services/dictionary";
 import { normalizeLookupWord, phraseCandidatesAround } from "../services/dictionary";
 import type { AnkiInvoker, AnkiSettingsLike, FetchBytes } from "../services/anki";
@@ -68,7 +70,7 @@ export class DictionaryModal extends Modal {
       .then((entry) => {
         body.empty();
         if (!entry) {
-          body.createDiv({ cls: "ear-coach-dict-status", text: `사전에 없는 단어입니다: ${this.word}` });
+          body.createDiv({ cls: "ear-coach-dict-status", text: `사전에 없는 단어예요: ${this.word}` });
           return;
         }
         this.renderEntry(head, body, entry);
@@ -76,7 +78,7 @@ export class DictionaryModal extends Modal {
       .catch((e: unknown) => {
         diagnostics.record("사전", e);
         body.empty();
-        body.createDiv({ cls: "ear-coach-dict-status is-error", text: "사전을 불러오지 못했습니다" });
+        body.createDiv({ cls: "ear-coach-dict-status is-error", text: `사전을 불러오지 못했어요 — ${failureCause(e)}` });
       });
   }
 
@@ -118,7 +120,7 @@ export class DictionaryModal extends Modal {
       const fail = () => {
         if (told || this.audio !== audio) return;
         told = true;
-        new Notice("발음을 재생하지 못했습니다");
+        notifyRetry("발음을 재생하지 못했어요", () => btn.click());
       };
       audio.addEventListener("error", fail, { once: true });
       void audio.play().catch((e: unknown) => {

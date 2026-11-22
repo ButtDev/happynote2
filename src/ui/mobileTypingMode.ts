@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { diagnostics } from "../services/diagnostics";
 
 /**
  * SPEC_029: 세로에서 목록 입력칸(받아쓰기)에 포커스가 가면 영상·툴바를 접고(is-typing)
@@ -54,11 +54,12 @@ export function setupMobileTypingMode(container: HTMLElement, listWrapper: HTMLE
       const b = p.getBoundingClientRect();
       chain.push(`${p.className.toString().split(" ")[0] || p.tagName}:${Math.round(b.top)}/${Math.round(b.height)}`);
     }
-    new Notice(
-      `[Ear-Coach 진단] in=${window.innerHeight} vv=${Math.round(vv?.height ?? -1)}/${Math.round(vv?.offsetTop ?? -1)} ` +
+    // SPEC_042: 알림 대신 진단 기록(🩺 진단 복사)
+    diagnostics.record(
+      "입력 배치",
+      `가려짐 in=${window.innerHeight} vv=${Math.round(vv?.height ?? -1)}/${Math.round(vv?.offsetTop ?? -1)} ` +
         `box=${Math.round(c.top)}/${Math.round(c.height)} input=${Math.round(r.top)}-${Math.round(r.bottom)} ` +
-        `hit=${hit ? `${hit.tagName}.${hit.className.toString().split(" ")[0]}` : "none"} | ${chain.join(" ")}`,
-      20000
+        `hit=${hit ? `${hit.tagName}.${hit.className.toString().split(" ")[0]}` : "none"} | ${chain.join(" ")}`
     );
   };
   listWrapper.addEventListener("focusin", (ev: FocusEvent) => {

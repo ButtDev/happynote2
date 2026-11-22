@@ -6,6 +6,8 @@ import type EarCoachPlugin from "../main";
 import { renderVideoDataSection } from "./videoDataSection";
 import { renderDiagnosticsSection } from "./diagnosticsSection";
 import { diagnostics } from "../services/diagnostics";
+import { failureNotice } from "../services/notices";
+import { notifyRetry } from "./notify";
 import { VideoDataStore } from "../services/videoData";
 import { VIEW_TYPE_EAR_COACH } from "./EarCoachView";
 import { ANKI_MESSAGES, ANKI_ROLES, ANKI_SENTENCE_BACK_TEMPLATE, ANKI_SENTENCE_FIELDS, ANKI_SENTENCE_FRONT_TEMPLATE, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
@@ -158,7 +160,7 @@ export class EarCoachSettingTab extends PluginSettingTab {
           .setCta()
           .onClick(async () => {
             await navigator.clipboard.writeText(generateBookmarkletCode());
-            new Notice("북마클릿 코드가 복사되었습니다! 브라우저 북마크 URL란에 붙여넣으세요.");
+            new Notice("북마클릿 코드를 복사했어요 — 브라우저 북마크 URL 칸에 붙여 넣어 주세요");
           })
       );
   }
@@ -271,9 +273,9 @@ export class EarCoachSettingTab extends PluginSettingTab {
         btn.setButtonText("🔌 agy 연결 테스트").onClick(async () => {
           const ok = await this.plugin.agyService.checkAgyAvailable();
           if (ok) {
-            new Notice("✅ agy CLI가 정상적으로 감지되었습니다!");
+            new Notice("✅ agy CLI를 찾았어요");
           } else {
-            new Notice("⚠️ agy CLI를 실행할 수 없습니다. PATH 또는 경로를 확인해 주세요.");
+            new Notice("⚠️ agy CLI를 실행할 수 없어요 — PATH 또는 경로를 확인해 주세요");
           }
         })
       );
@@ -413,10 +415,10 @@ export class EarCoachSettingTab extends PluginSettingTab {
             this.ankiDecks = await this.plugin.anki.invoke("deckNames");
             this.ankiModels = await this.plugin.anki.invoke("modelNames");
             await this.loadAnkiFields();
-            new Notice(`덱 ${this.ankiDecks?.length ?? 0}개, 노트 타입 ${this.ankiModels?.length ?? 0}개를 불러왔습니다`);
+            new Notice(`덱 ${this.ankiDecks?.length ?? 0}개, 노트 타입 ${this.ankiModels?.length ?? 0}개를 불러왔어요`);
           } catch (e) {
             diagnostics.record("Anki 불러오기", e);
-            new Notice(e instanceof AnkiConnectError && e.kind === "connection" ? ANKI_MESSAGES.connection : `Anki 오류: ${String((e as Error)?.message ?? e)}`);
+            notifyRetry(e instanceof AnkiConnectError && e.kind === "connection" ? ANKI_MESSAGES.connection : failureNotice("Anki 목록을 못 불러왔어요", e), () => btn.buttonEl.click());
           }
           this.display();
         })

@@ -1,8 +1,8 @@
 ---
 id: SPEC_042
 title: 알림 문구 정리 — 해요체·「무엇 — 원인 한 줄」·「다시」 버튼
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_041]
 ---
@@ -42,12 +42,12 @@ Ear-Coach가 띄우는 알림(`Notice`)과 그 알림에 들어가는 문구 상
 - 재시도 횟수·시간 제한 정책(SPEC_041).
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] Test 28 `tests/fixtures/notices/cases.json`: `failureCause` 사례(KnownFailure·offline·timeout·status 503/429/404·`{status:502}`·AI busy·글 모양 offline/timeout·일반 Error·문자열) 기대 원인과 같음, `failureNotice` 모양, 원인·알림 글에 `http`·`status`·영어 원문이 남지 않음 + 변이 실패 확인 [자동]
-2. [ ] 해요체 불변식: `src/` 안 `new Notice(` 줄(여러 줄 호출은 다음 3줄 포함)과 `ANKI_MESSAGES`·`AI_MESSAGES`·`NOTICE_CAUSES`·`aiResultMessage` 결과에 `니다`가 없음 — Test 28 안 소스 검사 [자동]
-3. [ ] 실패 알림에 원문이 없음: 자막 추출·재정렬·AI 실패·Anki 불러오기·지우기·비우기·복사 실패 `new Notice` 자리에 `err.message`·`String(e` 가 없음(데스크톱 agy 제외) — grep [자동]
-4. [ ] 「다시」 연결: `notifyRetry(` 자리 = 자막 추출·재정렬·AI 실패·AI 붐빔·핀 문장 Anki(연결·원음)·Anki 불러오기·발음 재생 — grep. 화면 검사 `sentenceAnki.retry`: 원음 실패 알림에 `다시` 버튼 1개, 글 `원음을 받지 못해 저장하지 않았어요`, 누르면 알림이 닫히고 Anki 호출이 다시 일어남(세로·가로) [자동]
-5. [ ] 입력 중 진단 알림 없음: `mobileTypingMode.ts`에 `new Notice` 없음, `diagnostics.record` 있음 — grep [자동]
-6. [ ] 회귀 `verify.mjs --set regression` [자동]
+1. [x] Test 28 `tests/fixtures/notices/cases.json`: `failureCause` 사례(KnownFailure·offline·timeout·status 503/429/404·`{status:502}`·AI busy·글 모양 offline/timeout·일반 Error·문자열) 기대 원인과 같음, `failureNotice` 모양, 원인·알림 글에 `http`·`status`·영어 원문이 남지 않음 + 변이 실패 확인 [자동]
+2. [x] 해요체 불변식: `src/` 안 `new Notice(` 줄(여러 줄 호출은 다음 3줄 포함)과 `ANKI_MESSAGES`·`AI_MESSAGES`·`NOTICE_CAUSES`·`aiResultMessage` 결과에 `니다`가 없음 — Test 28 안 소스 검사 [자동]
+3. [x] 실패 알림에 원문이 없음: 자막 추출·재정렬·AI 실패·Anki 불러오기·지우기·비우기·복사 실패 `new Notice` 자리에 `err.message`·`String(e` 가 없음(데스크톱 agy 제외) — grep [자동]
+4. [x] 「다시」 연결: `notifyRetry(` 자리 = 자막 추출·재정렬·AI 실패·AI 붐빔·핀 문장 Anki(연결·원음)·Anki 불러오기·발음 재생 — grep. 화면 검사 `sentenceAnki.retry`: 원음 실패 알림에 `다시` 버튼 1개, 글 `원음을 받지 못해 저장하지 않았어요`, 누르면 알림이 닫히고 Anki 호출이 다시 일어남(세로·가로) [자동]
+5. [x] 입력 중 진단 알림 없음: `mobileTypingMode.ts`에 `new Notice` 없음, `diagnostics.record` 있음 — grep [자동]
+6. [x] 회귀 `verify.mjs --set regression` [자동]
 7. [ ] 실기기: BRAT 업데이트 뒤 비행기 모드에서 핀 문장 「➕ Anki」를 누르면 알림 「원음을 받지 못해 저장하지 않았어요」에 「다시」 버튼이 보이는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -59,6 +59,11 @@ Ear-Coach가 띄우는 알림(`Notice`)과 그 알림에 들어가는 문구 상
 ## 8. 가결정 — 고른 것 · 이유 · 대안 (있으면)
 - Anki 연결 문구는 「…앱에서 서비스를 켜 주세요」 유지(초안의 「AnkiDroid 앱에서」 대신) · 이유: 서비스는 AnkiDroid가 아니라 AnkiConnect Android 앱에 있음, 문구가 사실과 어긋나지 않게 · 대안: 초안 그대로.
 - 원인이 분명한 자막 실패(자막 없음 등)는 unknown 대신 그 이유 · 이유: 「알 수 없는 오류」로 덮으면 사람이 할 일이 없어짐 · 대안: 네 원인만.
+- 「다시」는 AI 붐빔·연결·형식 실패에 붙이고 한도(quota)·키 거부(auth)엔 안 붙임 · 이유: 다시 해도 같은 결과 · 대안: 모든 AI 실패.
+- 설정 「🔌 연결 확인」 결과는 원문 유지(어미만) · 이유: 키·모델 시험 도구라 서버 글이 원인 찾기에 필요 · 대안: 원인 한 줄.
+- 화면 검사 가짜 Notice는 화면 위 고정 칸에 그림(버튼 누르기용) · 이유: 실기기 알림처럼 레이아웃을 밀지 않게 · 대안: 그리지 않고 글만 기록.
+- `styles.css` 「다시」 버튼 여백 한 블록 추가(파일 목록 밖, 화면 검사 통과) · 이유: 알림 글과 붙어 보임 · 대안: Obsidian 기본 버튼.
 - AI `network` 실패는 글 모양(offline·timeout 문구)으로 원인 판별 · 이유: aiAnalysis가 오류 객체 대신 글만 넘김, 구조를 바꾸지 않음 · 대안: aiAnalysis에 kind 추가.
 
 ## 실행 기록
+- 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 28 「17 cause cases, 3 notice cases」 PASS(503·429·502 객체·AI busy → 서버가 잠깐 바빠요, 404·network·format·일반 Error·URL 섞인 글 → 알 수 없는 오류, 원문·URL·status 글자 없음), 변이 m1(busy 빼기) → 「failureCause [AI busy]」, m2(unknown 대신 원문) → 「[404는 알 수 없음]」, m3(모든 status를 busy) → 「[404는 알 수 없음]」 실패 · 2 ✅ 같은 Test 28 「25 message constants 해요체, 33 Notice sites scanned」, 변이(src에 `new Notice("저장했습니다")` 임시 파일) → 「src/zzMut42.ts:2 해요체 아님」 실패 · 3 ✅ Test 28 rawScan(6파일 `new Notice(`·`notifyRetry(` 줄에 `.message`·`String(e` 없음) PASS · 4 ✅ grep `notifyRetry(` 7곳: sessionPipeline.ts:151·236, mobileAi.ts:54·58, EarCoachView.ts:838, SettingsTab.ts:421, DictionaryModal.ts:123; 화면 검사 `sentenceAnki.retry` 세로·가로 ok — buttons ["다시"], text 「원음을 받지 못해 저장하지 않았어요」, closed true, 누른 뒤 Anki 호출 deckNames·modelNames·modelFieldNames, 같은 알림 다시. `sentence-anki-portrait/landscape.png` 열어 봄: 화면 위 「원음을 받지 못해 저장하지 않았어요 [다시]」, 카드 목록 그대로 · 5 ✅ `src/ui/mobileTypingMode.ts:58` diagnostics.record, Notice 없음 · 6 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(가짜 Notice 고정 칸으로 바꾼 뒤 다시 돌림) · 7 ⏳ 실기기.

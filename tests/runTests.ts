@@ -39,6 +39,7 @@ import * as diagnosticsSrc from "../src/services/diagnostics.ts";
 import * as audioClipSrc from "../src/services/audioClip.ts";
 import * as learningSrc from "../src/services/learningStore.ts";
 import * as httpSrc from "../src/services/http.ts";
+import * as noticesSrc from "../src/services/notices.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -586,7 +587,7 @@ async function runAllTests() {
   for (const [raw, want] of audioData.messages) {
     assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("api", raw)), want, `ankiStatusMessage(${JSON.stringify(raw.slice(0, 30))})`);
   }
-  assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요", "connection message");
+  assert.equal(ankiMod.ankiStatusMessage(new ankiMod.AnkiConnectError("connection", "x")), "AnkiConnect Android에 연결하지 못했어요 — 앱에서 서비스를 켜 주세요", "connection message");
   // SPEC_017: 장면 그림 storeMediaFile + 파일 이름
   const snapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_snapshot.json"), "utf8"));
   for (const sc of snapData.store) {
@@ -606,7 +607,7 @@ async function runAllTests() {
     assert.deepEqual(calls, sc.calls, `storeSnapshot calls: ${sc.note}`);
   }
   for (const [args, want] of snapData.filenames) assert.equal(ankiMod.snapshotFilename(...(args as [string, number])), want, `snapshotFilename(${JSON.stringify(args)})`);
-  assert.equal(ankiMod.ANKI_MESSAGES.addedNoPicture, "Anki에 저장했습니다 (그림 없음)", "addedNoPicture message");
+  assert.equal(ankiMod.ANKI_MESSAGES.addedNoPicture, "Anki에 저장했어요 (그림 없음)", "addedNoPicture message");
   log(`  -> PASS: ${clozeData.cases.length} cloze cases, ${noteFiles.length} note fixtures, ${remapData.cases.length} remap cases, ${clientData.cases.length} client cases, ${clientData.save.length} save cases, ${audioData.cases.length} audio cases, ${audioData.messages.length} message cases, ${targetData.cases.length} target cases, ${migData.cases.length} migrate cases, ${snapData.store.length} snapshot store cases, ${pickData.cases.length} pick cases, ${sentData.notes.length}+${sentData.blanks.length}+${sentData.targets.length} sentence note/blank/target cases`);
   log("");
 
@@ -1195,6 +1196,72 @@ async function runAllTests() {
     assert.deepEqual(sleeps, e.sleeps, `${tag} sleeps`);
   }
   log(`  -> PASS: ${hc.scenarios.length} scenarios (retry 408/429/5xx, no retry 404·AI·Anki, timeout, offline, backoff).`);
+  log("");
+
+  log("[Test 28] Notices — 실패 원인 한 줄·해요체·원문 숨김·「다시」 자리 (data-driven, SPEC_042)");
+  const ntMod = process.env.EAR_COACH_NOTICES_MODULE ? await import(path.resolve(process.env.EAR_COACH_NOTICES_MODULE)) : noticesSrc;
+  const nt = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/notices/cases.json"), "utf8"));
+  const makeErr = (d: any): unknown => {
+    if (d.known !== undefined) return new ntMod.KnownFailure(d.known);
+    if (d.http) return new httpSrc.HttpFailure(d.http.kind, d.http.message, d.http.status ?? null);
+    if (d.statusObj !== undefined) return { status: d.statusObj };
+    if (d.ai) return { ...d.ai };
+    if (d.error !== undefined) return new Error(d.error);
+    if (d.text !== undefined) return d.text;
+    return null;
+  };
+  for (const c of nt.cause) {
+    const got = ntMod.failureCause(makeErr(c.err));
+    assert.equal(got, c.want, `failureCause [${c.name}]`);
+    if (c.raw) assert.ok(!got.includes(c.raw), `[${c.name}] 원문 「${c.raw}」이 알림에 남음: ${got}`);
+    assert.ok(!/https?:|status|\?/.test(got), `[${c.name}] 원인에 URL·status: ${got}`);
+  }
+  for (const c of nt.notice) assert.equal(ntMod.failureNotice(c.what, makeErr(c.err)), c.want, `failureNotice ${c.what}`);
+  assert.equal(ntMod.RETRY_NOTICE_MS, nt.retry.ms, "RETRY_NOTICE_MS");
+  assert.equal(ntMod.RETRY_LABEL, nt.retry.label, "RETRY_LABEL");
+  // 해요체: 문구 상수·결과
+  const polite: string[] = [
+    ...Object.values(ntMod.NOTICE_CAUSES).map((v: any) => (typeof v === "function" ? v(15) : v)),
+    ...Object.values(ankiSrc.ANKI_MESSAGES).map(String),
+    ...Object.values(aiSrc.AI_MESSAGES).map((v: any) => (typeof v === "function" ? v(3, 20) : v)),
+    ankiSrc.ankiStatusMessage(new ankiSrc.AnkiConnectError("connection", "x")),
+  ];
+  for (const r of nt.aiResult) {
+    const msg = aiSrc.aiResultMessage(r as any);
+    polite.push(msg);
+    if (r.want) assert.equal(msg, r.want, `aiResultMessage ${r.stoppedBy?.kind}`);
+  }
+  for (const t of polite) for (const f of nt.politeScan.forbidden) assert.ok(!t.includes(f), `해요체 아님: ${t}`);
+  // 소스 검사: new Notice( 줄 + 다음 N줄
+  const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : e.name.endsWith(".ts") ? [path.join(dir, e.name)] : []));
+  let noticeSites = 0;
+  for (const f of walk(path.resolve(nt.politeScan.dir))) {
+    const lines = fs.readFileSync(f, "utf8").split("\n");
+    lines.forEach((ln, i) => {
+      if (!ln.includes(nt.politeScan.trigger)) return;
+      noticeSites++;
+      // 여러 줄 호출만 다음 줄을 본다(한 줄 호출이 닫히면 그 줄만)
+      const open = (ln.split("(").length - ln.split(")").length) > 0;
+      const chunk = open ? lines.slice(i, i + 1 + nt.politeScan.following).join("\n") : ln;
+      for (const bad of nt.politeScan.forbidden) assert.ok(!chunk.includes(bad), `${path.relative(".", f)}:${i + 1} 해요체 아님: ${ln.trim()}`);
+    });
+  }
+  // 원문 숨김
+  for (const f of nt.rawScan.files) {
+    fs.readFileSync(path.resolve(f), "utf8").split("\n").forEach((ln, i) => {
+      if (!nt.rawScan.triggers.some((t: string) => ln.includes(t))) return;
+      for (const bad of nt.rawScan.forbidden) assert.ok(!ln.includes(bad), `${f}:${i + 1} 알림에 원문: ${ln.trim()}`);
+    });
+  }
+  // 「다시」 자리
+  let retrySites = 0;
+  for (const [f, n] of Object.entries(nt.retrySites)) {
+    if (f.startsWith("_")) continue;
+    const cnt = fs.readFileSync(path.resolve(f), "utf8").split("notifyRetry(").length - 1;
+    assert.ok(cnt >= (n as number), `${f}: notifyRetry ${cnt}곳 < ${n}`);
+    retrySites += cnt;
+  }
+  log(`  -> PASS: ${nt.cause.length} cause cases, ${nt.notice.length} notice cases, ${polite.length} message constants 해요체, ${noticeSites} Notice sites scanned, ${retrySites} retry sites.`);
   log("");
 
   log("==============================================================");

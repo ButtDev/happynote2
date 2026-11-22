@@ -7,6 +7,8 @@ import { EarCoachSettings } from "../types/settings";
 import { ListeningSessionData } from "../types/transcript";
 import { AI_MESSAGES, AiConfig, aiResultMessage, needsAiAnalysis, runAiAnalysis } from "../services/aiAnalysis";
 import { diagnostics } from "../services/diagnostics";
+import { failureCause } from "../services/notices";
+import { notifyRetry } from "../ui/notify";
 import { EarCoachView, VIEW_TYPE_EAR_COACH } from "../ui/EarCoachView";
 
 /** 설정에서 지금 쓸 AI 설정. 키가 없으면 null */
@@ -24,7 +26,7 @@ export function createMobileAiRunner(
   plugin: EarCoachPlugin
 ): (session: ListeningSessionData, noteFile: TFile | null) => Promise<void> {
   const running = new Set<string>();
-  return async (session, noteFile) => {
+  const run = async (session: ListeningSessionData, noteFile: TFile | null): Promise<void> => {
     const config = plugin.getAiConfig();
     if (!config || running.has(session.videoId)) return;
     const pending = session.segments.filter(needsAiAnalysis).length;
@@ -47,12 +49,16 @@ export function createMobileAiRunner(
         },
       });
       if (result.stoppedBy) diagnostics.record("AI 분석", `${result.stoppedBy.kind}: ${result.stoppedBy.message}`);
-      new Notice(aiResultMessage(result), result.stoppedBy ? 10000 : 5000);
+      // SPEC_042: 붐빔·연결 실패는 「다시」(한도·키 거부는 다시 해도 같음)
+      const kind = result.stoppedBy?.kind;
+      if (kind === "busy" || kind === "network" || kind === "format") notifyRetry(aiResultMessage(result), () => run(session, noteFile));
+      else new Notice(aiResultMessage(result), result.stoppedBy ? 10000 : 5000);
     } catch (err) {
       diagnostics.record("AI 분석", err);
-      new Notice(AI_MESSAGES.failed(err instanceof Error ? err.message : String(err)), 10000);
+      notifyRetry(AI_MESSAGES.failed(failureCause(err)), () => run(session, noteFile));
     } finally {
       running.delete(session.videoId);
     }
   };
+  return run;
 }

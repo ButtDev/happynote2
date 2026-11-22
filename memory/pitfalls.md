@@ -15,3 +15,4 @@
 - Obsidian 모바일은 키보드가 뜨면 웹뷰가 줄어든 데다 앱 영역을 또 줄여 뷰가 헤더 밑 ~30px만 남음(검정) → 입력 중엔 컨테이너를 position:fixed + visualViewport로(SPEC_029 회차 2, 2026-11-22)
 - AnkiDroid에서 노트 유형을 만들거나 고치면 AnkiWeb 동기화가 「유지할 컬렉션 선택」(전체 동기화)을 묻는다 — 노트 유형 안내엔 「다음 동기화 때 AnkiDroid 선택」을 미리 적을 것.
 - 매달린 약속(never-resolving promise)만 남으면 node 시험이 exit 0으로 조용히 끝남 → 매달릴 수 있는 시험엔 감시 타이머(SPEC_041 Test 27). macOS엔 `timeout` 명령 없음.
+- `run-detached.mjs status`는 `"state":"running"|"done"` — `"running":false`로 기다리면 영원히 돎.

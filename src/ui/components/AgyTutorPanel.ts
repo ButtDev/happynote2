@@ -181,7 +181,7 @@ export class AgyTutorPanel {
         note,
         session?.agyConversationId
       );
-      new Notice("노트에 사운드 해부 콜아웃을 저장하고 약점 대시보드를 업데이트했습니다!");
+      new Notice("노트에 사운드 해부 콜아웃을 저장하고 약점 대시보드를 고쳤어요");
     });
   }
 

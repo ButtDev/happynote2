@@ -9,6 +9,8 @@ import { parseYouTubeUrl } from "../utils/youtubeUrlParser";
 import { SegmentTimeIndex } from "../utils/binarySearch";
 import { isDesktopApp, isMobileApp } from "../utils/platform";
 import { diagnostics } from "../services/diagnostics";
+import { failureNotice } from "../services/notices";
+import { notifyRetry } from "../ui/notify";
 
 /**
  * Loads session from memory/sidecar/markdown, and if the sidecar JSON was missing
@@ -83,7 +85,7 @@ export async function handleYouTubeTrigger(
 ): Promise<void> {
   const parsed = parseYouTubeUrl(rawUrl);
   if (!parsed) {
-    new Notice("유효한 유튜브 URL이 아닙니다.");
+    new Notice("유튜브 링크가 아니에요");
     return;
   }
 
@@ -102,14 +104,14 @@ export async function handleYouTubeTrigger(
           existingSession.segments[idx].isPinned = true;
         }
         await plugin.noteGenerator.saveSessionToNote(existingSession, existingFile);
-        new Notice(`기존 노트에 📌 집중 분석 핀(${effectivePin}초)을 추가했습니다!`);
+        new Notice(`기존 노트에 📌 집중 분석 핀(${effectivePin}초)을 추가했어요`);
       }
       await plugin.activateWorkspaceView(existingSession, existingFile, effectivePin);
       return;
     }
   }
 
-  new Notice("⏳ 유튜브 자막을 추출하고 문장 단위로 조립하고 있습니다...");
+  new Notice("⏳ 유튜브 자막을 받아 문장으로 나누고 있어요…");
 
   try {
     const fetched = await plugin.transcriptService.fetchTranscript(parsed.videoId, plugin.settings.preferredCaptionLang);
@@ -135,7 +137,7 @@ export async function handleYouTubeTrigger(
     };
 
     const noteFile = await plugin.noteGenerator.saveSessionToNote(session);
-    new Notice(`✅ 리스닝 노트 생성 완료: ${fetched.title}`);
+    new Notice(`✅ 리스닝 노트를 만들었어요: ${fetched.title}`);
 
     await plugin.activateWorkspaceView(session, noteFile, effectivePin);
 
@@ -146,7 +148,7 @@ export async function handleYouTubeTrigger(
     }
   } catch (err) {
     diagnostics.record("노트 만들기", err);
-    new Notice(`❌ 자막 추출 실패: ${err instanceof Error ? err.message : String(err)}`);
+    notifyRetry(failureNotice("자막을 받지 못했어요", err), () => handleYouTubeTrigger(plugin, rawUrl, pinTimestampSeconds));
   }
 }
 
@@ -201,11 +203,11 @@ export async function resegmentNoteFile(plugin: EarCoachPlugin, file: TFile): Pr
   const existing = await plugin.loadOrRecoverSession(file);
   const videoId = existing?.videoId || plugin.noteGenerator.extractVideoIdFromFile(file);
   if (!videoId) {
-    new Notice("유튜브 Video ID를 찾을 수 없습니다.");
+    new Notice("유튜브 영상 ID를 찾지 못했어요");
     return;
   }
 
-  new Notice("⏳ 자막을 최신 문장 단위로 다시 추출·정렬하고 있습니다...");
+  new Notice("⏳ 자막을 다시 받아 문장으로 나누고 있어요…");
   try {
     const fetched = await plugin.transcriptService.fetchTranscript(videoId, plugin.settings.preferredCaptionLang);
     const pinnedTimestamps = existing?.pinnedTimestamps ?? [];
@@ -228,9 +230,9 @@ export async function resegmentNoteFile(plugin: EarCoachPlugin, file: TFile): Pr
     };
     await plugin.noteGenerator.saveSessionToNote(updated, file, false);
     await plugin.activateWorkspaceView(updated, file);
-    new Notice(`✅ 문장 단위 재정렬 완료 (${segments.length}문장)`);
+    new Notice(`✅ 문장을 다시 나눴어요 (${segments.length}문장)`);
   } catch (err) {
     diagnostics.record("재정렬", err);
-    new Notice(`❌ 재정렬 실패: ${err instanceof Error ? err.message : String(err)}`);
+    notifyRetry(failureNotice("문장을 다시 나누지 못했어요", err), () => resegmentNoteFile(plugin, file));
   }
 }
