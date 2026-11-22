@@ -1,7 +1,7 @@
 ---
 id: SPEC_042
 title: 알림 문구 정리 — 해요체·「무엇 — 원인 한 줄」·「다시」 버튼
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_041]
@@ -48,7 +48,7 @@ Ear-Coach가 띄우는 알림(`Notice`)과 그 알림에 들어가는 문구 상
 4. [x] 「다시」 연결: `notifyRetry(` 자리 = 자막 추출·재정렬·AI 실패·AI 붐빔·핀 문장 Anki(연결·원음)·Anki 불러오기·발음 재생 — grep. 화면 검사 `sentenceAnki.retry`: 원음 실패 알림에 `다시` 버튼 1개, 글 `원음을 받지 못해 저장하지 않았어요`, 누르면 알림이 닫히고 Anki 호출이 다시 일어남(세로·가로) [자동]
 5. [x] 입력 중 진단 알림 없음: `mobileTypingMode.ts`에 `new Notice` 없음, `diagnostics.record` 있음 — grep [자동]
 6. [x] 회귀 `verify.mjs --set regression` [자동]
-7. [ ] 실기기: BRAT 업데이트 뒤 비행기 모드에서 핀 문장 「➕ Anki」를 누르면 알림 「원음을 받지 못해 저장하지 않았어요」에 「다시」 버튼이 보이는지 보고 버튼 [수동]
+7. [x] 실기기: BRAT 업데이트 뒤 비행기 모드에서 핀 문장 「➕ Anki」를 누르면 알림 「원음을 받지 못해 저장하지 않았어요」에 「다시」 버튼이 보이는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1·2 → `npm test` Test 28 + `EAR_COACH_NOTICES_MODULE` 변이(busy 빼기·unknown으로 원문 내보내기). 3·4·5 → `grep -n`. 4 화면 → `runUiCheck` `sentenceAnki` 확장 + `sentence-anki-<뷰>.png` 열어 봄. 6 → `verify.mjs --set regression --json`.
@@ -67,3 +67,4 @@ Ear-Coach가 띄우는 알림(`Notice`)과 그 알림에 들어가는 문구 상
 
 ## 실행 기록
 - 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 28 「17 cause cases, 3 notice cases」 PASS(503·429·502 객체·AI busy → 서버가 잠깐 바빠요, 404·network·format·일반 Error·URL 섞인 글 → 알 수 없는 오류, 원문·URL·status 글자 없음), 변이 m1(busy 빼기) → 「failureCause [AI busy]」, m2(unknown 대신 원문) → 「[404는 알 수 없음]」, m3(모든 status를 busy) → 「[404는 알 수 없음]」 실패 · 2 ✅ 같은 Test 28 「25 message constants 해요체, 33 Notice sites scanned」, 변이(src에 `new Notice("저장했습니다")` 임시 파일) → 「src/zzMut42.ts:2 해요체 아님」 실패 · 3 ✅ Test 28 rawScan(6파일 `new Notice(`·`notifyRetry(` 줄에 `.message`·`String(e` 없음) PASS · 4 ✅ grep `notifyRetry(` 7곳: sessionPipeline.ts:151·236, mobileAi.ts:54·58, EarCoachView.ts:838, SettingsTab.ts:421, DictionaryModal.ts:123; 화면 검사 `sentenceAnki.retry` 세로·가로 ok — buttons ["다시"], text 「원음을 받지 못해 저장하지 않았어요」, closed true, 누른 뒤 Anki 호출 deckNames·modelNames·modelFieldNames, 같은 알림 다시. `sentence-anki-portrait/landscape.png` 열어 봄: 화면 위 「원음을 받지 못해 저장하지 않았어요 [다시]」, 카드 목록 그대로 · 5 ✅ `src/ui/mobileTypingMode.ts:58` diagnostics.record, Notice 없음 · 6 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(가짜 Notice 고정 칸으로 바꾼 뒤 다시 돌림) · 7 ⏳ 실기기.
+- 2026-11-23 사람 확인: DONE — 1~6 ✅ 회차 1 근거 그대로 · 7 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_042 7 OK]」(실기기 1.0.50). 회차 세지 않음.

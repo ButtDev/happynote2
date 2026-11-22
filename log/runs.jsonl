@@ -135,3 +135,4 @@
 {"ts":"2026-11-22T21:15:24.405Z","cmd":"/spec-run","spec":"SPEC_041","iteration":1,"status":"DONE","evidence":"사람확인 4 OK (button)"}
 {"ts":"2026-11-22T21:19:09.390Z","cmd":"/spec-new","spec":"SPEC_042","result":"READY","questions":0}
 {"ts":"2026-11-22T21:25:13.827Z","cmd":"/spec-run","spec":"SPEC_042","iteration":1,"status":"IMPLEMENTED","evidence":"Test 28 PASS + 변이 4개 실패, ui sentenceAnki.retry 세로·가로 ok, regression ok, 7 ⏳"}
+{"ts":"2026-11-22T21:34:24.895Z","cmd":"/spec-run","spec":"SPEC_042","iteration":1,"status":"DONE","evidence":"사람확인 7 OK (button), 1-6 회차1 근거"}
