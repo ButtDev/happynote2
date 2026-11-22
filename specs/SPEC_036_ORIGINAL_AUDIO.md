@@ -1,7 +1,7 @@
 ---
 id: SPEC_036
 title: 핀 문장 Anki 듣기 카드 소리를 TTS 대신 유튜브 원음 구간으로
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_026]
@@ -45,7 +45,7 @@ depends_on: [SPEC_026]
 3. [x] 화면 검사 `expect.sentenceAnki`: 호출 순서에 storeMediaFile(`.wav`)이 canAddNotes 앞, 원음 실패 흉내면 addNote 0회·알림 `원음을 받지 못해…` [자동]
 4. [x] 화면 검사 Chrome에서 실제 조각 fixture를 `audioDecode`로 풀어 자른 WAV 길이가 창 길이 ±0.05초 [자동]
 5. [x] 회귀 `verify.mjs --set regression`(main.ts 900줄 한도 포함) [자동]
-6. [ ] 준비: AnkiDroid → 노트 타입 `happynote2 Listening` → 카드 → 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>` 지우고 저장. 그다음 실기기에서 핀 문장 「➕ Anki」로 카드 하나 만들어 AnkiDroid에서 앞면을 열었을 때 그 문장의 유튜브 원래 목소리가 나오는지(앞뒤가 잘리지 않았는지) 듣고 버튼 [수동]
+6. [x] 준비: AnkiDroid → 노트 타입 `happynote2 Listening` → 카드 → 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>` 지우고 저장. 그다음 실기기에서 핀 문장 「➕ Anki」로 카드 하나 만들어 AnkiDroid에서 앞면을 열었을 때 그 문장의 유튜브 원래 목소리가 나오는지(앞뒤가 잘리지 않았는지) 듣고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 1 → `npm test` Test 23 + 변이 `EAR_COACH_AUDIOCLIP_MODULE`. 2 → Test 12. 3·4 → verify ui(`sentence-anki-portrait.png` 열어 봄). 5 → `verify.mjs --set regression`.
@@ -62,3 +62,4 @@ depends_on: [SPEC_026]
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 23 「sidx 121 fragments, 4 ranges, 5 windows, 4 picks, WAV header, clipper order+cache」(실제 TED iG9CE55wbtY itag 140: timescale 44100, 조각 1 = 164330~325620; 합성 sidx v1 first_offset 100), 변이 m1(first_offset 무시) → 「합성 sidx v1: ept·first_offset 반영」 실패, m2(20초 상한 뺌) → 「clipWindow(10, 40)」 실패 · 2 ✅ Test 12 Picture `[sound:happynote2_uiCheck0001_10_1.wav]<img …>`·원음만·audioNames 3개, 앞면 템플릿 TTS 없음 · 3 ✅ 화면 검사 세로·가로 `sentenceAnki` 호출 deckNames→modelNames→modelFieldNames→storeMediaFile(jpg)→storeMediaFile(happynote2_uiCheck0001_6_7.wav)→canAddNotes→addNote, `sentenceAnki.noAudio` 호출 3개·addNote 0·문구 일치, 변이(원음 확인 뺌) → ui exit 1 「sentenceAnki.noAudio failed」 · 4 ✅ `sentenceAnki.decode` Chrome 실제 조각 1.0~4.0초 → 3.000초, peak 0.702, RIFF 132,344B · 5 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(main.ts 896줄), `sentence-anki-portrait.png` 열어 봄: 핀 카드 「➕ Anki」 배치 그대로 · 6 ⏳ 실기기
+- 2026-11-22 사람 확인: DONE — 6 ✅ log/confirmations.jsonl 「[Button pressed: SPEC_036 6 OK]」(실기기 원음 확인). 1~5는 회차 1 근거, 제품 파일 변경 없음(회차 안 셈).

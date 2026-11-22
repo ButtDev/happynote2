@@ -206,3 +206,5 @@
 {"ts":"2026-11-22T12:02:26.587Z","spec":"SPEC_035","item":"7","result":"OK","raw":"[Button pressed: SPEC_035 7 OK]"}
 {"ts":"2026-11-22T12:04:48.975Z","spec":null,"item":"decision","result":"OK","raw":"아니야 내가 과속판정조절하면됨. 그보다 핀설정한 문장을 tts 로 들으면 너무 쉬워, 적당한 속도로 또박또박읽으니까. 그보다, 유튭에서 해당음성을 잘라내서 anki 에 추가하는게 취지에 맞을듯"}
 {"ts":"2026-11-22T12:22:59.648Z","spec":null,"item":"decision","result":"OK","raw":"영상은 말고 지금처럼하자. 그게 취지에 맞겠다. Ok","note":"영상 클립 카드 안 함 — 원음+그림(SPEC_036) 유지"}
+{"ts":"2026-11-22T12:23:23.920Z","source":"button","question":"**확인할 것 (6번):** BRAT에서 1.0.46으로 업데이트한 뒤 AnkiDroid 노트 타입 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>`을 지워 주세요. 그다음 핀 문장에서 「➕ Anki」로 카드를 하나 만들고, 카드 앞면에서 영상 속 원래 목소리가 나오는지 들어 보시면 돼요. OK가 오면 SPEC_036을 DONE으로 바꿀게요.","answer":"SPEC_036 6 OK","messageId":567}
+{"ts":"2026-11-22T12:23:37.211Z","spec":"SPEC_036","item":"6","result":"OK","raw":"[Button pressed: SPEC_036 6 OK]"}

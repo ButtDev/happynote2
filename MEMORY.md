@@ -3,8 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.46(11-22, 릴리스 3파일 확인): SPEC_036 핀 문장 Anki 카드 소리 = 유튜브 원음 구간(IMPLEMENTED). SPEC_035 DONE.
-- ⏳ SPEC_036 6(실기기: AnkiDroid 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>` 지운 뒤 핀 문장 「➕ Anki」 카드 앞면에서 원래 목소리 나오는지) — 11-22 버튼 보냄. OK면 `/spec-run SPEC_036 사람확인: 6 OK` → DONE. NG면 실기기 innertube 403·웹뷰 디코드 실패 가능성부터.
+- 배포 최신 BRAT 1.0.46(11-22): SPEC_036 핀 문장 Anki 카드 원음 DONE(실기기 OK).
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 
 ## 열린 질문 (사람에게)
