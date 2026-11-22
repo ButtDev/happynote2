@@ -87,8 +87,58 @@ function toPh(arpa: string, w: number, i: number): Ph {
 }
 
 /** 낱말들 → 음소열(사전에 없는 낱말이 있으면 null) */
+const ONES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+
+function under100(n: number): string[] {
+  if (n < 20) return [ONES[n]];
+  return n % 10 === 0 ? [TENS[Math.floor(n / 10)]] : [TENS[Math.floor(n / 10)], ONES[n % 10]];
+}
+
+function under1000(n: number): string[] {
+  if (n < 100) return under100(n);
+  const rest = n % 100;
+  return [ONES[Math.floor(n / 100)], "hundred", ...(rest ? under100(rest) : [])];
+}
+
+/** 숫자 → 영어 낱말(0~9999, 1100~1999·2010~2099는 연도 읽기). 그 밖은 null. */
+export function numberToWords(digits: string): string[] | null {
+  if (!/^\d{1,4}$/.test(digits)) return null;
+  const n = Number(digits);
+  if (n < 1000) return under1000(n);
+  if ((n >= 1100 && n <= 1999) || (n >= 2010 && n <= 2099)) {
+    const lo = n % 100;
+    return [...under100(Math.floor(n / 100)), ...(lo === 0 ? ["hundred"] : lo < 10 ? ["oh", ONES[lo]] : under100(lo))];
+  }
+  const rest = n % 1000;
+  return [...under100(Math.floor(n / 1000)), "thousand", ...(rest ? under1000(rest) : [])];
+}
+
+/** 낱말 펼치기: 하이픈으로 나누고 숫자는 영어 낱말로 (30-minute → thirty minute). 못 읽는 숫자(21st·12345)가 있으면 null. */
+export function expandHintWord(w: string): string[] | null {
+  const out: string[] = [];
+  for (const part of w.split(/[-–—]+/)) {
+    if (!/\d/.test(part)) {
+      out.push(normalizeHintWord(part));
+      continue;
+    }
+    const m = part.match(/^[^A-Za-z0-9]*(\d{1,3}(?:,\d{3})*|\d+)[^A-Za-z0-9]*$/);
+    const words = m ? numberToWords(m[1].replace(/,/g, "")) : null;
+    if (!words) return null;
+    out.push(...words);
+  }
+  return out;
+}
+
 export function wordsToPhonemes(words: string[], dict: PronDict): Ph[] | null {
-  const norm = words.map(normalizeHintWord).filter(Boolean);
+  // 숫자가 빠지던 것(30-minute → minute) — 숫자는 영어로 읽고, 못 읽으면 계산 포기(AI 값으로)
+  const expanded: string[] = [];
+  for (const w of words) {
+    const e = expandHintWord(w);
+    if (!e) return null;
+    expanded.push(...e);
+  }
+  const norm = expanded.filter(Boolean);
   if (norm.length === 0) return null;
   const out: Ph[] = [];
   for (let w = 0; w < norm.length; w++) {
