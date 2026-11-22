@@ -1432,3 +1432,53 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   height: auto !important;
   min-height: 0 !important;
 }
+
+/* SPEC_033: 설정 「🗑 저장된 영상」 — 행마다 제목·크기·날짜 + 지우기, 확인 창 경로 목록 */
+.ear-coach-videodata-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ear-coach-videodata-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+.ear-coach-videodata-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ear-coach-videodata-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-normal);
+}
+.ear-coach-videodata-meta {
+  font-size: 0.8em;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ear-coach-videodata-row > button {
+  flex: 0 0 auto;
+}
+.ear-coach-videodata-empty {
+  color: var(--text-muted);
+}
+.ear-coach-videodata-paths {
+  padding-left: 18px;
+  font-family: var(--font-monospace);
+  font-size: 0.8em;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+.ear-coach-videodata-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

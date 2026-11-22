@@ -93,7 +93,8 @@
             480
           ],
           "advance": true
-        }
+        },
+        "videoData": true
       }
     },
     {
@@ -191,7 +192,8 @@
         "rowSlack": {
           "selector": ".ear-coach-player-controls",
           "min": 24
-        }
+        },
+        "videoData": true
       }
     }
   ],

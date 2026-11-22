@@ -1,8 +1,8 @@
 ---
 id: SPEC_033
 title: 설정 화면에서 영상별 저장 데이터 지우기 (볼트 휴지통으로)
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -59,6 +59,8 @@ depends_on: []
 - 휴지통(`.trash`)으로 옮김 · 이유: 데이터 삭제는 되돌리기 어려운 결정이라 되살릴 수 있는 쪽을 기본으로 — 사람이 실수해도 복구 가능 · 대안: 영구 삭제(공간 바로 확보, 되돌릴 수 없음 → 사람 결정 필요).
 - 진입점 = 설정 화면 맨 아래 목록 · 이유: 명령 팔레트를 못 찾음, 가로 툴바 여유 6px라 버튼 못 넣음, 노트 없이 sidecar만 남은 영상도 보임 · 대안: 노트 길게 누르기 메뉴, 화면 ⋯ 메뉴.
 - 확인 창에 지울 경로를 보여 줌 · 이유: 숨김 폴더라 무엇이 지워지는지 알 수 없음 · 대안: 개수만.
+- 지운 뒤 되살아남 막기: `NoteGenerator.forgetSession`이 지운 시각을 기억하고, 그 전에 만든 세션(`createdAt` ≤ 지운 시각)은 `saveSessionToNote`가 저장하지 않음 · 이유: 진행 중 AI 분석이 끝나며 파일을 다시 만들 수 있음 · 대안: AI 분석 취소.
 - 자동 정리는 이번에 안 함 · 이유: 사람이 고른 건 「삭제 기능」, 자동 삭제는 기간 결정이 필요 · 대안: 다음 SPEC.
 
 ## 실행 기록
+- 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 21 `tests/fixtures/video-data/cases.json` PASS(영상 4개: sidecar만·옮긴 노트(front matter)·노트+사본 2·옛 사본만, 제목 노트명→sidecar title→ID, 노트 폴더 밖 `[draft0001]` 제외, 이미 없는 사본은 건너뛰어 2개만 휴지통), 변이 vd1(노트 폴더 제한 빼기) → 「listVideoData: 합집합…」 실패, vd2(stat 확인 빼기) → 「deleteVideoData: 있는 파일만 옮김」 실패 · 2 ✅ `runUiCheck` 세로·가로 videoData: 행 [abcDEF12345, xyzOnly0001] → 확인 창 「「How to Speak…」 데이터를 지울까요?」 버튼 휴지통으로|취소, 경로 3개 = trash 호출 3개 → 행 [xyzOnly0001], 알림 「🗑 … 파일 3개를 휴지통으로 옮겼어요」, 넘침 0. `video-data-portrait.png` 열어 봄: 긴 제목 말줄임, `ID · 1.6 MB · 2026-11-22` + 지우기. `video-data-confirm-landscape.png`: 아래 시트에 경로 3줄. UI 변이(지운 뒤 refresh 빼기) → 「videoData rows after [..2개]」 실패 · 3 ✅ `grep -nE "adapter\.remove|vault\.delete|rmdir"` videoData.ts·videoDataSection.ts·SettingsTab.ts 결과 없음(exit 1) · 4 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok(main.ts 891줄 그대로) · 5 ⏳ 실기기

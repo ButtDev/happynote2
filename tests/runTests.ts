@@ -32,6 +32,7 @@ import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
 import * as reviewSrc from "../src/utils/reviewQueue.ts";
 import * as dictationSrc from "../src/utils/dictationMatch.ts";
 import * as soundHintSrc from "../src/services/soundHint.ts";
+import * as videoDataSrc from "../src/services/videoData.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -872,6 +873,42 @@ async function runAllTests() {
   log(`  -> 블로그 근접도 평균 ${meanOurs.toFixed(3)} (철자식 ${meanBase.toFixed(3)}, 기준 ${blog.minMean})`);
   assert.ok(meanOurs >= blog.minMean, `블로그 근접도 평균 ${meanOurs.toFixed(3)} < ${blog.minMean}`);
   assert.ok(meanOurs > meanBase, `블로그 근접도 ${meanOurs.toFixed(3)}가 철자식 ${meanBase.toFixed(3)}보다 높아야 함`);
+  log("");
+
+  log("[Test 21] Video data list & delete — 노트·sidecar·플러그인 사본 합집합, 휴지통으로 (data-driven, SPEC_033)");
+  const vdMod = process.env.EAR_COACH_VIDEODATA_MODULE ? await import(path.resolve(process.env.EAR_COACH_VIDEODATA_MODULE)) : videoDataSrc;
+  const vd = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/video-data/cases.json"), "utf8"));
+  const makeStore = (files: Record<string, any>, trashed: string[]) => ({
+    listFiles: async (dir: string) => Object.keys(files).filter((p) => p.startsWith(dir + "/")),
+    stat: async (p: string) => (files[p] ? { size: files[p].size, mtime: files[p].mtime } : null),
+    read: async (p: string) => {
+      if (!files[p]) throw new Error(`no file ${p}`);
+      return files[p].content ?? "";
+    },
+    trash: async (p: string) => {
+      trashed.push(p);
+      delete files[p];
+    },
+    notes: async () => vd.notes.filter((n: any) => files[n.path]),
+  });
+  const vdFiles = structuredClone(vd.files);
+  const vdTrashed: string[] = [];
+  const vdStore = makeStore(vdFiles, vdTrashed);
+  const vdList = await vdMod.listVideoData(vdStore, vd.dirs);
+  assert.deepEqual(vdList, vd.expectList, "listVideoData: 합집합·제목 대체·정렬·크기");
+  const target = vdList.find((i: any) => i.videoId === vd.delete.videoId);
+  for (const p of vd.delete.goneBefore) delete vdFiles[p];
+  const done = await vdMod.deleteVideoData(vdStore, target);
+  assert.deepEqual(done, vd.delete.expectTrashed, "deleteVideoData: 있는 파일만 옮김");
+  assert.deepEqual(vdTrashed, vd.delete.expectTrashed, "trash 호출은 그 영상 파일만");
+  const after = await vdMod.listVideoData(vdStore, vd.dirs);
+  assert.deepEqual(after.map((i: any) => i.videoId), vd.delete.expectRemainingIds, "지운 뒤 목록");
+  for (const [p, id, title] of vd.names) {
+    assert.equal(vdMod.videoIdFromNoteName(p), id, `videoIdFromNoteName(${p})`);
+    assert.equal(vdMod.titleFromNoteName(p), title, `titleFromNoteName(${p})`);
+  }
+  for (const [n, want] of vd.bytes) assert.equal(vdMod.formatBytes(n), want, `formatBytes(${n})`);
+  log(`  -> PASS: ${vdList.length} videos listed, ${done.length} trashed, ${vd.names.length} names + ${vd.bytes.length} sizes`);
   log("");
 
   log("==============================================================");

@@ -826,6 +826,54 @@ for (const vp of cases.viewports) {
     await page.evaluate(() => [...document.querySelectorAll(".ear-coach-mobile-toolbar button")].find((b) => /^전체/.test(b.textContent ?? ""))?.click());
   }
 
+  // SPEC_033: 설정 「🗑 저장된 영상」 — 행 2개 → 첫 행 지우기 → 확인 창 → 휴지통으로 → 행 1개, 휴지통 호출은 그 영상 파일만
+  if (vp.expect?.videoData) {
+    await page.evaluate(() => {
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      window.__renderVideoData();
+    });
+    await page.waitForTimeout(200);
+    const rowIds = () => page.evaluate(() => [...document.querySelectorAll(".ear-coach-videodata-row")].map((r) => r.dataset.videoId));
+    const before = await rowIds();
+    const overflow = await page.evaluate(() => {
+      const h = document.querySelector(".ear-coach-ui-settings-host");
+      const rows = [...document.querySelectorAll(".ear-coach-videodata-row")];
+      return { host: h ? h.scrollWidth - h.clientWidth : -1, rows: rows.map((r) => r.scrollWidth - r.clientWidth) };
+    });
+    await page.screenshot({ path: path.join(outDir, `video-data-${vp.name}.png`) });
+    const firstId = before[0];
+    await page.locator(`.ear-coach-videodata-row[data-video-id="${firstId}"] button`).click();
+    await page.waitForTimeout(150);
+    const modal = await page.evaluate(() => {
+      const c = document.querySelector(".ear-coach-videodata-confirm");
+      return c ? { title: c.querySelector("h3")?.textContent ?? "", paths: [...c.querySelectorAll("li")].map((l) => l.textContent), buttons: [...c.querySelectorAll("button")].map((b) => b.textContent) } : null;
+    });
+    await page.screenshot({ path: path.join(outDir, `video-data-confirm-${vp.name}.png`) });
+    if (modal) await page.locator(".ear-coach-videodata-confirm button.mod-warning").click();
+    await page.waitForTimeout(300);
+    const after = await rowIds();
+    const trash = await page.evaluate(() => window.__vdTrash ?? []);
+    const notices = await page.evaluate(() => (window.__notices ?? []).filter((n) => n.startsWith("🗑")));
+    const res = { before, after, modal, trash, notices, overflow };
+    if (before.length !== 2) errors.push(`${vp.name}: videoData rows before ${before.length} != 2`);
+    if (!modal) errors.push(`${vp.name}: videoData confirm modal missing`);
+    else {
+      if (!/데이터를 지울까요\?$/.test(modal.title)) errors.push(`${vp.name}: videoData modal title ${modal.title}`);
+      if (modal.buttons.join("|") !== "휴지통으로|취소") errors.push(`${vp.name}: videoData modal buttons ${modal.buttons.join("|")}`);
+    }
+    if (after.length !== 1 || after[0] === firstId) errors.push(`${vp.name}: videoData rows after ${JSON.stringify(after)}`);
+    if (trash.length === 0 || trash.some((p) => !p.includes(firstId))) errors.push(`${vp.name}: videoData trash ${JSON.stringify(trash)}`);
+    if (JSON.stringify(trash) !== JSON.stringify(modal?.paths ?? [])) errors.push(`${vp.name}: videoData trash != modal paths`);
+    if (notices.length !== 1) errors.push(`${vp.name}: videoData notice ${JSON.stringify(notices)}`);
+    if (overflow.host > 1 || overflow.rows.some((x) => x > 1)) errors.push(`${vp.name}: videoData overflowX ${JSON.stringify(overflow)}`);
+    m.videoData = res;
+    console.log(`${vp.name} videoData: ${JSON.stringify(res)}`);
+    await page.evaluate(() => {
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      document.querySelector(".ear-coach-ui-settings-host")?.remove();
+    });
+  }
+
   // SPEC_029: 세로 받아쓰기 입력 중 — 키보드가 덮든(높이 그대로) 줄이든(480·380) 입력칸·컨트롤이 보이고 세로 배치 유지
   if (vp.expect?.typing) {
     const t = vp.expect.typing;

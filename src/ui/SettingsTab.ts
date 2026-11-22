@@ -1,8 +1,11 @@
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, normalizePath, Notice, PluginSettingTab, Setting, TFile } from "obsidian";
 import { isMobileApp } from "../utils/platform";
 import { generateBookmarkletCode } from "../utils/youtubeUrlParser";
 import { UnlockStep } from "../types/transcript";
 import type EarCoachPlugin from "../main";
+import { renderVideoDataSection } from "./videoDataSection";
+import { VideoDataStore } from "../services/videoData";
+import { VIEW_TYPE_EAR_COACH } from "./EarCoachView";
 import { ANKI_MESSAGES, ANKI_ROLES, ANKI_SENTENCE_BACK_TEMPLATE, ANKI_SENTENCE_FIELDS, ANKI_SENTENCE_FRONT_TEMPLATE, AnkiConnectError, AnkiRole, remapFieldsForModel } from "../services/anki";
 
 /** SPEC_015: 필드 대응 화면에 보일 역할 이름 */
@@ -44,6 +47,7 @@ export class EarCoachSettingTab extends PluginSettingTab {
       this.displayCommonSettings(containerEl);
       this.displayAnkiSettings(containerEl);
       this.displayMobileAiSettings(containerEl);
+      this.displayVideoData(containerEl);
     } else {
       containerEl.createEl("h2", {
         text: "🎧 Obsidian Ear-Coach (YouTube + agy CLI) 설정",
@@ -52,7 +56,44 @@ export class EarCoachSettingTab extends PluginSettingTab {
       this.displayCommonSettings(containerEl);
       this.displayAnkiSettings(containerEl);
       this.displayDesktopAgyCliSettings(containerEl);
+      this.displayVideoData(containerEl);
     }
+  }
+
+  /** SPEC_033: 영상별 저장 데이터 지우기(볼트 휴지통으로) */
+  private displayVideoData(containerEl: HTMLElement): void {
+    const { vault, metadataCache, workspace } = this.app;
+    const ng = this.plugin.noteGenerator;
+    const store: VideoDataStore = {
+      listFiles: async (dir) => ((await vault.adapter.exists(dir)) ? (await vault.adapter.list(dir)).files : []),
+      stat: async (p) => {
+        const st = await vault.adapter.stat(p);
+        return st && st.type === "file" ? { size: st.size, mtime: st.mtime } : null;
+      },
+      read: (p) => vault.adapter.read(p),
+      trash: async (p) => {
+        const f = vault.getAbstractFileByPath(p);
+        if (f instanceof TFile) await vault.trash(f, false);
+        else await vault.adapter.trashLocal(p);
+      },
+      notes: async () =>
+        vault.getMarkdownFiles().map((f) => ({ path: f.path, videoId: metadataCache.getFileCache(f)?.frontmatter?.video_id ?? null })),
+    };
+    renderVideoDataSection(containerEl, {
+      app: this.app,
+      store,
+      dirs: {
+        notesDir: normalizePath(this.plugin.settings.notesFolder || "YouTube Listening"),
+        sessionsDir: ng.getPrimarySidecarDir(),
+        legacyDir: ng.getLegacyPluginSidecarDir(),
+      },
+      onDeleted: (item) => {
+        ng.forgetSession(item.videoId);
+        for (const leaf of workspace.getLeavesOfType(VIEW_TYPE_EAR_COACH)) {
+          if (leaf.view.getState()?.videoId === item.videoId) leaf.detach();
+        }
+      },
+    });
   }
 
   private displayMobileGuideBanner(containerEl: HTMLElement): void {

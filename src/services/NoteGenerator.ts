@@ -25,13 +25,15 @@ export interface SidecarSessionPointer {
  */
 export class NoteGenerator {
   private sessionMemoryCache = new Map<string, ListeningSessionData>();
+  /** SPEC_033: 지운 영상 id → 지운 시각. 그 전에 만든 세션은 다시 저장하지 않는다(진행 중 AI 분석이 되살리지 않게). */
+  private forgottenAt = new Map<string, number>();
 
   constructor(
     private app: App,
     private getNotesFolder: () => string
   ) {}
 
-  private getPrimarySidecarDir(): string {
+  public getPrimarySidecarDir(): string {
     const folder = this.getNotesFolder() || "YouTube Listening";
     return normalizePath(`${folder}/.ear-coach-sessions`);
   }
@@ -40,7 +42,7 @@ export class NoteGenerator {
     return normalizePath(`${this.getPrimarySidecarDir()}/${videoId}.json`);
   }
 
-  private getLegacyPluginSidecarDir(): string {
+  public getLegacyPluginSidecarDir(): string {
     return normalizePath(`${this.app.vault.configDir}/plugins/obsidian-ear-coach/sessions`);
   }
 
@@ -57,6 +59,12 @@ export class NoteGenerator {
         await this.app.vault.adapter.mkdir(current);
       }
     }
+  }
+
+  /** SPEC_033: 지운 영상의 메모리 사본을 비우고, 지우기 전 세션의 저장을 막는다. */
+  public forgetSession(videoId: string): void {
+    this.sessionMemoryCache.delete(videoId);
+    this.forgottenAt.set(videoId, Date.now());
   }
 
   public getCachedSession(videoId: string): ListeningSessionData | null {
@@ -123,6 +131,8 @@ export class NoteGenerator {
     existingFile?: TFile | null,
     sidecarOnly = false
   ): Promise<TFile | null> {
+    const forgotten = this.forgottenAt.get(session.videoId);
+    if (forgotten !== undefined && !(Date.parse(session.createdAt) > forgotten)) return null;
     session.updatedAt = new Date().toISOString();
     this.sessionMemoryCache.set(session.videoId, session);
 

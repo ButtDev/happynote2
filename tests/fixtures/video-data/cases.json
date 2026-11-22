@@ -1,0 +1,43 @@
+{
+  "_doc": "SPEC_033 영상 데이터 목록·지우기. files = 가짜 저장소(경로 → 크기·시각·내용), notes = 마크다운 노트(front matter video_id). 시각 mtime은 ms.",
+  "dirs": {
+    "notesDir": "YouTube Listening",
+    "sessionsDir": "YouTube Listening/.ear-coach-sessions",
+    "legacyDir": ".obsidian/plugins/obsidian-ear-coach/sessions"
+  },
+  "files": {
+    "YouTube Listening/TED Talk [abcDEF12345].md": { "size": 2048, "mtime": 1000 },
+    "YouTube Listening/.ear-coach-sessions/abcDEF12345.json": { "size": 300000, "mtime": 5000, "content": "{\"title\":\"sidecar title\"}" },
+    ".obsidian/plugins/obsidian-ear-coach/sessions/abcDEF12345.json": { "size": 300000, "mtime": 5000 },
+    "YouTube Listening/.ear-coach-sessions/onlySide01.json": { "size": 1500000, "mtime": 9000, "content": "{\"title\":\"Rick Song\",\"segments\":[]}" },
+    ".obsidian/plugins/obsidian-ear-coach/sessions/legacyOnly1.json": { "size": 100, "mtime": 2000, "content": "not json" },
+    "Moved/My notes.md": { "size": 500, "mtime": 7000 },
+    "Daily/Meeting [draft0001].md": { "size": 10, "mtime": 8000 },
+    "YouTube Listening/.ear-coach-sessions/readme.txt": { "size": 1, "mtime": 9999 },
+    "YouTube Listening/.ear-coach-sessions/sub/nested01.json": { "size": 1, "mtime": 9999 }
+  },
+  "notes": [
+    { "path": "YouTube Listening/TED Talk [abcDEF12345].md", "videoId": "abcDEF12345" },
+    { "path": "Moved/My notes.md", "videoId": "movedNote01" },
+    { "path": "Daily/Meeting [draft0001].md" },
+    { "path": "YouTube Listening/ghost [ghostNote01].md" }
+  ],
+  "expectList": [
+    { "videoId": "onlySide01", "title": "Rick Song", "paths": ["YouTube Listening/.ear-coach-sessions/onlySide01.json"], "size": 1500000, "mtime": 9000 },
+    { "videoId": "movedNote01", "title": "movedNote01", "paths": ["Moved/My notes.md"], "size": 500, "mtime": 7000 },
+    { "videoId": "abcDEF12345", "title": "TED Talk", "paths": ["YouTube Listening/TED Talk [abcDEF12345].md", "YouTube Listening/.ear-coach-sessions/abcDEF12345.json", ".obsidian/plugins/obsidian-ear-coach/sessions/abcDEF12345.json"], "size": 602048, "mtime": 5000 },
+    { "videoId": "legacyOnly1", "title": "legacyOnly1", "paths": [".obsidian/plugins/obsidian-ear-coach/sessions/legacyOnly1.json"], "size": 100, "mtime": 2000 }
+  ],
+  "delete": {
+    "videoId": "abcDEF12345",
+    "goneBefore": [".obsidian/plugins/obsidian-ear-coach/sessions/abcDEF12345.json"],
+    "expectTrashed": ["YouTube Listening/TED Talk [abcDEF12345].md", "YouTube Listening/.ear-coach-sessions/abcDEF12345.json"],
+    "expectRemainingIds": ["onlySide01", "movedNote01", "legacyOnly1"]
+  },
+  "names": [
+    ["YouTube Listening/TED Talk [abcDEF12345].md", "abcDEF12345", "TED Talk"],
+    ["YouTube Listening/[abcDEF12345].md", "abcDEF12345", null],
+    ["YouTube Listening/no id.md", null, null]
+  ],
+  "bytes": [[0, "1 KB"], [2048, "2 KB"], [602048, "588 KB"], [1048576, "1.0 MB"], [1500000, "1.4 MB"]]
+}

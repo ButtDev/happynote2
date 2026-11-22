@@ -12,6 +12,7 @@ import helloDict from "../fixtures/dictionary/hello.json";
 import phraseDict from "../fixtures/dictionary/look-forward-to.json";
 // SPEC_017: 합성 스토리보드 시트(960×540, 3×3 색 칸)
 import storyboardSheet from "./fixtures/storyboard-sheet.png";
+import { renderVideoDataSection } from "../../src/ui/videoDataSection.ts";
 
 declare global {
   interface Window {
@@ -125,6 +126,41 @@ async function main(): Promise<void> {
   PlayerBar.prototype.pause = function (this: PlayerBar) {
     (window as any).__pauseCalls = ((window as any).__pauseCalls ?? 0) + 1;
     return origPause.call(this);
+  };
+  // SPEC_033: 설정 화면 「🗑 저장된 영상」 — 가짜 저장소(영상 2개), 휴지통 호출은 window.__vdTrash
+  (window as any).__renderVideoData = () => {
+    const now = Date.now();
+    const files: Record<string, { size: number; mtime: number; content?: string }> = {
+      "YouTube Listening/How to Speak Fast English Like a Native Speaker in 30 Days [abcDEF12345].md": { size: 2048, mtime: now },
+      "YouTube Listening/.ear-coach-sessions/abcDEF12345.json": { size: 812000, mtime: now },
+      ".obsidian/plugins/obsidian-ear-coach/sessions/abcDEF12345.json": { size: 812000, mtime: now },
+      "YouTube Listening/.ear-coach-sessions/xyzOnly0001.json": { size: 1600000, mtime: now - 86400000 * 3, content: '{"title":"Rick Song"}' },
+    };
+    const w = window as any;
+    w.__vdTrash = [];
+    const store = {
+      listFiles: async (dir: string) => Object.keys(files).filter((p) => p.startsWith(dir + "/")),
+      stat: async (p: string) => (files[p] ? { size: files[p].size, mtime: files[p].mtime } : null),
+      read: async (p: string) => files[p]?.content ?? "",
+      trash: async (p: string) => {
+        w.__vdTrash.push(p);
+        delete files[p];
+      },
+      notes: async () => Object.keys(files).filter((p) => p.endsWith(".md")).map((path) => ({ path, videoId: null })),
+    };
+    const host = document.createElement("div");
+    host.className = "ear-coach-ui-settings-host vertical-tab-content";
+    // 실기기 설정 화면 근사: 헤더 아래 전체, 좌우 여백 16px
+    host.style.cssText = "position:fixed;inset:88px 0 0 0;z-index:30;overflow:auto;box-sizing:border-box;padding:12px 16px;background:var(--background-primary)";
+    document.body.appendChild(host);
+    renderVideoDataSection(host, {
+      app: {} as any,
+      store,
+      dirs: { notesDir: "YouTube Listening", sessionsDir: "YouTube Listening/.ear-coach-sessions", legacyDir: ".obsidian/plugins/obsidian-ear-coach/sessions" },
+      onDeleted: (item) => {
+        w.__vdDeleted = [...(w.__vdDeleted ?? []), item.videoId];
+      },
+    });
   };
   window.__uiReady = true;
 }

@@ -109,3 +109,4 @@
 {"ts":"2026-11-22T09:44:30.888Z","cmd":"간이","id":"BLANKS-IN-CHUNK","result":"ok","evidence":"aiAnalysis sanitizeItems: 빈칸 = 덩어리와 겹치는 것, 없으면 덩어리 앞 3낱말 + 프롬프트 'must be inside chunkWordIndices'. Test 15 7 response(새 사례 [0]→[1,2,3], 기존 [3,4]→[3]), 변이(정렬 뺀 사본) 실패, verify regression ok"}
 {"ts":"2026-11-22T09:45:48.605Z","cmd":"release","version":"1.0.42","result":"github release 3 assets"}
 {"ts":"2026-11-22T09:53:51.064Z","cmd":"/spec-new","spec":"SPEC_033","result":"READY","questions":0}
+{"ts":"2026-11-22T09:58:52.891Z","cmd":"/spec-run","spec":"SPEC_033","iteration":1,"status":"IMPLEMENTED","evidence":"Test 21 + 변이 2, ui videoData 세로·가로 + 변이, grep 영구삭제 없음, regression ok"}
