@@ -4,7 +4,7 @@
 
 ## 지금 하는 일
 - BRAT 1.0.39 배포(SPEC_031 소리 힌트). ⏳ 실기기 버튼 대기: 031 8(새 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA가 실제 소리에 가까운지 — 026 4도 함께) · 025 5(고른 뜻 하나만 앞면) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보 SPEC_032: 사전에 없는 낱말 → dictionaryapi IPA 대체(SPEC_031 범위 밖).
-- 026 확인엔 사람이 AnkiDroid 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함. 사람이 처음엔 같은 이름 **덱**을 만듦(11-22) → 노트 유형 관리 단계로 다시 안내함. 「노트 타입」 말은 덱과 헷갈림 — 메뉴 경로까지 적을 것.
+- 사람 AnkiDroid에 노트 유형 `happynote2 Listening` 만들어졌고 문장 카드 저장·AnkiWeb 전체 동기화(AnkiDroid 쪽 유지 안내)까지 됨(11-22). 문장 카드도 덱은 `happynote2`.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
 
