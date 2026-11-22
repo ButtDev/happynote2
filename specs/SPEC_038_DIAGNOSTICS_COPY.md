@@ -1,7 +1,7 @@
 ---
 id: SPEC_038
 title: 설정 「🩺 진단 복사」 — 최근 오류 50개를 가려서 클립보드로
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -44,11 +44,11 @@ depends_on: []
 - 오류 안내 문구·재시도 버튼·http 계층(「네트워크·오류 계층」), 파일 저장, 자동 전송, 오류 아닌 로그(정보·경고).
 
 ## 5. 완료 조건
-- [ ] 1. `diagnostics` 데이터 시험(상한 50·오래된 것 버림, 연속 같은 오류 묶음, 가리기: 설정 키·Gemini·Groq·OpenAI 모양·URL 쿼리·key=, 보고 글 머리·오류 없음, 보고에 비밀 값 글자가 남지 않음) + 변이 실패 확인 [자동]
-- [ ] 2. 화면 검사 `expect.diagnostics`: 세로·가로 — 처음 `기록된 오류가 없어요…` → 오류 2개(하나는 키·URL 쿼리 포함) 기록 → 다시 그리면 `최근 오류 2개 —` → `복사` → 클립보드 글이 `Ear-Coach 진단 `으로 시작, 단계 두 개 포함, 비밀 키·쿼리 글자 없음, 알림 `📋 진단을 복사했어요 (오류 2개)`, 넘침 없음, 스크린샷 열어 봄 [자동]
-- [ ] 3. `main.ts` 900줄 미만 + 전역 잡기·catch 자리 기록이 들어갔는지 grep [자동]
-- [ ] 4. 회귀 통과(`verify.mjs --set regression`) [자동]
-- [ ] 5. 실기기 설정 맨 아래 「🩺 진단 복사」의 `복사`를 눌러 대화창에 붙여 넣었을 때 `Ear-Coach 진단`으로 시작하는 글이 붙는지 보고 버튼 [수동]
+- [x] 1. `diagnostics` 데이터 시험(상한 50·오래된 것 버림, 연속 같은 오류 묶음, 가리기: 설정 키·Gemini·Groq·OpenAI 모양·URL 쿼리·key=, 보고 글 머리·오류 없음, 보고에 비밀 값 글자가 남지 않음) + 변이 실패 확인 [자동]
+- [x] 2. 화면 검사 `expect.diagnostics`: 세로·가로 — 처음 `기록된 오류가 없어요…` → 오류 2개(하나는 키·URL 쿼리 포함) 기록 → 다시 그리면 `최근 오류 2개 —` → `복사` → 클립보드 글이 `Ear-Coach 진단 `으로 시작, 단계 두 개 포함, 비밀 키·쿼리 글자 없음, 알림 `📋 진단을 복사했어요 (오류 2개)`, 넘침 없음, 스크린샷 열어 봄 [자동]
+- [x] 3. `main.ts` 900줄 미만 + 전역 잡기·catch 자리 기록이 들어갔는지 grep [자동]
+- [x] 4. 회귀 통과(`verify.mjs --set regression`) [자동]
+- [x] 5. 실기기 설정 맨 아래 「🩺 진단 복사」의 `복사`를 눌러 대화창에 붙여 넣었을 때 `Ear-Coach 진단`으로 시작하는 글이 붙는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1 → Test 24 + 망가진 사본(`EAR_COACH_DIAGNOSTICS_MODULE`). 2 → `runUiCheck`, `diagnostics-<뷰>.png`. 3 → `wc -l`·grep `diagnostics.record`. 4 → `verify.mjs --set regression`.
@@ -66,3 +66,4 @@ depends_on: []
 ## 실행 기록
 - 2026-11-23 회차 1(야간, night/SPEC_038): IMPLEMENTED — 1 ✅ Test 24 `tests/fixtures/diagnostics/cases.json` PASS(ring 50/57 처음 「오류 7」, 연속 묶음 [AI×3, Anki×1, AI×1], redact 8: Gemini `?key=AIza…`→`?…`·`gsk_`·`sk-`·`token=`/`api_key=`·설정 키·6자 미만 그대로·유튜브 쿼리, describe 4, 보고 머리·`AI 분석 ×2`·비밀/`key=` 없음·`오류 없음`), 변이 dg1(상한 빼기)→「링버퍼 상한」, dg2(설정 키 가리기 빼기)→「redact my custom key…」, dg3(보고 전체 가리기 빼기)→「보고에 … chat?…」, dg4(단계 비교 빼기)→「연달아 같은 오류만 묶음」 실패 · 2 ✅ `runUiCheck` 세로·가로 diagnostics: 처음 「기록된 오류가 없어요. 문제가 생기면 복사해서 보내 주세요.」 → 오류 2개 기록 뒤 「최근 오류 2개 — …」, 복사 글 「Ear-Coach 진단 …\n앱 9.9.9 · Obsidian 1.7.7 · android\n기기 …\n화면 412×915\n오류 2개 (최근 50개까지)\n[…] Anki 저장: Request failed, status 500 …\n[…] AI 분석: fetch https://generativelanguage.googleapis.com/v1beta/x?… failed」, `ui-fake-secret-123456`·`key=` 없음, 알림 「📋 진단을 복사했어요 (오류 2개)」, 넘침 0, 높이 63px. `diagnostics-portrait.png`·`diagnostics-landscape.png` 열어 봄: 구분선 아래 「🩺 진단 복사」 제목·설명 한 줄, 오른쪽 「복사」 버튼. UI 변이(`const n = 0`) → 「diagnostics after … 기록된 오류가 없어요」 실패 · 3 ✅ `wc -l src/main.ts` 898(<900), grep: `src/main.ts:128` installDiagnosticsCapture, record 자리 main.ts:291·652·752·875·877, DictionaryModal.ts:77·183, sentenceAnki.ts:40·71, SettingsTab.ts:418, EarCoachView.ts:694, videoDataSection.ts:98·142 · 4 ✅ worktree `verify.mjs --set regression --json` harness·build·test·ui ok · 5 ⏳ 실기기.
 
+- 2026-11-23 사람 확인: DONE — 5 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_038 5 OK]」(실기기 1.0.49 진단 복사 → 대화창 붙여넣기). 1~4는 회차 1 근거 그대로.
