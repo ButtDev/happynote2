@@ -1,0 +1,52 @@
+{
+  "_note": "SPEC_039: 모듈 분리 전 src/main.ts(6b7b60e)에서 손으로 옮긴 기대값. 분리 전 main도 mainMaxLines 말고는 모두 통과함(SPEC_039 실행 기록).",
+  "mainMaxLines": 600,
+  "registrations": {
+    "views": ["ear-coach-listening-view"],
+    "protocols": ["ear-coach"],
+    "ribbonIcons": ["headphones"],
+    "commands": [
+      "ear-coach-create-from-url-modal:callback",
+      "ear-coach-create-from-clipboard:callback",
+      "ear-coach-open-current-note:check",
+      "ear-coach-mobile-ai-continue:check",
+      "ear-coach-resegment-current-note:check"
+    ],
+    "codeblocks": ["ear-coach-session"],
+    "settingTabs": 1,
+    "events": ["metadataCache:resolved", "workspace:file-open"],
+    "registeredEvents": 2,
+    "layoutReady": 1,
+    "openFilePatched": true
+  },
+  "publicMembers": [
+    "onload", "onunload", "isEarCoachNoteFast", "loadOrRecoverSession", "restoreSessionForView",
+    "openUrlInputModal", "handleYouTubeTrigger", "runAgyBatchEnrichment", "activateWorkspaceView",
+    "getAiConfig", "testAiConnection", "runMobileAiEnrichment", "loadSettings", "saveSettings",
+    "aiFetch", "fetchBytes", "storyboard", "audioClip"
+  ],
+  "publicObjects": [
+    "settings", "dictionary", "anki", "workerManager", "transcriptService", "agyService", "noteGenerator", "weaknessTracker"
+  ],
+  "aiConfig": [
+    { "settings": { "aiProvider": "gemini", "geminiApiKey": "" }, "expect": null },
+    { "settings": { "aiProvider": "gemini", "geminiApiKey": "test-gemini" }, "expect": { "provider": "gemini", "apiKey": "test-gemini", "model": "gemini-3.5-flash-lite" } },
+    { "settings": { "aiProvider": "openai", "openaiApiKey": "" }, "expect": null },
+    { "settings": { "aiProvider": "openai", "openaiApiKey": "test-groq" }, "expect": { "provider": "openai", "apiKey": "test-groq", "model": "openai/gpt-oss-120b", "baseUrl": "https://api.groq.com/openai/v1" } }
+  ],
+  "isEarCoachNoteFast": [
+    { "path": "YouTube Listening/Talk [iG9CE55wbtY].md", "expect": true },
+    { "path": "YouTube Listening/Talk.md", "expect": false },
+    { "path": "Other/Talk [iG9CE55wbtY].md", "expect": false },
+    { "path": "Other/tagged.md", "frontmatter": { "tags": ["english-listening"] }, "expect": true },
+    { "path": "Other/vid.md", "frontmatter": { "video_id": "abc123def45" }, "expect": true },
+    { "path": "Other/plain.md", "frontmatter": { "tags": ["diary"] }, "expect": false }
+  ],
+  "commandsWithoutActiveFile": [
+    { "id": "ear-coach-open-current-note", "expect": false },
+    { "id": "ear-coach-mobile-ai-continue", "expect": false },
+    { "id": "ear-coach-resegment-current-note", "expect": false }
+  ],
+  "protocolWithoutUrlNotice": "Ear-Coach URI에 유튜브 url 파라미터가 없습니다.",
+  "invalidUrlNotice": "유효한 유튜브 URL이 아닙니다."
+}

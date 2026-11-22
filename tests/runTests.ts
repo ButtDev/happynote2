@@ -1078,6 +1078,15 @@ async function runAllTests() {
   log(`  -> PASS: ring ${dgList.length}/${dg.ring.push}, ${dg.redact.length} redact, ${dg.describe.length} describe, report ${dgText.split("\n").length} lines`);
   log("");
 
+  // 25. SPEC_039: 플러그인 연결 — main.ts를 가짜 obsidian으로 onload, 기대값은 tests/fixtures/wiring/expected.json
+  log("[Test 25] Plugin wiring after feature split (data-driven, SPEC_039)");
+  const { spawnSync } = await import("node:child_process");
+  const wiringArgs = ["tests/wiring/runWiringCheck.mjs", ...(process.env.EAR_COACH_MAIN ? ["--main", process.env.EAR_COACH_MAIN] : [])];
+  const wiring = spawnSync(process.execPath, wiringArgs, { encoding: "utf8" });
+  assert.equal(wiring.status, 0, `wiring check failed:\n${wiring.stdout}${wiring.stderr}`);
+  log(`  -> PASS: ${wiring.stdout.trim()}`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");
