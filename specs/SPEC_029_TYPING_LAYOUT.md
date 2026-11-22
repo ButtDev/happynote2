@@ -1,7 +1,7 @@
 ---
 id: SPEC_029
 title: 세로 화면 받아쓰기 입력 중 키보드 배치 (영상 접고 카드 보이기)
-status: IMPLEMENTED
+status: DONE
 iterations: 2
 max_iterations: 3
 depends_on: []
@@ -29,9 +29,9 @@ depends_on: []
 가로 화면 입력 배치, 받아쓰기 채점 동작, 사전 창.
 
 ## 5. 완료 조건
-1. [ ] 화면 검사 세로: 빈칸 입력칸 포커스 → `is-typing`, 높이 그대로(덮는 키보드 가정)일 때 입력칸 아래 끝 ≤ 화면 55%, 높이를 480·380으로 줄였을 때 입력칸·재생 컨트롤이 화면 안·세로 배치 유지, 포커스 해제 → 클래스 풀림·영상 다시 보임. 변이(CSS 블록 뺀 사본) 실패 확인 [자동]
-2. [ ] 회귀 `verify.mjs --set regression` 통과 [자동]
-3. [ ] 실기기 세로에서 카드 「빈칸」 칸을 눌러 키보드가 떠도 그 카드와 입력칸이 보이고, 키보드를 내리면 영상이 돌아오는지 보고 버튼 [수동]
+1. [x] 화면 검사 세로: 빈칸 입력칸 포커스 → `is-typing`, 높이 그대로(덮는 키보드 가정)일 때 입력칸 아래 끝 ≤ 화면 55%, 높이를 480·380으로 줄였을 때 입력칸·재생 컨트롤이 화면 안·세로 배치 유지, 포커스 해제 → 클래스 풀림·영상 다시 보임. 변이(CSS 블록 뺀 사본) 실패 확인 [자동]
+2. [x] 회귀 `verify.mjs --set regression` 통과 [자동]
+3. [x] 실기기 세로에서 카드 「빈칸」 칸을 눌러 키보드가 떠도 그 카드와 입력칸이 보이고, 키보드를 내리면 영상이 돌아오는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1 → `runUiCheck.mjs --fail-on-overlap` + `typing-portrait*.png` 직접 열기. 2 → verify.
@@ -52,3 +52,4 @@ BRAT 업데이트 → 리스닝 노트 세로 → 카드 「빈칸」 → 입력
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ 화면 검사 `expect.typing`: 수정 전 4개 실패(클래스 없음·입력칸 bottom=614>503·툴바 보임·h=380에서 가로 배치로 뒤집힘) → 수정 뒤 `ui-check: ok`, 변이(SPEC_029 CSS 블록 뺀 `--css` 사본) → 「input bottom=614 > 503」「toolbar still shown」「h=380 not stacked」 실패 · `typing-portrait.png`·`-480.png`·`-380.png` 열어 봄: 재생 컨트롤 한 줄 + 빈칸 카드(▶ 00:03·단계·입력칸·메모칸)가 맨 위, 380에서도 세로 배치 · 2 ✅ `verify.mjs --set regression` ok · 3 ⏳ 실기기
 - 2026-11-22 회차 2: IMPLEMENTED — 사람 1.0.36 사진 「해결안됨」. 1 ✅ 화면 검사에 `typing.squeeze`(#app 아래 여백 += 키보드 높이, 실기기 이중 축소 흉내) 추가 → 수정 전 「squeeze h=480 list too small h=0」「input covered」 실패(스크린샷도 헤더만 남음) → 수정 뒤 `ui-check: ok`, 변이(fixed 줄 뺀 CSS 사본) → 같은 2개 실패 · `typing-portrait-squeeze480.png` 열어 봄: 재생 줄 + 빈칸 카드·입력칸 보임 · 2 ✅ `verify.mjs --set regression` ok(EarCoachView 900줄 시험 포함) · 3 ⏳ 실기기
+- 2026-11-22 사람확인: 3 ✅ `[Button pressed: SPEC_029 3 OK]`(1.0.37 실기기) → DONE
