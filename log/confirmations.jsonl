@@ -169,3 +169,4 @@
 {"ts":"2026-11-22T05:46:46.577Z","source":"chat","answer":"[사진 .scratch/inbox/20261122-143930-506.jpg] Because, cause 둘다 오답으로 체크됨.\n정답입력시 다음 빈칸이 있으면 커서를 바로 이동","interpretation":"빈칸 정답 'Cause에 cause·because 오답 → SPEC_030"}
 {"ts":"2026-11-22T06:04:28.457Z","source":"button","question":"**확인 부탁:** BRAT로 1.0.38을 업데이트한 뒤, 세로 화면 카드에서 「빈칸」을 눌러 주세요. `'Cause` 빈칸에 cause나 because를 넣으면 초록(정답)이 되는지, 맞히면 다음 빈칸으로 커서가 넘어가는지 봐 주세요. 이전 항목(025·026·027·028) 버튼은 지난 메시지에 그대로 있어요.","answer":"SPEC_030 4 OK","messageId":507}
 {"ts":"2026-11-22T06:04:44.358Z","spec":"SPEC_030","item":"4","result":"OK","raw":"[Button pressed: SPEC_030 4 OK]"}
+{"ts":"2026-11-22T06:29:36.606Z","spec":"SPEC_026","item":"4","result":"MEMO","raw":"Spec 26 은 어떤건지 모르겠음. 핀설정 후 그 카드의 단어하나를 선택해 anki 추가하니 happynote2 에 들어가고 'happynote2 Listening' 는 비어있음","interpretation":"단어 탭→사전 창 Anki(단어 카드, SPEC_015) 경로를 씀. SPEC_026은 핀 켜진 카드 머리의 「➕ Anki」 버튼 — 안내 다시 보냄"}
