@@ -103,3 +103,4 @@
 {"ts":"2026-11-22T07:35:47.276Z","cmd":"release","version":"1.0.39","spec":"SPEC_031","evidence":"push buttdev main 5c96cb2 + tag 1.0.39, release assets main.js manifest.json styles.css"}
 {"ts":"2026-11-22T08:38:59.548Z","cmd":"/spec-new","spec":"SPEC_032","result":"READY","questions":0}
 {"ts":"2026-11-22T08:43:13.603Z","cmd":"/spec-run","spec":"SPEC_032","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, Test20 10 chunk(변이 실패 확인), ui soundHintStep3 'going to → [고잉 터]'"}
+{"ts":"2026-11-22T08:45:19.812Z","cmd":"release","version":"1.0.40","spec":"SPEC_032","result":"github release 3 assets (main.js,manifest.json,styles.css)"}
