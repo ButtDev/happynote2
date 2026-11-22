@@ -3,12 +3,13 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.50(SPEC_042 알림 정리). ⏳ SPEC_042 7(비행기 모드에서 핀 문장 「➕ Anki」 → 「원음을 받지 못해 저장하지 않았어요」 + 「다시」) 버튼 보냄. OK면 `/spec-run SPEC_042 사람확인: 7 OK` → DONE.
+- 배포 최신 BRAT 1.0.50(SPEC_042 알림 정리, 11-23 릴리스 3파일 확인). ⏳ SPEC_042 7(비행기 모드에서 핀 문장 「➕ Anki」 → 「원음을 받지 못해 저장하지 않았어요」 + 「다시」) 버튼 보냄. OK면 `/spec-run SPEC_042 사람확인: 7 OK` → DONE.
 - 백로그 「대기」(`memory/backlog.md`): 야간 순서 노래방식 하이라이트 → 오늘의 5문장 → 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
 - 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
+- SPEC_042 가결정을 보고함(답 없음): Anki 연결 문구 「앱에서」 유지(초안 「AnkiDroid 앱에서」 아님), 모르는 원인은 「❌ … — 알 수 없는 오류 — 🩺 진단 복사로 보내 주세요」(— 두 번). 사람이 고치라 하면 `src/services/notices.ts`·`ANKI_MESSAGES`만.
 
 ## 주의
 - 네트워크(SPEC_041): 모든 요청은 `src/features/network.ts` `send(opts, HTTP_POLICIES.x)` → `src/services/http.ts` `sendWithPolicy`(Test 27, 변이 `EAR_COACH_HTTP_MODULE`). 새 요청도 `requestUrl` 직접 말고 `send`로. Anki는 재시도 0(카드 두 번 방지).
