@@ -4,7 +4,7 @@
 
 ## 지금 하는 일
 - 배포 최신 BRAT 1.0.48(11-23 야간, 릴리스 3파일 확인): SPEC_038 진단 복사(IMPLEMENTED, ⏳ 5 실기기 복사·붙여 넣기). ⏳ SPEC_037 4(「1등이 전부가 아니라더니」 00:35 카드 빈칸·힌트 같은 낱말인지) 남음. SPEC_036 DONE.
-- 백로그 「대기」 11건 — 맨 앞 구조 개선(진단 복사·기능 모듈 분리 끝남 → 학습 기록 저장소 → 네트워크·오류 계층, 11-22 사람 선택), 그 뒤 기능(실제 학습·사용에 도움 되는 것만, 11-22 사람 「실제적으로 도움 안되는것도 버려」). 버린 것: 속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검 — 다시 제안 금지. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
+- 백로그 「대기」 11건 — 맨 앞 구조 개선(진단 복사·기능 모듈 분리·학습 기록 저장소 끝남 → 네트워크·오류 계층, 11-22 사람 선택), 그 뒤 기능(실제 학습·사용에 도움 되는 것만, 11-22 사람 「실제적으로 도움 안되는것도 버려」). 버린 것: 속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검 — 다시 제안 금지. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
 
 ## 열린 질문 (사람에게)
 - 다음 후보: 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
@@ -41,3 +41,4 @@
 - 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
 - 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`. 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
 - 진단(SPEC_038): `src/services/diagnostics.ts`(순수, 공용 `diagnostics`, Test 24 + `tests/fixtures/diagnostics/`, 변이 `EAR_COACH_DIAGNOSTICS_MODULE`), 설정 줄·전역 잡기 `src/ui/diagnosticsSection.ts`. 새 오류 catch 자리엔 `diagnostics.record("<단계>", err)` 한 줄. 화면 검사 `expect.diagnostics`(`__diagnostics`·`__diagClip`). 메모리만(앱 다시 켜면 비워짐).
+- 학습 기록(SPEC_040): `src/services/learningStore.ts`(순수, 파일 주입, Test 26 + `tests/fixtures/learning/cases.json`, 변이 `EAR_COACH_LEARNING_MODULE`), `plugin.learning`(`src/features/learning.ts` → `<manifest.dir>/learning.json`). 지금 연결은 핀 토글뿐(`EarCoachView` onTogglePin) — 빈칸 `recordBlank`·위치 `setPosition`·퀴즈 `recordQuiz`는 쓰는 기능 SPEC에서 연결. schemaVersion>1 파일은 읽기 전용. 화면 검사 가짜 플러그인 `tests/ui/entry.ts`에도 `learning` 있음.
