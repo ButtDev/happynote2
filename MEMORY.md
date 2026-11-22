@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- SPEC_029 DONE(1.0.37 실기기 OK). ⏳ 버튼 대기: 025 5 · 026 4 · 027 4 · 028 4(🔁·📌 아이콘 — 키보드 문제로 NG였음, 다시 물음).
+- BRAT 1.0.38(SPEC_030 빈칸 채점 'cause=because·아포스트로피 무시 + 맞히면 다음 빈칸). ⏳ 버튼 대기: 030 4 · 025 5 · 026 4 · 027 4 · 028 4.
 - 026 확인 전 사람이 AnkiDroid에서 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내는 이미 보냄.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 켜져 있음 — 사람이 끄라고 하면 끔.
