@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.38 배포됨. ⏳ 실기기 버튼 대기: SPEC_030 4(빈칸 'Cause←cause/because 정답·다음 빈칸 이동) · 025 5(고른 뜻 하나만 앞면) · 026 4(핀 문장 카드 소리·그림·힌트) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘 — 전 NG는 키보드 문제였고 SPEC_029로 해결, 다시 물음). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
+- BRAT 1.0.38 배포됨. ⏳ 실기기 버튼 대기: 025 5(고른 뜻 하나만 앞면) · 026 4(핀 문장 카드 소리·그림·힌트) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘 — 전 NG는 키보드 문제였고 SPEC_029로 해결, 다시 물음). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE.
 - 026 확인엔 사람이 AnkiDroid 노트 타입 `happynote2 Listening`(필드 Sentence·Cloze·Picture·Hint·Source, 템플릿 `src/services/anki.ts` `ANKI_SENTENCE_*_TEMPLATE`)을 만들어야 함 — 안내 보냄.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.

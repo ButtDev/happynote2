@@ -1,7 +1,7 @@
 ---
 id: SPEC_030
 title: 빈칸 받아쓰기 채점 너그럽게('cause=cause=because) + 맞히면 다음 빈칸으로
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -32,7 +32,7 @@ depends_on: []
 1. [x] Test 19 데이터 시험 통과(사람 사례 `'Cause`←cause·because 포함, 오답 사례 포함) + 변이(묶음 뺀 사본) 실패 [자동]
 2. [x] 화면 검사: 첫 빈칸에 정답 입력 → 포커스가 다음 빈칸, 오답이면 그대로. 변이(이동 코드 뺀 사본) 실패 [자동]
 3. [x] 회귀 `verify.mjs --set regression` [자동]
-4. [ ] 실기기에서 `'Cause` 빈칸에 cause/because가 정답(초록)이 되고, 맞히면 다음 빈칸으로 커서가 넘어가는지 보고 버튼 [수동]
+4. [x] 실기기에서 `'Cause` 빈칸에 cause/because가 정답(초록)이 되고, 맞히면 다음 빈칸으로 커서가 넘어가는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1 → `npm test`. 2 → `runUiCheck.mjs --fail-on-overlap`. 3 → verify.
@@ -47,3 +47,4 @@ BRAT 업데이트 → 세로 카드 「빈칸」 → 입력 → 버튼.
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 19 「PASS: 17 cases」(cause·because←'Cause, dont←don't, 오답 becuase·case·then), 변이(묶음 뺀 `EAR_COACH_DICTATION_MODULE` 사본) → 「dictationMatches("because", "'Cause") 사람 사례」 실패 · 2 ✅ 화면 검사 `typing.advance`: 「zzz」엔 첫 빈칸 그대로, 정답 「SO」(대문자) → 둘째 빈칸으로, `ui-check: ok`; 변이(이동 호출 뺀 사본) → 「did not move to next blank (at 0)」 실패 · 3 ✅ `verify.mjs --set regression` ok · 4 ⏳ 실기기
+- 2026-11-22 사람확인(회차 세지 않음): DONE — 1·2·3 ✅ 회차 1 근거 · 4 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_030 4 OK]」(1.0.38 실기기)
