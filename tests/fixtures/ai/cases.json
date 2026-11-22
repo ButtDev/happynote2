@@ -861,6 +861,7 @@
   "8. restoredText: the SAME words in the SAME order",
   "Never add, remove, merge, split or respell words",
   "9. chunkWordIndices",
+  "never write Korean phonetic spellings in this field",
   "plus the 9 fields above"
  ],
  "restore": [

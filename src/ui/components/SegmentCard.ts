@@ -55,9 +55,10 @@ export class SegmentCard {
   }
 
   /** SPEC_031: CMUdict + 이어 말하기 규칙으로 계산한 소리 힌트, 사전에 없으면 AI phoneticKr */
-  private soundHintText(): string {
+  private soundHintText(withChunk = false): string {
     const hint = segmentSoundHint(this.segment);
-    if (hint) return `[${hint.hangul}] /${hint.ipa}/`;
+    // SPEC_032: 정답 단계에선 어느 낱말의 힌트인지 앞에 붙임(2단계는 정답이 드러나므로 안 붙임)
+    if (hint) return `${withChunk ? `${hint.text} → ` : ""}[${hint.hangul}] /${hint.ipa}/`;
     return this.segment.analysis?.phoneticKr ?? "";
   }
 
@@ -277,7 +278,7 @@ export class SegmentCard {
       });
       fullBox.createDiv({
         cls: "ear-coach-phonetic-kr",
-        text: `🔊 발음 포인트: ${this.soundHintText() || analysis.phoneticKr} — ${analysis.trapExplanation}`,
+        text: `🔊 발음 포인트: ${this.soundHintText(true) || analysis.phoneticKr} — ${analysis.trapExplanation}`,
       });
       fullBox.createDiv({
         cls: "ear-coach-rhythm-guide",

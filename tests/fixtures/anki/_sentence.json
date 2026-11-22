@@ -1,5 +1,5 @@
 {
-  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답) · SPEC_031: Hint=함정만, 소리 힌트는 Source 앞",
+  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답) · SPEC_031: Hint=함정만, 소리 힌트는 Source 앞 · SPEC_032: 덩어리 글자 → 힌트",
   "settings": { "ankiDeck": "happynote2", "ankiSentenceNoteType": "happynote2 Listening", "ankiTags": "ear-coach" },
   "notes": [
     {
@@ -14,7 +14,7 @@
         "videoTitle": "Trip <story>",
         "startSec": 10.07,
         "pictureFilename": "ear-coach-uiCheck0001-11.jpg",
-        "soundHint": { "hangul": "디 쥬 에벌", "ipa": "ˈdɪdʒ ju ˈɛvɚ" }
+        "soundHint": { "hangul": "디 쥬 에벌", "ipa": "ˈdɪdʒ ju ˈɛvɚ", "text": "Did you ever" }
       },
       "expect": {
         "deckName": "happynote2",
@@ -24,7 +24,7 @@
           "Cloze": "Did ____ ever try to catch a train at ____?",
           "Picture": "<img src=\"ear-coach-uiCheck0001-11.jpg\">",
           "Hint": "연음 · 플랩 t",
-          "Source": "🔊 [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
+          "Source": "🔊 Did you ever → [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
         },
         "tags": ["ear-coach", "sentence"],
         "options": { "allowDuplicate": false, "duplicateScope": "deck" }

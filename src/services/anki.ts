@@ -402,7 +402,7 @@ export interface SentenceNoteInput {
   startSec: number;
   pictureFilename?: string | null;
   /** SPEC_031: 계산한 소리 힌트(있으면 phoneticKr 대신) — 뒷면(Source 앞)에만 */
-  soundHint?: { hangul: string; ipa: string } | null;
+  soundHint?: { hangul: string; ipa: string; text?: string } | null;
 }
 
 export interface SentenceSettingsLike {
@@ -451,7 +451,7 @@ export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSe
   const blanks = sentenceBlankIndices(input.words, input.attempts);
   // SPEC_031: 앞면 Hint = 함정 유형만. 한글 소리·IPA는 뒷면(Source 앞)으로.
   const sound = input.soundHint
-    ? `🔊 [${escapeHtml(input.soundHint.hangul)}] /${escapeHtml(input.soundHint.ipa)}/`
+    ? `🔊 ${input.soundHint.text ? `${escapeHtml(input.soundHint.text)} → ` : ""}[${escapeHtml(input.soundHint.hangul)}] /${escapeHtml(input.soundHint.ipa)}/`
     : input.phoneticKr?.trim()
       ? `🔊 ${escapeHtml(input.phoneticKr.trim())}`
       : "";

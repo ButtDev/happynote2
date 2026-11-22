@@ -78,7 +78,7 @@ export function buildAnalysisPrompt(title: string, segments: PromptSegment[]): s
     "For each segment, provide:",
     "1. traps: Array of applicable trap categories (LINKING, FLAP_T, WEAK_FORM, ELISION, SLANG, SPEED_SPIKE).",
     "2. phoneticKr: Realistic Korean phonetic approximation of the linked/reduced chunk as heard in American speech, not from spelling (e.g. 'did you eat -> [디쥬잇]', 'bought a -> [바러]', 'exactly -> [익재끌리]').",
-    "3. trapExplanation: Concise Korean explanation of the sound change.",
+    "3. trapExplanation: Concise Korean explanation of the sound change. Quote English words in English as written (e.g. 'did a lot of'); never write Korean phonetic spellings in this field.",
     "4. skeletonWordIndices: 0-based word indices of stressed content words.",
     "5. dictationBlankIndices: 0-based word indices (2-3 words max) of the trickiest linked/reduced words for micro-dictation.",
     "6. rhythmGuide: Sentence with stressed words capitalized/bolded and '/' for natural pauses.",

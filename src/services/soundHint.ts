@@ -369,7 +369,41 @@ export function soundHintForWords(words: string[], dict: PronDict): SoundHint | 
 
 export interface HintSegmentLike {
   words: string[];
-  analysis?: { chunkWordIndices?: number[]; dictationBlankIndices?: number[] } | null;
+  analysis?: { chunkWordIndices?: number[]; dictationBlankIndices?: number[]; trapExplanation?: string } | null;
+}
+
+const CHUNK_STOP_WORDS = new Set([
+  "a", "an", "the", "to", "and", "of", "for", "you", "your", "can", "at", "them", "him", "her", "have", "was", "are",
+  "with", "that", "this", "from", "into", "they", "were", "been", "what", "when", "there", "their", "then", "than",
+]);
+
+// 앞뒤 문장부호·따옴표('going to') 뺌, 낱말 안 아포스트로피(I'm)는 남김
+const normChunkWord = (w: string) => w.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, "");
+
+/** AI 설명 속 영어 구를 문장 낱말에서 찾은 번호(연속). 없으면 []. SPEC_032 3절. */
+export function explanationChunk(words: string[], explanation: string | null | undefined): number[] {
+  if (!explanation) return [];
+  const sent = words.map(normChunkWord);
+  const runs = (explanation.match(/[A-Za-z']+(?: +[A-Za-z']+)*/g) ?? []).map((r) => r.split(/ +/).map(normChunkWord).filter(Boolean));
+  for (const run of runs) {
+    let best: number[] = [];
+    for (let a = 0; a < run.length; a++) {
+      for (let st = 0; st < sent.length; st++) {
+        let k = 0;
+        while (k < 6 && a + k < run.length && st + k < sent.length && run[a + k] === sent[st + k]) k++;
+        if (k >= 2 && k > best.length) best = Array.from({ length: k }, (_, j) => st + j);
+      }
+    }
+    if (best.length > 0) return best;
+  }
+  for (const run of runs) {
+    if (run.length !== 1) continue;
+    const w = run[0];
+    if (w.length < 4 || CHUNK_STOP_WORDS.has(w)) continue;
+    const i = sent.indexOf(w);
+    if (i >= 0) return [i];
+  }
+  return [];
 }
 
 /** 힌트를 계산할 낱말 번호(연속, 오름차순). SPEC_031 3절. */
@@ -383,6 +417,8 @@ export function pickHintChunk(seg: HintSegmentLike): number[] {
   const valid = (xs: number[] | undefined) => (xs ?? []).filter((i) => Number.isInteger(i) && i >= 0 && i < n);
   const chunk = valid(seg.analysis?.chunkWordIndices);
   if (chunk.length > 0) return range(Math.min(...chunk), Math.max(...chunk));
+  const fromText = explanationChunk(seg.words, seg.analysis?.trapExplanation);
+  if (fromText.length > 0) return fromText;
   if (n <= 8) return range(0, n - 1);
   const blanks = valid(seg.analysis?.dictationBlankIndices);
   if (blanks.length > 0) return range(Math.min(...blanks) - 1, Math.max(...blanks) + 1);

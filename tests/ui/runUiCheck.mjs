@@ -157,12 +157,15 @@ function evaluateExpect(vp, m, nums) {
   // SPEC_031: 정답 단계 「🔊 발음 포인트」 = 계산한 [한글] /IPA/
   if (e.soundHintStep3) {
     const ph = m.dictionary?.phonetic ?? "";
-    add("soundHintStep3", /^🔊 발음 포인트: \[[가-힣 ]+\] \/[^/]+\/ — /.test(ph), JSON.stringify(ph));
+    // SPEC_032: 힌트 앞에 덩어리 영어 「<낱말> → 」
+    add("soundHintStep3", /^🔊 발음 포인트: [A-Za-z'][A-Za-z' ,.?!]* → \[[가-힣 ]+\] \/[^/]+\/ — /.test(ph), JSON.stringify(ph));
+    const ph2 = m.dictionary?.phonetic2 ?? "";
+    add("soundHintStep2NoChunk", /^🔊 실제 발음 힌트: \[[가-힣 ]+\] \/[^/]+\/$/.test(ph2), JSON.stringify(ph2));
   }
   // SPEC_031: 문장 카드 앞면 Hint엔 한글 소리 없음, 뒷면 Source 맨 앞에 🔊 [한글] /IPA/
   if (e.sentenceAnki?.soundOnBack) {
     const f = m.sentenceAnki?.note?.fields ?? {};
-    const ok = !String(f.Hint ?? "").includes("[") && /^🔊 \[[가-힣 ]+\] \/[^/]+\/<br><a /.test(String(f.Source ?? ""));
+    const ok = !String(f.Hint ?? "").includes("[") && /^🔊 [A-Za-z'][A-Za-z' ,.?!]* → \[[가-힣 ]+\] \/[^/]+\/<br><a /.test(String(f.Source ?? ""));
     add("sentenceAnki.soundOnBack", ok, JSON.stringify({ Hint: f.Hint, Source: f.Source }));
   }
   if (e.sentenceAnki) {
@@ -592,7 +595,12 @@ for (const vp of cases.viewports) {
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       const card = document.querySelector(".ear-coach-segment-card");
       if (!card) return { error: "card missing" };
-      const step3 = card.querySelector('.ear-coach-step-btn[data-step="3"]'); // SPEC_028: 글자 대신 data-step
+      // SPEC_032: 2단계 힌트 글자(덩어리 영어가 없어야 함)
+      const step2 = card.querySelector('.ear-coach-step-btn[data-step="2"]');
+      step2?.click();
+      await wait(200);
+      const phonetic2 = document.querySelector(".ear-coach-segment-card .ear-coach-sound-hint-box .ear-coach-phonetic-kr")?.textContent ?? null;
+      const step3 = document.querySelector('.ear-coach-segment-card .ear-coach-step-btn[data-step="3"]'); // SPEC_028: 글자 대신 data-step
       if (!step3) return { error: "step3 button missing" };
       step3.click();
       await wait(200);
@@ -621,10 +629,14 @@ for (const vp of cases.viewports) {
         pauseCalls: (window.__pauseCalls ?? 0) - before,
         lookups: window.__dictLookups ?? [],
         phonetic,
+        phonetic2,
       };
     });
     await page.screenshot({ path: path.join(outDir, `dictionary-${vp.name}.png`) });
     await page.evaluate(() => document.querySelectorAll(".modal-container").forEach((e) => e.remove()));
+    // SPEC_032: 사전 창을 닫은 뒤 3단계 카드(「🔊 발음 포인트: <덩어리> → […]」)
+    await page.evaluate(() => document.querySelector(".ear-coach-segment-card .ear-coach-full-reveal-box .ear-coach-phonetic-kr")?.scrollIntoView({ block: "center" }));
+    await page.screenshot({ path: path.join(outDir, `sound-hint-${vp.name}.png`) });
   }
 
   // SPEC_014: 같은 카드에서 「going」 누름 → 맨 위 구동사 칸(go to) + 그 아래 단어 칸

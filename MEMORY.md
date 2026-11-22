@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- BRAT 1.0.39 배포(SPEC_031 소리 힌트). ⏳ 실기기 버튼 대기: 031 8(새 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA가 실제 소리에 가까운지 — 026 4도 함께) · 025 5(고른 뜻 하나만 앞면) · 027 4(⏰ 목록) · 028 4(🔁·📌 아이콘). OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보 SPEC_032: 사전에 없는 낱말 → dictionaryapi IPA 대체(SPEC_031 범위 밖).
+- BRAT 1.0.40 배포(SPEC_032 힌트 덩어리를 AI 설명과 맞춤, 정답 단계·Anki 뒷면에 「did a lot of → [..]」). ⏳ 실기기 버튼 대기: 032 7(Miss Earth 문장 정답 단계) · 031 8(새 핀 문장 카드 앞면 한글 없음·뒷면 한글+IPA — 026 4도 함께) · 025 5 · 027 4 · 028 4. OK 오면 `/spec-run SPEC_NNN 사람확인: <항목> OK` → DONE. 다음 후보: SPEC_033 사전에 없는 낱말 → dictionaryapi IPA 대체, going to → gonna 같은 축약 규칙(지금 계산은 [고잉 터]라 설명의 gonna와 다름), 옛 분석 재분석 버튼.
 - 사람 AnkiDroid에 노트 유형 `happynote2 Listening` 만들어졌고 문장 카드 저장·AnkiWeb 전체 동기화(AnkiDroid 쪽 유지 안내)까지 됨(11-22). 문장 카드도 덱은 `happynote2`.
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 - 이미지 서버 8001(`run-detached.mjs status review-site`)이 아직 켜져 있고 외부 스캐너 접속 기록이 있음 — 쓸 일 없으면 끄자고 제안할 것.
@@ -32,4 +32,4 @@
 - 세로 입력 중 배치(SPEC_029): `src/ui/mobileTypingMode.ts` — 목록 입력칸 포커스 → `is-typing`(영상 상자 높이 0·툴바/조절 바 숨김) + 컨테이너 `position:fixed`(헤더 아래 ~ visualViewport 끝, 조상 transform 해제). 실기기 Obsidian은 키보드 때 앱 영역을 헤더 밑 ~30px까지 줄임. 입력칸이 가려지면 `[Ear-Coach 진단]` 알림. 화면 검사 `expect.typing`(heights·squeeze·advance). `EarCoachView.ts`에도 900줄 한도 시험 있음(지금 ~830).
 - 빈칸 채점(SPEC_030): `src/utils/dictationMatch.ts` `dictationMatches`(아포스트로피·구두점 무시, 같은 말 묶음 `DICTATION_SAME_WORDS`), Test 19 + `tests/fixtures/dictation/cases.json`, 변이용 `EAR_COACH_DICTATION_MODULE`. 맞히면 `MicroDictationBox.focusNextBlank`.
 - 셸 한 줄에 한국어·따옴표 JSON을 길게 넣으면 zsh 파싱 실패로 통째로 안 돎 → 긴 기록·버전 올림은 `.scratch/` 파이썬 스크립트로.
-- 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지).
+- 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말.
