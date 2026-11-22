@@ -120,3 +120,4 @@
 {"ts":"2026-11-22T11:16:53.550Z","cmd":"/spec-run","spec":"SPEC_028","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
 {"ts":"2026-11-22T11:16:53.592Z","cmd":"/spec-run","spec":"SPEC_033","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
 {"ts":"2026-11-22T11:27:28.536Z","cmd":"/spec-new","spec":"SPEC_035","result":"READY","questions":0}
+{"ts":"2026-11-22T11:32:33.958Z","cmd":"/spec-run","spec":"SPEC_035","iteration":1,"status":"IMPLEMENTED","evidence":"Test 20 규칙A·축약·IPA 통과, 변이 3개 실패, 블로그 0.709, regression ok"}

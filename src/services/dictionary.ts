@@ -16,6 +16,8 @@ export interface DictionaryMeaning {
 export interface DictionaryEntry {
   word: string;
   phonetic: string | null;
+  /** SPEC_035: 미국 발음 IPA(`-us` 오디오 짝 → `oʊ` 든 글자 → phonetic) */
+  ipaUs?: string | null;
   audioUrl: string | null;
   meanings: DictionaryMeaning[];
   sourceUrl: string | null;
@@ -85,7 +87,20 @@ export function parseDictionaryApiDev(json: Json): DictionaryEntry | null {
   if (meanings.length === 0) return null;
 
   const { audioUrl } = pickPronunciation(json);
-  return { word, phonetic, audioUrl, meanings, sourceUrl };
+  return { word, phonetic, ipaUs: pickUsIpa(json) ?? phonetic, audioUrl, meanings, sourceUrl };
+}
+
+/** SPEC_035: 미국 발음 IPA 글자 — `-us.mp3` 짝 → `oʊ` 든 글자 → 첫 글자 */
+export function pickUsIpa(json: Json): string | null {
+  if (!Array.isArray(json)) return null;
+  const texts: { text: string; audio: string }[] = [];
+  for (const e of json) {
+    if (typeof e?.phonetic === "string" && e.phonetic.trim()) texts.push({ text: e.phonetic.trim(), audio: "" });
+    for (const p of Array.isArray(e?.phonetics) ? e.phonetics : []) {
+      if (typeof p?.text === "string" && p.text.trim()) texts.push({ text: p.text.trim(), audio: typeof p?.audio === "string" ? p.audio : "" });
+    }
+  }
+  return (texts.find((t) => /-us\.mp3$/i.test(t.audio)) ?? texts.find((t) => t.text.includes("oʊ")) ?? texts[0])?.text ?? null;
 }
 
 /**

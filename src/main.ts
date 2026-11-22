@@ -13,6 +13,7 @@ import { isDesktopApp, isMobileApp } from "./utils/platform";
 import { TranscriptWorkerManager } from "./workers/WorkerPoolManager";
 import { TranscriptService } from "./services/TranscriptService";
 import { DictionaryApiDevProvider, DictionaryProvider } from "./services/dictionary";
+import { setPronunciationFetcher } from "./services/cmudictLite";
 import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker, migrateAnkiDeck } from "./services/anki";
 import { StoryboardInfo, storyboardFromPlayerResponse, storyboardFromWatchHtml } from "./services/storyboard";
 import { AgyCliService } from "./services/AgyCliService";
@@ -118,6 +119,7 @@ export default class EarCoachPlugin extends Plugin {
   public bypassOpenInterceptor = false;
 
   public async onload(): Promise<void> {
+    setPronunciationFetcher(async (w) => { const e = await this.dictionary.lookup(w); return e?.ipaUs ?? e?.phonetic ?? null; }); // SPEC_035
     await this.loadSettings();
 
     this.workerManager = new TranscriptWorkerManager(2);

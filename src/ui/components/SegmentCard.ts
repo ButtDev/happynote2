@@ -3,7 +3,7 @@ import { isDesktopApp, isMobileApp } from "../../utils/platform";
 import { trapLabel } from "../../utils/trapLabels";
 import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
-import { segmentSoundHint } from "../../services/cmudictLite";
+import { ensureSegmentPronunciations, segmentSoundHint } from "../../services/cmudictLite";
 
 export interface SegmentCardCallbacks {
   onPlaySegment: (segment: TranscriptSegment, loop: boolean) => void;
@@ -59,6 +59,11 @@ export class SegmentCard {
     const hint = segmentSoundHint(this.segment);
     // SPEC_032: 정답 단계에선 어느 낱말의 힌트인지 앞에 붙임(2단계는 정답이 드러나므로 안 붙임)
     if (hint) return `${withChunk ? `${hint.text} → ` : ""}[${hint.hangul}] /${hint.ipa}/`;
+    // SPEC_035: 사전에 없는 낱말 → dictionaryapi IPA를 받아 오면 다시 그림(그동안은 AI 값)
+    const seg = this.segment;
+    void ensureSegmentPronunciations(seg).then((added) => {
+      if (added && this.segment === seg) this.render();
+    });
     return this.segment.analysis?.phoneticKr ?? "";
   }
 

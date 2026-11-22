@@ -32,9 +32,10 @@ import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
 import * as reviewSrc from "../src/utils/reviewQueue.ts";
 import * as dictationSrc from "../src/utils/dictationMatch.ts";
 import * as soundHintSrc from "../src/services/soundHint.ts";
+import * as pronFallbackSrc from "../src/services/pronFallback.ts";
 import * as videoDataSrc from "../src/services/videoData.ts";
 import * as videoTrashSrc from "../src/services/videoTrash.ts";
-import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation } from "../src/services/dictionary.ts";
+import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
 function log(line: string) {
@@ -379,7 +380,7 @@ async function runAllTests() {
   log("[Test 11] Dictionary: normalize word & parse dictionaryapi.dev (data-driven, SPEC_013)");
   const dictMod = process.env.EAR_COACH_DICT_MODULE
     ? await import(path.resolve(process.env.EAR_COACH_DICT_MODULE))
-    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl, lemmaVariants, phraseCandidates, phraseCandidatesAround };
+    : { normalizeLookupWord, parseDictionaryApiDev, DictionaryApiDevProvider, pickPronunciation, parseCommonsAudioUrl, lemmaVariants, phraseCandidates, phraseCandidatesAround, pickUsIpa };
   const dictDir = path.resolve("tests/fixtures/dictionary");
   const norm = JSON.parse(fs.readFileSync(path.join(dictDir, "_normalize.json"), "utf8"));
   for (const [raw, want] of norm.cases) {
@@ -405,6 +406,10 @@ async function runAllTests() {
     }
     dictCount++;
   }
+  // SPEC_035: 미국 발음 IPA 고르기(실제 응답) + 파싱 결과 ipaUs
+  const usIpa = JSON.parse(fs.readFileSync(path.join(dictDir, "_ipa-us.json"), "utf8"));
+  for (const c of usIpa.cases) assert.equal(dictMod.pickUsIpa(c.response), c.expect, `pickUsIpa(${c.word})`);
+  assert.equal(dictMod.parseDictionaryApiDev(JSON.parse(fs.readFileSync(path.join(dictDir, "back.json"), "utf8")).response)?.ipaUs, "/bæk/", "parseDictionaryApiDev ipaUs (back)");
   // 제공자: 404 → null, 캐시(같은 단어 두 번이면 fetch 1회), 정리된 단어로 URL
   const fetched: string[] = [];
   const helloRaw = JSON.parse(fs.readFileSync(path.join(dictDir, "hello.json"), "utf8")).response;
@@ -874,6 +879,29 @@ async function runAllTests() {
   log(`  -> 블로그 근접도 평균 ${meanOurs.toFixed(3)} (철자식 ${meanBase.toFixed(3)}, 기준 ${blog.minMean})`);
   assert.ok(meanOurs >= blog.minMean, `블로그 근접도 평균 ${meanOurs.toFixed(3)} < ${blog.minMean}`);
   assert.ok(meanOurs > meanBase, `블로그 근접도 ${meanOurs.toFixed(3)}가 철자식 ${meanBase.toFixed(3)}보다 높아야 함`);
+  // SPEC_035: IPA → ARPAbet + 없는 낱말 채우기(PronFallback, 가짜 fetch)
+  const ipaData = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/sound-hint/ipa.json"), "utf8"));
+  for (const [ipa, arpa, hangul] of ipaData.convert) {
+    const got = shMod.ipaToArpabet(ipa);
+    assert.equal(got?.join(" "), arpa, `ipaToArpabet(${ipa})`);
+    assert.equal(shMod.soundHintForWords(["x"], new Map([["x", got]]))?.hangul, hangul, `IPA 한글(${ipa})`);
+  }
+  for (const [word, ipa] of ipaData.sameAsCmu) assert.equal(shMod.ipaToArpabet(ipa)?.join(" "), cmu.get(word)?.join(" "), `ipaToArpabet(${ipa}) == CMUdict ${word}`);
+  for (const [ipa, note] of ipaData.invalid) assert.equal(shMod.ipaToArpabet(ipa), null, `ipaToArpabet null: ${note}`);
+  const pfMod = process.env.EAR_COACH_PRONFALLBACK_MODULE ? await import(path.resolve(process.env.EAR_COACH_PRONFALLBACK_MODULE)) : pronFallbackSrc;
+  const pfCalls: string[] = [];
+  const pf = new pfMod.PronFallback(cmu, async (w: string) => {
+    pfCalls.push(w);
+    return ipaData.fallback.ipa[w] ?? null;
+  });
+  for (const c of ipaData.fallback.cases) {
+    pfCalls.length = 0;
+    assert.equal(shMod.soundHintForWords(c.words, pf)?.hangul ?? null, c.before, `PronFallback before: ${c.note}`);
+    assert.equal(await pf.ensure(c.words), c.added, `PronFallback added: ${c.note}`);
+    assert.deepEqual(pfCalls, c.calls, `PronFallback calls: ${c.note}`);
+    assert.equal(shMod.soundHintForWords(c.words, pf)?.hangul ?? null, c.after, `PronFallback after: ${c.note}`);
+  }
+  log(`  -> PASS: ipa ${ipaData.convert.length} convert + ${ipaData.invalid.length} invalid + ${ipaData.fallback.cases.length} fallback`);
   log("");
 
   log("[Test 21] Video data list & delete — 노트·sidecar·플러그인 사본 합집합, 휴지통으로 (data-driven, SPEC_033)");

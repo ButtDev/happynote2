@@ -5,7 +5,7 @@
  */
 import type { TranscriptSegment } from "../types/transcript";
 import type { AnkiInvoker, FetchBytes, SentenceSettingsLike } from "../services/anki";
-import { segmentSoundHint } from "../services/cmudictLite";
+import { ensureSegmentPronunciations, segmentSoundHint } from "../services/cmudictLite";
 import { ANKI_MESSAGES, addNoteIfNew, ankiStatusMessage, buildSentenceNote, resolveSentenceTarget, snapshotFilename, storeSnapshot } from "../services/anki";
 
 export interface SentenceAnkiDeps {
@@ -31,6 +31,7 @@ export async function saveSentenceCard(deps: SentenceAnkiDeps, seg: TranscriptSe
       const sec = seg.end > seg.start ? (seg.start + seg.end) / 2 : seg.start;
       pictureFilename = await storeSnapshot(client, () => snapshot(videoId, sec), snapshotFilename(videoId, sec));
     }
+    await ensureSegmentPronunciations(seg); // SPEC_035: 사전에 없는 낱말 IPA
     const note = buildSentenceNote(
       {
         text: seg.text,

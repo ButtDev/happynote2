@@ -130,8 +130,28 @@ export function expandHintWord(w: string): string[] | null {
   return out;
 }
 
-export function wordsToPhonemes(words: string[], dict: PronDict): Ph[] | null {
-  // 숫자가 빠지던 것(30-minute → minute) — 숫자는 영어로 읽고, 못 읽으면 계산 포기(AI 값으로)
+/** SPEC_035: 축약 — 덩어리 안 두 낱말 → 한 낱말 소리 */
+export const CONTRACTIONS: Record<string, string> = {
+  "going to": "G AH1 N AH0",
+  "want to": "W AA1 N AH0",
+  "got to": "G AA1 T AH0",
+  "have to": "HH AE1 F T AH0",
+  "has to": "HH AE1 S T AH0",
+  "kind of": "K AY1 N D AH0",
+  "sort of": "S AO1 R T AH0",
+  "out of": "AW1 T AH0",
+  "let me": "L EH1 M IY0",
+  "give me": "G IH1 M IY0",
+  "don't know": "D AH0 N OW1",
+};
+/** 「… to」 축약을 막는 다음 낱말(to가 전치사) */
+const TO_BLOCKERS = new Set(["the", "a", "an", "my", "your", "his", "her", "our", "their", "this", "that", "these", "those"]);
+
+/** 낱말 하나(사전 찾기용 글자) 또는 축약(ARPAbet 직접) */
+export type HintToken = { word: string; arpa?: string };
+
+/** 펼친 낱말 + 축약 적용(SPEC_035). 못 읽는 숫자가 있으면 null. */
+export function hintLookupWords(words: string[]): HintToken[] | null {
   const expanded: string[] = [];
   for (const w of words) {
     const e = expandHintWord(w);
@@ -139,18 +159,98 @@ export function wordsToPhonemes(words: string[], dict: PronDict): Ph[] | null {
     expanded.push(...e);
   }
   const norm = expanded.filter(Boolean);
-  if (norm.length === 0) return null;
+  const out: HintToken[] = [];
+  for (let i = 0; i < norm.length; i++) {
+    const pair = i + 1 < norm.length ? `${norm[i]} ${norm[i + 1]}` : "";
+    const arpa = CONTRACTIONS[pair];
+    const blocked = norm[i + 1] === "to" && TO_BLOCKERS.has(norm[i + 2] ?? "");
+    if (arpa && !blocked) {
+      out.push({ word: pair, arpa });
+      i++;
+      continue;
+    }
+    out.push({ word: norm[i] });
+  }
+  return out;
+}
+
+/** 사전에 없는 낱말(기능어 약한 꼴·축약 제외). 못 읽는 숫자가 있으면 null. */
+export function missingHintWords(words: string[], dict: PronDict): string[] | null {
+  const toks = hintLookupWords(words);
+  if (!toks) return null;
+  const multi = toks.length > 1;
+  return [...new Set(toks.filter((t) => !t.arpa && !(multi && WEAK_FORMS[t.word]) && !dict.get(t.word)).map((t) => t.word))];
+}
+
+export function wordsToPhonemes(words: string[], dict: PronDict): Ph[] | null {
+  // 숫자가 빠지던 것(30-minute → minute) — 숫자는 영어로 읽고, 못 읽으면 계산 포기(AI 값으로)
+  const toks = hintLookupWords(words);
+  if (!toks || toks.length === 0) return null;
   const out: Ph[] = [];
-  for (let w = 0; w < norm.length; w++) {
-    const word = norm[w];
-    const weak = norm.length > 1 ? WEAK_FORMS[word] : undefined;
-    const arpa = weak ? weak.split(" ") : dict.get(word);
+  for (let w = 0; w < toks.length; w++) {
+    const { word, arpa: fixed } = toks[w];
+    const weak = toks.length > 1 && !fixed ? WEAK_FORMS[word] : undefined;
+    const arpa = fixed ? fixed.split(" ") : weak ? weak.split(" ") : dict.get(word);
     if (!arpa || arpa.length === 0) return null;
     arpa.forEach((a, i) => out.push({ ...toPh(a, w, i), ...(weak ? { weak: true } : {}) }));
   }
   return out;
 }
 
+// ── IPA → ARPAbet (SPEC_035: 사전에 없는 낱말) ─────────────
+const IPA2: Record<string, string> = {
+  "tʃ": "CH", "dʒ": "JH", "eɪ": "EY", "aɪ": "AY", "ɔɪ": "OY", "aʊ": "AW", "oʊ": "OW", "əʊ": "OW",
+  "ɪə": "IH R", "eə": "EH R", "ʊə": "UH R", "ɜɹ": "ER", "ɜr": "ER", "əɹ": "ER", "ər": "ER",
+};
+const IPA1: Record<string, string> = {
+  "ɝ": "ER", "ɚ": "ER", "ɜ": "ER", "ə": "AH", "ʌ": "AH", "ɐ": "AH", "æ": "AE", "a": "AA", "ɑ": "AA", "ɒ": "AA", "ɔ": "AO",
+  "ɛ": "EH", "e": "EH", "ɪ": "IH", "ᵻ": "IH", "ɨ": "IH", "i": "IY", "ʊ": "UH", "u": "UW", "o": "OW",
+  "p": "P", "b": "B", "t": "T", "d": "D", "k": "K", "ɡ": "G", "g": "G", "f": "F", "v": "V", "θ": "TH", "ð": "DH",
+  "s": "S", "z": "Z", "ʃ": "SH", "ʒ": "ZH", "h": "HH", "m": "M", "n": "N", "ŋ": "NG", "l": "L", "ɫ": "L",
+  "ɹ": "R", "r": "R", "ɾ": "T", "j": "Y", "w": "W", "ʔ": "T",
+};
+
+/** dictionaryapi IPA 글자 → ARPAbet(강세 숫자). 모르는 기호가 있으면 null. */
+export function ipaToArpabet(ipa: string | null | undefined): string[] | null {
+  if (!ipa) return null;
+  let s = ipa.split(/[,;]/)[0];
+  s = s.replace(/\(([ɹr])\)/g, "$1").replace(/\([^)]*\)/g, "");
+  s = s.replace(/[\/\[\]\s.ːˑ‿\u0303\u0306]/g, "").replace(/'/g, "ˈ");
+  const out: string[] = [];
+  let stress = 0;
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch === "ˈ") { stress = 1; i++; continue; }
+    if (ch === "ˌ") { stress = 2; i++; continue; }
+    if (ch === "\u0329") {
+      // 음절 자음(l̩ n̩) → 앞에 약모음
+      const c = out.pop();
+      out.push("AH0");
+      if (c) out.push(c);
+      i++;
+      continue;
+    }
+    const two = s.slice(i, i + 2);
+    const sym = IPA2[two] ?? IPA1[ch];
+    if (!sym) return null;
+    i += IPA2[two] ? 2 : 1;
+    for (const p of sym.split(" ")) {
+      if (VOWELS.has(p)) {
+        out.push(`${p}${stress}`);
+        stress = 0;
+      } else out.push(p);
+    }
+  }
+  if (out.length === 0) return null;
+  if (!out.some((p) => /[12]$/.test(p))) {
+    const k = out.findIndex((p) => /0$/.test(p));
+    if (k >= 0) out[k] = out[k].replace(/0$/, "1");
+  }
+  return out;
+}
+
+const GEMINATE_MERGE = new Set(["P", "B", "T", "D", "K", "G", "S"]);
 const isV = (x: Ph | undefined) => !!x && x.s >= 0;
 const isC = (x: Ph | undefined) => !!x && x.s < 0;
 
@@ -171,10 +271,10 @@ export function applyConnectedSpeech(input: Ph[]): Ph[] {
     const sameWord = a?.w === x.w && b?.w === x.w;
     return !(x.p === "T" && a?.p === "N" && isV(b) && b!.s !== 1 && (sameWord || (x.weak && x.first)));
   });
-  // 2c. 낱말 경계의 같은 자음 둘 → 하나 (it tastes → 이테이스)
+  // 2c. 낱말 경계의 같은 자음 둘 → 하나 (it tastes → 이테이스) — 파열음·S만, 비음·L·R은 둘 다 (nineteen ninety, SPEC_035)
   ph = ph.filter((x, i) => {
     const b = ph[i + 1];
-    return !(isC(x) && b && b.p === x.p && b.w !== x.w);
+    return !(isC(x) && b && b.p === x.p && b.w !== x.w && GEMINATE_MERGE.has(x.p));
   });
   // 2d. 낱말 끝 T·D + 다음 낱말 Y → CH·JH (did you → 디쥬)
   for (let i = 0; i + 1 < ph.length; i++) {
@@ -199,7 +299,9 @@ export function applyConnectedSpeech(input: Ph[]): Ph[] {
     if ((x.p === "P" || x.p === "K") && !x.first && !x.tense) {
       const v = isV(b) ? b : ["L", "R"].includes(b?.p ?? "") && isV(ph[i + 2]) ? ph[i + 2] : undefined;
       const sonorantBefore = isV(a) || ["M", "N", "NG", "L", "R"].includes(a?.p ?? "");
-      if (v && v.s === 0 && sonorantBefore) x.tense = true;
+      // SPEC_035: 낱말 끝 -ing(IH0 NG) 앞은 된소리 아님 (walking → 워킹)
+      const ingNext = !!v && v === b && b!.p === "IH" && ph[i + 2]?.p === "NG" && ph[i + 2].w === x.w && ph[i + 3]?.w !== x.w;
+      if (v && v.s === 0 && sonorantBefore && !ingNext) x.tense = true;
     }
     // 0. 낱말 첫 S + 모음 → ㅆ
     if (x.p === "S" && x.first && isV(b)) x.tense = true;
@@ -280,13 +382,14 @@ export function phonemesToHangul(ph: Ph[]): string {
       const seq = [...VOWEL_JAMO[x.p]];
       const on = onset as { j: string; c: Ph | null; plainR?: boolean } | null;
       // 강세 앞 열린 음절의 약모음 + 파열음 첫소리 → ㅡ (banana → 브내너)
-      if (x.p === "AH" && x.s === 0 && on?.c && STOPS.has(on.c.p) && isC(next) && isV(ph[i + 2]) && ph[i + 2].s === 1 && ph[i + 2].w === x.w) seq[0] = "ㅡ";
+      if (x.p === "AH" && x.s === 0 && on?.c && STOPS.has(on.c.p) && !on.c.flap && isC(next) && isV(ph[i + 2]) && ph[i + 2].s === 1 && ph[i + 2].w === x.w) seq[0] = "ㅡ";
       let v0 = seq[0];
       const op = on?.c?.p;
       if (glide === "Y") v0 = Y_GLIDE[v0] ?? v0;
       else if (glide === "W") v0 = W_GLIDE[v0] ?? v0;
       else if (op === "R" && !on?.plainR) v0 = R_COLOR[v0] ?? v0;
-      else if (op === "SH") v0 = v0 === "ㅣ" ? "ㅟ" : Y_GLIDE[v0] ?? v0;
+      // SPEC_035: SH + 강세 없는 ㅣ → 시(finishing → 퓌니싱). F·V + ㅣ → 퓌·뷔는 유지(사람이 준 블로그 표기 커어퓌·뷔엗나암)
+      else if (op === "SH") v0 = v0 === "ㅣ" ? (x.s === 0 ? "ㅣ" : "ㅟ") : Y_GLIDE[v0] ?? v0;
       else if ((op === "F" || op === "V") && v0 === "ㅣ") v0 = "ㅟ";
       else if ((op === "CH" || op === "JH") && (x.p === "AA" || x.p === "AO" || x.p === "AY")) v0 = W_GLIDE[v0] ?? v0;
       seq[0] = v0;
@@ -306,7 +409,7 @@ export function phonemesToHangul(ph: Ph[]): string {
     }
     if ((x.p === "Y" || x.p === "W") && !isV(next)) continue;
     // T+S / D+Z → 츠·즈 (모음 앞이면 받침 ㅅ + ㅉ)
-    if ((x.p === "T" || x.p === "D") && !x.flap && (next?.p === "S" || next?.p === "Z")) {
+    if ((x.p === "T" || x.p === "D") && !x.flap && (next?.p === "S" || next?.p === "Z") && next.w === x.w) {
       if (isV(ph[i + 2])) {
         flushOnset();
         const l = last();

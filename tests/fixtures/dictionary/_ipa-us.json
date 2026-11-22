@@ -1,0 +1,155 @@
+{
+  "_note": "SPEC_035 pickUsIpa — dictionaryapi.dev 실제 응답(2026-11-22, 뜻 칸 뺌). -us.mp3 짝 → oʊ 든 글자 → 첫 글자",
+  "cases": [
+    {
+      "word": "procrastinate",
+      "response": [
+        {
+          "word": "procrastinate",
+          "phonetics": [
+            {
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/procrastinate-au.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=75834355",
+              "license": {
+                "name": "BY-SA 4.0",
+                "url": "https://creativecommons.org/licenses/by-sa/4.0"
+              }
+            },
+            {
+              "text": "/pɹəʊˈkɹæstɪneɪt/",
+              "audio": ""
+            },
+            {
+              "text": "/pɹoʊˈkɹæstəneɪt/",
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/procrastinate-us.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=1217794",
+              "license": {
+                "name": "BY-SA 3.0",
+                "url": "https://creativecommons.org/licenses/by-sa/3.0"
+              }
+            }
+          ]
+        }
+      ],
+      "expect": "/pɹoʊˈkɹæstəneɪt/"
+    },
+    {
+      "word": "ubiquitous",
+      "response": [
+        {
+          "word": "ubiquitous",
+          "phonetics": [
+            {
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ubiquitous-au.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=75859043",
+              "license": {
+                "name": "BY-SA 4.0",
+                "url": "https://creativecommons.org/licenses/by-sa/4.0"
+              }
+            },
+            {
+              "text": "/juːˈbɪk.wə.təs/",
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ubiquitous-uk.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=583119"
+            },
+            {
+              "text": "/juˈbɪk.wɪ.təs/",
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/ubiquitous-us.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=811935",
+              "license": {
+                "name": "BY-SA 3.0",
+                "url": "https://creativecommons.org/licenses/by-sa/3.0"
+              }
+            }
+          ]
+        }
+      ],
+      "expect": "/juˈbɪk.wɪ.təs/"
+    },
+    {
+      "word": "serendipity",
+      "response": [
+        {
+          "word": "serendipity",
+          "phonetic": "/ˌsɛ.ɹən.ˈdɪ.pɪ.ti/",
+          "phonetics": [
+            {
+              "text": "/ˌsɛ.ɹən.ˈdɪ.pɪ.ti/",
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/serendipity-au.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=75857831",
+              "license": {
+                "name": "BY-SA 4.0",
+                "url": "https://creativecommons.org/licenses/by-sa/4.0"
+              }
+            },
+            {
+              "text": "/ˌsɛ.ɹən.ˈdɪ.pɪ.ti/",
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/serendipity-us.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=965947",
+              "license": {
+                "name": "BY-SA 3.0",
+                "url": "https://creativecommons.org/licenses/by-sa/3.0"
+              }
+            }
+          ]
+        }
+      ],
+      "expect": "/ˌsɛ.ɹən.ˈdɪ.pɪ.ti/"
+    },
+    {
+      "word": "quinoa",
+      "response": [
+        {
+          "word": "quinoa",
+          "phonetic": "/kiːˈnəʊə/",
+          "phonetics": [
+            {
+              "text": "/kiːˈnəʊə/",
+              "audio": ""
+            },
+            {
+              "text": "/k(w)əˈnoʊə/",
+              "audio": ""
+            }
+          ]
+        }
+      ],
+      "expect": "/k(w)əˈnoʊə/"
+    },
+    {
+      "word": "emoji",
+      "response": [
+        {
+          "word": "emoji",
+          "phonetics": [
+            {
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/emoji-au.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=75730482",
+              "license": {
+                "name": "BY-SA 4.0",
+                "url": "https://creativecommons.org/licenses/by-sa/4.0"
+              }
+            },
+            {
+              "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/emoji-ca.mp3",
+              "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=52514965",
+              "license": {
+                "name": "BY-SA 3.0",
+                "url": "https://creativecommons.org/licenses/by-sa/3.0"
+              }
+            },
+            {
+              "text": "/ɪˈməʊdʒi/",
+              "audio": ""
+            },
+            {
+              "text": "/iˈmoʊdʒi/",
+              "audio": ""
+            }
+          ]
+        }
+      ],
+      "expect": "/iˈmoʊdʒi/"
+    }
+  ]
+}

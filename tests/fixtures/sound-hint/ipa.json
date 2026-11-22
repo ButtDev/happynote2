@@ -1,0 +1,141 @@
+{
+  "_note": "SPEC_035 IPA → ARPAbet → 한글. ipa 글자는 dictionaryapi.dev 실제 응답(2026-11-22, tests/fixtures/dictionary/_ipa-us.json에서 고른 것 + water·cat·bottle 응답 꼴). [IPA, ARPAbet, 한글]",
+  "convert": [
+    [
+      "/pɹoʊˈkɹæstəneɪt/",
+      "P R OW0 K R AE1 S T AH0 N EY0 T",
+      "프로크뤠스떠네잇"
+    ],
+    [
+      "/juˈbɪk.wɪ.təs/",
+      "Y UW0 B IH1 K W IH0 T AH0 S",
+      "유비퀴러스"
+    ],
+    [
+      "/ˌsɛ.ɹən.ˈdɪ.pɪ.ti/",
+      "S EH2 R AH0 N D IH1 P IH0 T IY0",
+      "쎄뤈디삐리"
+    ],
+    [
+      "/k(w)əˈnoʊə/",
+      "K AH0 N OW1 AH0",
+      "크노어"
+    ],
+    [
+      "/iˈmoʊdʒi/",
+      "IY0 M OW1 JH IY0",
+      "이모지"
+    ],
+    [
+      "/ˈwɔːtə(ɹ)/",
+      "W AO1 T ER0",
+      "워럴"
+    ],
+    [
+      "/ˈbʌt.l̩/",
+      "B AH1 T AH0 L",
+      "버럴"
+    ],
+    [
+      "/kæt/",
+      "K AE1 T",
+      "캣"
+    ]
+  ],
+  "sameAsCmu": [
+    [
+      "water",
+      "/ˈwɔːtə(ɹ)/"
+    ],
+    [
+      "cat",
+      "/kæt/"
+    ]
+  ],
+  "invalid": [
+    [
+      "/ˈxʏz/",
+      "모르는 기호(x, ʏ)"
+    ],
+    [
+      "",
+      "빈 글자"
+    ],
+    [
+      null,
+      "없음"
+    ]
+  ],
+  "fallback": {
+    "ipa": {
+      "quinoa": "/k(w)əˈnoʊə/",
+      "seolgi": null
+    },
+    "cases": [
+      {
+        "words": [
+          "I",
+          "love",
+          "quinoa"
+        ],
+        "before": null,
+        "added": true,
+        "calls": [
+          "quinoa"
+        ],
+        "after": "아이 러브 크노어",
+        "note": "없는 낱말만 한 번 요청 → 계산됨"
+      },
+      {
+        "words": [
+          "I",
+          "love",
+          "quinoa"
+        ],
+        "before": "아이 러브 크노어",
+        "added": false,
+        "calls": [],
+        "after": "아이 러브 크노어",
+        "note": "이미 채운 낱말은 다시 요청 안 함"
+      },
+      {
+        "words": [
+          "Seolgi",
+          "is",
+          "good"
+        ],
+        "before": null,
+        "added": false,
+        "calls": [
+          "seolgi"
+        ],
+        "after": null,
+        "note": "사전에 없음 → 실패 기억"
+      },
+      {
+        "words": [
+          "Seolgi",
+          "is",
+          "good"
+        ],
+        "before": null,
+        "added": false,
+        "calls": [],
+        "after": null,
+        "note": "실패한 낱말도 다시 요청 안 함"
+      },
+      {
+        "words": [
+          "going",
+          "to",
+          "eat"
+        ],
+        "before": "거너 잇",
+        "added": false,
+        "calls": [],
+        "after": "거너 잇",
+        "note": "축약·사전에 다 있음 → 요청 없음"
+      }
+    ]
+  }
+}
