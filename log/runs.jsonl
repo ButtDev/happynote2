@@ -105,3 +105,4 @@
 {"ts":"2026-11-22T08:43:13.603Z","cmd":"/spec-run","spec":"SPEC_032","iteration":1,"status":"IMPLEMENTED","evidence":"verify regression ok, Test20 10 chunk(변이 실패 확인), ui soundHintStep3 'going to → [고잉 터]'"}
 {"ts":"2026-11-22T08:45:19.812Z","cmd":"release","version":"1.0.40","spec":"SPEC_032","result":"github release 3 assets (main.js,manifest.json,styles.css)"}
 {"ts":"2026-11-22T08:58:31.763Z","cmd":"간이","id":"HINT-NUMBERS","result":"ok","evidence":"숫자→영어 낱말(30-minute → thirty minute, 0~9999·연도·쉼표, 21st·5자리는 계산 포기). Test 20 19 hangul 통과, 변이(펼치기 뺀 사본) '마이 미넛 워낑' 실패 확인, verify regression ok"}
+{"ts":"2026-11-22T08:59:45.756Z","cmd":"release","version":"1.0.41","result":"github release 3 assets"}
