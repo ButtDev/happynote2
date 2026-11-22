@@ -8,7 +8,6 @@
 - 백로그 「대기」 9건(④긴 영상 성능 ~ ⑫학습 기록) — 다음 밤.
 
 ## 열린 질문 (사람에게)
-- finishing 표기: 퓌니싱(지금, f·v+ㅣ 퓌·뷔 유지 — 피로 바꾸면 블로그 근접도 0.709→0.702) vs 피니싱 — 버튼 보냄, 답 대기. 피니싱이면 `soundHint.ts` F·V+ㅣ 줄 빼고 rules.json(finishing·fifteen·fish) 갱신.
 - 과속 기준(`docs/review/ui-ux.md` H: 175 WPM 고정 → 실기기 439장 중 312장 과속, 상대 기준 추천) — 11-22 버튼으로 물었으나 답 없음(사람은 서버·소리만 답함). 다시 물을 것. I(Lucide 아이콘 교체)는 아직 안 물음.
 - 다음 후보: 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
 
@@ -37,4 +36,4 @@
 - 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말. 숫자는 `expandHintWord`로 영어 낱말(0~9999·연도·쉼표, 서수·5자리는 계산 포기). AI 빈칸은 `alignBlanksToChunk`(aiAnalysis `sanitizeItems`)로 덩어리 안만.
 - 영상 데이터 지우기(SPEC_033): 순수 `src/services/videoData.ts`(저장소 주입, Test 21 + `tests/fixtures/video-data/`, 변이 `EAR_COACH_VIDEODATA_MODULE`), 화면 `src/ui/videoDataSection.ts`(설정 맨 아래, 화면 검사 `expect.videoData` → `video-data-<뷰>.png`). 지우기 = `vault.trash(file,false)`/`adapter.trashLocal`(볼트 `.trash`, 영구 삭제 안 함). `NoteGenerator.forgetSession`은 지운 시각 전 `createdAt` 세션 저장을 막음. 자동 정리·전부 지우기는 안 함(사람이 원하면 새 SPEC).
 - 휴지통 비우기(SPEC_034): `src/services/videoTrash.ts`(Test 22 + `tests/fixtures/video-trash/`, 변이 `EAR_COACH_VIDEOTRASH_MODULE`). 지우기 전후 `.trash` 목록 차이를 설정 `videoDataTrash`에 기록 → 비우기는 기록 + `.trash/` 밑만 `adapter.remove`. 1.0.43으로 이미 휴지통에 간 파일은 안 잡음(호환 안 함). 화면 검사 `expect.videoTrash`.
-- 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔를 피로 바꾸면 블로그 0.709→0.702.
+- 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
