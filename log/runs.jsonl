@@ -123,3 +123,4 @@
 {"ts":"2026-11-22T11:32:33.958Z","cmd":"/spec-run","spec":"SPEC_035","iteration":1,"status":"IMPLEMENTED","evidence":"Test 20 규칙A·축약·IPA 통과, 변이 3개 실패, 블로그 0.709, regression ok"}
 {"ts":"2026-11-22T12:02:26.630Z","cmd":"/spec-run","spec":"SPEC_035","iteration":1,"status":"DONE","evidence":"사람확인 7 OK (버튼), 1~6은 회차 1 근거"}
 {"ts":"2026-11-22T12:06:43.884Z","cmd":"/spec-new","spec":"SPEC_036","result":"READY","questions":0}
+{"ts":"2026-11-22T12:13:23.738Z","cmd":"/spec-run","spec":"SPEC_036","iteration":1,"status":"IMPLEMENTED","evidence":"Test 23·12 통과+변이 실패, ui sentenceAnki.audio/noAudio/decode ok, regression ok"}

@@ -1,8 +1,8 @@
 ---
 id: SPEC_036
 title: 핀 문장 Anki 듣기 카드 소리를 TTS 대신 유튜브 원음 구간으로
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_026]
 ---
@@ -40,11 +40,11 @@ depends_on: [SPEC_026]
 단어 카드(SPEC_015)에 원음, 이미 만든 카드 고치기, 원음 실패 시 TTS 대체, webm/opus·서명 암호 스트림, 소리 파일을 볼트에 저장, 노트 타입·템플릿 자동 변경, 재생 속도 조절.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] Test 23: 실제 itag 140 초기화+sidx 바이트에서 timescale 44100·조각 수·첫 조각 바이트 범위가 기대값과 같음, `fragmentsForRange`·`clipWindow`·`pickAudioFormat` 사례 통과, `encodeWav` 머리(RIFF·WAVE·22050·16비트·데이터 길이) 통과 + 변이(sidx 첫 오프셋 무시한 사본) 실패 [자동]
-2. [ ] Test 12: 소리 파일이 있으면 Picture가 `[sound:happynote2_…wav]`로 시작, 앞면 템플릿에 `tts` 없음 [자동]
-3. [ ] 화면 검사 `expect.sentenceAnki`: 호출 순서에 storeMediaFile(`.wav`)이 canAddNotes 앞, 원음 실패 흉내면 addNote 0회·알림 `원음을 받지 못해…` [자동]
-4. [ ] 화면 검사 Chrome에서 실제 조각 fixture를 `audioDecode`로 풀어 자른 WAV 길이가 창 길이 ±0.05초 [자동]
-5. [ ] 회귀 `verify.mjs --set regression`(main.ts 900줄 한도 포함) [자동]
+1. [x] Test 23: 실제 itag 140 초기화+sidx 바이트에서 timescale 44100·조각 수·첫 조각 바이트 범위가 기대값과 같음, `fragmentsForRange`·`clipWindow`·`pickAudioFormat` 사례 통과, `encodeWav` 머리(RIFF·WAVE·22050·16비트·데이터 길이) 통과 + 변이(sidx 첫 오프셋 무시한 사본) 실패 [자동]
+2. [x] Test 12: 소리 파일이 있으면 Picture가 `[sound:happynote2_…wav]`로 시작, 앞면 템플릿에 `tts` 없음 [자동]
+3. [x] 화면 검사 `expect.sentenceAnki`: 호출 순서에 storeMediaFile(`.wav`)이 canAddNotes 앞, 원음 실패 흉내면 addNote 0회·알림 `원음을 받지 못해…` [자동]
+4. [x] 화면 검사 Chrome에서 실제 조각 fixture를 `audioDecode`로 풀어 자른 WAV 길이가 창 길이 ±0.05초 [자동]
+5. [x] 회귀 `verify.mjs --set regression`(main.ts 900줄 한도 포함) [자동]
 6. [ ] 준비: AnkiDroid → 노트 타입 `happynote2 Listening` → 카드 → 앞면 템플릿에서 `{{tts en_US:Sentence}}<br>` 지우고 저장. 그다음 실기기에서 핀 문장 「➕ Anki」로 카드 하나 만들어 AnkiDroid에서 앞면을 열었을 때 그 문장의 유튜브 원래 목소리가 나오는지(앞뒤가 잘리지 않았는지) 듣고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
@@ -61,3 +61,4 @@ depends_on: [SPEC_026]
 - itag 140 · 이유: AAC-LC라 웹뷰 디코드가 가장 안전(139는 HE-AAC) · 대안: 139(작음).
 
 ## 실행 기록
+- 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 23 「sidx 121 fragments, 4 ranges, 5 windows, 4 picks, WAV header, clipper order+cache」(실제 TED iG9CE55wbtY itag 140: timescale 44100, 조각 1 = 164330~325620; 합성 sidx v1 first_offset 100), 변이 m1(first_offset 무시) → 「합성 sidx v1: ept·first_offset 반영」 실패, m2(20초 상한 뺌) → 「clipWindow(10, 40)」 실패 · 2 ✅ Test 12 Picture `[sound:happynote2_uiCheck0001_10_1.wav]<img …>`·원음만·audioNames 3개, 앞면 템플릿 TTS 없음 · 3 ✅ 화면 검사 세로·가로 `sentenceAnki` 호출 deckNames→modelNames→modelFieldNames→storeMediaFile(jpg)→storeMediaFile(happynote2_uiCheck0001_6_7.wav)→canAddNotes→addNote, `sentenceAnki.noAudio` 호출 3개·addNote 0·문구 일치, 변이(원음 확인 뺌) → ui exit 1 「sentenceAnki.noAudio failed」 · 4 ✅ `sentenceAnki.decode` Chrome 실제 조각 1.0~4.0초 → 3.000초, peak 0.702, RIFF 132,344B · 5 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(main.ts 896줄), `sentence-anki-portrait.png` 열어 봄: 핀 카드 「➕ Anki」 배치 그대로 · 6 ⏳ 실기기

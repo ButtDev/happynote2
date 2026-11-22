@@ -1,20 +1,47 @@
 {
-  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답) · SPEC_031: Hint=함정만, 소리 힌트는 Source 앞 · SPEC_032: 덩어리 글자 → 힌트",
-  "settings": { "ankiDeck": "happynote2", "ankiSentenceNoteType": "happynote2 Listening", "ankiTags": "ear-coach" },
+  "comment": "SPEC_026 문장 듣기 카드: buildSentenceNote(input, settings) → 노트, sentenceBlankIndices, resolveSentenceTarget(가짜 응답) · SPEC_031: Hint=함정만, 소리 힌트는 Source 앞 · SPEC_032: 덩어리 글자 → 힌트 · SPEC_036: Picture 앞에 원음 [sound:], audioNames",
+  "settings": {
+    "ankiDeck": "happynote2",
+    "ankiSentenceNoteType": "happynote2 Listening",
+    "ankiTags": "ear-coach"
+  },
   "notes": [
     {
       "name": "틀린 낱말 빈칸 + 계산 소리 힌트(뒷면) + 함정(SPEED_SPIKE 빠짐) + 그림 + 출처",
       "input": {
         "text": "Did you ever try to catch a train at six?",
-        "words": ["Did", "you", "ever", "try", "to", "catch", "a", "train", "at", "six?"],
-        "attempts": { "1": "ya", "4": "to", "9": "sex" },
+        "words": [
+          "Did",
+          "you",
+          "ever",
+          "try",
+          "to",
+          "catch",
+          "a",
+          "train",
+          "at",
+          "six?"
+        ],
+        "attempts": {
+          "1": "ya",
+          "4": "to",
+          "9": "sex"
+        },
         "phoneticKr": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]",
-        "traps": ["LINKING", "FLAP_T", "SPEED_SPIKE"],
+        "traps": [
+          "LINKING",
+          "FLAP_T",
+          "SPEED_SPIKE"
+        ],
         "videoId": "uiCheck0001",
         "videoTitle": "Trip <story>",
         "startSec": 10.07,
         "pictureFilename": "ear-coach-uiCheck0001-11.jpg",
-        "soundHint": { "hangul": "디 쥬 에벌", "ipa": "ˈdɪdʒ ju ˈɛvɚ", "text": "Did you ever" }
+        "soundHint": {
+          "hangul": "디 쥬 에벌",
+          "ipa": "ˈdɪdʒ ju ˈɛvɚ",
+          "text": "Did you ever"
+        }
       },
       "expect": {
         "deckName": "happynote2",
@@ -26,18 +53,37 @@
           "Hint": "연음 · 플랩 t",
           "Source": "🔊 Did you ever → [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
         },
-        "tags": ["ear-coach", "sentence"],
-        "options": { "allowDuplicate": false, "duplicateScope": "deck" }
+        "tags": [
+          "ear-coach",
+          "sentence"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
       }
     },
     {
       "name": "계산 힌트 없음 → AI phoneticKr를 뒷면으로(앞면 Hint엔 한글 없음, SPEC_031)",
       "input": {
         "text": "Did you ever try to catch a train at six?",
-        "words": ["Did", "you", "ever", "try", "to", "catch", "a", "train", "at", "six?"],
+        "words": [
+          "Did",
+          "you",
+          "ever",
+          "try",
+          "to",
+          "catch",
+          "a",
+          "train",
+          "at",
+          "six?"
+        ],
         "attempts": null,
         "phoneticKr": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]",
-        "traps": ["LINKING"],
+        "traps": [
+          "LINKING"
+        ],
         "videoId": "uiCheck0001",
         "videoTitle": "Trip",
         "startSec": 10,
@@ -53,15 +99,26 @@
           "Hint": "연음",
           "Source": "🔊 [디쥬 에버 트라이러 캐취어 트레인 앳 식스]<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip 00:10</a>"
         },
-        "tags": ["ear-coach", "sentence"],
-        "options": { "allowDuplicate": false, "duplicateScope": "deck" }
+        "tags": [
+          "ear-coach",
+          "sentence"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
       }
     },
     {
       "name": "받아쓰기·분석·영상 없음 → 앞면엔 소리만(빈칸 문장·힌트·출처 빈 값)",
       "input": {
         "text": "We got up early.",
-        "words": ["We", "got", "up", "early."],
+        "words": [
+          "We",
+          "got",
+          "up",
+          "early."
+        ],
         "attempts": null,
         "phoneticKr": null,
         "traps": null,
@@ -73,20 +130,46 @@
       "expect": {
         "deckName": "happynote2",
         "modelName": "happynote2 Listening",
-        "fields": { "Sentence": "We got up early.", "Cloze": "", "Picture": "", "Hint": "", "Source": "" },
-        "tags": ["ear-coach", "sentence"],
-        "options": { "allowDuplicate": false, "duplicateScope": "deck" }
+        "fields": {
+          "Sentence": "We got up early.",
+          "Cloze": "",
+          "Picture": "",
+          "Hint": "",
+          "Source": ""
+        },
+        "tags": [
+          "ear-coach",
+          "sentence"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
       }
     },
     {
       "name": "다 맞음·빈 시도 → 빈칸 없음, 태그 중복 없음, 함정만 힌트",
-      "settings": { "ankiDeck": "Listening", "ankiSentenceNoteType": "My Listen", "ankiTags": "sentence  ear-coach" },
+      "settings": {
+        "ankiDeck": "Listening",
+        "ankiSentenceNoteType": "My Listen",
+        "ankiTags": "sentence  ear-coach"
+      },
       "input": {
         "text": "I'd \"rather\" not.",
-        "words": ["I'd", "\"rather\"", "not."],
-        "attempts": { "0": "I'D", "1": " ", "2": "not" },
+        "words": [
+          "I'd",
+          "\"rather\"",
+          "not."
+        ],
+        "attempts": {
+          "0": "I'D",
+          "1": " ",
+          "2": "not"
+        },
         "phoneticKr": "",
-        "traps": ["WEAK_FORM"],
+        "traps": [
+          "WEAK_FORM"
+        ],
         "videoId": "abc",
         "videoTitle": null,
         "startSec": 65.9,
@@ -95,22 +178,294 @@
       "expect": {
         "deckName": "Listening",
         "modelName": "My Listen",
-        "fields": { "Sentence": "I'd &quot;rather&quot; not.", "Cloze": "", "Picture": "", "Hint": "약형", "Source": "<a href=\"https://youtu.be/abc?t=65\"> 01:05</a>" },
-        "tags": ["sentence", "ear-coach"],
-        "options": { "allowDuplicate": false, "duplicateScope": "deck" }
+        "fields": {
+          "Sentence": "I'd &quot;rather&quot; not.",
+          "Cloze": "",
+          "Picture": "",
+          "Hint": "약형",
+          "Source": "<a href=\"https://youtu.be/abc?t=65\"> 01:05</a>"
+        },
+        "tags": [
+          "sentence",
+          "ear-coach"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
+      }
+    },
+    {
+      "name": "SPEC_036 원음: Picture = [sound:원음] + 그림",
+      "input": {
+        "text": "Did you ever try to catch a train at six?",
+        "words": [
+          "Did",
+          "you",
+          "ever",
+          "try",
+          "to",
+          "catch",
+          "a",
+          "train",
+          "at",
+          "six?"
+        ],
+        "attempts": {
+          "1": "ya",
+          "4": "to",
+          "9": "sex"
+        },
+        "phoneticKr": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]",
+        "traps": [
+          "LINKING",
+          "FLAP_T",
+          "SPEED_SPIKE"
+        ],
+        "videoId": "uiCheck0001",
+        "videoTitle": "Trip <story>",
+        "startSec": 10.07,
+        "pictureFilename": "ear-coach-uiCheck0001-11.jpg",
+        "soundHint": {
+          "hangul": "디 쥬 에벌",
+          "ipa": "ˈdɪdʒ ju ˈɛvɚ",
+          "text": "Did you ever"
+        },
+        "audioFilename": "happynote2_uiCheck0001_10_1.wav"
+      },
+      "expect": {
+        "deckName": "happynote2",
+        "modelName": "happynote2 Listening",
+        "fields": {
+          "Sentence": "Did you ever try to catch a train at six?",
+          "Cloze": "Did ____ ever try to catch a train at ____?",
+          "Picture": "[sound:happynote2_uiCheck0001_10_1.wav]<img src=\"ear-coach-uiCheck0001-11.jpg\">",
+          "Hint": "연음 · 플랩 t",
+          "Source": "🔊 Did you ever → [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
+        },
+        "tags": [
+          "ear-coach",
+          "sentence"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
+      }
+    },
+    {
+      "name": "SPEC_036 원음만(그림 없음)",
+      "input": {
+        "text": "Did you ever try to catch a train at six?",
+        "words": [
+          "Did",
+          "you",
+          "ever",
+          "try",
+          "to",
+          "catch",
+          "a",
+          "train",
+          "at",
+          "six?"
+        ],
+        "attempts": {
+          "1": "ya",
+          "4": "to",
+          "9": "sex"
+        },
+        "phoneticKr": "[디쥬 에버 트라이러 캐취어 트레인 앳 식스]",
+        "traps": [
+          "LINKING",
+          "FLAP_T",
+          "SPEED_SPIKE"
+        ],
+        "videoId": "uiCheck0001",
+        "videoTitle": "Trip <story>",
+        "startSec": 10.07,
+        "pictureFilename": null,
+        "soundHint": {
+          "hangul": "디 쥬 에벌",
+          "ipa": "ˈdɪdʒ ju ˈɛvɚ",
+          "text": "Did you ever"
+        },
+        "audioFilename": "happynote2_uiCheck0001_10_1.wav"
+      },
+      "expect": {
+        "deckName": "happynote2",
+        "modelName": "happynote2 Listening",
+        "fields": {
+          "Sentence": "Did you ever try to catch a train at six?",
+          "Cloze": "Did ____ ever try to catch a train at ____?",
+          "Picture": "[sound:happynote2_uiCheck0001_10_1.wav]",
+          "Hint": "연음 · 플랩 t",
+          "Source": "🔊 Did you ever → [디 쥬 에벌] /ˈdɪdʒ ju ˈɛvɚ/<br><a href=\"https://youtu.be/uiCheck0001?t=10\">Trip &lt;story&gt; 00:10</a>"
+        },
+        "tags": [
+          "ear-coach",
+          "sentence"
+        ],
+        "options": {
+          "allowDuplicate": false,
+          "duplicateScope": "deck"
+        }
       }
     }
   ],
   "blanks": [
-    { "words": ["a", "b", "c"], "attempts": null, "expect": [] },
-    { "words": ["Hello,", "world!"], "attempts": { "1": "word", "0": "hello" }, "expect": [1] },
-    { "words": ["one", "two"], "attempts": { "5": "x", "x": "y", "0": "" }, "expect": [] },
-    { "words": ["it's", "fine"], "attempts": { "1": "fin", "0": "its" }, "expect": [0, 1] }
+    {
+      "words": [
+        "a",
+        "b",
+        "c"
+      ],
+      "attempts": null,
+      "expect": []
+    },
+    {
+      "words": [
+        "Hello,",
+        "world!"
+      ],
+      "attempts": {
+        "1": "word",
+        "0": "hello"
+      },
+      "expect": [
+        1
+      ]
+    },
+    {
+      "words": [
+        "one",
+        "two"
+      ],
+      "attempts": {
+        "5": "x",
+        "x": "y",
+        "0": ""
+      },
+      "expect": []
+    },
+    {
+      "words": [
+        "it's",
+        "fine"
+      ],
+      "attempts": {
+        "1": "fin",
+        "0": "its"
+      },
+      "expect": [
+        0,
+        1
+      ]
+    }
   ],
   "targets": [
-    { "name": "덱 없음", "replies": { "deckNames": ["기본"] }, "expect": { "ok": false, "message": "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요" }, "calls": ["deckNames"] },
-    { "name": "노트 타입 없음", "replies": { "deckNames": ["happynote2"], "modelNames": ["Basic"] }, "expect": { "ok": false, "message": "Anki에 「happynote2 Listening」 노트 타입이 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요" }, "calls": ["deckNames", "modelNames"] },
-    { "name": "필드 모자람", "replies": { "deckNames": ["happynote2"], "modelNames": ["happynote2 Listening"], "modelFieldNames": ["Sentence", "Picture", "Source"] }, "expect": { "ok": false, "message": "「happynote2 Listening」 노트 타입에 필드 Cloze·Hint가 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요" }, "calls": ["deckNames", "modelNames", "modelFieldNames"] },
-    { "name": "준비됨", "replies": { "deckNames": ["happynote2"], "modelNames": ["Basic", "happynote2 Listening"], "modelFieldNames": ["Sentence", "Cloze", "Picture", "Hint", "Source", "Extra"] }, "expect": { "ok": true }, "calls": ["deckNames", "modelNames", "modelFieldNames"] }
+    {
+      "name": "덱 없음",
+      "replies": {
+        "deckNames": [
+          "기본"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "message": "Anki에 「happynote2」 덱이 없습니다 — AnkiDroid에서 「happynote2」 덱을 만들거나 설정에서 「덱·노트 타입 불러오기」로 골라 주세요"
+      },
+      "calls": [
+        "deckNames"
+      ]
+    },
+    {
+      "name": "노트 타입 없음",
+      "replies": {
+        "deckNames": [
+          "happynote2"
+        ],
+        "modelNames": [
+          "Basic"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "message": "Anki에 「happynote2 Listening」 노트 타입이 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
+      },
+      "calls": [
+        "deckNames",
+        "modelNames"
+      ]
+    },
+    {
+      "name": "필드 모자람",
+      "replies": {
+        "deckNames": [
+          "happynote2"
+        ],
+        "modelNames": [
+          "happynote2 Listening"
+        ],
+        "modelFieldNames": [
+          "Sentence",
+          "Picture",
+          "Source"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "message": "「happynote2 Listening」 노트 타입에 필드 Cloze·Hint가 없습니다 — AnkiDroid에서 노트 타입 「happynote2 Listening」을 만들고 필드 Sentence·Cloze·Picture·Hint·Source를 넣어 주세요"
+      },
+      "calls": [
+        "deckNames",
+        "modelNames",
+        "modelFieldNames"
+      ]
+    },
+    {
+      "name": "준비됨",
+      "replies": {
+        "deckNames": [
+          "happynote2"
+        ],
+        "modelNames": [
+          "Basic",
+          "happynote2 Listening"
+        ],
+        "modelFieldNames": [
+          "Sentence",
+          "Cloze",
+          "Picture",
+          "Hint",
+          "Source",
+          "Extra"
+        ]
+      },
+      "expect": {
+        "ok": true
+      },
+      "calls": [
+        "deckNames",
+        "modelNames",
+        "modelFieldNames"
+      ]
+    }
+  ],
+  "audioNames": [
+    [
+      "uiCheck0001",
+      10.07,
+      "happynote2_uiCheck0001_10_1.wav"
+    ],
+    [
+      "abc123",
+      12.34,
+      "happynote2_abc123_12_3.wav"
+    ],
+    [
+      "a/b?c",
+      0,
+      "happynote2_a-b-c_0_0.wav"
+    ]
   ]
 }

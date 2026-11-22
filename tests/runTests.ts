@@ -35,6 +35,7 @@ import * as soundHintSrc from "../src/services/soundHint.ts";
 import * as pronFallbackSrc from "../src/services/pronFallback.ts";
 import * as videoDataSrc from "../src/services/videoData.ts";
 import * as videoTrashSrc from "../src/services/videoTrash.ts";
+import * as audioClipSrc from "../src/services/audioClip.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -505,6 +506,9 @@ async function runAllTests() {
     assert.deepEqual(calls, tc.calls, `resolveSentenceTarget calls: ${tc.name}`);
   }
   assert.equal(DEFAULT_EAR_COACH_SETTINGS.ankiSentenceNoteType, ankiMod.ANKI_SENTENCE_NOTE_TYPE, "default ankiSentenceNoteType");
+  // SPEC_036: 원음 — 앞면 템플릿에 TTS 없음, 파일 이름
+  assert.ok(!/tts/i.test(ankiMod.ANKI_SENTENCE_FRONT_TEMPLATE) && ankiMod.ANKI_SENTENCE_FRONT_TEMPLATE.includes("{{Picture}}"), "앞면 템플릿: TTS 없음, Picture 있음");
+  for (const [vid, st, want] of sentData.audioNames) assert.equal(ankiMod.audioFilename(vid, st), want, `audioFilename(${vid}, ${st})`);
   const remapData = JSON.parse(fs.readFileSync(path.join(ankiDir, "_remap.json"), "utf8"));
   const roleOrder = ["sentence", "picture", "meaning", "word", "ipa", "audio", "source"];
   for (const rc of remapData.cases) {
@@ -965,6 +969,81 @@ async function runAllTests() {
   assert.deepEqual(vtRes.remaining, vt.expectRemaining, "실패한 경로는 기록에 남음");
   assert.deepEqual(Object.keys(vtFiles).sort(), vt.expectLeft, "남의 휴지통 노트·.trash 밖 파일은 그대로");
   log(`  -> PASS: ${vt.diff.length} diff + ${vt.safe.length} safe cases, removed ${vtRes.removed.length}, kept ${vt.expectLeft.length}`);
+  log("");
+
+  log("[Test 23] Audio clip — 유튜브 itag 140 sidx 조각 고르기·창·WAV·받기 순서 (data-driven, SPEC_036)");
+  const acMod = process.env.EAR_COACH_AUDIOCLIP_MODULE ? await import(path.resolve(process.env.EAR_COACH_AUDIOCLIP_MODULE)) : audioClipSrc;
+  const acDir = path.resolve("tests/fixtures/audio-clip");
+  const ac = JSON.parse(fs.readFileSync(path.join(acDir, "cases.json"), "utf8"));
+  const acHead = new Uint8Array(fs.readFileSync(path.join(acDir, ac.sidx.file)));
+  const acSidx = acMod.parseSidx(acHead, ac.sidx.offset);
+  assert.ok(acSidx, "parseSidx: 실제 sidx");
+  assert.equal(acSidx.timescale, ac.sidx.timescale, "sidx timescale");
+  assert.equal(acSidx.fragments.length, ac.sidx.count, "sidx 조각 수");
+  for (const fx of ac.sidx.fragments) {
+    const fr = acSidx.fragments[fx.i];
+    assert.deepEqual([fr.byteStart, fr.byteEnd], [fx.byteStart, fx.byteEnd], `sidx 조각 ${fx.i} 바이트`);
+    assert.ok(Math.abs(fr.end - fr.start - ac.sidx.fragmentDurationApprox) < 0.05, `sidx 조각 ${fx.i} 길이 ${fr.end - fr.start}`);
+  }
+  assert.equal(acMod.parseSidx(acHead, 0), null, "sidx 아닌 위치 → null");
+  const acSyn = acMod.parseSidx(new Uint8Array(Buffer.from(ac.sidxSynthetic.hex, "hex")), ac.sidxSynthetic.offset);
+  assert.deepEqual(acSyn?.fragments, ac.sidxSynthetic.expect, "합성 sidx v1: ept·first_offset 반영");
+  for (const rc of ac.ranges) {
+    const got = acMod.fragmentsForRange(acSidx, rc.a, rc.b);
+    if (rc.expect === null) assert.equal(got, null, `fragmentsForRange ${rc.a}-${rc.b}`);
+    else assert.deepEqual([got.first, got.last, got.byteStart, got.byteEnd], [rc.first, rc.last, rc.byteStart, rc.byteEnd], `fragmentsForRange ${rc.a}-${rc.b}`);
+  }
+  for (const [s0, e0, want] of ac.windows) assert.deepEqual(acMod.clipWindow(s0, e0), want, `clipWindow(${s0}, ${e0})`);
+  for (const pc of ac.pick) {
+    const fmts = ac.formats
+      .filter((f: any) => !(pc.drop ?? []).includes(f.itag))
+      .map((f: any) => ((pc.cipher ?? []).includes(f.itag) ? { ...f, url: undefined, signatureCipher: "s=x" } : f));
+    const got = acMod.pickAudioFormat(fmts);
+    assert.equal(got?.itag ?? null, pc.expectItag, `pickAudioFormat: ${pc.name}`);
+  }
+  const w = acMod.encodeWav(new Float32Array(ac.wav.samples), ac.wav.rate);
+  const wdv = new DataView(w.buffer);
+  const wstr = (o: number) => String.fromCharCode(...w.subarray(o, o + 4));
+  assert.deepEqual([wstr(0), wstr(8), wstr(12), wstr(36)], ["RIFF", "WAVE", "fmt ", "data"], "WAV 머리 글자");
+  assert.deepEqual([wdv.getUint32(4, true), wdv.getUint16(20, true), wdv.getUint16(22, true), wdv.getUint32(24, true), wdv.getUint16(34, true), wdv.getUint32(40, true)], [ac.wav.riffLen, 1, 1, ac.wav.rate, 16, ac.wav.dataLen], "WAV 머리 값(PCM 1채널 16비트)");
+  assert.deepEqual(Array.from({ length: ac.wav.samples.length }, (_, i) => wdv.getInt16(44 + i * 2, true)), ac.wav.int16, "WAV 샘플");
+  // 받기 순서: player POST → 머리(0~indexEnd) → 조각, 두 번째는 조각만(캐시), 조각 실패 → null
+  const acFrag = new Uint8Array(fs.readFileSync(path.join(acDir, "itag140-frag1.m4a"))).subarray(723);
+  const acPlayer = JSON.stringify({ streamingData: { adaptiveFormats: ac.formats } });
+  const acReqs: string[] = [];
+  const acDecodes: number[][] = [];
+  let acFail = false;
+  const acClip = acMod.createAudioClipper({
+    request: async (r: any) => {
+      if (r.method === "POST") {
+        acReqs.push("POST");
+        assert.ok(JSON.parse(r.body).context.client.clientName === "ANDROID" && JSON.parse(r.body).videoId === ac.videoId, "player 요청 본문");
+        return { status: 200, text: acPlayer };
+      }
+      const m = /[?&]range=(\d+-\d+)$/.exec(r.url);
+      acReqs.push(m ? m[1] : r.url);
+      if (acFail) return { status: 403 };
+      if (m?.[1] === `0-${acHead.length - 1}`) return { status: 200, arrayBuffer: acHead.slice().buffer };
+      return { status: 200, arrayBuffer: acFrag.slice().buffer };
+    },
+    decode: async (bytes: ArrayBuffer, from: number, to: number, rate: number) => {
+      const u = new Uint8Array(bytes);
+      assert.equal(String.fromCharCode(...u.subarray(4, 8)), "ftyp", "디코더에 초기화 바이트가 앞에");
+      assert.equal(u.length, 723 + acFrag.length, "초기화 + 조각 길이");
+      acDecodes.push([from, to, rate]);
+      return new Float32Array(Math.round((to - from) * rate));
+    },
+  });
+  const acB64 = await acClip(ac.videoId, ac.clipper.start, ac.clipper.end);
+  assert.ok(typeof acB64 === "string" && acB64.startsWith("UklGR"), "결과는 WAV base64(RIFF)");
+  assert.deepEqual(acReqs, ["POST", ...ac.clipper.expectRanges], "받기 순서");
+  assert.ok(Math.abs(acDecodes[0][0] - ac.clipper.expectDecode[0]) < 0.001 && Math.abs(acDecodes[0][1] - ac.clipper.expectDecode[1]) < 0.001 && acDecodes[0][2] === 22050, `디코드 구간 ${JSON.stringify(acDecodes[0])}`);
+  acReqs.length = 0;
+  await acClip(ac.videoId, ac.clipper.start, ac.clipper.end);
+  assert.deepEqual(acReqs, [ac.clipper.expectRanges[1]], "두 번째는 캐시(조각만)");
+  acFail = true;
+  assert.equal(await acClip(ac.videoId, ac.clipper.start, ac.clipper.end), null, "조각 403 → null");
+  log(`  -> PASS: sidx ${acSidx.fragments.length} fragments, ${ac.ranges.length} ranges, ${ac.windows.length} windows, ${ac.pick.length} picks, WAV header, clipper order+cache`);
   log("");
 
   log("==============================================================");

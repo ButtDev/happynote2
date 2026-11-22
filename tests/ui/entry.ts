@@ -13,6 +13,10 @@ import phraseDict from "../fixtures/dictionary/look-forward-to.json";
 // SPEC_017: 합성 스토리보드 시트(960×540, 3×3 색 칸)
 import storyboardSheet from "./fixtures/storyboard-sheet.png";
 import { renderVideoDataSection } from "../../src/ui/videoDataSection.ts";
+// SPEC_036: 실제 유튜브 itag 140 초기화+조각 1(TED iG9CE55wbtY) — Chrome 디코드 검사
+import audioFixture from "../fixtures/audio-clip/itag140-frag1.m4a";
+import { decodeAudioClip } from "../../src/ui/audioDecode.ts";
+import { encodeWav } from "../../src/services/audioClip.ts";
 
 declare global {
   interface Window {
@@ -61,6 +65,12 @@ async function main(): Promise<void> {
       (window as any).__storyboardNone
         ? null
         : { spec: `https://i.ytimg.com/sb/${videoId}/storyboard3_L$L/$N.jpg?sqp=x|320#180#9#3#3#2000#M$M#sig`, durationSec: 60 },
+    // SPEC_036: 가짜 원음(작은 WAV base64), window.__audioNone이면 null
+    audioClip: async (videoId: string, start: number, end: number) => {
+      const w = window as any;
+      w.__clipArgs = [...(w.__clipArgs ?? []), [videoId, start, end]];
+      return w.__audioNone ? null : "UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
+    },
     // SPEC_015: 가짜 AnkiConnect — 호출 기록, window.__ankiDuplicate면 canAddNotes가 false
     anki: {
       invoke: async (action: string, params?: any) => {
@@ -107,6 +117,9 @@ async function main(): Promise<void> {
   leaf.appendChild(view.containerEl);
   host.appendChild(leaf);
   await view.onOpen();
+  (window as any).__decodeAudioClip = decodeAudioClip; // SPEC_036
+  (window as any).__encodeWav = encodeWav;
+  (window as any).__audioFixture = audioFixture;
   (window as any).__earCoachView = view; // SPEC_023: 재생 시각 흉내(playerBar.seekTo)
   const now = new Date().toISOString();
   await view.loadSession(

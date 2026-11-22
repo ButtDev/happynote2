@@ -1,0 +1,312 @@
+{
+ "comment": "SPEC_036 원음 구간: 실제 TED 영상(iG9CE55wbtY, Do schools kill creativity?) ANDROID innertube itag 140 바이트 — itag140-head.bin = 0~indexRange.end(초기화 0~722 + sidx 723~2206), itag140-frag1.m4a = 초기화 + 조각 1(바이트 164330~325620). 기대값은 별도 탐침 스크립트로 읽은 값.",
+ "videoId": "iG9CE55wbtY",
+ "formats": [
+  {
+   "itag": 139,
+   "mimeType": "audio/mp4; codecs=\"mp4a.40.5\"",
+   "bitrate": 51042,
+   "initRange": {
+    "start": "0",
+    "end": "731"
+   },
+   "indexRange": {
+    "start": "732",
+    "end": "2215"
+   },
+   "contentLength": "7339831",
+   "approxDurationMs": "1203536",
+   "url": "https://example.invalid/videoplayback?itag=139"
+  },
+  {
+   "itag": 139,
+   "mimeType": "audio/mp4; codecs=\"mp4a.40.5\"",
+   "bitrate": 51042,
+   "initRange": {
+    "start": "0",
+    "end": "731"
+   },
+   "indexRange": {
+    "start": "732",
+    "end": "2215"
+   },
+   "contentLength": "7339831",
+   "approxDurationMs": "1203536",
+   "url": "https://example.invalid/videoplayback?itag=139"
+  },
+  {
+   "itag": 140,
+   "mimeType": "audio/mp4; codecs=\"mp4a.40.2\"",
+   "bitrate": 131661,
+   "initRange": {
+    "start": "0",
+    "end": "722"
+   },
+   "indexRange": {
+    "start": "723",
+    "end": "2206"
+   },
+   "contentLength": "19477579",
+   "approxDurationMs": "1203466",
+   "url": "https://example.invalid/videoplayback?itag=140"
+  },
+  {
+   "itag": 140,
+   "mimeType": "audio/mp4; codecs=\"mp4a.40.2\"",
+   "bitrate": 131661,
+   "initRange": {
+    "start": "0",
+    "end": "722"
+   },
+   "indexRange": {
+    "start": "723",
+    "end": "2206"
+   },
+   "contentLength": "19477579",
+   "approxDurationMs": "1203466",
+   "url": "https://example.invalid/videoplayback?itag=140"
+  },
+  {
+   "itag": 249,
+   "mimeType": "audio/webm; codecs=\"opus\"",
+   "bitrate": 67310,
+   "initRange": {
+    "start": "0",
+    "end": "265"
+   },
+   "indexRange": {
+    "start": "266",
+    "end": "2319"
+   },
+   "contentLength": "7697745",
+   "approxDurationMs": "1203421",
+   "url": "https://example.invalid/videoplayback?itag=249"
+  },
+  {
+   "itag": 249,
+   "mimeType": "audio/webm; codecs=\"opus\"",
+   "bitrate": 67133,
+   "initRange": {
+    "start": "0",
+    "end": "265"
+   },
+   "indexRange": {
+    "start": "266",
+    "end": "2319"
+   },
+   "contentLength": "7724232",
+   "approxDurationMs": "1203421",
+   "url": "https://example.invalid/videoplayback?itag=249"
+  },
+  {
+   "itag": 251,
+   "mimeType": "audio/webm; codecs=\"opus\"",
+   "bitrate": 157877,
+   "initRange": {
+    "start": "0",
+    "end": "265"
+   },
+   "indexRange": {
+    "start": "266",
+    "end": "2319"
+   },
+   "contentLength": "15872842",
+   "approxDurationMs": "1203421",
+   "url": "https://example.invalid/videoplayback?itag=251"
+  },
+  {
+   "itag": 251,
+   "mimeType": "audio/webm; codecs=\"opus\"",
+   "bitrate": 157505,
+   "initRange": {
+    "start": "0",
+    "end": "265"
+   },
+   "indexRange": {
+    "start": "266",
+    "end": "2319"
+   },
+   "contentLength": "15899455",
+   "approxDurationMs": "1203421",
+   "url": "https://example.invalid/videoplayback?itag=251"
+  }
+ ],
+ "sidx": {
+  "file": "itag140-head.bin",
+  "offset": 723,
+  "timescale": 44100,
+  "count": 121,
+  "fragments": [
+   {
+    "i": 0,
+    "byteStart": 2207,
+    "byteEnd": 164329
+   },
+   {
+    "i": 1,
+    "byteStart": 164330,
+    "byteEnd": 325620
+   },
+   {
+    "i": 2,
+    "byteStart": 325621,
+    "byteEnd": 486937
+   }
+  ],
+  "fragmentDurationApprox": 9.98
+ },
+ "ranges": [
+  {
+   "a": 12.0,
+   "b": 15.0,
+   "first": 1,
+   "last": 1,
+   "byteStart": 164330,
+   "byteEnd": 325620
+  },
+  {
+   "a": 9.0,
+   "b": 11.0,
+   "first": 0,
+   "last": 1,
+   "byteStart": 2207,
+   "byteEnd": 325620
+  },
+  {
+   "a": 0,
+   "b": 2.35,
+   "first": 0,
+   "last": 0,
+   "byteStart": 2207,
+   "byteEnd": 164329
+  },
+  {
+   "a": 99999,
+   "b": 100002,
+   "expect": null
+  }
+ ],
+ "windows": [
+  [
+   10,
+   12,
+   [
+    9.75,
+    12.35
+   ]
+  ],
+  [
+   0.1,
+   2,
+   [
+    0,
+    2.35
+   ]
+  ],
+  [
+   5,
+   5,
+   [
+    4.75,
+    8.35
+   ]
+  ],
+  [
+   10,
+   40,
+   [
+    9.75,
+    29.75
+   ]
+  ],
+  [
+   3.2,
+   3.1,
+   [
+    2.95,
+    6.55
+   ]
+  ]
+ ],
+ "pick": [
+  {
+   "name": "itag 140 url 있음",
+   "drop": [],
+   "expectItag": 140
+  },
+  {
+   "name": "140 없음 → mp4 중 bitrate 최고",
+   "drop": [
+    140
+   ],
+   "expectItag": 139
+  },
+  {
+   "name": "mp4 없음(webm만) → null",
+   "drop": [
+    139,
+    140,
+    599
+   ],
+   "expectItag": null
+  },
+  {
+   "name": "140이 서명 암호(url 없음) → 다음 mp4",
+   "cipher": [
+    140
+   ],
+   "expectItag": 139
+  }
+ ],
+ "wav": {
+  "samples": [
+   0,
+   1,
+   -1,
+   2,
+   0.5
+  ],
+  "rate": 22050,
+  "int16": [
+   0,
+   32767,
+   -32767,
+   32767,
+   16384
+  ],
+  "dataLen": 10,
+  "riffLen": 46
+ },
+ "clipper": {
+  "start": 12.1,
+  "end": 14.0,
+  "expectRanges": [
+   "0-2206",
+   "164330-325620"
+  ],
+  "expectDecode": [
+   1.8654,
+   4.3654
+  ],
+  "comment": "창 [11.85, 14.35] − 조각 1 시작 9.98458초. 두 번째 호출은 player POST·머리 받기 없이 조각만(캐시). 조각 받기 403이면 null."
+ },
+ "sidxSynthetic": {
+  "comment": "합성 sidx v1: 16바이트 뒤 상자, timescale 1000, ept 2000, first_offset 100, 조각 500B/3초·700B/4초 → 첫 조각 바이트 = 상자 끝 + 100",
+  "hex": "0000000000000000000000000000000000000040736964780100000000000001000003e800000000000007d0000000000000006400000002000001f400000bb890000000000002bc00000fa090000000",
+  "offset": 16,
+  "expect": [
+   {
+    "start": 2,
+    "end": 5,
+    "byteStart": 180,
+    "byteEnd": 679
+   },
+   {
+    "start": 5,
+    "end": 9,
+    "byteStart": 680,
+    "byteEnd": 1379
+   }
+  ]
+ }
+}

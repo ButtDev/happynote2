@@ -586,6 +586,7 @@ export class EarCoachView extends ItemView {
                 snapshot: this.plugin.storyboard
                   ? (videoId: string, sec: number) => captureSnapshot(this.plugin.storyboard, this.plugin.fetchBytes, videoId, sec)
                   : null,
+                audioClip: this.plugin.audioClip ?? null, // SPEC_036
               },
               segment
             );

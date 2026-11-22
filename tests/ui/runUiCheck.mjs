@@ -35,7 +35,7 @@ const bundle = await esbuild.build({
   format: "iife",
   target: "es2022",
   alias: { obsidian: stubPath },
-  loader: { ".json": "json", ".png": "binary", ".txt": "text" },
+  loader: { ".json": "json", ".png": "binary", ".txt": "text", ".m4a": "binary" },
   define: { __INLINE_WORKER_CODE__: '""' },
   logLevel: "silent",
 });
@@ -171,8 +171,17 @@ function evaluateExpect(vp, m, nums) {
   if (e.sentenceAnki) {
     const sa = m.sentenceAnki;
     const n = sa?.note;
-    const ok = !!sa && !sa.error && sa.inside === true && sa.pinned >= 1 && sa.btnOnPinned === sa.pinned && sa.btnOnUnpinned === 0 && JSON.stringify(sa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "canAddNotes", "addNote"]) && n?.modelName === e.sentenceAnki.modelName && n?.deckName === "happynote2" && n?.fields?.Sentence === sa.text && (n?.fields?.Picture ?? "").startsWith("<img") && n?.tags?.includes("sentence") && sa.notice === "Anki에 저장했습니다";
+    const ok = !!sa && !sa.error && sa.inside === true && sa.pinned >= 1 && sa.btnOnPinned === sa.pinned && sa.btnOnUnpinned === 0 && JSON.stringify(sa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames", "storeMediaFile", "storeMediaFile", "canAddNotes", "addNote"]) && n?.modelName === e.sentenceAnki.modelName && n?.deckName === "happynote2" && n?.fields?.Sentence === sa.text && /^\[sound:happynote2_[^\]]+\.wav\]<img /.test(n?.fields?.Picture ?? "") && n?.tags?.includes("sentence") && sa.notice === "Anki에 저장했습니다";
     add("sentenceAnki", ok, JSON.stringify(sa));
+    // SPEC_036: 원음 — storeMediaFile(.wav, WAV base64)이 canAddNotes 앞, 원음 실패면 addNote 0회 + 문구
+    const media = sa?.media ?? [];
+    const wav = media.find((x) => /\.wav$/.test(x?.filename ?? ""));
+    add("sentenceAnki.audio", !!wav && String(wav.data ?? "").startsWith("UklGR") && (n?.fields?.Picture ?? "").includes(`[sound:${wav.filename}]`) && sa.clipArgs?.length === 1, JSON.stringify({ media: media.map((x) => x.filename), clipArgs: sa?.clipArgs }));
+    const fa = sa?.fail;
+    add("sentenceAnki.noAudio", !!fa && JSON.stringify(fa.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames"]) && fa.notes === 0 && fa.notice === "원음을 받지 못해 저장하지 않았습니다 (네트워크·영상 확인)", JSON.stringify(fa));
+    // SPEC_036: Chrome에서 실제 조각 디코드 → 창 길이 ±0.05초
+    const dc = sa?.decode;
+    add("sentenceAnki.decode", !!dc && !dc.error && Math.abs(dc.sec - dc.want) <= 0.05 && dc.peak > 0.01 && dc.wavHead === "RIFF", JSON.stringify(dc));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
     const r = m.extraRects?.[sel];
@@ -699,9 +708,31 @@ for (const vp of cases.viewports) {
       const idx = Number(card.dataset.segmentIndex);
       const seg = window.__earCoachView?.session?.segments?.[idx];
       card.scrollIntoView({ block: "center" });
+      window.__audioNone = false;
+      window.__clipArgs = [];
       card.querySelector(".ear-coach-sentence-anki").click();
       await wait(400);
-      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, calls: window.__ankiCalls, note: window.__ankiNotes[0] ?? null, text: seg?.text ?? null, notice: (window.__notices ?? []).at(-1) ?? null };
+      const okRun = { calls: window.__ankiCalls, note: window.__ankiNotes[0] ?? null, media: window.__ankiMedia, clipArgs: window.__clipArgs, notice: (window.__notices ?? []).at(-1) ?? null };
+      // SPEC_036: 원음 실패 흉내
+      window.__ankiCalls = [];
+      window.__ankiNotes = [];
+      window.__audioNone = true;
+      card.querySelector(".ear-coach-sentence-anki").click();
+      await wait(400);
+      const fail = { calls: window.__ankiCalls, notes: window.__ankiNotes.length, notice: (window.__notices ?? []).at(-1) ?? null };
+      window.__audioNone = false;
+      // SPEC_036: 실제 조각(초기화+조각 1, 9.98초) 1.0~4.0초 디코드
+      let decode;
+      try {
+        const s = await window.__decodeAudioClip(window.__audioFixture.slice().buffer, 1.0, 4.0, 22050);
+        let peak = 0;
+        for (let i = 0; i < s.length; i++) peak = Math.max(peak, Math.abs(s[i]));
+        const wav = window.__encodeWav(s, 22050);
+        decode = { sec: s.length / 22050, want: 3.0, peak: Math.round(peak * 1000) / 1000, wavHead: String.fromCharCode(...wav.subarray(0, 4)), wavBytes: wav.length };
+      } catch (err) {
+        decode = { error: String(err) };
+      }
+      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, ...okRun, text: seg?.text ?? null, fail, decode };
     });
     await page.screenshot({ path: path.join(outDir, `sentence-anki-${vp.name}.png`) });
   }

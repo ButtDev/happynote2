@@ -16,6 +16,8 @@ import { DictionaryApiDevProvider, DictionaryProvider } from "./services/diction
 import { setPronunciationFetcher } from "./services/cmudictLite";
 import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker, migrateAnkiDeck } from "./services/anki";
 import { StoryboardInfo, storyboardFromPlayerResponse, storyboardFromWatchHtml } from "./services/storyboard";
+import { createAudioClipper } from "./services/audioClip";
+import { decodeAudioClip } from "./ui/audioDecode";
 import { AgyCliService } from "./services/AgyCliService";
 import { AI_MESSAGES, AiConfig, AiHttpRequest, AiHttpResponse, aiResultMessage, needsAiAnalysis, runAiAnalysis, testAiConnection } from "./services/aiAnalysis";
 import { NoteGenerator } from "./services/NoteGenerator";
@@ -72,6 +74,7 @@ export default class EarCoachPlugin extends Plugin {
     if (r.status < 200 || r.status >= 300) throw new Error(`HTTP ${r.status}`);
     return r.arrayBuffer;
   };
+  public audioClip = createAudioClipper({ request: async (o) => { const r = await requestUrl({ ...o, throw: false }); return { status: r.status, get text() { return r.text; }, get arrayBuffer() { return r.arrayBuffer; } }; }, decode: decodeAudioClip }); // SPEC_036: 원음 구간 WAV
   /** SPEC_017: 영상 스토리보드 스펙(시청 페이지 L3 320×180 → Android innertube L2), 영상별 캐시 */
   private storyboardCache = new Map<string, Promise<StoryboardInfo | null>>();
   public storyboard = (videoId: string): Promise<StoryboardInfo | null> => {

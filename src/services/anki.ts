@@ -20,6 +20,7 @@ export const ANKI_MESSAGES = {
   duplicate: "이미 Anki에 있는 카드입니다",
   connection: "AnkiConnect Android에 연결하지 못했습니다 — 앱에서 서비스를 켜 주세요",
   noSettings: "설정에서 Anki 덱·노트 타입을 골라 주세요",
+  noAudio: "원음을 받지 못해 저장하지 않았습니다 (네트워크·영상 확인)",
 } as const;
 
 export interface AnkiSettingsLike {
@@ -140,10 +141,16 @@ export function formatMmSs(sec: number): string {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
-function audioFilename(word: string, url: string): string {
+function wordAudioFilename(word: string, url: string): string {
   const ext = (url.split("?")[0].match(/\.([a-z0-9]{2,4})$/i)?.[1] ?? "mp3").toLowerCase();
   const slug = word.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "word";
   return `ear-coach-${slug}.${ext}`;
+}
+
+/** SPEC_036: 원음 파일 이름 happynote2_<videoId>_<시작 소수 1자리, 점은 _>.wav */
+export function audioFilename(videoId: string, start: number): string {
+  const id = String(videoId ?? "").replace(/[^A-Za-z0-9_-]/g, "-") || "video";
+  return `happynote2_${id}_${Math.max(0, Number.isFinite(start) ? start : 0).toFixed(1).replace(".", "_")}.wav`;
 }
 
 /** SPEC_017: 장면 그림 파일 이름 */
@@ -238,7 +245,7 @@ export function buildAnkiNote(input: AnkiNoteInput, settings: AnkiSettingsLike):
   };
   const audioField = (settings.ankiFieldMap?.audio ?? "").trim();
   if (input.audioUrl && audioField) {
-    note.audio = [{ url: input.audioUrl, filename: audioFilename(input.word, input.audioUrl), fields: [audioField] }];
+    note.audio = [{ url: input.audioUrl, filename: wordAudioFilename(input.word, input.audioUrl), fields: [audioField] }];
   }
   return note;
 }
@@ -384,10 +391,11 @@ export function ankiSettingsReady(s: AnkiSettingsLike): boolean {
 
 /** 문장 카드 노트 타입(사람이 AnkiDroid에서 한 번 만든다 — AnkiConnect Android에 createModel 없음). */
 export const ANKI_SENTENCE_NOTE_TYPE = "happynote2 Listening";
-/** 문장 카드 필드(이 이름 그대로 만든다). Sentence = TTS·뒷면 원문, Cloze = 앞면 빈칸 문장. */
+/** 문장 카드 필드(이 이름 그대로 만든다). Sentence = 뒷면 원문, Picture = 원음 [sound:]·장면 그림(SPEC_036), Cloze = 앞면 빈칸 문장. */
 export const ANKI_SENTENCE_FIELDS = ["Sentence", "Cloze", "Picture", "Hint", "Source"] as const;
 /** AnkiDroid 노트 타입 카드 템플릿(⏳ 안내·설정 설명에 그대로 보여 줌). */
-export const ANKI_SENTENCE_FRONT_TEMPLATE = "{{tts en_US:Sentence}}<br>{{Picture}}<br>{{Cloze}}<br>{{Hint}}";
+/** SPEC_036: 소리는 Picture 필드의 원음 [sound:] — TTS 없음 */
+export const ANKI_SENTENCE_FRONT_TEMPLATE = "{{Picture}}<br>{{Cloze}}<br>{{Hint}}";
 export const ANKI_SENTENCE_BACK_TEMPLATE = "{{FrontSide}}<hr id=answer>{{Sentence}}<br>{{Source}}";
 
 export interface SentenceNoteInput {
@@ -401,6 +409,8 @@ export interface SentenceNoteInput {
   videoTitle: string | null;
   startSec: number;
   pictureFilename?: string | null;
+  /** SPEC_036: storeMediaFile로 넣은 원음 WAV 이름 */
+  audioFilename?: string | null;
   /** SPEC_031: 계산한 소리 힌트(있으면 phoneticKr 대신) — 뒷면(Source 앞)에만 */
   soundHint?: { hangul: string; ipa: string; text?: string } | null;
 }
@@ -446,7 +456,7 @@ function sourceLink(videoId: string | null, videoTitle: string | null, startSec:
   return `<a href="https://youtu.be/${encodeURIComponent(videoId)}?t=${t}">${escapeHtml(videoTitle ?? "")} ${formatMmSs(t)}</a>`;
 }
 
-/** addNote용 문장 듣기 카드(순수). 앞면 = TTS 소리·장면·빈칸·함정, 뒷면 = 원문·소리 힌트(한글·IPA)·출처 (SPEC_031). */
+/** addNote용 문장 듣기 카드(순수). 앞면 = 원음(SPEC_036)·장면·빈칸·함정, 뒷면 = 원문·소리 힌트(한글·IPA)·출처 (SPEC_031). */
 export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSettingsLike): AnkiNote {
   const blanks = sentenceBlankIndices(input.words, input.attempts);
   // SPEC_031: 앞면 Hint = 함정 유형만. 한글 소리·IPA는 뒷면(Source 앞)으로.
@@ -459,7 +469,7 @@ export function buildSentenceNote(input: SentenceNoteInput, settings: SentenceSe
   const fields: Record<string, string> = {
     Sentence: escapeHtml(input.text.trim()),
     Cloze: escapeHtml(sentenceCloze(input.words, blanks)),
-    Picture: input.pictureFilename ? `<img src="${escapeHtml(input.pictureFilename)}">` : "",
+    Picture: (input.audioFilename ? `[sound:${input.audioFilename}]` : "") + (input.pictureFilename ? `<img src="${escapeHtml(input.pictureFilename)}">` : ""),
     Hint: escapeHtml(trapLabelList(input.traps).join(" · ")),
     Source: [sound, link].filter(Boolean).join("<br>"),
   };
