@@ -1,7 +1,7 @@
 ---
 id: SPEC_027
 title: 핀 문장 간격 재청취 큐 + 핀 졸업
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -49,3 +49,4 @@ Test 17, `runUiCheck` 스크린샷, `verify.mjs --set regression`.
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 18 `tests/fixtures/review/cases.json` due 10·간격 7·졸업 5·큐 통과(어젯밤 11시 핀 → 오늘 아침 차례, UTC 같은 날도 KST 다음 날, 실패 뒤 처음부터), 변이(연속 성공 대신 전체 성공 수) → 「isReviewDue: 실패 뒤 1일 → 차례(처음부터)」 실패 · 2 ✅ 화면 검사 `expect.reviewQueue` 세로·가로 ok: 「⏰ 1」, 오늘 켠 핀(1)은 빠지고 시각 모르는 핀(2)만, 블라인드로 열림, 정답을 직접 열자 reviews [{ok:false}] 1개, 변이(⏰ = 핀 전부) → shown [1,2] 실패 · 툴바 noOverflowX 처음엔 가로 435>362 실패 → 아이콘+숫자로 줄여 통과 · `review-landscape.png` 열어 봄: 「전체 20 · 📌 2 · ⏰ 1 · 🚀 2」 한 줄 + 블라인드·공개 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기
+- 2026-11-22 사람확인: DONE — 4 ✅ `log/confirmations.jsonl` 「스펙 모두 ok」(실기기 OK) · 나머지 자동 항목은 회차 1 근거 그대로

@@ -1,7 +1,7 @@
 ---
 id: SPEC_025
 title: Anki 카드에 문맥 뜻 하나만 + 사전 품사 잘림 고침
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -51,3 +51,4 @@ AI 문맥 뜻 자동 선택, 개인 연결 칸, 장면 고르기, 노트 타입�
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 11 `back.json` partsOfSpeech [noun, verb, adjective, adverb] 통과(품사 상한 제거 `src/services/dictionary.ts:80-83`), 변이(상한 3 되돌림) → 「back.json: partsOfSpeech」 실패 · 2 ✅ Test 12 `tests/fixtures/anki/_pick.json` 7사례(고른 뜻·안 고름→첫 뜻·범위 밖→첫 뜻·빈 품사 건너뜀·뜻 없음→[]) 통과, 변이(뜻 전부 반환) → 「pickCardMeaning(null)」 실패 · 3 ✅ 화면 검사 `expect.anki.chooseDef: 1` okChosen·okDefault true: 고른 뜻 Front 「<i>verb</i> To greet with &quot;hello&quot;.」, 안 고른 noPic Front 「<i>noun</i> &quot;Hello!&quot; or an equivalent greeting.」, is-chosen 1개, 변이(창이 고른 뜻 무시) → ui exit 1 okChosen false · `anki-portrait.png` 열어 봄: verb 뜻 줄에 왼쪽 강조선·배경 · 4 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok(변이 복구 뒤 다시) · 5 ⏳ 실기기
 - 가결정: 품사 상한은 없앰(뜻 상한 3 유지) · 고른 뜻은 칸(구·단어)마다 따로 · 강조는 왼쪽 강조선+옅은 배경(문구 없음)
+- 2026-11-22 사람확인: DONE — 5 ✅ `log/confirmations.jsonl` 「스펙 모두 ok」(실기기 OK) · 나머지 자동 항목은 회차 1 근거 그대로

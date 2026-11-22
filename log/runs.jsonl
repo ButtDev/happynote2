@@ -115,3 +115,7 @@
 {"ts":"2026-11-22T10:23:49.334Z","cmd":"/spec-run","spec":"SPEC_034","iteration":1,"status":"IMPLEMENTED","evidence":"Test 22 + 변이 3, ui videoTrash 세로·가로 + 변이, regression ok"}
 {"ts":"2026-11-22T10:24:43.967Z","cmd":"release","version":"1.0.44","spec":"SPEC_034","evidence":"push buttdev main + tag 1.0.44, release assets main.js manifest.json styles.css"}
 {"ts":"2026-11-22T11:09:57.953Z","cmd":"/spec-run","spec":"SPEC_034","status":"DONE","evidence":"사람확인 4 OK (실기기 1.0.44)"}
+{"ts":"2026-11-22T11:16:53.465Z","cmd":"/spec-run","spec":"SPEC_025","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
+{"ts":"2026-11-22T11:16:53.508Z","cmd":"/spec-run","spec":"SPEC_027","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
+{"ts":"2026-11-22T11:16:53.550Z","cmd":"/spec-run","spec":"SPEC_028","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}
+{"ts":"2026-11-22T11:16:53.592Z","cmd":"/spec-run","spec":"SPEC_033","iteration":1,"status":"DONE","evidence":"사람확인 OK (스펙 모두 ok)"}

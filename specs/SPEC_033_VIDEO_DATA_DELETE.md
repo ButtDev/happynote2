@@ -1,7 +1,7 @@
 ---
 id: SPEC_033
 title: 설정 화면에서 영상별 저장 데이터 지우기 (볼트 휴지통으로)
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -64,3 +64,4 @@ depends_on: []
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 21 `tests/fixtures/video-data/cases.json` PASS(영상 4개: sidecar만·옮긴 노트(front matter)·노트+사본 2·옛 사본만, 제목 노트명→sidecar title→ID, 노트 폴더 밖 `[draft0001]` 제외, 이미 없는 사본은 건너뛰어 2개만 휴지통), 변이 vd1(노트 폴더 제한 빼기) → 「listVideoData: 합집합…」 실패, vd2(stat 확인 빼기) → 「deleteVideoData: 있는 파일만 옮김」 실패 · 2 ✅ `runUiCheck` 세로·가로 videoData: 행 [abcDEF12345, xyzOnly0001] → 확인 창 「「How to Speak…」 데이터를 지울까요?」 버튼 휴지통으로|취소, 경로 3개 = trash 호출 3개 → 행 [xyzOnly0001], 알림 「🗑 … 파일 3개를 휴지통으로 옮겼어요」, 넘침 0. `video-data-portrait.png` 열어 봄: 긴 제목 말줄임, `ID · 1.6 MB · 2026-11-22` + 지우기. `video-data-confirm-landscape.png`: 아래 시트에 경로 3줄. UI 변이(지운 뒤 refresh 빼기) → 「videoData rows after [..2개]」 실패 · 3 ✅ `grep -nE "adapter\.remove|vault\.delete|rmdir"` videoData.ts·videoDataSection.ts·SettingsTab.ts 결과 없음(exit 1) · 4 ✅ `verify.mjs --set regression --json` harness·build·test·ui 모두 ok(main.ts 891줄 그대로) · 5 ⏳ 실기기
+- 2026-11-22 사람확인: DONE — 5 ✅ `log/confirmations.jsonl` 「스펙 모두 ok」(실기기 OK) · 나머지 자동 항목은 회차 1 근거 그대로

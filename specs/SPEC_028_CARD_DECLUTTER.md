@@ -1,7 +1,7 @@
 ---
 id: SPEC_028
 title: 카드 버튼·글자 간결화 (반복·핀 아이콘, 단계 이름, 안내 한 줄, 함정 한국어)
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -59,3 +59,4 @@ depends_on: []
 
 ## 실행 기록
 - 2026-11-22 회차 1: IMPLEMENTED — 1 ✅ Test 17 trapLabel 7+6 통과, 변이(LINKING→링킹 사본 `EAR_COACH_TRAP_MODULE`) → 「trapLabel LINKING」 실패 · 2 ✅ 화면 검사 세로 `cardPitchMax` 「cardPitch=145 <= 160」(전 ≈198), 겹침 없음, 사전·Anki·문장 카드·⏰ 검사 ok(단계 버튼은 `data-step`으로 찾음), 변이(긴 안내문 되돌림) → 「cardPitch=161 <= 160」 실패 · `portrait.png` 열어 봄: ▶ 00:03 · 🔁 · 📌(켜짐 노랑) · ➕ Anki · 174 WPM · 약형/연음, 단계 「듣기·빈칸·힌트·정답」, 「🎧 10단어 · 3.45초」, 툴바 「모두 가림 · 모두 공개」 · `sentence-anki-landscape.png`: 버튼 줄 한 줄로 돌아옴 · 3 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok · 4 ⏳ 실기기
+- 2026-11-22 사람확인: DONE — 4 ✅ `log/confirmations.jsonl` 「스펙 모두 ok」(실기기 OK) · 나머지 자동 항목은 회차 1 근거 그대로
