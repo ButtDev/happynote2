@@ -1,0 +1,65 @@
+{
+  "_about": "SPEC_048: card length quality. real = invariants on real captions (tests/fixtures/transcript/), before = numbers from the pre-SPEC_048 code (for the report, not checked). cases = small synthetic cues with the exact expected card texts. Word counts only count tokens with a letter or digit. short = <= shortWords words, long = > longWords words, dangling = card (not the last) ends with a function word without punctuation (segmentBalance.isDanglingTail).",
+  "shortWords": 3,
+  "longWords": 20,
+  "real": [
+    { "file": "ted-asr.srv3.xml", "maxWords": 18, "maxShortRatio": 0.06, "maxLongRatio": 0, "maxDanglingRatio": 0.06,
+      "before": { "cards": 312, "maxWords": 18, "short": 0.077, "long": 0, "dangling": 0.125, "letterless": 0 } },
+    { "file": "ted-manual.srv3.xml", "maxWords": 28, "maxShortRatio": 0.04, "maxLongRatio": 0.05, "maxDanglingRatio": 0.01,
+      "before": { "cards": 273, "maxWords": 52, "short": 0.136, "long": 0.15, "dangling": 0, "letterless": 1 } },
+    { "file": "rick-asr.srv3.xml", "maxWords": 18, "maxShortRatio": 0.05, "maxLongRatio": 0, "maxDanglingRatio": 0.01,
+      "before": { "cards": 43, "maxWords": 17, "short": 0.093, "long": 0, "dangling": 0, "letterless": 0 } }
+  ],
+  "cases": [
+    {
+      "name": "ASR: dangling 'to the' moves to the next card, short head folds in",
+      "asr": [
+        [[0, "we"], [0.3, "went"], [0.6, "to"], [0.9, "the"]],
+        [[2.4, "store"], [2.7, "yesterday"], [3.0, "and"], [3.3, "bought"], [3.6, "milk"]]
+      ],
+      "expect": ["We went to the store yesterday and bought milk"]
+    },
+    {
+      "name": "ASR: long silence keeps the cut even after a dangling word",
+      "asr": [
+        [[0, "we"], [0.3, "went"], [0.6, "to"], [0.9, "the"]],
+        [[4.0, "store"], [4.3, "yesterday"], [4.6, "and"], [4.9, "bought"], [5.2, "milk"]]
+      ],
+      "expect": ["We went to the", "Store yesterday and bought milk"]
+    },
+    {
+      "name": "ASR: one-word leftover joins the nearer card",
+      "asr": [
+        [[0, "i"], [0.3, "loved"], [0.6, "every"], [0.9, "minute"], [1.2, "of"], [1.5, "this"]],
+        [[2.4, "talk"], [4.6, "next"], [4.9, "we"], [5.2, "will"], [5.5, "look"], [5.8, "at"], [6.1, "data"]]
+      ],
+      "expect": ["I loved every minute of this talk", "Next we will look at data"]
+    },
+    {
+      "name": "punct: short greeting lines pair up, speaker label stays alone",
+      "cues": [
+        [0, 1.3, "Good morning."],
+        [1.32, 1.18, "How are you?"],
+        [2.52, 0.98, "(Audience) Good."],
+        [3.52, 1.5, "It's been great, hasn't it?"]
+      ],
+      "expect": ["Good morning. How are you?", "(Audience) Good.", "It's been great, hasn't it?"]
+    },
+    {
+      "name": "punct: a lone quote mark joins the previous card",
+      "cues": [
+        [0, 3, "He said, \"Well, I was born ... \""],
+        [6.2, 3, "I heard a great story recently."]
+      ],
+      "expect": ["He said, \"Well, I was born ... \"", "I heard a great story recently."]
+    },
+    {
+      "name": "punct: long sentence is cut at a clause comma",
+      "cues": [
+        [0, 3, "But if you ask about their education, they pin you to the wall,"],
+        [3, 3, "because it's one of those things that goes deep with people, am I right?"]
+      ],
+      "expect": ["But if you ask about their education, they pin you to the wall,", "because it's one of those things that goes deep with people, am I right?"]
+    }
+  ]
+}

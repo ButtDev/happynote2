@@ -7,6 +7,7 @@ import type {
   UnlockStep,
 } from "../types/transcript";
 import { attachWordStarts } from "../utils/karaoke.ts";
+import { mergeShortSentences, rebalanceTimedChunks } from "./segmentBalance.ts";
 
 export interface TranscriptProcessOptions {
   speedSpikeWpmThreshold: number;
@@ -247,6 +248,42 @@ function splitCueIntoSentenceFragments(cue: RawTranscriptCue): RawTranscriptCue[
 }
 
 /**
+ * SPEC_048: splits a punctuated fragment after clause punctuation (", ", "; ", ": ", "-- ") so a long
+ * sentence can be cut mid-cue. Times are interpolated by characters like sentence splits.
+ */
+function splitFragmentAtClauses(frag: RawTranscriptCue): RawTranscriptCue[] {
+  const parts: string[] = [];
+  let rest = frag.text;
+  const re = /(?:[,;:]|--|—)["'”’]?\s+/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(frag.text)) !== null) {
+    const cut = m.index + m[0].length;
+    const head = frag.text.slice(last, cut).trim();
+    const tail = frag.text.slice(cut).trim();
+    if (head.split(/\s+/).length >= 2 && tail.split(/\s+/).length >= 2) {
+      parts.push(head);
+      last = cut;
+    }
+  }
+  rest = frag.text.slice(last).trim();
+  if (parts.length === 0) return [frag];
+  parts.push(rest);
+  const total = Math.max(1, parts.reduce((a, p) => a + p.length, 0));
+  const out: RawTranscriptCue[] = [];
+  let cursor = frag.start;
+  for (let i = 0; i < parts.length; i++) {
+    const dur =
+      i === parts.length - 1
+        ? Math.max(0.2, frag.start + frag.duration - cursor)
+        : Math.max(0.2, (frag.duration * parts[i].length) / total);
+    out.push({ start: Number(cursor.toFixed(3)), duration: Number(dur.toFixed(3)), text: parts[i] });
+    cursor += dur;
+  }
+  return out;
+}
+
+/**
  * Normalizes raw YouTube caption cues before sentence splitting:
  * 1. Strips non-speech markers and sorts chronologically.
  * 2. Deduplicates rolling-caption word overlaps between consecutive cues.
@@ -355,10 +392,16 @@ export function mergeCuesIntoSegments(
     return timed;
   }
 
+  if (hasSentencePunctuation) {
+    const clauseFrags = fragments.flatMap(splitFragmentAtClauses);
+    fragments.length = 0;
+    fragments.push(...clauseFrags);
+  }
+
   const maxWords =
-    options.maxWordsPerSegment ?? (hasSentencePunctuation ? 55 : 26);
+    options.maxWordsPerSegment ?? (hasSentencePunctuation ? PUNCT_MAX_WORDS : 26);
   const maxDuration =
-    options.maxDurationPerSegment ?? (hasSentencePunctuation ? 28.0 : 12.0);
+    options.maxDurationPerSegment ?? (hasSentencePunctuation ? 16.0 : 12.0);
   const maxGap = hasSentencePunctuation ? 2.5 : 1.2;
   const pinnedList = options.pinnedTimestamps ?? [];
 
@@ -427,14 +470,22 @@ export function mergeCuesIntoSegments(
       const wouldExceedDuration = cueEnd - bufferStart > maxDuration;
       const wouldExceedWords = currentWords + nextWords > maxWords;
 
-      // In punctuation-free ASR mode, only break at conjunctions when sentence is already substantial (>= 16 words)
+      // Break before a conjunction once the sentence is already substantial (>= 16 words; SPEC_048 also for punctuated)
       const shouldBreakBeforeConjunction =
-        !hasSentencePunctuation &&
-        currentWords >= 16 &&
+        currentWords >= PUNCT_CLAUSE_MIN_WORDS &&
         /^(and|but|so|because|when|while|although|though|however|if)\b/i.test(text);
+
+      // SPEC_048: the buffer already ends at a clause mark and adding this would make a long card → cut here
+      const lastText = bufferText[bufferText.length - 1];
+      const clauseCutBefore =
+        hasSentencePunctuation &&
+        currentWords >= 6 &&
+        currentWords + nextWords > PUNCT_SOFT_MAX_WORDS &&
+        /(?:[,;:]|--|—)["'”’]?$/.test(lastText);
 
       if (
         gap > maxGap ||
+        clauseCutBefore ||
         wouldExceedDuration ||
         wouldExceedWords ||
         shouldBreakBeforeConjunction
@@ -456,6 +507,8 @@ export function mergeCuesIntoSegments(
       }
     } else if (!hasSentencePunctuation && /[,;]["']?$/.test(text) && currentWordCount >= 14) {
       flushBuffer(nextFragStart);
+    } else if (hasSentencePunctuation && /(?:[,;:]|--|—)["'”’]?$/.test(text) && currentWordCount >= PUNCT_CLAUSE_MIN_WORDS) {
+      flushBuffer(nextFragStart); // SPEC_048: long punctuated sentence → cut at a clause boundary
     }
   }
 
@@ -463,14 +516,37 @@ export function mergeCuesIntoSegments(
     flushBuffer();
   }
 
-  attachWordStarts(merged, normalizedCues); // SPEC_043
-  return merged;
+  // SPEC_048: fold too-short sentences ("Good morning.", "Isn't it?") and letter-less leftovers into a neighbor.
+  const balanced = mergeShortSentences(merged, {
+    shortWords: SHORT_SENTENCE_WORDS,
+    maxWords: SHORT_MERGE_MAX_WORDS,
+    maxGap: SHORT_MERGE_MAX_GAP_SEC,
+  }).map((s, index) => {
+    if ("id" in s) {
+      const seg = s as TranscriptSegment;
+      return seg.index === index ? seg : { ...seg, index, id: `seg-${index}-${Math.round(seg.start * 10)}` };
+    }
+    return buildSegment(s.text, s.start, s.end, index, options);
+  });
+
+  attachWordStarts(balanced, normalizedCues); // SPEC_043
+  return balanced;
 }
+
+/** SPEC_048 card length rules for punctuated captions. */
+export const PUNCT_MAX_WORDS = 28;
+export const PUNCT_CLAUSE_MIN_WORDS = 16;
+export const PUNCT_SOFT_MAX_WORDS = 20;
+export const SHORT_SENTENCE_WORDS = 3;
+export const SHORT_MERGE_MAX_WORDS = 16;
+export const SHORT_MERGE_MAX_GAP_SEC = 0.6;
 
 export const ASR_PAUSE_SEC = 0.25;
 export const ASR_HARD_PAUSE_SEC = 1.2;
 export const ASR_MIN_WORDS = 4;
 export const ASR_MAX_WORDS = 18;
+/** Words joined into one card must start within this many seconds of each other (Test 14: < hard pause + 0.6). */
+export const ASR_JOIN_MAX_START_GAP_SEC = 1.75;
 const ASR_WORD_MAX_SEC = 0.6;
 const ASR_SPLIT_MIN_INDEX = 5; // split after the 6th word at the earliest
 
@@ -573,13 +649,13 @@ export function mergeTimedWords(
   const words = collectTimedWords(cues);
   const pauseAfter = (i: number) => (i + 1 < words.length ? words[i + 1].start - words[i].end : Infinity);
 
-  const chunks: TimedWord[][] = [];
+  const raw: number[][] = [];
   let buf: number[] = [];
   for (let i = 0; i < words.length; i++) {
     buf.push(i);
     const pause = pauseAfter(i);
     if (pause >= ASR_HARD_PAUSE_SEC || (pause >= ASR_PAUSE_SEC && buf.length >= ASR_MIN_WORDS)) {
-      chunks.push(buf.map((k) => words[k]));
+      raw.push(buf);
       buf = [];
     } else if (buf.length >= ASR_MAX_WORDS) {
       let splitAt = buf.length - 1;
@@ -591,11 +667,18 @@ export function mergeTimedWords(
           splitAt = j;
         }
       }
-      chunks.push(buf.slice(0, splitAt + 1).map((k) => words[k]));
+      raw.push(buf.slice(0, splitAt + 1));
       buf = buf.slice(splitAt + 1);
     }
   }
-  if (buf.length > 0) chunks.push(buf.map((k) => words[k]));
+  if (buf.length > 0) raw.push(buf);
+
+  // SPEC_048: dangling tails forward, too-short chunks into the nearer neighbor (never across a long silence).
+  const chunks: TimedWord[][] = rebalanceTimedChunks(words, raw, {
+    minWords: ASR_MIN_WORDS,
+    maxWords: ASR_MAX_WORDS,
+    maxStartGap: ASR_JOIN_MAX_START_GAP_SEC,
+  }).map((c) => c.map((k) => words[k]));
 
   return chunks.map((chunk, index) => {
     const first = chunk[0];

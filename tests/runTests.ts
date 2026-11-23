@@ -26,6 +26,7 @@ import * as ankiSrc from "../src/services/anki.ts";
 import * as storyboardSrc from "../src/services/storyboard.ts";
 import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
+import * as segmentBalanceSrc from "../src/workers/segmentBalance.ts";
 import * as aiSrc from "../src/services/aiAnalysis.ts";
 import * as loopSrc from "../src/utils/loopControl.ts";
 import * as trapLabelsSrc from "../src/utils/trapLabels.ts";
@@ -117,11 +118,11 @@ async function runAllTests() {
     speedSpikeWpmThreshold: 175,
     defaultUnlockStep: 0,
   });
-  assert.equal(sentenceSegs.length, 4, `Expected 4 exact sentences, got ${sentenceSegs.length}`);
-  assert.equal(sentenceSegs[0].text, "It was great.");
-  assert.equal(sentenceSegs[1].text, "Next week Dr. Kim and I will visit the U.S. office together.");
-  assert.equal(sentenceSegs[2].text, "Yes, we will!");
-  assert.ok(sentenceSegs[3].words.length >= 23, "Long punctuated sentence must stay intact");
+  // SPEC_048: a 3-word sentence right before the next one ("It was great.") folds into it; abbreviations still never split.
+  assert.equal(sentenceSegs.length, 3, `Expected 3 cards, got ${sentenceSegs.length}`);
+  assert.equal(sentenceSegs[0].text, "It was great. Next week Dr. Kim and I will visit the U.S. office together.");
+  assert.equal(sentenceSegs[1].text, "Yes, we will!");
+  assert.ok(sentenceSegs[2].words.length >= 23, "Long punctuated sentence without commas must stay intact (<= 28 words)");
   log("  -> PASS: Mid-cue sentence split, abbreviation protection (Dr., U.S.), short sentences, and long sentences verified.\n");
 
   // 2-C. Punctuation-Free ASR Timeline Overlap, Rolling Deduplication & Non-Clipped Conjunctions
@@ -703,7 +704,8 @@ async function runAllTests() {
       fixtureSummary.push(`${fc.file} ${fc.beforeSegments}->${segs.length} cards, max ${Math.max(...wc)}w, fillers ${fillersInSource}->0`);
     } else if (fc.mode === "punct") {
       assert.equal(segs.length, fc.segments, `${fc.file}: segment count unchanged`);
-      const ends = segs.filter((s: { text: string }) => /[.?!]["')\]]*$/.test(s.text)).length / segs.length;
+      // SPEC_048: long sentences are cut at clause marks, so a card may end with , ; : -- as well as . ? !
+      const ends = segs.filter((s: { text: string }) => /(?:[.?!,;:]|--|—)["')\]”’]*$/.test(s.text)).length / segs.length;
       assert.ok(ends >= fc.punctEndRatio, `${fc.file}: punctuation end ratio ${ends.toFixed(2)}`);
       fixtureSummary.push(`${fc.file} ${segs.length} sentences`);
     } else {
@@ -1311,6 +1313,43 @@ async function runAllTests() {
   }
   assert.equal(tdMod.TODAY_SENTENCES_MAX, 5, "TODAY_SENTENCES_MAX = 5");
   log(`  -> PASS: ${td.wrong.length} wrong-blank cases, ${td.pick.length} pick cases.`);
+  log("");
+
+  log("[Test 31] Card length quality — 너무 짧은·너무 긴·말이 걸린 카드 (data-driven, SPEC_048)");
+  const slMod = process.env.EAR_COACH_SEGMENT_MODULE ? await import(path.resolve(process.env.EAR_COACH_SEGMENT_MODULE)) : transcriptProcSrc;
+  const sl = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/segment-length/cases.json"), "utf8"));
+  const slOpts = { speedSpikeWpmThreshold: 180, defaultUnlockStep: 0 as const };
+  const slWords = (t: string) => t.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+  const slSummary: string[] = [];
+  for (const r of sl.real) {
+    const cues: RawTranscriptCue[] = captionPayloadSrc.parseCaptionPayload(fs.readFileSync(path.resolve("tests/fixtures/transcript", r.file), "utf8"));
+    const segs = slMod.mergeCuesIntoSegments(cues, slOpts) as Array<{ text: string }>;
+    const wc = segs.map((s) => slWords(s.text));
+    const max = Math.max(...wc);
+    const short = wc.filter((n) => n <= sl.shortWords).length / segs.length;
+    const long = wc.filter((n) => n > sl.longWords).length / segs.length;
+    const dangling = segs.slice(0, -1).filter((s) => segmentBalanceSrc.isDanglingTail(s.text.trim().split(/\s+/).pop() ?? "")).length / segs.length;
+    const letterless = segs.filter((s) => !/[\p{L}\p{N}]/u.test(s.text)).length;
+    assert.ok(max <= r.maxWords, `${r.file}: 가장 긴 카드 ${max}낱말 > ${r.maxWords}`);
+    assert.ok(short <= r.maxShortRatio, `${r.file}: 짧은 카드(<=${sl.shortWords}낱말) ${short.toFixed(3)} > ${r.maxShortRatio}`);
+    assert.ok(long <= r.maxLongRatio, `${r.file}: 긴 카드(>${sl.longWords}낱말) ${long.toFixed(3)} > ${r.maxLongRatio}`);
+    assert.ok(dangling <= r.maxDanglingRatio, `${r.file}: 말이 걸린 카드 ${dangling.toFixed(3)} > ${r.maxDanglingRatio}`);
+    assert.equal(letterless, 0, `${r.file}: 글자 없는 카드 ${letterless}개`);
+    slSummary.push(`${r.file} ${r.before.cards}->${segs.length} cards, max ${r.before.maxWords}->${max}w, short ${r.before.short}->${short.toFixed(3)}, long ${r.before.long}->${long.toFixed(3)}, dangling ${r.before.dangling}->${dangling.toFixed(3)}`);
+  }
+  for (const c of sl.cases) {
+    const cues: RawTranscriptCue[] = c.asr
+      ? c.asr.map((line: [number, string][]) => ({
+          start: line[0][0],
+          duration: Number((line[line.length - 1][0] - line[0][0] + 0.5).toFixed(3)),
+          text: line.map((w) => w[1]).join(" "),
+          words: line.map(([start, text]) => ({ start, text })),
+        }))
+      : c.cues.map(([start, duration, text]: [number, number, string]) => ({ start, duration, text }));
+    const got = (slMod.mergeCuesIntoSegments(cues, slOpts) as Array<{ text: string }>).map((s) => s.text);
+    assert.deepEqual(got, c.expect, `card length: ${c.name}`);
+  }
+  log(`  -> PASS: ${sl.cases.length} synthetic cases; ${slSummary.join("; ")}.`);
   log("");
 
   log("==============================================================");

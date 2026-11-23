@@ -1,5 +1,5 @@
 {
- "_about": "SPEC_018: real YouTube srv3 caption responses (2026-11-21, Android innertube baseUrl). Invariants per case; before=* numbers come from the pre-SPEC_018 code. SPEC_020: tidy = ASR card text cleanup (fillers, I, first capital).",
+ "_about": "SPEC_018: real YouTube srv3 caption responses (2026-11-21, Android innertube baseUrl). Invariants per case; before=* numbers come from the pre-SPEC_018 code. SPEC_020: tidy = ASR card text cleanup (fillers, I, first capital). SPEC_048: punct segment count 273->283 and rick texts updated for the card length rules (short lines fold, long sentences cut at clause commas).",
  "parser": [
   {
    "name": "srv3 ASR <s> word times",
@@ -90,7 +90,7 @@
   {
    "file": "ted-manual.srv3.xml",
    "mode": "punct",
-   "segments": 273,
+   "segments": 283,
    "punctEndRatio": 0.9
   },
   {
@@ -128,11 +128,8 @@
     "Got to make you understand.",
     "Never going to give you up.",
     "Never going to let you down.",
-    "Never going to run around and desert you.",
-    "Heat.",
-    "Heat.",
-    "Heat.",
-    "Heat.",
+    "Never going to run around and desert you. Heat.",
+    "Heat. Heat. Heat.",
     "Never going to tell a lie and hurt you.",
     "Never going to give you up.",
     "Never going to let you down.",
