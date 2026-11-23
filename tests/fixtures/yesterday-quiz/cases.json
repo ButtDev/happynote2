@@ -1,0 +1,64 @@
+{
+  "_about": "SPEC_050 어제 영상 퀴즈. now = 2026-11-24 12:00 KST (tz -540). day: pickQuizDay, pick: pickQuizSegments, grade: gradeQuizAnswer(같은 말 판정은 dictationMatches).",
+  "now": "2026-11-24T03:00:00Z",
+  "tz": -540,
+  "day": [
+    { "name": "어제 본 영상 둘 — 늦게 본 영상부터",
+      "act": { "positions": { "A": { "at": "2026-11-23T01:00:00Z" }, "B": { "at": "2026-11-23T12:00:00Z" } }, "pins": [], "blanks": [], "quizzes": [] },
+      "expect": { "daysAgo": 1, "videoIds": ["B", "A"] } },
+    { "name": "KST 자정 직전(UTC 전날)은 어제, 자정 뒤는 오늘",
+      "act": { "positions": { "A": { "at": "2026-11-23T14:59:00Z" }, "T": { "at": "2026-11-23T15:01:00Z" } }, "pins": [], "blanks": [], "quizzes": [] },
+      "expect": { "daysAgo": 1, "videoIds": ["A"] } },
+    { "name": "어제 없음 → 사흘 전, 핀·빈칸도 활동",
+      "act": { "positions": { "A": { "at": "2026-11-20T02:00:00Z" } }, "pins": [{ "videoId": "P", "pinnedAt": "2026-11-21T02:00:00Z" }], "blanks": [{ "videoId": "Q", "at": "2026-11-21T03:00:00Z" }], "quizzes": [] },
+      "expect": { "daysAgo": 3, "videoIds": ["Q", "P"] } },
+    { "name": "오늘 본 영상뿐 → 없음",
+      "act": { "positions": { "T": { "at": "2026-11-24T01:00:00Z" } }, "pins": [], "blanks": [], "quizzes": [] },
+      "expect": null },
+    { "name": "8일 전 → 없음",
+      "act": { "positions": { "A": { "at": "2026-11-16T03:00:00Z" } }, "pins": [], "blanks": [], "quizzes": [] },
+      "expect": null },
+    { "name": "오늘 퀴즈 했음 → 없음",
+      "act": { "positions": { "A": { "at": "2026-11-23T03:00:00Z" } }, "pins": [], "blanks": [], "quizzes": [{ "at": "2026-11-24T00:30:00Z" }] },
+      "expect": null },
+    { "name": "어제 퀴즈 기록은 상관없음",
+      "act": { "positions": { "A": { "at": "2026-11-23T03:00:00Z" } }, "pins": [], "blanks": [], "quizzes": [{ "at": "2026-11-23T04:00:00Z" }] },
+      "expect": { "daysAgo": 1, "videoIds": ["A"] } }
+  ],
+  "banner": [
+    { "daysAgo": 1, "count": 3, "expect": "🎧 어제 본 영상 퀴즈 3문제" },
+    { "daysAgo": 3, "count": 2, "expect": "🎧 3일 전 본 영상 퀴즈 2문제" }
+  ],
+  "segments": [
+    { "index": 0, "start": 0, "end": 1, "text": "Hi there." },
+    { "index": 1, "start": 1, "end": 4, "text": "Today we are going to talk about sleep." },
+    { "index": 2, "start": 4, "end": 7, "text": "Most people do not get enough of it at night." },
+    { "index": 3, "start": 7, "end": 30, "text": "This one is far too long in time to be a fair quiz clip." },
+    { "index": 4, "start": 30, "end": 34, "text": "And that changes how your brain stores new memories every day." },
+    { "index": 5, "start": 34, "end": 38, "text": "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen." },
+    { "index": 6, "start": 38, "end": 41, "text": "So here is what you can do about it." },
+    { "index": 7, "start": 41, "end": 44, "text": "Put your phone away an hour before bed." },
+    { "index": 8, "start": 44, "end": 47, "text": "Keep the room cool and dark." },
+    { "index": 9, "start": 47, "end": 50, "text": "Thanks for watching, see you next time." }
+  ],
+  "pick": [
+    { "name": "표시 없음 → 거를 것 빼고 고르게", "marks": { "wrongStarts": [], "pinStarts": [] }, "expect": [2, 6, 8] },
+    { "name": "틀린 빈칸 먼저, 그다음 핀", "marks": { "wrongStarts": [41.2], "pinStarts": [30, 1] }, "expect": [1, 4, 7] },
+    { "name": "길이 안 맞는 문장의 표시는 무시", "marks": { "wrongStarts": [0, 7, 34], "pinStarts": [47] }, "expect": [2, 7, 9] },
+    { "name": "상한 2", "max": 2, "marks": { "wrongStarts": [], "pinStarts": [44] }, "expect": [6, 8] }
+  ],
+  "grade": [
+    { "name": "정확히", "answer": "today we are going to talk about sleep", "expected": "Today we are going to talk about sleep.",
+      "expect": { "correct": 8, "total": 8, "pass": true, "missed": [] } },
+    { "name": "두 낱말 빠뜨림 → 6/8 = 0.75 → 틀림", "answer": "today we going to talk sleep", "expected": "Today we are going to talk about sleep.",
+      "expect": { "correct": 6, "total": 8, "pass": false, "missed": ["are", "about"] } },
+    { "name": "dont≠doesn't 한 낱말 틀림 → 6/7 맞힘, 'cause=because", "answer": "cause it dont matter what you think", "expected": "Because it doesn't matter what you think.",
+      "expect": { "correct": 6, "total": 7, "pass": true, "missed": ["doesn't"] } },
+    { "name": "덧붙인 낱말은 깎지 않음, 순서 바뀌면 틀림", "answer": "keep keep the dark room cool and", "expected": "Keep the room cool and dark.",
+      "expect": { "correct": 5, "total": 6, "pass": true, "missed": ["dark."] } },
+    { "name": "경계 4/5 = 0.8 → 맞힘", "answer": "put your phone away", "expected": "Put your phone away now.",
+      "expect": { "correct": 4, "total": 5, "pass": true, "missed": ["now."] } },
+    { "name": "빈 입력", "answer": "", "expected": "Keep the room cool and dark.",
+      "expect": { "correct": 0, "total": 6, "pass": false, "missed": ["Keep", "the", "room", "cool", "and", "dark."] } }
+  ]
+}

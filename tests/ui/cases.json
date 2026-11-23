@@ -46,6 +46,7 @@
         },
         "reviewQueue": true,
         "todaySentences": { "toolbarMaxH": 48 },
+        "quiz": { "toolbarMaxH": 86 },
         "blankRecord": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening",
@@ -170,6 +171,7 @@
         },
         "reviewQueue": true,
         "todaySentences": { "toolbarMaxH": 44 },
+        "quiz": { "toolbarMaxH": 82 },
         "blankRecord": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening",

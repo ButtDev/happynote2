@@ -10,6 +10,7 @@ import { isMobileApp } from "../utils/platform";
 import { isReviewDue, shouldGraduate, withReview } from "../utils/reviewQueue";
 import { pickTodaySentences, wrongBlankSegmentIndices } from "../utils/todaySentences";
 import { renderWarmupBanner } from "./warmupBanner";
+import { QuizOffer, renderQuizBanner, yesterdayQuizOffer } from "../features/yesterdayQuiz";
 import { ResumePosition } from "./resumePosition";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
@@ -47,6 +48,7 @@ export class EarCoachView extends ItemView {
   private filterMode: FilterMode = "ALL";
   /** SPEC_044: 오늘 전에 틀린 빈칸이 있는 문장 번호(영상 열 때 learning.json에서), 줄 닫음 */
   private wrongBlankIdx: number[] = [];
+  private quizOffer: QuizOffer | null = null; // SPEC_050
   private warmupClosed = false;
   private resume = new ResumePosition(() => this.session, () => this.playerBar, (i) => this.scrollToSegment(i), () => this.plugin.learning); // SPEC_046
 
@@ -737,19 +739,13 @@ export class EarCoachView extends ItemView {
     }
     // SPEC_044: 오늘의 문장이 있으면 맨 위 한 줄(전체 목록일 때만, 닫으면 이 화면에선 안 보임)
     if (dueCount > 0 && this.filterMode === "ALL" && !this.warmupClosed) {
-      renderWarmupBanner(
-        toolbar,
-        dueCount,
-        () => {
-          this.applyFilter("DUE", toolbar);
-          const first = this.session?.segments[today[0]];
-          if (first) this.playerBar?.playSegment(first, false);
-        },
-        () => {
-          this.warmupClosed = true;
-          this.applyFilter(this.filterMode, toolbar);
-        }
-      );
+      renderWarmupBanner(toolbar, `☀️ 오늘의 문장 ${dueCount}개`, "오늘은 닫기", () => {
+        this.applyFilter("DUE", toolbar);
+        const first = this.session?.segments[today[0]];
+        if (first) this.playerBar?.playSegment(first, false);
+      }, () => ((this.warmupClosed = true), this.applyFilter(this.filterMode, toolbar)));
+    } else if (this.quizOffer && !this.quizOffer.closed && this.filterMode === "ALL") {
+      renderQuizBanner(toolbar, this.quizOffer, this.plugin, () => this.applyFilter(this.filterMode, toolbar)); // SPEC_050
     }
 
     const actionGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
@@ -798,7 +794,8 @@ export class EarCoachView extends ItemView {
       diagnostics.record("learning.wrongBlanks", err);
       return;
     }
-    if (this.toolbarEl) this.applyFilter(this.filterMode, this.toolbarEl);
+    this.quizOffer ??= await yesterdayQuizOffer(this.plugin); // SPEC_050
+    if (this.toolbarEl && this.session === session) this.applyFilter(this.filterMode, this.toolbarEl);
   }
 
   /** SPEC_021: 바깥(AI 분석)에서 카드 내용을 다시 그릴 때 */

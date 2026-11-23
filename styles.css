@@ -1580,3 +1580,75 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   color: var(--text-on-accent);
   background: var(--interactive-accent);
 }
+
+/* SPEC_050: 어제 영상 퀴즈 창 */
+.ear-coach-quiz-modal .ear-coach-quiz-title {
+  margin: 0 0 4px;
+}
+
+.ear-coach-quiz-source {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ear-coach-quiz-play {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.ear-coach-quiz-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.ear-coach-quiz-feedback {
+  margin: 8px 0;
+}
+
+.ear-coach-quiz-verdict {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ear-coach-quiz-verdict.is-pass,
+.ear-coach-quiz-word.is-ok {
+  color: var(--color-green, var(--interactive-accent));
+}
+
+.ear-coach-quiz-verdict.is-fail,
+.ear-coach-quiz-word.is-miss {
+  color: var(--color-red);
+}
+
+.ear-coach-quiz-answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  line-height: 1.5;
+}
+
+.ear-coach-quiz-word.is-miss {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.ear-coach-quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ear-coach-quiz-actions .is-hidden {
+  display: none;
+}
+
+.ear-coach-quiz-result {
+  font-size: 1.1em;
+  margin: 8px 0 12px;
+}

@@ -26,6 +26,7 @@ import * as ankiSrc from "../src/services/anki.ts";
 import * as storyboardSrc from "../src/services/storyboard.ts";
 import * as captionPayloadSrc from "../src/services/captionPayload.ts";
 import * as transcriptProcSrc from "../src/workers/transcriptProcessor.ts";
+import * as yesterdayQuizSrc from "../src/utils/yesterdayQuiz.ts";
 import * as segmentBalanceSrc from "../src/workers/segmentBalance.ts";
 import * as aiSrc from "../src/services/aiAnalysis.ts";
 import * as loopSrc from "../src/utils/loopControl.ts";
@@ -1494,6 +1495,21 @@ async function runAllTests() {
     log(`  -> real: ${first.word} ${first.phonetic} ${first.meanings.length} meanings, audio ${first.audioUrl}, file ${f.text!.length} bytes`);
   }
   log(`  -> PASS: ${dcc.scenarios.length} scenarios + real response round trip.`);
+  log("");
+
+  log("[Test 35] Yesterday quiz — 날 고르기·문장 고르기·채점 (data-driven, SPEC_050)");
+  const yqMod = process.env.EAR_COACH_QUIZ_MODULE ? await import(path.resolve(process.env.EAR_COACH_QUIZ_MODULE)) : yesterdayQuizSrc;
+  const yq = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/yesterday-quiz/cases.json"), "utf8"));
+  const yqNow = Date.parse(yq.now);
+  for (const c of yq.day) assert.deepEqual(yqMod.pickQuizDay(c.act, yqNow, yq.tz), c.expect, `pickQuizDay: ${c.name}`);
+  for (const c of yq.banner) assert.equal(yqMod.quizBannerText(c.daysAgo, c.count), c.expect, `quizBannerText ${c.daysAgo}`);
+  for (const c of yq.pick) assert.deepEqual(yqMod.pickQuizSegments(yq.segments, c.marks, c.max), c.expect, `pickQuizSegments: ${c.name}`);
+  for (const c of yq.grade) {
+    const g = yqMod.gradeQuizAnswer(c.answer, c.expected, dictationSrc.dictationMatches);
+    const got = { correct: g.correct, total: g.total, pass: g.pass, missed: g.words.filter((w: { ok: boolean }) => !w.ok).map((w: { text: string }) => w.text) };
+    assert.deepEqual(got, c.expect, `gradeQuizAnswer: ${c.name}`);
+  }
+  log(`  -> PASS: ${yq.day.length} day cases, ${yq.pick.length} pick cases, ${yq.grade.length} grade cases.`);
   log("");
 
   log("==============================================================");

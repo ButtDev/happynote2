@@ -219,6 +219,13 @@ export class LearningStore {
     return this.data.quizzes.filter((q) => !videoId || q.videoId === videoId);
   }
 
+  /** SPEC_050: 퀴즈 날 고르기용 — 위치·핀·빈칸·퀴즈 사본 */
+  async activity(): Promise<Pick<LearningData, "positions" | "pins" | "blanks" | "quizzes">> {
+    await this.load();
+    const d = this.data;
+    return { positions: { ...d.positions }, pins: [...d.pins], blanks: [...d.blanks], quizzes: [...d.quizzes] };
+  }
+
   /** 다음 쓰기까지 기다림(시험·언로드용) */
   flush(): Promise<void> {
     return this.writing;

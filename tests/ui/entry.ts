@@ -50,7 +50,13 @@ async function main(): Promise<void> {
     restoreSessionForView: async () => {},
     runAgyBatchEnrichment: async () => {},
     agyService: {},
-    noteGenerator: { saveSessionToNote: async () => {}, appendTutorCalloutToNote: async () => {} },
+    noteGenerator: {
+      saveSessionToNote: async () => {},
+      appendTutorCalloutToNote: async () => {},
+      // SPEC_050: 퀴즈용 — window.__quizAct가 있을 때만 노트가 있는 척, 세션은 지금 화면 것
+      findExistingNoteByVideoId: (id: string) => ((window as any).__quizAct ? { path: `${id}.md` } : null),
+      loadSessionFromNote: async () => (window as any).__earCoachView?.session ?? null,
+    },
     weaknessTracker: { recordWeakSegment: async () => {} },
     learning: {
       setPin: async (...a: unknown[]) => { ((window as any).__learningPins ??= []).push(a); }, // SPEC_040
@@ -59,6 +65,9 @@ async function main(): Promise<void> {
       // SPEC_046: 가짜 재생 위치 — window.__positions[videoId], 저장은 [videoId, 초, 그때 흉내 시각 __simT]
       position: async (id: string) => (window as any).__positions?.[id] ?? null,
       setPosition: async (id: string, sec: number) => { ((window as any).__setPositions ??= []).push([id, sec, (window as any).__simT ?? null]); },
+      // SPEC_050: 퀴즈 날 고르기 재료·기록
+      activity: async () => (window as any).__quizAct ?? { positions: {}, pins: [], blanks: [], quizzes: [] },
+      recordQuiz: async (...a: unknown[]) => { ((window as any).__quizRecords ??= []).push(a); },
     },
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
     // SPEC_015 회차 2: 발음 바이트(가짜, 3바이트)

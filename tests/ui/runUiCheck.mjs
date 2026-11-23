@@ -162,6 +162,16 @@ function evaluateExpect(vp, m, nums) {
       && t.closedH > 0 && t.closedH <= e.todaySentences.toolbarMaxH;
     add("todaySentences", ok, JSON.stringify(t));
   }
+  if (e.quiz) {
+    const q = m.quiz;
+    const ok = !!q && !q.error && q.start.warmup?.startsWith("☀️ 오늘의 문장") && q.afterClose.banner === "🎧 어제 본 영상 퀴즈 3문제"
+      && q.afterClose.overflow <= 0 && q.afterClose.h <= e.quiz.toolbarMaxH && q.titles.join("|") === "🎧 퀴즈 1/3|🎧 퀴즈 2/3|🎧 퀴즈 3/3"
+      && q.play1 === "▶ 듣기" && q.verdict1.startsWith("맞혔어요") && q.verdict2.startsWith("아쉬워요") && q.miss2 > 0
+      && q.play3 === "원음을 못 받았어요 — 건너뛸게요" && q.result === "2문제 중 1개 맞힘"
+      && JSON.stringify(q.records) === JSON.stringify([[q.videoId, 2, 1]]) && q.clipCalls === 3
+      && q.afterDone.banner === null && q.modalOverflow <= 0;
+    add("quiz", ok, JSON.stringify(q));
+  }
   if (e.blankRecord) {
     const b = m.blankRecord;
     const w = b?.want;
@@ -1144,6 +1154,82 @@ for (const vp of cases.viewports) {
       return { shown, blind, active, afterStart, backAll, empty, again, closed, closedH };
     });
     m.todaySentences = { ...m.todaySentences, ...rest };
+  }
+
+  // SPEC_050: 어제 영상 퀴즈 — 오늘의 문장 줄 닫기 → 퀴즈 줄 → 시작 → 3문제(맞힘·틀림·원음 없음) → 끝·기록
+  m.quiz = null;
+  if (vp.expect?.quiz) {
+    const qa = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const vid = view.session.videoId;
+      const tb = () => document.querySelector(".ear-coach-mobile-toolbar");
+      const text = () => tb()?.querySelector(".ear-coach-warmup-text")?.textContent ?? null;
+      const y = new Date(Date.now() - 86400000).toISOString();
+      window.__quizAct = { positions: { [vid]: { at: y } }, pins: [], blanks: [], quizzes: [] };
+      window.__quizRecords = [];
+      window.__clipArgs = [];
+      view.quizOffer = null;
+      view.warmupClosed = false;
+      window.__wrongBlanks = window.__todayMaterial ?? []; // 오늘의 문장 줄이 먼저인지 보려고
+      await view.loadWrongBlanks();
+      await wait(150);
+      const start = { warmup: text() };
+      tb().querySelector('.ear-coach-warmup button[aria-label="오늘은 닫기"]')?.click();
+      await wait(150);
+      const r = tb().getBoundingClientRect();
+      const afterClose = { banner: text(), overflow: tb().scrollWidth - tb().clientWidth, h: r.height };
+      tb().querySelector(".ear-coach-warmup .ear-coach-btn-primary")?.click();
+      await wait(200);
+      const modal = () => document.querySelector(".ear-coach-quiz-modal");
+      const titles = [modal()?.querySelector(".ear-coach-quiz-title")?.textContent];
+      const play1 = modal()?.querySelector(".ear-coach-quiz-play")?.textContent;
+      const items = view.quizOffer?.items ?? [];
+      modal().querySelector(".ear-coach-quiz-input").value = items[0]?.seg.text ?? "";
+      modal().querySelector(".ear-coach-quiz-check").click();
+      await wait(50);
+      const verdict1 = modal().querySelector(".ear-coach-quiz-verdict")?.textContent ?? "";
+      modal().querySelector(".ear-coach-quiz-next").click();
+      await wait(200);
+      titles.push(modal()?.querySelector(".ear-coach-quiz-title")?.textContent);
+      modal().querySelector(".ear-coach-quiz-input").value = "nothing like it";
+      modal().querySelector(".ear-coach-quiz-check").click();
+      await wait(50);
+      const verdict2 = modal().querySelector(".ear-coach-quiz-verdict")?.textContent ?? "";
+      const miss2 = modal().querySelectorAll(".ear-coach-quiz-word.is-miss").length;
+      const mr = modal().getBoundingClientRect();
+      const modalOverflow = Math.max(0, mr.right - window.innerWidth, -mr.left);
+      return { start, afterClose, titles, play1, verdict1, verdict2, miss2, modalOverflow, videoId: vid };
+    });
+    await page.screenshot({ path: path.join(outDir, `quiz-${vp.name}.png`) });
+    const qb = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const modal = () => document.querySelector(".ear-coach-quiz-modal");
+      const text = () => document.querySelector(".ear-coach-mobile-toolbar .ear-coach-warmup-text")?.textContent ?? null;
+      window.__audioNone = true;
+      modal().querySelector(".ear-coach-quiz-next").click();
+      await wait(200);
+      const title3 = modal()?.querySelector(".ear-coach-quiz-title")?.textContent;
+      const play3 = modal()?.querySelector(".ear-coach-quiz-play")?.textContent;
+      window.__audioNone = false;
+      modal().querySelector(".ear-coach-quiz-next").click();
+      await wait(100);
+      const result = modal()?.querySelector(".ear-coach-quiz-result")?.textContent ?? null;
+      const records = window.__quizRecords;
+      const clipCalls = window.__clipArgs.length;
+      const afterDone = { banner: text() };
+      modal()?.querySelector(".ear-coach-quiz-close")?.click();
+      // 원래 상태로
+      delete window.__quizAct;
+      window.__wrongBlanks = [];
+      view.quizOffer = null;
+      view.warmupClosed = false;
+      await view.loadWrongBlanks();
+      return { title3, play3, result, records, clipCalls, afterDone };
+    });
+    qa.titles.push(qb.title3);
+    m.quiz = { ...qa, ...qb };
   }
 
   // SPEC_044: 빈칸 결과 기록 — 틀린 말 입력 후 떠남(두 번) → false 1번, 정답 → true 1번
