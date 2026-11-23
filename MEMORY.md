@@ -9,9 +9,9 @@
 
 ## 열린 질문 (사람에게)
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
-- 하네스 템플릿 개선 후보(11-23 보고, 답 없음): 1 log 시각 UTC→현지 시각 병기 · 2 버튼 답 두 번 기록(채팅 연결 자동 + spec-run) 중복 건너뛰기 · 3 화면 검사 변이용 `mutate.mjs`(worktree) · 4 `harness.json` 무시할 생성 파일(gate dirty의 `docs/test_result.txt`) · 5 아침 요약(`status.mjs --since`). 추천 1·2·4. 템플릿은 폴더 밖 → 고르면 `.scratch/upstream/` 패치만.
 
 ## 주의
+- 하네스 템플릿 개선 후보(log UTC·버튼 중복 기록 등)는 사람이 11-23 「안 함」 — 다시 제안하지 않는다.
 - `log/*.jsonl` `ts`는 UTC(KST −9h) — 밤/아침 판단은 git 커밋 시각(KST)으로. 11-23 06:39에 야간을 「오늘 밤」으로 착각함.
 - 네트워크(SPEC_041): 모든 요청은 `src/features/network.ts` `send(opts, HTTP_POLICIES.x)` → `src/services/http.ts` `sendWithPolicy`(Test 27, 변이 `EAR_COACH_HTTP_MODULE`). 새 요청도 `requestUrl` 직접 말고 `send`로. Anki는 재시도 0(카드 두 번 방지).
 - 기능 모듈(SPEC_039): `src/main.ts`(150줄)는 필드·위임·등록 순서만. 네트워크 `src/features/network.ts`, 세션 만들기·복구·재정렬·agy `sessionPipeline.ts`, 화면 열기·openFile 가로채기 `workspaceView.ts`, 모바일 AI `mobileAi.ts`, URI·리본·명령·코드 블록 `commands.ts`. 연결 검사 `tests/wiring/runWiringCheck.mjs`(node + esbuild 메모리 번들 + 가짜 obsidian, 기대값 `tests/fixtures/wiring/expected.json`, Test 25, 변이 `EAR_COACH_MAIN`) — 명령·공개 메서드를 늘리면 기대값도 같이. main.ts 상한 600.
