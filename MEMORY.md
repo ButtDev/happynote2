@@ -3,8 +3,8 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.51(SPEC_043 노래방식 하이라이트 DONE 11-23). 남은 ⏳ 없음. 다음은 백로그 「대기」 첫 번째 오늘의 5문장.
-- 백로그 「대기」(`memory/backlog.md`): 야간 순서 오늘의 5문장 → 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
+- 배포 최신 BRAT 1.0.52(SPEC_044 오늘의 문장, 11-23 릴리스 3파일 확인). ⏳ SPEC_044 5(빈칸에 틀린 말 → **다음 날** 같은 영상 「☀️ 오늘의 문장」 → 시작) 버튼 보냄 — 하루 뒤에야 판정 가능. OK면 `/spec-run SPEC_044 사람확인: 5 OK` → DONE.
+- 백로그 「대기」(`memory/backlog.md`): 야간 순서 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
 - 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
@@ -47,3 +47,4 @@
 - 진단(SPEC_038): `src/services/diagnostics.ts`(순수, 공용 `diagnostics`, Test 24 + `tests/fixtures/diagnostics/`, 변이 `EAR_COACH_DIAGNOSTICS_MODULE`), 설정 줄·전역 잡기 `src/ui/diagnosticsSection.ts`. 새 오류 catch 자리엔 `diagnostics.record("<단계>", err)` 한 줄. 화면 검사 `expect.diagnostics`(`__diagnostics`·`__diagClip`). 메모리만(앱 다시 켜면 비워짐).
 - 학습 기록(SPEC_040): `src/services/learningStore.ts`(순수, 파일 주입, Test 26 + `tests/fixtures/learning/cases.json`, 변이 `EAR_COACH_LEARNING_MODULE`), `plugin.learning`(`src/features/learning.ts` → `<manifest.dir>/learning.json`). 지금 연결은 핀 토글뿐(`EarCoachView` onTogglePin) — 빈칸 `recordBlank`·위치 `setPosition`·퀴즈 `recordQuiz`는 쓰는 기능 SPEC에서 연결. schemaVersion>1 파일은 읽기 전용. 화면 검사 가짜 플러그인 `tests/ui/entry.ts`에도 `learning` 있음.
 - 노래방식(SPEC_043): 확인용 자동 자막만 있는 영상 txqiwrbYGrs(David After Dentist) — 앱은 수동 자막을 먼저 골라 수동 자막 있는 영상엔 낱말 시각 없음. `src/utils/karaoke.ts` `attachWordStarts`(mergeCuesIntoSegments 끝, 모든 낱말 찾을 때만 `seg.wordStarts`)·`activeWordIndex`, Test 29 + `tests/fixtures/karaoke/`(변이 `EAR_COACH_KARAOKE_MODULE`), 카드 `setPlaybackTime` → 3단계 `.ear-coach-word[data-wi]`에 `is-karaoke`. 화면 검사 `expect.karaoke`. 옛 영상엔 시각 없음(새로 열어야).
+- 오늘의 문장(SPEC_044): 순수 `src/utils/todaySentences.ts`(Test 30 + `tests/fixtures/today/`, 변이 `EAR_COACH_TODAY_MODULE`), 줄 `src/ui/warmupBanner.ts`(툴바 끝에 붙이고 `order:-1`, 줄 있을 때만 툴바 wrap). ⏰ 필터 = 차례 핀 + 오늘 전 틀린 빈칸 문장 최대 5. 빈칸 기록 = MicroDictationBox `onBlankResult`(맞음 전환 true, `change` 때 틀림 false) → `learning.recordBlank`. 화면 검사 가짜 데이터엔 차례 핀이 있어 기본 화면에 줄이 뜸 → 툴바 maxHeight 86/82, 한 줄 보장은 `todaySentences.toolbarMaxH`. strip-types 시험은 src 안 확장자 없는 import를 못 읽음 — 시험 대상 순수 모듈은 import 없이.
