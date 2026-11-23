@@ -15,12 +15,12 @@ import { UrlInputModal } from "./ui/UrlInputModal";
 import { EarCoachSettingTab } from "./ui/SettingsTab";
 import { installDiagnosticsCapture } from "./ui/diagnosticsSection";
 // SPEC_039: 기능은 src/features/에, 이 파일은 연결만
-import { aiFetch, createAnki, createAudioClip, createDictionary, createStoryboard, fetchBytes } from "./features/network";
+import { aiFetch, createAnki, createAudioClip, createDictionary, createStoryboard, DICT_CACHE_FILE_NAME, fetchBytes } from "./features/network";
 import { createSessionLoader, handleYouTubeTrigger, runAgyBatchEnrichment } from "./features/sessionPipeline";
 import { activateWorkspaceView, isEarCoachNoteFast, registerAutoOpen, restoreSessionForView } from "./features/workspaceView";
 import { aiConfigFromSettings, createMobileAiRunner } from "./features/mobileAi";
 import { registerEntryPoints } from "./features/commands";
-import { createLearningStore } from "./features/learning";
+import { createLearningStore, pluginDataFile } from "./features/learning";
 
 /**
  * Main Obsidian Plugin class for Ear-Coach (YouTube + Obsidian + agy CLI).
@@ -35,7 +35,7 @@ export default class EarCoachPlugin extends Plugin {
   public bypassOpenInterceptor = false;
 
   /** SPEC_013: 자막 단어 사전 */
-  public dictionary: DictionaryProvider = createDictionary();
+  public dictionary: DictionaryProvider = createDictionary(pluginDataFile(this, DICT_CACHE_FILE_NAME)); // SPEC_047 캐시
   /** SPEC_015: AnkiConnect Android */
   public anki: AnkiInvoker = createAnki();
   /** SPEC_021: 모바일 AI 요청 */

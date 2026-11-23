@@ -3,7 +3,9 @@
  * 모두 Obsidian `requestUrl`(모바일 웹뷰 CORS 회피). main.ts는 결과를 필드로 받기만 한다.
  */
 import { RequestUrlParam, RequestUrlResponse, requestUrl } from "obsidian";
-import { DictionaryApiDevProvider, DictionaryProvider } from "../services/dictionary";
+import { DictionaryApiDevProvider, DictionaryProvider, normalizeLookupWord } from "../services/dictionary";
+import { CachedDictionaryProvider, DictCacheFile } from "../services/dictCache";
+import { diagnostics } from "../services/diagnostics";
 import { ANKI_CONNECT_URL, AnkiConnectClient, AnkiInvoker } from "../services/anki";
 import { StoryboardInfo, storyboardFromPlayerResponse, storyboardFromWatchHtml } from "../services/storyboard";
 import { createAudioClipper } from "../services/audioClip";
@@ -32,9 +34,13 @@ function statusAndJson(r: RequestUrlResponse): { status: number; json: unknown }
   return { status: r.status, json };
 }
 
-/** SPEC_013: 자막 단어 사전 */
-export function createDictionary(): DictionaryProvider {
-  return new DictionaryApiDevProvider(async (url) => statusAndJson(await send({ url, throw: false })));
+export const DICT_CACHE_FILE_NAME = "dict-cache.json";
+
+/** SPEC_013: 자막 단어 사전. SPEC_047: 파일이 있으면 결과를 캐시(오프라인에서도 다시 찾기) */
+export function createDictionary(cacheFile?: DictCacheFile): DictionaryProvider {
+  const api = new DictionaryApiDevProvider(async (url) => statusAndJson(await send({ url, throw: false })));
+  if (!cacheFile) return api;
+  return new CachedDictionaryProvider(api, cacheFile, { normalize: normalizeLookupWord, onWriteError: (err) => diagnostics.record("사전 캐시", err) });
 }
 
 /** SPEC_015: AnkiConnect Android (웹뷰 CORS를 피해 requestUrl) */

@@ -45,6 +45,7 @@ import * as karaokeSrc from "../src/utils/karaoke.ts";
 import * as todaySrc from "../src/utils/todaySentences.ts";
 import * as shadowSrc from "../src/utils/shadowing.ts";
 import * as resumeSrc from "../src/utils/resume.ts";
+import * as dictCacheSrc from "../src/services/dictCache.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1390,6 +1391,88 @@ async function runAllTests() {
   for (const c of rsc.resumePoint) assert.equal(rsMod.resumePoint(c.pos, c.lastEnd), c.expect, `resumePoint: ${c.name}`);
   for (const c of rsc.shouldSave) assert.equal(rsMod.shouldSavePosition(c.last, c.now), c.expect, `shouldSavePosition: ${c.name}`);
   log(`  -> PASS: ${rsc.resumePoint.length} resumePoint, ${rsc.shouldSave.length} shouldSave cases.`);
+  log("");
+
+  log("[Test 34] Dictionary cache — 한 번 찾은 낱말은 네트워크 없이 (data-driven, SPEC_047)");
+  const dcMod = process.env.EAR_COACH_DICTCACHE_MODULE ? await import(path.resolve(process.env.EAR_COACH_DICTCACHE_MODULE)) : dictCacheSrc;
+  const dcc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/dict-cache/cases.json"), "utf8"));
+  for (const [k, v] of Object.entries(dcc.constants)) assert.equal(dcMod[k], v, k);
+  const fakeEntry = (w: string) => ({ word: w, phonetic: null, ipaUs: null, audioUrl: null, meanings: [{ partOfSpeech: "noun", definitions: [{ definition: `def of ${w}`, example: null }] }], sourceUrl: null });
+  for (const sc of dcc.scenarios) {
+    const file = { text: (sc.file ?? null) as string | null, writes: 0 };
+    const memFile = { read: async () => file.text, write: async (t: string) => { file.writes++; file.text = t; } };
+    let clock = Date.parse("2026-11-24T00:00:00.000Z");
+    let respond: string | undefined;
+    let calls = 0;
+    const inner = {
+      name: "fake",
+      lookup: async (w: string) => {
+        calls++;
+        if (respond === "ok") return fakeEntry(w);
+        if (respond === "404") return null;
+        throw new Error(respond ? `network ${respond}` : `unexpected network: ${w}`);
+      },
+    };
+    const make = () => new dcMod.CachedDictionaryProvider(inner, memFile, { normalize: normalizeLookupWord, now: () => clock });
+    let prov = make();
+    if (sc.fill) {
+      respond = "ok";
+      for (let i = 0; i < sc.fill; i++) { clock += 1000; await prov.lookup(`w${i}`); }
+      await prov.flush();
+    }
+    const keysNow = () => Object.keys(file.text ? JSON.parse(file.text).entries ?? {} : {});
+    for (const [i, st] of sc.steps.entries()) {
+      const tag = `${sc.name} #${i + 1}`;
+      if (st.reopen) { await prov.flush(); prov = make(); }
+      if (st.advanceDays) clock += st.advanceDays * 86400000;
+      respond = st.respond;
+      calls = 0;
+      let got: any;
+      let threw = false;
+      try { got = await prov.lookup(st.lookup); } catch { threw = true; }
+      await prov.flush();
+      assert.equal(calls, st.calls, `${tag}: network calls`);
+      if (st.expect === "throw") assert.ok(threw, `${tag}: should throw`);
+      else {
+        assert.ok(!threw, `${tag}: threw`);
+        if (st.expect === null) assert.equal(got, null, `${tag}: null`);
+        else assert.deepEqual(got, fakeEntry(normalizeLookupWord(st.lookup)), `${tag}: entry`);
+      }
+      for (const k of st.absentNow ?? []) assert.ok(!keysNow().includes(k), `${tag}: ${k} should not be saved`);
+    }
+    await prov.flush();
+    if (sc.keys || sc.absent || sc.keyCount !== undefined) {
+      const ks = keysNow();
+      for (const k of sc.keys ?? []) assert.ok(ks.includes(k), `${sc.name}: file has ${k}`);
+      for (const k of sc.absent ?? []) assert.ok(!ks.includes(k), `${sc.name}: file lacks ${k}`);
+      if (sc.keyCount !== undefined) assert.equal(ks.length, sc.keyCount, `${sc.name}: key count`);
+    }
+    if (sc.writes?.min !== undefined) assert.ok(file.writes >= sc.writes.min, `${sc.name}: writes ${file.writes} >= ${sc.writes.min}`);
+    if (sc.writes?.max !== undefined) assert.ok(file.writes <= sc.writes.max, `${sc.name}: writes ${file.writes} <= ${sc.writes.max}`);
+  }
+  {
+    // 실제 응답: DictionaryApiDevProvider(+Commons) → 캐시 → 파일 다시 읽기 → 같은 결과, 네트워크 0번
+    const realRaw = JSON.parse(fs.readFileSync(path.resolve(dcc.real.response), "utf8")).response;
+    const realCommons = JSON.parse(fs.readFileSync(path.resolve(dcc.real.commons), "utf8")).response;
+    let net = 0;
+    const api = new DictionaryApiDevProvider(async (url: string) => {
+      net++;
+      return url.includes("commons.wikimedia.org") ? { status: 200, json: realCommons } : { status: 200, json: realRaw };
+    });
+    const f = { text: null as string | null };
+    const mf = { read: async () => f.text, write: async (t: string) => { f.text = t; } };
+    const p1 = new dcMod.CachedDictionaryProvider(api, mf, { normalize: normalizeLookupWord });
+    const first = await p1.lookup(dcc.real.word);
+    await p1.flush();
+    assert.ok(first && first.meanings.length > 0, "real: first lookup");
+    const before = net;
+    const offline = { name: "offline", lookup: async () => { throw new Error("offline"); } };
+    const p2 = new dcMod.CachedDictionaryProvider(offline, mf, { normalize: normalizeLookupWord });
+    assert.deepEqual(await p2.lookup(dcc.real.word.toUpperCase()), first, "real: JSON 왕복 같은 결과");
+    assert.equal(net, before, "real: 다시 찾기 네트워크 0번");
+    log(`  -> real: ${first.word} ${first.phonetic} ${first.meanings.length} meanings, audio ${first.audioUrl}, file ${f.text!.length} bytes`);
+  }
+  log(`  -> PASS: ${dcc.scenarios.length} scenarios + real response round trip.`);
   log("");
 
   log("==============================================================");
