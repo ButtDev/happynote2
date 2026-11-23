@@ -148,3 +148,4 @@
 {"ts":"2026-11-23T14:12:44.548Z","cmd":"/spec-new","spec":"SPEC_049","result":"READY","questions":0,"note":"야간"}
 {"ts":"2026-11-23T16:09:57.770Z","cmd":"/night-run","spec":"SPEC_045","iteration":1,"status":"IMPLEMENTED","evidence":"Test 32 + ui shadowing/denied 세로·가로 ok, 변이 3개 실패 확인, regression ok, BRAT 1.0.54 릴리스 3파일"}
 {"ts":"2026-11-23T18:12:32.831Z","cmd":"/spec-run","spec":"SPEC_046","iteration":1,"status":"IMPLEMENTED","evidence":"Test 33 + 변이 2, ui resume·resume.save 세로·가로 + 변이, 회귀 통과(worktree), EarCoachView 898, BRAT 1.0.55 릴리스 3파일"}
+{"ts":"2026-11-23T21:13:18.415Z","spec":"SPEC_047","result":"IMPLEMENTED","commit":"64f3c2c","release":"1.0.56","verify":"regression ok, Test 34 + 5 mutations"}
