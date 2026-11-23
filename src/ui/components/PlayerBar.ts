@@ -245,7 +245,7 @@ export class PlayerBar {
       if (this.pendingStartSec !== null) {
         const sec = this.pendingStartSec;
         this.pendingStartSec = null;
-        this.seekTo(sec);
+        this.applySeek(sec);
         if (this.pendingAutoplay) this.play();
       }
       this.pendingAutoplay = true;
@@ -382,6 +382,17 @@ export class PlayerBar {
   }
 
   public seekTo(seconds: number): void {
+    // SPEC_046: 플레이어가 아직 안 떴으면(이어 보기 복원 등) 뜰 때 그 시각으로 — 재생은 안 함
+    if (!this.isEmbedLoaded && this.isMounted) {
+      this.pendingStartSec = Math.max(0, seconds);
+      this.pendingAutoplay = false;
+      this.lastSeekVideoTime = this.pendingStartSec;
+      return;
+    }
+    this.applySeek(seconds);
+  }
+
+  private applySeek(seconds: number): void {
     this.currentTimeSec = Math.max(0, seconds);
     this.lockedSeekTime = this.currentTimeSec;
     this.seekLockUntil = performance.now() + 1000;
@@ -393,6 +404,11 @@ export class PlayerBar {
     } else {
       this.sendCommand("seekTo", [this.currentTimeSec, true]);
     }
+  }
+
+  /** SPEC_046: 지금 재생 중인지(이어 보기 저장이 멈춤을 알아챔) */
+  public isPlayingNow(): boolean {
+    return this.isPlaying;
   }
 
   public play(): void {

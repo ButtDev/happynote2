@@ -44,6 +44,7 @@ import * as noticesSrc from "../src/services/notices.ts";
 import * as karaokeSrc from "../src/utils/karaoke.ts";
 import * as todaySrc from "../src/utils/todaySentences.ts";
 import * as shadowSrc from "../src/utils/shadowing.ts";
+import * as resumeSrc from "../src/utils/resume.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1380,6 +1381,15 @@ async function runAllTests() {
     if (reason) assert.ok(!reason.includes("니다"), `해요체: ${reason}`);
   }
   log(`  -> PASS: ${sdc.limit.length} limit, ${sdc.mime.length} mime, ${sdc.label.length} label, ${sdc.failure.length} failure cases.`);
+  log("");
+
+  log("[Test 33] Resume — 이어 보기 위치·저장 간격 (data-driven, SPEC_046)");
+  const rsMod = process.env.EAR_COACH_RESUME_MODULE ? await import(path.resolve(process.env.EAR_COACH_RESUME_MODULE)) : resumeSrc;
+  const rsc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/resume/cases.json"), "utf8"));
+  for (const [k, v] of Object.entries(rsc.constants)) assert.equal(rsMod[k], v, k);
+  for (const c of rsc.resumePoint) assert.equal(rsMod.resumePoint(c.pos, c.lastEnd), c.expect, `resumePoint: ${c.name}`);
+  for (const c of rsc.shouldSave) assert.equal(rsMod.shouldSavePosition(c.last, c.now), c.expect, `shouldSavePosition: ${c.name}`);
+  log(`  -> PASS: ${rsc.resumePoint.length} resumePoint, ${rsc.shouldSave.length} shouldSave cases.`);
   log("");
 
   log("==============================================================");

@@ -56,6 +56,9 @@ async function main(): Promise<void> {
       setPin: async (...a: unknown[]) => { ((window as any).__learningPins ??= []).push(a); }, // SPEC_040
       recordBlank: async (...a: unknown[]) => { ((window as any).__blankRecords ??= []).push(a); }, // SPEC_044
       wrongBlanks: async () => (window as any).__wrongBlanks ?? [], // SPEC_044
+      // SPEC_046: 가짜 재생 위치 — window.__positions[videoId], 저장은 [videoId, 초, 그때 흉내 시각 __simT]
+      position: async (id: string) => (window as any).__positions?.[id] ?? null,
+      setPosition: async (id: string, sec: number) => { ((window as any).__setPositions ??= []).push([id, sec, (window as any).__simT ?? null]); },
     },
     // SPEC_013: 가짜 사전(네트워크 없음) — 실제 응답 fixture를 파싱해 단어만 바꿔 돌려준다.
     // SPEC_015 회차 2: 발음 바이트(가짜, 3바이트)
@@ -128,6 +131,7 @@ async function main(): Promise<void> {
   (window as any).__encodeWav = encodeWav;
   (window as any).__audioFixture = audioFixture;
   (window as any).__earCoachView = view; // SPEC_023: 재생 시각 흉내(playerBar.seekTo)
+  (window as any).__PlayerBar = PlayerBar; // SPEC_046: seekTo 호출 세기
   const now = new Date().toISOString();
   await view.loadSession(
     {

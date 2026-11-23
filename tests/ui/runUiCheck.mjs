@@ -280,6 +280,18 @@ function evaluateExpect(vp, m, nums) {
     const okDenied = !!d && d.notices.length === 1 && d.notices[0].includes("마이크 권한") && !d.notices[0].includes("니다") && d.recorders === 0 && d.text === "🎙" && !!d.diag?.includes("shadow.record");
     add("shadowing.denied", okDenied, JSON.stringify(d));
   }
+  if (e.resume) {
+    const r = m.resume;
+    const okRestore = r && !r.error && r.restore.seeks === 1 && r.restore.visible && r.restore.notices.length === 1 &&
+      r.restore.notices[0] === `⏩ 지난번 ${r.label}부터 이어요` && !r.restore.notices[0].includes("니다") &&
+      r.focus.seeks === 0 && r.focus.notices.length === 0 && r.none.seeks === 0 && r.none.notices.length === 0;
+    add("resume", !!okRestore, JSON.stringify({ ...r, save: undefined }));
+    const sv = r?.save;
+    const okSave = !!sv && !sv.error && sv.during.length >= 2 && sv.during.length <= 3 && sv.afterPause.length === 1 &&
+      [...sv.during, ...sv.afterPause].every((x) => x[0] === r.videoId && x[2] !== null && Math.abs(x[1] - x[2]) <= 1) &&
+      sv.during.every((x, i) => i === 0 || x[1] - sv.during[i - 1][1] >= 10 - 1);
+    add("resume.save", okSave, JSON.stringify(sv));
+  }
   if (e.karaoke) {
     const k = m.karaoke;
     const ok = k && !k.error && k.first.length === 1 && k.first[0].wi === 1 && k.first[0].text === k.words[1] &&
@@ -1423,6 +1435,86 @@ for (const vp of cases.viewports) {
     if (res.after.typing) errors.push(`${vp.name}: typing class stays after blur`);
     if ((res.after.video?.h ?? 0) < 60) errors.push(`${vp.name}: video not back after blur h=${res.after.video?.h}`);
     m.typing = res;
+  }
+
+  // SPEC_046: 이어 보기 — 가짜 위치(가운데 문장)로 다시 열면 seekTo 1번·카드 보임·알림, 시각 지정·위치 없음이면 복원 안 함.
+  // 저장: 재생 중 0→25초 흘리면 10초마다(≤3번), 멈추면 1번 더.
+  m.resume = null;
+  if (vp.expect?.resume) {
+    m.resume = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const w = window;
+      const view = w.__earCoachView;
+      const segs = view?.session?.segments ?? [];
+      if (!view || segs.length < 4) return { error: "view/segments missing" };
+      const videoId = view.session.videoId;
+      const mid = segs[Math.floor(segs.length / 2)];
+      const sec = Math.round((mid.start + 0.2) * 10) / 10;
+      const seeks = [];
+      const orig = w.__PlayerBar.prototype.seekTo;
+      w.__PlayerBar.prototype.seekTo = function (t) { seeks.push(t); return orig.call(this, t); };
+      const reopen = async (focus) => {
+        seeks.length = 0;
+        const before = (w.__notices ?? []).length;
+        await view.loadSession({ ...view.session }, null, focus);
+        await wait(700);
+        return { all: seeks.slice(), notices: (w.__notices ?? []).slice(before).filter((n) => n.includes("⏩")) };
+      };
+      const fmt = (s) => { const x = Math.floor(s); return `${String(Math.floor(x / 60)).padStart(2, "0")}:${String(x % 60).padStart(2, "0")}`; };
+      try {
+        w.__positions = { [videoId]: { seconds: sec, at: new Date().toISOString() } };
+        const a = await reopen(undefined);
+        const scroller = [...document.querySelectorAll(".ear-coach-mobile-list-wrapper, .ear-coach-mobile-list-wrapper *")].find((el) => el.scrollHeight > el.clientHeight + 10 && getComputedStyle(el).overflowY !== "visible");
+        const card = document.querySelector(`.ear-coach-segment-card[data-segment-index="${mid.index}"]`);
+        const sr = scroller?.getBoundingClientRect();
+        const cr = card?.getBoundingClientRect();
+        const visible = !!sr && !!cr && cr.bottom > sr.top + 4 && cr.top < sr.bottom - 4;
+        const restore = { seeks: a.all.filter((t) => Math.abs(t - sec) < 0.01).length, seekArgs: a.all, visible, notices: a.notices };
+        w.__positions = {};
+        const c = await reopen(undefined);
+        const none = { seeks: c.all.length, notices: c.notices };
+        w.__positions = { [videoId]: { seconds: sec, at: new Date().toISOString() } };
+        const b = await reopen(segs[1].start);
+        const focus = { seeks: b.all.filter((t) => Math.abs(t - sec) < 0.01).length, notices: b.notices };
+        view.playerBar.clearSegmentLoop();
+        view.playerBar.pause();
+        w.__positions = {};
+        await wait(200);
+        // 저장 — 위치 없이 다시 열어 저장 기록을 처음부터
+        await reopen(undefined);
+        w.__setPositions = [];
+        view.playerBar.seekTo(0);
+        w.__simT = 0;
+        view.playerBar.play();
+        for (let t = 0; t <= 25; t++) {
+          w.__simT = t;
+          view.playerBar.seekTo(t);
+          await wait(120);
+        }
+        const during = w.__setPositions.slice();
+        view.playerBar.pause();
+        await wait(300);
+        const afterPause = w.__setPositions.slice(during.length);
+        w.__simT = null;
+        view.playerBar.seekTo(0);
+        await wait(200);
+        return { videoId, sec, label: fmt(sec), restore, focus, none, save: { during, afterPause } };
+      } finally {
+        w.__PlayerBar.prototype.seekTo = orig;
+      }
+    });
+    if (m.resume && !m.resume.error) {
+      // 스크린샷은 복원 상태로 다시 연 화면(알림 포함)
+      await page.evaluate(async (sec) => {
+        const view = window.__earCoachView;
+        window.__positions = { [view.session.videoId]: { seconds: sec, at: new Date().toISOString() } };
+        document.querySelector(".notice-container")?.replaceChildren();
+        await view.loadSession({ ...view.session }, null);
+        await new Promise((r) => setTimeout(r, 700));
+      }, m.resume.sec);
+      await page.screenshot({ path: path.join(outDir, `resume-${vp.name}.png`) });
+      await page.evaluate(() => { window.__positions = {}; document.querySelector(".notice-container")?.replaceChildren(); });
+    }
   }
 
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);

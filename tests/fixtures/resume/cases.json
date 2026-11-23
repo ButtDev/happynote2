@@ -1,0 +1,20 @@
+{
+  "constants": { "RESUME_MIN_SEC": 5, "RESUME_END_MARGIN_SEC": 5, "POSITION_SAVE_EVERY_SEC": 10 },
+  "resumePoint": [
+    { "name": "없음", "pos": null, "lastEnd": 600, "expect": null },
+    { "name": "4초(너무 앞)", "pos": { "seconds": 4 }, "lastEnd": 600, "expect": null },
+    { "name": "5초(경계, 이어 감)", "pos": { "seconds": 5 }, "lastEnd": 600, "expect": 5 },
+    { "name": "가운데", "pos": { "seconds": 312.4 }, "lastEnd": 600, "expect": 312.4 },
+    { "name": "끝 5초 안", "pos": { "seconds": 597 }, "lastEnd": 600, "expect": null },
+    { "name": "끝 정확히 5초 전(이어 감)", "pos": { "seconds": 595 }, "lastEnd": 600, "expect": 595 },
+    { "name": "끝 지남", "pos": { "seconds": 640 }, "lastEnd": 600, "expect": null },
+    { "name": "숫자 아님", "pos": { "seconds": "abc" }, "lastEnd": 600, "expect": null }
+  ],
+  "shouldSave": [
+    { "name": "처음", "last": null, "now": 0.2, "expect": true },
+    { "name": "9초 뒤", "last": 20, "now": 29, "expect": false },
+    { "name": "10초 뒤", "last": 20, "now": 30, "expect": true },
+    { "name": "뒤로 감기 10초 넘게", "last": 120, "now": 40, "expect": true },
+    { "name": "뒤로 3초", "last": 120, "now": 117, "expect": false }
+  ]
+}

@@ -10,6 +10,7 @@ import { isMobileApp } from "../utils/platform";
 import { isReviewDue, shouldGraduate, withReview } from "../utils/reviewQueue";
 import { pickTodaySentences, wrongBlankSegmentIndices } from "../utils/todaySentences";
 import { renderWarmupBanner } from "./warmupBanner";
+import { ResumePosition } from "./resumePosition";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
 import { setupMobileTypingMode } from "./mobileTypingMode";
@@ -47,13 +48,13 @@ export class EarCoachView extends ItemView {
   /** SPEC_044: 오늘 전에 틀린 빈칸이 있는 문장 번호(영상 열 때 learning.json에서), 줄 닫음 */
   private wrongBlankIdx: number[] = [];
   private warmupClosed = false;
+  private resume = new ResumePosition(() => this.session, () => this.playerBar, (i) => this.scrollToSegment(i), () => this.plugin.learning); // SPEC_046
 
   private isShellMounted = false;
   private toolbarEl: HTMLElement | null = null;
   private listContainerEl: HTMLElement | null = null;
   private tutorContainerEl: HTMLElement | null = null;
   private boundKeyHandler: (ev: KeyboardEvent) => void;
-  // SPEC_005 임시 진단: 모바일 가로로 열릴 때 뷰 열림당 1회
 
   constructor(
     leaf: WorkspaceLeaf,
@@ -111,6 +112,7 @@ export class EarCoachView extends ItemView {
   }
 
   public async onClose(): Promise<void> {
+    this.resume.flush(); // SPEC_046
     this.containerEl.removeEventListener("keydown", this.boundKeyHandler, { capture: true });
     this.typingCleanup?.();
     this.typingCleanup = null;
@@ -141,12 +143,11 @@ export class EarCoachView extends ItemView {
     try {
       (this.leaf as any).updateHeader?.();
       this.app.workspace.requestSaveLayout();
-    } catch {
-      // Ignore leaf header update errors
-    }
+    } catch { /* Ignore leaf header update errors */ }
 
     this.renderWorkspace();
     void this.loadWrongBlanks();
+    this.resume.open(session, focusTimestampSec); // SPEC_046
 
     if (focusTimestampSec !== undefined) {
       const nearestIdx = this.timeIndex.findNearestSegmentIndex(focusTimestampSec);
@@ -484,7 +485,7 @@ export class EarCoachView extends ItemView {
     this.playerBar = new PlayerBar(
       playerSection,
       {
-        onTimeUpdate: (timeSec) => this.handlePlaybackTimeUpdate(timeSec),
+        onTimeUpdate: (timeSec) => (this.handlePlaybackTimeUpdate(timeSec), this.resume.tick(timeSec)),
         onLoopToggle: (isLooping, segment, prevSegment) => {
           if (prevSegment) {
             this.virtualList?.setLoopStateForSegment(prevSegment.index, false);
