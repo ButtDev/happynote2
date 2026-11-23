@@ -141,3 +141,6 @@
 {"ts":"2026-11-23T00:38:08.883Z","cmd":"/spec-run","spec":"SPEC_043","iteration":1,"status":"DONE","evidence":"사람확인 6 OK (버튼), 1~5 회차 1 근거"}
 {"ts":"2026-11-23T07:19:12.145Z","cmd":"/spec-new","spec":"SPEC_044","result":"READY","questions":0}
 {"ts":"2026-11-23T07:27:27.453Z","cmd":"/spec-run","spec":"SPEC_044","iteration":1,"status":"IMPLEMENTED","evidence":"Test 30 PASS+변이 2, ui todaySentences·blankRecord 세로·가로 ok+변이, regression ok; ⏳5 실기기"}
+{"ts":"2026-11-23T13:40:13.038Z","cmd":"/spec-new","spec":"SPEC_045","result":"READY","questions":0}
+{"ts":"2026-11-23T13:40:13.082Z","cmd":"/spec-new","spec":"SPEC_046","result":"READY","questions":0}
+{"ts":"2026-11-23T13:40:13.126Z","cmd":"/spec-new","spec":"SPEC_047","result":"READY","questions":0}
