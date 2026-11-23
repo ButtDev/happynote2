@@ -1,7 +1,7 @@
 ---
 id: SPEC_048
 title: 문장 끊기 품질 — 너무 짧은·너무 긴 카드 고치기 + 길이 품질 시험
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_018]
@@ -32,7 +32,7 @@ AI 문장 복원, 이미 저장된 영상의 카드 다시 자르기(호환 작�
 2. [x] 합성 사례 6개(걸린 낱말 옮기기·침묵이면 그대로·한 낱말 붙이기·인사말 짝·화자 표시 따로·따옴표만 카드·긴 문장 쉼표 자르기) 글자 그대로 [자동]
 3. [x] 옛 코드로 Test 31이 실패(변이) [자동]
 4. [x] 회귀 통과(낱말 순서 보존·카드 안 긴 침묵 없음 등 Test 14 불변식 유지) [자동]
-5. [ ] Android에서 **새 영상**을 열고 카드 몇 개를 넘겨 보며 너무 짧은·너무 긴 카드가 줄었는지 보고 버튼 [수동]
+5. [x] Android에서 **새 영상**을 열고 카드 몇 개를 넘겨 보며 너무 짧은·너무 긴 카드가 줄었는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1·2 Test 31, 3 `EAR_COACH_SEGMENT_MODULE=<옛 transcriptProcessor> npm test`, 4 `verify.mjs --set regression`.
@@ -46,3 +46,4 @@ AI 문장 복원, 이미 저장된 영상의 카드 다시 자르기(호환 작�
 ## 실행 기록
 - 2026-11-23 실행 1: Test 31 PASS — ted-asr 카드 312→305, 짧은 0.077→0.056, 말 걸림 0.125→0.052 / ted-manual 273→283, 최대 52→26낱말, 짧은 0.136→0.028, 긴 0.15→0.035, 따옴표만 카드 1→0 / rick 짧은 0.093→0.025. 변이(옛 코드): `ted-asr.srv3.xml: 짧은 카드(<=3낱말) 0.077 > 0.06`으로 실패. `verify.mjs --set regression` ok(harness·build·test·ui).
 - 실제 예: 「Good morning.」「How are you?」 → 「Good morning. How are you?」 / 33낱말 「One is the extraordinary … range of it.」 → 16 + 17낱말 / 자동 자막 「…is he still」「Wrong」 → 「…is he still wrong」.
+- 2026-11-23 사람 확인: 5 OK (`[Button pressed: SPEC_048 5 OK]`, log/confirmations.jsonl) → DONE.
