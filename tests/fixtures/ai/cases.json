@@ -49,6 +49,32 @@
     },
     "urlMustNotContain": "TEST-KEY-O"
    }
+  },
+  {
+   "name": "openai plain (형식 재시도, SPEC_051)",
+   "config": {
+    "provider": "openai",
+    "apiKey": "TEST-KEY-O",
+    "model": "openai/gpt-oss-120b",
+    "baseUrl": "https://api.groq.com/openai/v1/"
+   },
+   "expect": {
+    "url": "https://api.groq.com/openai/v1/chat/completions",
+    "headers": {
+     "Authorization": "Bearer TEST-KEY-O"
+    },
+    "body": {
+     "model": "openai/gpt-oss-120b",
+     "temperature": 0.2,
+     "messages.1.content": "PROMPT",
+     "messages.0.role": "system"
+    },
+    "urlMustNotContain": "TEST-KEY-O",
+    "bodyMustNotHave": [
+     "response_format"
+    ]
+   },
+   "plain": true
   }
  ],
  "responses": [
@@ -781,6 +807,52 @@
    "expect": {
     "error": "network"
    }
+  },
+  {
+   "name": "openai 앞뒤 잡글 붙은 JSON → 첫 { ~ 마지막 } (SPEC_051)",
+   "provider": "openai",
+   "status": 200,
+   "json": {
+    "id": "chatcmpl-x",
+    "object": "chat.completion",
+    "choices": [
+     {
+      "index": 0,
+      "message": {
+       "role": "assistant",
+       "content": "Here is the analysis:\n{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}\nHope this helps."
+      },
+      "finish_reason": "stop"
+     }
+    ]
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
   }
  ],
  "runs": [
@@ -990,6 +1062,94 @@
      "1": "It was fun.",
      "2": "we flew to tokyo again"
     }
+   }
+  },
+  {
+   "name": "groq400 then ok -> retry same batch without JSON mode (SPEC_051)",
+   "provider": "openai",
+   "segments": 5,
+   "analyzedAt": [],
+   "replies": [
+    "groq400",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     5,
+     5
+    ],
+    "sleeps": [],
+    "jsonModes": [
+     "json",
+     "plain"
+    ],
+    "analyzed": 5,
+    "total": 5,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "20 장 형식 오류 두 번 -> 10+10으로 나눠 계속 (SPEC_051)",
+   "provider": "openai",
+   "segments": 25,
+   "analyzedAt": [],
+   "replies": [
+    "groq400",
+    "bad",
+    "ok",
+    "ok",
+    "ok"
+   ],
+   "expect": {
+    "batchSizes": [
+     20,
+     20,
+     10,
+     10,
+     5
+    ],
+    "sleeps": [
+     4000,
+     4000,
+     4000
+    ],
+    "jsonModes": [
+     "json",
+     "plain",
+     "json",
+     "json",
+     "json"
+    ],
+    "analyzed": 25,
+    "total": 25,
+    "stoppedBy": null,
+    "sentAnalyzed": 0
+   }
+  },
+  {
+   "name": "5장 이하는 더 안 나눔 -> format으로 멈춤 (SPEC_051)",
+   "provider": "openai",
+   "segments": 5,
+   "analyzedAt": [],
+   "replies": [
+    "groq400",
+    "groq400"
+   ],
+   "expect": {
+    "batchSizes": [
+     5,
+     5
+    ],
+    "sleeps": [],
+    "jsonModes": [
+     "json",
+     "plain"
+    ],
+    "analyzed": 0,
+    "total": 5,
+    "stoppedBy": "format",
+    "sentAnalyzed": 0
    }
   }
  ],

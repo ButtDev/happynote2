@@ -734,13 +734,14 @@ async function runAllTests() {
     return seg;
   };
   for (const rc of aiCases.requests) {
-    const req = aiMod.buildAiRequest(rc.config, "PROMPT");
+    const req = aiMod.buildAiRequest(rc.config, "PROMPT", rc.plain === true);
     assert.equal(req.url, rc.expect.url, `buildAiRequest ${rc.name}: url`);
     assert.equal(req.method, "POST", `buildAiRequest ${rc.name}: method`);
     assert.ok(!req.url.includes(rc.expect.urlMustNotContain), `buildAiRequest ${rc.name}: key must not be in URL`);
     for (const [k, v] of Object.entries(rc.expect.headers)) assert.equal(req.headers[k], v, `buildAiRequest ${rc.name}: header ${k}`);
     const body = JSON.parse(req.body);
     for (const [k, v] of Object.entries(rc.expect.body)) assert.deepEqual(dig(body, k), v, `buildAiRequest ${rc.name}: body ${k}`);
+    for (const k of rc.expect.bodyMustNotHave ?? []) assert.equal(dig(body, k), undefined, `buildAiRequest ${rc.name}: body must not have ${k}`);
     for (const [k, v] of Object.entries(rc.expect.bodyArrayExcludes ?? {})) {
       const arr = dig(body, k);
       assert.ok(Array.isArray(arr) && !arr.includes(v), `buildAiRequest ${rc.name}: ${k} must not include ${v}`);
@@ -773,11 +774,15 @@ async function runAllTests() {
       assert.deepEqual(got.items.map(pickItem), pc.expect.items, `parseAiResponse ${pc.name}: items`);
     }
   }
-  const okReply = (req: { body: string }, restored: Record<string, string> = {}) => {
-    const prompt = JSON.parse(req.body).contents[0].parts[0].text as string;
+  // 묶음 시험은 gemini 기본, run.provider "openai"면 chat/completions 모양(SPEC_051)
+  const promptOf = (body: any): string => (body.contents ? body.contents[0].parts[0].text : body.messages[1].content);
+  const wrapText = (provider: string, text: string) =>
+    provider === "openai" ? { choices: [{ message: { content: text } }] } : { candidates: [{ content: { parts: [{ text }] } }] };
+  const okReply = (req: { body: string }, restored: Record<string, string> = {}, provider = "gemini") => {
+    const prompt = promptOf(JSON.parse(req.body));
     const sent = JSON.parse(prompt.split("Segments JSON:\n")[1]) as Array<{ index: number; text: string }>;
     const items = sent.map((x) => ({ segmentIndex: x.index, traps: ["LINKING"], phoneticKr: "p", trapExplanation: "e", skeletonWordIndices: [0], dictationBlankIndices: [1], rhythmGuide: x.text, translationKr: `번역 ${x.index}`, restoredText: restored[String(x.index)] ?? "" }));
-    return { status: 200, json: { candidates: [{ content: { parts: [{ text: JSON.stringify({ summaryKr: "", keyListeningPoints: [], items }) }] } }] } };
+    return { status: 200, json: wrapText(provider, JSON.stringify({ summaryKr: "", keyListeningPoints: [], items })) };
   };
   for (const run of aiCases.runs) {
     const segs = Array.from({ length: run.segments }, (_, i) => mkSeg(i, run.texts?.[String(i)] ?? `word one two three ${i}`, run.analyzedAt.includes(i)));
@@ -785,22 +790,28 @@ async function runAllTests() {
     const sleeps: number[] = [];
     let sentAnalyzed = 0;
     let call = 0;
-    const result = await aiMod.runAiAnalysis(segs, { provider: "gemini", apiKey: "TEST", model: "m" }, {
+    const provider = run.provider ?? "gemini";
+    const jsonModes: string[] = [];
+    const result = await aiMod.runAiAnalysis(segs, { provider, apiKey: "TEST", model: "m", baseUrl: "https://x.test/v1" }, {
       title: "t",
       sleep: async (ms: number) => { sleeps.push(ms); },
       fetch: async (req: { body: string }) => {
-        const prompt = JSON.parse(req.body).contents[0].parts[0].text as string;
+        const body = JSON.parse(req.body);
+        const prompt = promptOf(body);
         const sent = JSON.parse(prompt.split("Segments JSON:\n")[1]) as Array<{ index: number }>;
         batchSizes.push(sent.length);
+        if (provider === "openai") jsonModes.push(body.response_format ? "json" : "plain");
         sentAnalyzed += sent.filter((x) => run.analyzedAt.includes(x.index)).length;
         const reply = run.replies[call++];
-        if (reply === "ok") return okReply(req, run.restoredTexts);
-        if (reply === "bad") return { status: 200, json: { candidates: [{ content: { parts: [{ text: "not json" }] } }] } };
+        if (reply === "ok") return okReply(req, run.restoredTexts, provider);
+        if (reply === "bad") return { status: 200, json: wrapText(provider, "not json") };
+        if (reply === "groq400") return { status: 400, json: { error: { message: "Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.", code: "json_validate_failed", failed_generation: "{\"items\": [" } } };
         return { status: reply, json: { error: { message: `HTTP ${reply}` } } };
       },
     });
     assert.deepEqual(batchSizes, run.expect.batchSizes, `runAiAnalysis ${run.name}: batch sizes`);
     assert.deepEqual(sleeps, run.expect.sleeps, `runAiAnalysis ${run.name}: sleeps`);
+    if (run.expect.jsonModes) assert.deepEqual(jsonModes, run.expect.jsonModes, `runAiAnalysis ${run.name}: JSON mode per request`);
     assert.equal(result.analyzed, run.expect.analyzed, `runAiAnalysis ${run.name}: analyzed`);
     assert.equal(result.total, run.expect.total, `runAiAnalysis ${run.name}: total`);
     assert.equal(result.stoppedBy?.kind ?? null, run.expect.stoppedBy, `runAiAnalysis ${run.name}: stoppedBy`);

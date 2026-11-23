@@ -56,6 +56,8 @@ export interface AiRunResult {
 
 export const AI_BATCH_SEGMENTS = 20;
 export const AI_REQUEST_GAP_MS = 4000;
+/** 형식 오류가 두 번 난 묶음을 반으로 나누는 최소 크기(이하면 멈춤) — 20 → 10 → 5 */
+export const AI_SPLIT_MIN = 5;
 export const AI_RETRY_WAIT_MS = 30000;
 /** 서버 과부하(502·503·504, "high demand") 때 같은 묶음을 다시 보내기 전 기다림 — 길이만큼 다시 시도 */
 export const AI_BUSY_WAITS_MS = [10000, 20000];
@@ -131,7 +133,8 @@ const GEMINI_RESPONSE_SCHEMA = {
   },
 };
 
-export function buildAiRequest(config: AiConfig, prompt: string): AiHttpRequest {
+/** plain: OpenAI 호환에서 response_format(json_object)을 빼고 보냄 — Groq JSON 검사에 걸린 묶음 재시도용 */
+export function buildAiRequest(config: AiConfig, prompt: string, plain = false): AiHttpRequest {
   if (config.provider === "gemini") {
     return {
       url: `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(config.model)}:generateContent`,
@@ -155,7 +158,7 @@ export function buildAiRequest(config: AiConfig, prompt: string): AiHttpRequest 
     body: JSON.stringify({
       model: config.model,
       temperature: 0.2,
-      response_format: { type: "json_object" },
+      ...(plain ? {} : { response_format: { type: "json_object" } }),
       messages: [
         { role: "system", content: "You reply with a single valid JSON object and nothing else." },
         { role: "user", content: prompt },
@@ -269,7 +272,10 @@ export function parseAiResponse(
   const failed = jsonValidateFailure(json);
   if (failed !== null) {
     const salvaged = failed ? parseItemsText(failed, segments) : null;
-    return salvaged && "items" in salvaged ? salvaged : { error: { kind: "format", message: detail || "json_validate_failed" } };
+    if (salvaged && "items" in salvaged) return salvaged;
+    // 진단에서 원인(잘림·잡글)을 보이게: 길이와 끝 60자
+    const tail = failed.slice(-60).replace(/\s+/g, " ");
+    return { error: { kind: "format", message: `json_validate_failed (생성 ${failed.length}자, 끝: ${JSON.stringify(tail)})` } };
   }
   if (status === 401 || status === 403) return { error: { kind: "auth", message: detail || `HTTP ${status}` } };
   if (status === 429) return { error: { kind: "quota", message: detail || "HTTP 429" } };
@@ -291,10 +297,19 @@ function jsonValidateFailure(json: unknown): string | null {
 
 function parseItemsText(text: string, segments: TranscriptSegment[]): { items: AiItem[] } | { error: AiError } {
   let parsed: unknown;
+  const body = stripFence(text);
   try {
-    parsed = JSON.parse(stripFence(text));
+    parsed = JSON.parse(body);
   } catch {
-    return { error: { kind: "format", message: "AI response is not JSON" } };
+    // 앞뒤 잡글(설명·생각)이 붙은 답: 첫 { ~ 마지막 }만
+    const a = body.indexOf("{");
+    const b = body.lastIndexOf("}");
+    try {
+      if (a < 0 || b <= a) throw new Error("no object");
+      parsed = JSON.parse(body.slice(a, b + 1));
+    } catch {
+      return { error: { kind: "format", message: "AI response is not JSON" } };
+    }
   }
   const items = (parsed as { items?: unknown } | null)?.items;
   if (!Array.isArray(items)) return { error: { kind: "format", message: "AI response has no items array" } };
@@ -303,8 +318,10 @@ function parseItemsText(text: string, segments: TranscriptSegment[]): { items: A
 
 /**
  * Analyzes pending segments in batches of AI_BATCH_SEGMENTS, writing results into seg.analysis
- * as they arrive. Stops on auth/network errors, on a second quota error, a second format error,
- * or when the server is still busy after AI_BUSY_WAITS_MS retries.
+ * as they arrive. Stops on auth/network errors, on a second quota error, a second format error
+ * on a batch of AI_SPLIT_MIN or fewer (bigger batches are split in half and retried),
+ * or when the server is still busy after AI_BUSY_WAITS_MS retries. A format retry goes out
+ * without JSON mode (buildAiRequest plain).
  */
 export async function runAiAnalysis(
   segments: TranscriptSegment[],
@@ -315,10 +332,15 @@ export async function runAiAnalysis(
   const total = pending.length;
   let analyzed = 0;
   let done = 0;
-  for (let start = 0; start < pending.length; start += AI_BATCH_SEGMENTS) {
-    const batch = pending.slice(start, start + AI_BATCH_SEGMENTS);
-    if (start > 0) await deps.sleep(AI_REQUEST_GAP_MS);
-    const req = buildAiRequest(config, buildAnalysisPrompt(deps.title ?? "", batch));
+  const queue: TranscriptSegment[][] = [];
+  for (let start = 0; start < pending.length; start += AI_BATCH_SEGMENTS) queue.push(pending.slice(start, start + AI_BATCH_SEGMENTS));
+  let first = true;
+  while (queue.length > 0) {
+    const batch = queue.shift()!;
+    if (!first) await deps.sleep(AI_REQUEST_GAP_MS);
+    first = false;
+    const prompt = buildAnalysisPrompt(deps.title ?? "", batch);
+    let req = buildAiRequest(config, prompt);
     let result: { items: AiItem[] } | { error: AiError } | null = null;
     let busyRetries = 0;
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -339,8 +361,17 @@ export async function runAiAnalysis(
         await deps.sleep(AI_RETRY_WAIT_MS);
         continue;
       }
-      if (result.error.kind === "format" && attempt === 0) continue;
-      return { analyzed, total, stoppedBy: result.error };
+      if (result.error.kind === "format" && attempt === 0) {
+        req = buildAiRequest(config, prompt, true);
+        continue;
+      }
+      break;
+    }
+    // 같은 묶음이 두 번 형식 오류: 답이 길수록 깨지기 쉬움 → 반으로 나눠 다시
+    if (result && "error" in result && result.error.kind === "format" && batch.length > AI_SPLIT_MIN) {
+      const half = Math.ceil(batch.length / 2);
+      queue.unshift(batch.slice(0, half), batch.slice(half));
+      continue;
     }
     if (!result || !("items" in result)) {
       return { analyzed, total, stoppedBy: result && "error" in result ? result.error : { kind: "format", message: "no result" } };
