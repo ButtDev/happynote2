@@ -3,7 +3,7 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.51(SPEC_043 노래방식 하이라이트, 11-23 릴리스 3파일 확인). ⏳ SPEC_043 6(새 자동 자막 영상 → 3단계 펼치고 재생 → 낱말이 소리 따라 칠해짐) 버튼 보냄. OK면 `/spec-run SPEC_043 사람확인: 6 OK` → DONE.
+- 배포 최신 BRAT 1.0.51(SPEC_043 노래방식 하이라이트 DONE 11-23). 남은 ⏳ 없음. 다음은 백로그 「대기」 첫 번째 오늘의 5문장.
 - 백로그 「대기」(`memory/backlog.md`): 야간 순서 오늘의 5문장 → 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
 - 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
@@ -46,4 +46,4 @@
 - 알림(SPEC_042): 실패 알림은 `failureNotice("<무엇>", err)`(`src/services/notices.ts`, 원인 4가지·`KnownFailure`), 다시 할 수 있으면 `notifyRetry(text, retry)`(`src/ui/notify.ts`, 10초). 알림·문구 상수는 해요체 — Test 28이 `new Notice(` 줄의 「니다」·원문(`.message`)을 잡음. 화면 검사 가짜 Notice는 `.notice-container`에 그려 버튼을 누를 수 있음.
 - 진단(SPEC_038): `src/services/diagnostics.ts`(순수, 공용 `diagnostics`, Test 24 + `tests/fixtures/diagnostics/`, 변이 `EAR_COACH_DIAGNOSTICS_MODULE`), 설정 줄·전역 잡기 `src/ui/diagnosticsSection.ts`. 새 오류 catch 자리엔 `diagnostics.record("<단계>", err)` 한 줄. 화면 검사 `expect.diagnostics`(`__diagnostics`·`__diagClip`). 메모리만(앱 다시 켜면 비워짐).
 - 학습 기록(SPEC_040): `src/services/learningStore.ts`(순수, 파일 주입, Test 26 + `tests/fixtures/learning/cases.json`, 변이 `EAR_COACH_LEARNING_MODULE`), `plugin.learning`(`src/features/learning.ts` → `<manifest.dir>/learning.json`). 지금 연결은 핀 토글뿐(`EarCoachView` onTogglePin) — 빈칸 `recordBlank`·위치 `setPosition`·퀴즈 `recordQuiz`는 쓰는 기능 SPEC에서 연결. schemaVersion>1 파일은 읽기 전용. 화면 검사 가짜 플러그인 `tests/ui/entry.ts`에도 `learning` 있음.
-- 노래방식(SPEC_043): `src/utils/karaoke.ts` `attachWordStarts`(mergeCuesIntoSegments 끝, 모든 낱말 찾을 때만 `seg.wordStarts`)·`activeWordIndex`, Test 29 + `tests/fixtures/karaoke/`(변이 `EAR_COACH_KARAOKE_MODULE`), 카드 `setPlaybackTime` → 3단계 `.ear-coach-word[data-wi]`에 `is-karaoke`. 화면 검사 `expect.karaoke`. 옛 영상엔 시각 없음(새로 열어야).
+- 노래방식(SPEC_043): 확인용 자동 자막만 있는 영상 txqiwrbYGrs(David After Dentist) — 앱은 수동 자막을 먼저 골라 수동 자막 있는 영상엔 낱말 시각 없음. `src/utils/karaoke.ts` `attachWordStarts`(mergeCuesIntoSegments 끝, 모든 낱말 찾을 때만 `seg.wordStarts`)·`activeWordIndex`, Test 29 + `tests/fixtures/karaoke/`(변이 `EAR_COACH_KARAOKE_MODULE`), 카드 `setPlaybackTime` → 3단계 `.ear-coach-word[data-wi]`에 `is-karaoke`. 화면 검사 `expect.karaoke`. 옛 영상엔 시각 없음(새로 열어야).

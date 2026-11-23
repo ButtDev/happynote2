@@ -1,7 +1,7 @@
 ---
 id: SPEC_043
 title: 노래방식 낱말 하이라이트 — 재생 중 정답 문장 낱말을 단어 시각대로 차례로 강조
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_018]
@@ -43,7 +43,7 @@ depends_on: [SPEC_018]
 3. [x] Test 29 실제 자막 불변식: `ted-asr`·`rick-asr`를 `mergeCuesIntoSegments`로 처리하면 카드 90% 이상에 `wordStarts`가 붙고, 붙은 카드는 모두 길이 = `words.length`, 줄지 않음, `[start-0.5, end+0.5]` 안. `ted-manual`은 0장 [자동]
 4. [x] 화면 검사 `expect.karaoke`(세로·가로): 3단계 카드에 시각을 넣고 재생 위치를 낱말 2개에 차례로 두면 `.is-karaoke`가 1개씩, 그 낱말 글자와 같음, 다른 문장으로 가면 0개. 카드 높이가 강조 전후 같음. `karaoke-<뷰>.png` 열어 봄 [자동]
 5. [x] 회귀 `verify.mjs --set regression` [자동]
-6. [ ] 실기기: BRAT 업데이트 뒤 **새 영상**(자동 자막)을 열고 한 문장을 3단계로 펼친 채 재생하면 낱말이 소리에 맞춰 차례로 칠해지는지 보고 버튼 [수동]
+6. [x] 실기기: BRAT 업데이트 뒤 **새 영상**(자동 자막)을 열고 한 문장을 3단계로 펼친 채 재생하면 낱말이 소리에 맞춰 차례로 칠해지는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법 (verify 항목·grep·스크린샷)
 - 1~3: `npm test` Test 29(`tests/fixtures/karaoke/cases.json`), 변이 `EAR_COACH_KARAOKE_MODULE`로 망가뜨린 사본.
@@ -63,3 +63,4 @@ depends_on: [SPEC_018]
 
 ## 실행 기록
 - 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 29 「8 active cases」 PASS, 변이 m1(끝 시각 검사 뺌) → 「activeWordIndex: 문장 끝(끝 시각은 밖)」 실패 · 2 ✅ Test 29 「7 attach cases」 PASS, 변이 m2(건너뛰기 99) → 「건너뛰기 한도」, m3(한 낱말 cue 무시) → 「낱말 하나뿐인 cue」, m4(범위 무시) → 「범위 밖 낱말은 안 씀」 실패 · 3 ✅ Test 29 real: ted-asr 312/312, rick-asr 39/43(0.907), ted-manual 0/273, 길이·줄지 않음·범위 불변식 통과(처음엔 낱말 하나뿐인 cue에 words가 없어 ted 272/312 → 그 낱말을 cue 시작 시각으로 넣어 고침) · 4 ✅ ui `karaoke` 세로·가로 ok: first [{wi:1,"I"}], last [{wi:9,"trip."}], away 0, 높이 293→293; 변이(setPlaybackTime 빈 함수) → first [] 세로·가로 실패. `karaoke-portrait/landscape.png` 열어 봄: 3단계 문장에서 「trip.」만 노란 배경, 줄바꿈·카드 그대로 · 5 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(변이 뒤 원복하고 다시 돌림) · 6 ⏳ 실기기.
+- 2026-11-23 사람 확인(회차 세지 않음): DONE — 6 ✅ `log/confirmations.jsonl` 「[Button pressed: SPEC_043 6 OK]」(1.0.51, 새 자동 자막 영상). 1~5는 회차 1 근거 그대로.
