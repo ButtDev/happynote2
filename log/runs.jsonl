@@ -151,3 +151,4 @@
 {"ts":"2026-11-23T21:13:18.415Z","spec":"SPEC_047","result":"IMPLEMENTED","commit":"64f3c2c","release":"1.0.56","verify":"regression ok, Test 34 + 5 mutations"}
 {"ts":"2026-11-23T21:26:45.419Z","cmd":"/night-run → /spec-run","spec":"SPEC_049","iteration":1,"status":"IMPLEMENTED","evidence":"Test 31 새 영상 5개+시간·자르는 자리 지표, badCut ted-asr 0.062→0.048 sinek 0.039→0.012 mit-asr 0.057→0.033, 변이(13e6955) 실패, 회귀 통과(worktree), f2f4d05 ff → main, BRAT 1.0.57 릴리스 3파일"}
 {"ts":"2026-11-23T21:40:32.134Z","cmd":"/spec-new+/spec-run","spec":"SPEC_050","result":"IMPLEMENTED","questions":0,"evidence":"Test 35 PASS, 5 mutants caught, ui expect.quiz ok, regression ok"}
+{"ts":"2026-11-23T22:05:53.392Z","id":"fix-ai-400","kind":"simple","summary":"Groq 400 json_validate_failed → failed_generation 살리기/format 재시도 (진단 1.0.58)","evidence":"Test 15 19 response PASS, 변이 실패 확인, verify regression ok","release":"1.0.59"}
