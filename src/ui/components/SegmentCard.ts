@@ -5,6 +5,7 @@ import { formatSecondsToTimestamp } from "../../utils/youtubeUrlParser";
 import { MicroDictationBox } from "./MicroDictationBox";
 import { ensureSegmentPronunciations, segmentSoundHint } from "../../services/cmudictLite";
 import { activeWordIndex } from "../../utils/karaoke";
+import { renderShadowRow } from "../shadowRow";
 
 export interface SegmentCardCallbacks {
   onPlaySegment: (segment: TranscriptSegment, loop: boolean) => void;
@@ -21,6 +22,9 @@ export interface SegmentCardCallbacks {
   onReviewResult?: (segment: TranscriptSegment, ok: boolean) => void;
   /** SPEC_044: 빈칸 하나의 결과(학습 기록) */
   onBlankResult?: (segment: TranscriptSegment, word: string, ok: boolean) => void;
+  /** SPEC_045: 쉐도잉 비교 — 원음(그 문장) 재생 / 내 녹음 직전·멈출 때 원음 멈춤 */
+  onPlayOriginal?: (segment: TranscriptSegment) => void;
+  onStopOriginal?: () => void;
 }
 
 /**
@@ -294,6 +298,17 @@ export class SegmentCard {
     const fullBox = bodyEl.createDiv({ cls: "ear-coach-full-reveal-box" });
     const scriptEl = fullBox.createDiv({ cls: "ear-coach-full-script" });
     this.renderTappableWords(scriptEl, this.segment.text);
+
+    // SPEC_045: 따라 말하기 녹음 → 원음·내 녹음 비교
+    const onOriginal = this.callbacks.onPlayOriginal;
+    if (onOriginal) {
+      const seg = this.segment;
+      renderShadowRow(fullBox, seg, {
+        playOriginal: () => onOriginal(seg),
+        stopOriginal: () => this.callbacks.onStopOriginal?.(),
+        isAlive: () => this.cardEl.isConnected && this.segment === seg && seg.unlockStep === 3,
+      });
+    }
 
     if (analysis) {
       fullBox.createDiv({

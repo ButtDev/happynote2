@@ -43,6 +43,7 @@ import * as httpSrc from "../src/services/http.ts";
 import * as noticesSrc from "../src/services/notices.ts";
 import * as karaokeSrc from "../src/utils/karaoke.ts";
 import * as todaySrc from "../src/utils/todaySentences.ts";
+import * as shadowSrc from "../src/utils/shadowing.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1350,6 +1351,35 @@ async function runAllTests() {
     assert.deepEqual(got, c.expect, `card length: ${c.name}`);
   }
   log(`  -> PASS: ${sl.cases.length} synthetic cases; ${slSummary.join("; ")}.`);
+  log("");
+
+  log("[Test 32] Shadowing — 녹음 한도·녹음 형식·버튼 글자·실패 이유 (data-driven, SPEC_045)");
+  const sdMod = process.env.EAR_COACH_SHADOWING_MODULE ? await import(path.resolve(process.env.EAR_COACH_SHADOWING_MODULE)) : shadowSrc;
+  const sdc = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/shadowing/cases.json"), "utf8"));
+  assert.equal(sdMod.SHADOW_EXTRA_SEC, sdc.constants.SHADOW_EXTRA_SEC, "SHADOW_EXTRA_SEC");
+  assert.equal(sdMod.SHADOW_MAX_SEC, sdc.constants.SHADOW_MAX_SEC, "SHADOW_MAX_SEC");
+  assert.equal(sdMod.SHADOW_MAX_SEC, audioClipSrc.CLIP_MAX_SEC, "SHADOW_MAX_SEC = CLIP_MAX_SEC");
+  for (const c of sdc.limit) {
+    const d = c.duration === "NaN" ? NaN : c.duration;
+    const got = sdMod.shadowLimitSec(d);
+    assert.ok(Math.abs(got - c.expect) < 1e-9, `shadowLimitSec: ${c.name} → ${got}`);
+  }
+  for (const c of sdc.mime) {
+    const asked: string[] = [];
+    const got = sdMod.pickRecorderMime((m: string) => {
+      asked.push(m);
+      if ((c.throws ?? []).includes(m)) throw new Error("boom");
+      return c.supported.includes(m);
+    });
+    assert.equal(got, c.expect, `pickRecorderMime: ${c.name}`);
+  }
+  for (const c of sdc.label) assert.equal(sdMod.shadowRecordingLabel(c.remaining), c.expect, `shadowRecordingLabel(${c.remaining})`);
+  for (const c of sdc.failure) {
+    const reason = sdMod.shadowFailureReason(c.err);
+    assert.equal(reason, c.expect, `shadowFailureReason: ${c.name}`);
+    if (reason) assert.ok(!reason.includes("니다"), `해요체: ${reason}`);
+  }
+  log(`  -> PASS: ${sdc.limit.length} limit, ${sdc.mime.length} mime, ${sdc.label.length} label, ${sdc.failure.length} failure cases.`);
   log("");
 
   log("==============================================================");

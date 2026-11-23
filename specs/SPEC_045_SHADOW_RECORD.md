@@ -1,8 +1,8 @@
 ---
 id: SPEC_045
 title: 쉐도잉 녹음 비교 — 정답 단계에서 따라 말하기 녹음 → 원음·내 녹음 번갈아 듣기
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -53,3 +53,6 @@ depends_on: []
 - 메모리에만 · 이유: 저장은 용량·사생활 결정이 필요 · 대안: 볼트에 저장(사람 결정).
 
 ## 실행 기록
+- 2026-11-24 회차 1 (야간): IMPLEMENTED — 1 ✅ `npm test` Test 32 PASS(7 limit·5 mime·4 label·6 failure), 변이 EAR_COACH_SHADOWING_MODULE 한도(+1)→「shadowLimitSec: 짧은 문장 2.4초 → 4.4 → 3.4」, 형식(항상 "")→「pickRecorderMime: opus 됨」 실패 · 2 ✅ 화면 검사 shadowing 세로·가로 ok: 1·2단계 카드 🎙 [0,0], 3단계 🎙 1개, 누름 → MediaRecorder 1번(opus)·「⏹ 6」, 한도 5.45초에 자동 stop 5454ms, 🔁 비교 보임, 원음 playSegment [[0,false]] 1번 → 3806ms 뒤 Audio play 1번(기대 3750±400), 카드·줄 넘침 0; shadow-portrait/landscape.png 열어 봄 — 정답 문장 아래 「🎙 · 🔁 비교」 한 줄, 겹침 없음 · 3 ✅ shadowing.denied ok: 알림 「❌ 녹음 — 마이크 권한을 허용해 주세요」, MediaRecorder 0번, 진단 shadow.record; 변이(catch 비움) → notices [] 로 세로·가로 실패 · 4 ✅ verify --set regression ok:true exit 0(worktree), EarCoachView 897줄 · 5 ⏳ 실기기
+  - 가결정: 시험 번호 Test 32(31은 SPEC_048이 이미 씀) · 대안 없음. 버튼 줄은 새 `src/ui/shadowRow.ts`로(SegmentCard 334줄 유지·상태는 공용 ShadowRecorder) · 대안 SegmentCard 안. 콜백 `onStopOriginal`(= playerBar.pause) 추가 — 내 녹음 직전·비교 멈춤 때 원음을 멈춤(안 그러면 영상이 계속 말함) · 대안 원음을 그대로 둠. 실패 이유 `shadowFailureReason`(거부·마이크 없음·미지원)을 순수 모듈에 둠. 녹음은 메모리 최대 20개(오래된 것 버림).
+

@@ -267,6 +267,19 @@ function evaluateExpect(vp, m, nums) {
       st[2].text === "🔁 OFF" && !st[2].active && st[2].loopingCards.length === 0;
     add("loopCycle", !!ok, JSON.stringify(z));
   }
+  if (e.shadowing) {
+    const z = m.shadowing;
+    const d = z?.denied;
+    const ok = z && !z.error && JSON.stringify(z.recInLow) === "[0,0]" && z.recCount === 1 && z.idleText === "🎙" && z.idleAria === "따라 말하기 녹음" &&
+      !z.cmpBefore && /^⏹ \d+$/.test(z.recText ?? "") && z.recorders === 1 && z.mime === "audio/webm;codecs=opus" &&
+      z.autoStopMs !== null && Math.abs(z.autoStopMs - z.limit * 1000) <= 400 && z.afterText === "🎙" && z.cmpShown && z.cmpText === "🔁 비교" &&
+      z.trackStops >= 1 && z.overflow.card <= 1 && z.overflow.row <= 1 &&
+      JSON.stringify(z.origCalls) === JSON.stringify([[z.index, false]]) && z.audioPlays === 1 && JSON.stringify(z.order) === JSON.stringify(["playSegment", "audio.play"]) &&
+      z.gapMs !== null && Math.abs(z.gapMs - (z.duration + 0.3) * 1000) <= 400;
+    add("shadowing", !!ok, JSON.stringify({ ...z, denied: undefined, evs: undefined }));
+    const okDenied = !!d && d.notices.length === 1 && d.notices[0].includes("마이크 권한") && !d.notices[0].includes("니다") && d.recorders === 0 && d.text === "🎙" && !!d.diag?.includes("shadow.record");
+    add("shadowing.denied", okDenied, JSON.stringify(d));
+  }
   if (e.karaoke) {
     const k = m.karaoke;
     const ok = k && !k.error && k.first.length === 1 && k.first[0].wi === 1 && k.first[0].text === k.words[1] &&
@@ -666,6 +679,99 @@ for (const vp of cases.viewports) {
         view.playerBar.seekTo(0);
         await wait(300);
         return away;
+      });
+    }
+  }
+
+  // SPEC_045: 쉐도잉 — 가짜 마이크로 3단계 카드 🎙 → 자동 멈춤 → 🔁 비교(원음 → 내 녹음), 권한 거부 알림.
+  m.shadowing = null;
+  if (vp.expect?.shadowing) {
+    m.shadowing = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      window.__installShadowFakes();
+      const view = window.__earCoachView;
+      const segs = view?.session?.segments ?? [];
+      const seg = segs.find((s) => s.duration > 0 && s.duration <= 4) ?? segs[0];
+      const others = segs.filter((s) => s !== seg).slice(0, 2);
+      if (!seg || others.length < 2) return { error: "segments missing" };
+      const card = (s) => document.querySelector(`.ear-coach-segment-card[data-segment-index="${s.index}"]`);
+      const step = (s, n) => card(s)?.querySelector(`.ear-coach-step-btn[data-step="${n}"]`)?.click();
+      const recBtn = () => card(seg)?.querySelector(".ear-coach-shadow-rec");
+      const cmpBtn = () => card(seg)?.querySelector(".ear-coach-shadow-compare");
+      const shown = (el) => !!el && el.getBoundingClientRect().width > 0;
+      const evs = () => window.__shadowLog.map((e) => e.ev);
+      // 1·2단계 카드엔 🎙 없음
+      step(others[0], 1);
+      step(others[1], 2);
+      await wait(150);
+      const recInLow = [others[0], others[1]].map((s) => card(s)?.querySelectorAll(".ear-coach-shadow-rec").length ?? -1);
+      step(seg, 3);
+      await wait(200);
+      card(seg)?.scrollIntoView({ block: "center" });
+      await wait(200);
+      const recCount = card(seg)?.querySelectorAll(".ear-coach-shadow-rec").length ?? 0;
+      const idleText = recBtn()?.textContent ?? null;
+      const idleAria = recBtn()?.getAttribute("aria-label") ?? null;
+      const cmpBefore = shown(cmpBtn());
+      const limit = Math.min(seg.duration + 2, 20);
+      recBtn()?.click();
+      await wait(400);
+      const recText = recBtn()?.textContent ?? null;
+      const recorders = window.__shadowRecorders;
+      const startEv = window.__shadowLog.find((e) => e.ev === "recorder.start");
+      const deadline = performance.now() + (limit + 3) * 1000;
+      while (!window.__shadowLog.some((e) => e.ev === "recorder.stop") && performance.now() < deadline) await wait(100);
+      const stopEv = window.__shadowLog.find((e) => e.ev === "recorder.stop");
+      await wait(200);
+      const autoStopMs = startEv && stopEv ? Math.round(stopEv.t - startEv.t) : null;
+      const afterText = recBtn()?.textContent ?? null;
+      const cmpShown = shown(cmpBtn());
+      const cmpText = cmpBtn()?.textContent ?? null;
+      const trackStops = window.__shadowTrackStops;
+      const c = card(seg);
+      const row = c?.querySelector(".ear-coach-shadow-row");
+      const overflow = { card: c ? c.scrollWidth - c.clientWidth : null, row: row ? row.scrollWidth - row.clientWidth : null };
+      const logLen = window.__shadowLog.length;
+      cmpBtn()?.click();
+      await wait((seg.duration + 0.3) * 1000 + 700);
+      const cmpLog = window.__shadowLog.slice(logLen);
+      const orig = cmpLog.filter((e) => e.ev === "playSegment");
+      const plays = cmpLog.filter((e) => e.ev === "audio.play");
+      const gapMs = orig[0] && plays[0] ? Math.round(plays[0].t - orig[0].t) : null;
+      return {
+        index: seg.index, duration: seg.duration, limit, recInLow, recCount, idleText, idleAria, cmpBefore, recText, recorders,
+        mime: window.__shadowLog.find((e) => e.ev === "recorder.new")?.mime ?? null,
+        autoStopMs, afterText, cmpShown, cmpText, trackStops, overflow,
+        origCalls: orig.map((e) => [e.index, e.loop]), audioPlays: plays.length, gapMs, order: cmpLog.map((e) => e.ev).filter((e) => e === "playSegment" || e === "audio.play"),
+        evs: evs(),
+      };
+    });
+    if (m.shadowing && !m.shadowing.error) {
+      await page.screenshot({ path: path.join(outDir, `shadow-${vp.name}.png`) });
+      m.shadowing.denied = await page.evaluate(async () => {
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+        const view = window.__earCoachView;
+        const segs = view.session.segments;
+        const seg = segs.find((s) => s.duration > 0 && s.duration <= 4) ?? segs[0];
+        const card = (s) => document.querySelector(`.ear-coach-segment-card[data-segment-index="${s.index}"]`);
+        window.__shadowDeny = true;
+        window.__shadowRecorders = 0;
+        const before = (window.__notices ?? []).length;
+        card(seg)?.querySelector(".ear-coach-shadow-rec")?.click();
+        await wait(400);
+        const notices = (window.__notices ?? []).slice(before);
+        const text = card(seg)?.querySelector(".ear-coach-shadow-rec")?.textContent ?? null;
+        const recorders = window.__shadowRecorders;
+        const diag = (window.__diagnostics?.list?.() ?? window.__diagnostics?.entries?.() ?? []).map?.((e) => e.stage) ?? null;
+        window.__shadowDeny = false;
+        // 되돌리기: 바꾼 카드들을 0단계로
+        for (const s of segs) {
+          const c = card(s);
+          if (c && !c.querySelector('.ear-coach-step-btn[data-step="0"]')?.classList.contains("is-current-step")) c.querySelector('.ear-coach-step-btn[data-step="0"]')?.click();
+        }
+        document.querySelector(".notice-container")?.replaceChildren();
+        await wait(200);
+        return { notices, text, recorders, diag };
       });
     }
   }

@@ -1,0 +1,33 @@
+{
+  "constants": { "SHADOW_EXTRA_SEC": 2, "SHADOW_MAX_SEC": 20 },
+  "limit": [
+    { "name": "짧은 문장 2.4초 → 4.4", "duration": 2.4, "expect": 4.4 },
+    { "name": "18초 → 20(한도와 같음)", "duration": 18, "expect": 20 },
+    { "name": "20초 넘는 문장 → 20", "duration": 26.5, "expect": 20 },
+    { "name": "0 → 20", "duration": 0, "expect": 20 },
+    { "name": "음수 → 20", "duration": -3, "expect": 20 },
+    { "name": "NaN → 20", "duration": "NaN", "expect": 20 },
+    { "name": "숫자 아님(글자) → 20", "duration": "3", "expect": 20 }
+  ],
+  "mime": [
+    { "name": "opus 됨", "supported": ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"], "expect": "audio/webm;codecs=opus" },
+    { "name": "mp4만(iOS·일부 Android 웹뷰)", "supported": ["audio/mp4"], "expect": "audio/mp4" },
+    { "name": "webm만", "supported": ["audio/webm"], "expect": "audio/webm" },
+    { "name": "아무것도 안 됨 → 브라우저 기본", "supported": [], "expect": "" },
+    { "name": "물어보다 오류 → 다음 후보", "supported": ["audio/mp4"], "throws": ["audio/webm;codecs=opus"], "expect": "audio/mp4" }
+  ],
+  "label": [
+    { "remaining": 4.4, "expect": "⏹ 5" },
+    { "remaining": 4.0, "expect": "⏹ 4" },
+    { "remaining": 0.2, "expect": "⏹ 1" },
+    { "remaining": -1, "expect": "⏹ 0" }
+  ],
+  "failure": [
+    { "name": "권한 거부", "err": { "name": "NotAllowedError" }, "expect": "마이크 권한을 허용해 주세요" },
+    { "name": "보안 오류(권한)", "err": { "name": "SecurityError" }, "expect": "마이크 권한을 허용해 주세요" },
+    { "name": "마이크 없음", "err": { "name": "NotFoundError" }, "expect": "마이크를 찾지 못했어요" },
+    { "name": "MediaRecorder 없음", "err": { "name": "ShadowUnsupported" }, "expect": "이 기기에선 녹음할 수 없어요" },
+    { "name": "모르는 오류 → 공용 규칙", "err": { "name": "TypeError" }, "expect": null },
+    { "name": "null", "err": null, "expect": null }
+  ]
+}

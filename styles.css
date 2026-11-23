@@ -1555,3 +1555,28 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   flex-wrap: wrap;
   row-gap: 4px;
 }
+
+/* SPEC_045: 쉐도잉 녹음·비교 줄(정답 단계) */
+.ear-coach-shadow-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  min-width: 0;
+}
+
+.ear-coach-shadow-row .ear-coach-shadow-compare.is-hidden {
+  display: none;
+}
+
+.ear-coach-shadow-row .ear-coach-shadow-rec.is-recording {
+  color: var(--text-on-accent);
+  background: var(--color-red, #e5484d);
+  font-variant-numeric: tabular-nums;
+}
+
+.ear-coach-shadow-row .ear-coach-shadow-compare.is-comparing {
+  color: var(--text-on-accent);
+  background: var(--interactive-accent);
+}

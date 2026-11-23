@@ -147,6 +147,54 @@ async function main(): Promise<void> {
     (window as any).__pauseCalls = ((window as any).__pauseCalls ?? 0) + 1;
     return origPause.call(this);
   };
+  // SPEC_045: 가짜 마이크·MediaRecorder·Audio(부를 때만 설치). 호출은 window.__shadowLog(시각 ms 포함),
+  // window.__shadowDeny면 getUserMedia가 NotAllowedError, MediaRecorder 생성 수는 __shadowRecorders.
+  (window as any).__installShadowFakes = () => {
+    const w = window as any;
+    w.__shadowLog = [];
+    w.__shadowRecorders = 0;
+    w.__shadowTrackStops = 0;
+    const log = (ev: string, extra: Record<string, unknown> = {}) => w.__shadowLog.push({ ev, t: performance.now(), ...extra });
+    class FakeRecorder {
+      state = "inactive";
+      ondataavailable: ((e: { data: Blob }) => void) | null = null;
+      onstop: (() => void) | null = null;
+      static isTypeSupported(m: string) { return m === "audio/webm;codecs=opus"; }
+      constructor(_s: unknown, opts?: { mimeType?: string }) { w.__shadowRecorders++; log("recorder.new", { mime: opts?.mimeType ?? "" }); }
+      start() { this.state = "recording"; log("recorder.start"); }
+      stop() {
+        this.state = "inactive";
+        log("recorder.stop");
+        setTimeout(() => {
+          this.ondataavailable?.({ data: new Blob([new Uint8Array([1, 2, 3])], { type: "audio/webm" }) });
+          this.onstop?.();
+        }, 10);
+      }
+    }
+    class FakeAudio {
+      onended: (() => void) | null = null;
+      constructor(public src: string) { log("audio.new", { src }); }
+      play() { log("audio.play", { src: this.src }); setTimeout(() => this.onended?.(), 300); return Promise.resolve(); }
+      pause() { log("audio.pause"); }
+    }
+    w.MediaRecorder = FakeRecorder;
+    w.Audio = FakeAudio;
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        getUserMedia: async () => {
+          log("getUserMedia");
+          if (w.__shadowDeny) throw new DOMException("Permission denied", "NotAllowedError");
+          return { getTracks: () => [{ stop: () => { w.__shadowTrackStops++; } }] };
+        },
+      },
+    });
+    const origPlaySeg = PlayerBar.prototype.playSegment;
+    PlayerBar.prototype.playSegment = function (this: PlayerBar, seg: any, loop?: boolean) {
+      log("playSegment", { index: seg.index, loop: !!loop });
+      return origPlaySeg.call(this, seg, loop);
+    };
+  };
   // SPEC_033: 설정 화면 「🗑 저장된 영상」 — 가짜 저장소(영상 2개), 휴지통 호출은 window.__vdTrash
   (window as any).__renderVideoData = () => {
     const now = Date.now();

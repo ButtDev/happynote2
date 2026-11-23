@@ -562,6 +562,8 @@ export class EarCoachView extends ItemView {
         // SPEC_044: 빈칸 결과 → 학습 기록(다음 날 「오늘의 문장」 재료)
         if (this.session) void this.plugin.learning.recordBlank(this.session.videoId, s.start, word, ok);
       },
+      onPlayOriginal: (s) => this.playerBar?.playSegment(s, false), // SPEC_045: 쉐도잉 비교 원음
+      onStopOriginal: () => this.playerBar?.pause(),
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
       },
