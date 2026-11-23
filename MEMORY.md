@@ -3,16 +3,15 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.52(SPEC_044 오늘의 문장, 11-23 릴리스 3파일 확인). ⏳ SPEC_044 5(빈칸에 틀린 말 → **다음 날** 같은 영상 「☀️ 오늘의 문장」 → 시작) 버튼 보냄 — 하루 뒤에야 판정 가능. OK면 `/spec-run SPEC_044 사람확인: 5 OK` → DONE.
-- 야간 READY(11-23 사람 「심야 스펙 준비해」): SPEC_045 쉐도잉 녹음 → 046 이어 보기 → 047 사전 캐시. 045·046은 EarCoachView 900줄 한도(지금 895) — 새 코드는 모듈로.
-- 백로그 「대기」(`memory/backlog.md`): 야간 순서 쉐도잉 → 어제 영상 퀴즈 → 공유로 바로 열기 → 이어 보기 → 긴 영상 성능 → 실패 경로 시험 → 사전 캐시. 화면 바뀌는 건 night 브랜치 + 아침 ⏳.
-- 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검. 보류: 설정 스키마 한 표·화면 상태 저장소.
+- 배포 최신 BRAT 1.0.52(SPEC_044 오늘의 문장). ⏳ SPEC_044 5는 사람이 **11-24에 확인**(「내일 확인, 답 기다리지 말 것」) — 버튼 오면 `/spec-run SPEC_044 사람확인: 5 OK` → DONE.
+- 야간 READY(11-23 사람 「심야 스펙 준비해」): SPEC_045 쉐도잉 녹음 → 046 이어 보기 → 047 사전 캐시(`/night-run`, gate mode=spec). 045·046은 EarCoachView 900줄 한도(지금 895) — 새 코드는 모듈로. 화면 바뀌는 건 BRAT 배포 뒤 아침 ⏳.
+- 백로그 「대기」 남은 것(SPEC 없음): 어제 영상 퀴즈 → 공유로 바로 열기 → 긴 영상 성능 → 실패 경로 시험.
+- 버린 아이디어(11-22 사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검·하네스 템플릿 개선(11-23 「안 함」). 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
 
 ## 주의
-- 하네스 템플릿 개선 후보(log UTC·버튼 중복 기록 등)는 사람이 11-23 「안 함」 — 다시 제안하지 않는다.
 - `log/*.jsonl` `ts`는 UTC(KST −9h) — 밤/아침 판단은 git 커밋 시각(KST)으로. 11-23 06:39에 야간을 「오늘 밤」으로 착각함.
 - 네트워크(SPEC_041): 모든 요청은 `src/features/network.ts` `send(opts, HTTP_POLICIES.x)` → `src/services/http.ts` `sendWithPolicy`(Test 27, 변이 `EAR_COACH_HTTP_MODULE`). 새 요청도 `requestUrl` 직접 말고 `send`로. Anki는 재시도 0(카드 두 번 방지).
 - 기능 모듈(SPEC_039): `src/main.ts`(150줄)는 필드·위임·등록 순서만. 네트워크 `src/features/network.ts`, 세션 만들기·복구·재정렬·agy `sessionPipeline.ts`, 화면 열기·openFile 가로채기 `workspaceView.ts`, 모바일 AI `mobileAi.ts`, URI·리본·명령·코드 블록 `commands.ts`. 연결 검사 `tests/wiring/runWiringCheck.mjs`(node + esbuild 메모리 번들 + 가짜 obsidian, 기대값 `tests/fixtures/wiring/expected.json`, Test 25, 변이 `EAR_COACH_MAIN`) — 명령·공개 메서드를 늘리면 기대값도 같이. main.ts 상한 600.
