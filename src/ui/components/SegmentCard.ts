@@ -19,6 +19,8 @@ export interface SegmentCardCallbacks {
   onAddSentenceToAnki?: (segment: TranscriptSegment) => Promise<string>;
   /** SPEC_027: 받아쓰기를 다 맞힘(ok) / 힌트·정답을 직접 엶(실패) — 「오늘」 복습 기록용 */
   onReviewResult?: (segment: TranscriptSegment, ok: boolean) => void;
+  /** SPEC_044: 빈칸 하나의 결과(학습 기록) */
+  onBlankResult?: (segment: TranscriptSegment, word: string, ok: boolean) => void;
 }
 
 /**
@@ -269,6 +271,7 @@ export class SegmentCard {
         onAskTutorWithHeardText: (seg, heardText) => {
           this.callbacks.onOpenTutor(seg, heardText);
         },
+        onBlankResult: (seg, word, ok) => this.callbacks.onBlankResult?.(seg, word, ok),
       });
       dictBox.render();
       return;

@@ -41,6 +41,7 @@ import * as learningSrc from "../src/services/learningStore.ts";
 import * as httpSrc from "../src/services/http.ts";
 import * as noticesSrc from "../src/services/notices.ts";
 import * as karaokeSrc from "../src/utils/karaoke.ts";
+import * as todaySrc from "../src/utils/todaySentences.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1296,6 +1297,20 @@ async function runAllTests() {
     kaSummary.push(`${r.file} ${timed.length}/${segs.length}`);
   }
   log(`  -> PASS: ${ka.active.length} active cases, ${ka.attach.length} attach cases, real: ${kaSummary.join(", ")}.`);
+  log("");
+
+  log("[Test 30] Today sentences — 차례 핀 + 지난날 틀린 빈칸 문장 최대 5개 (data-driven, SPEC_044)");
+  const tdMod = process.env.EAR_COACH_TODAY_MODULE ? await import(path.resolve(process.env.EAR_COACH_TODAY_MODULE)) : todaySrc;
+  const td = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/today/cases.json"), "utf8"));
+  const tdNow = Date.parse(td.now);
+  for (const c of td.wrong) {
+    assert.deepEqual(tdMod.wrongBlankSegmentIndices(td.segments, c.blanks, "v1", tdNow, td.tz), c.expect, `wrongBlankSegmentIndices: ${c.name}`);
+  }
+  for (const c of td.pick) {
+    assert.deepEqual(tdMod.pickTodaySentences(c.due, c.wrong), c.expect, `pickTodaySentences: ${c.name}`);
+  }
+  assert.equal(tdMod.TODAY_SENTENCES_MAX, 5, "TODAY_SENTENCES_MAX = 5");
+  log(`  -> PASS: ${td.wrong.length} wrong-blank cases, ${td.pick.length} pick cases.`);
   log("");
 
   log("==============================================================");

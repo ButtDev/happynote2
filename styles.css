@@ -1530,3 +1530,28 @@ body.is-mobile:has(.workspace-leaf.mod-active .ear-coach-mobile-container.is-typ
   font-size: var(--font-ui-small);
   vertical-align: middle;
 }
+
+/* SPEC_044: 오늘의 문장 줄 — 툴바 맨 위 한 줄(order로 올림) */
+.ear-coach-warmup {
+  order: -1;
+  flex: 1 0 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ear-coach-warmup-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* SPEC_044: 줄이 있을 때만 툴바를 두 줄로(필터·버튼 줄은 그대로 한 줄) */
+.ear-coach-mobile-toolbar:has(> .ear-coach-warmup) {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}

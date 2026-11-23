@@ -140,3 +140,4 @@
 {"ts":"2026-11-22T21:48:41.426Z","cmd":"/spec-run","spec":"SPEC_043","iteration":1,"status":"IMPLEMENTED","evidence":"Test 29 PASS + 변이 4개 실패, ui karaoke 세로·가로 ok + 변이 실패, regression ok, 6 ⏳"}
 {"ts":"2026-11-23T00:38:08.883Z","cmd":"/spec-run","spec":"SPEC_043","iteration":1,"status":"DONE","evidence":"사람확인 6 OK (버튼), 1~5 회차 1 근거"}
 {"ts":"2026-11-23T07:19:12.145Z","cmd":"/spec-new","spec":"SPEC_044","result":"READY","questions":0}
+{"ts":"2026-11-23T07:27:27.453Z","cmd":"/spec-run","spec":"SPEC_044","iteration":1,"status":"IMPLEMENTED","evidence":"Test 30 PASS+변이 2, ui todaySentences·blankRecord 세로·가로 ok+변이, regression ok; ⏳5 실기기"}

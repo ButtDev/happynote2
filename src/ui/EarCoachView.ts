@@ -8,6 +8,8 @@ import { SegmentTimeIndex } from "../utils/binarySearch";
 import { followTargetIndex, shouldAutoFollow, USER_SCROLL_PAUSE_MS } from "../utils/loopControl";
 import { isMobileApp } from "../utils/platform";
 import { isReviewDue, shouldGraduate, withReview } from "../utils/reviewQueue";
+import { pickTodaySentences, wrongBlankSegmentIndices } from "../utils/todaySentences";
+import { renderWarmupBanner } from "./warmupBanner";
 import { clampLandscapeLeftPercent, landscapeLeftPercentFromPointer, LANDSCAPE_LEFT_DEFAULT } from "../utils/landscapeSplit";
 import { PlayerBar } from "./components/PlayerBar";
 import { setupMobileTypingMode } from "./mobileTypingMode";
@@ -42,6 +44,9 @@ export class EarCoachView extends ItemView {
   private manualLockSegmentIdx = -1;
   private manualLockUntil = 0;
   private filterMode: FilterMode = "ALL";
+  /** SPEC_044: 오늘 전에 틀린 빈칸이 있는 문장 번호(영상 열 때 learning.json에서), 줄 닫음 */
+  private wrongBlankIdx: number[] = [];
+  private warmupClosed = false;
 
   private isShellMounted = false;
   private toolbarEl: HTMLElement | null = null;
@@ -126,6 +131,8 @@ export class EarCoachView extends ItemView {
     this.session = session;
     this.activeNoteFile = noteFile;
     this.filterMode = "ALL";
+    this.wrongBlankIdx = [];
+    this.warmupClosed = false;
     this.timeIndex.setSegments(session.segments);
     this.lastActiveSegmentIdx = -1;
     this.manualLockSegmentIdx = -1;
@@ -139,6 +146,7 @@ export class EarCoachView extends ItemView {
     }
 
     this.renderWorkspace();
+    void this.loadWrongBlanks();
 
     if (focusTimestampSec !== undefined) {
       const nearestIdx = this.timeIndex.findNearestSegmentIndex(focusTimestampSec);
@@ -550,6 +558,10 @@ export class EarCoachView extends ItemView {
         if (shouldGraduate(s)) new Notice("📌 이 문장을 두 번 연달아 맞혔어요 — 이제 핀을 풀어도 돼요");
         void this.persistCurrentSession(false);
       },
+      onBlankResult: (s, word, ok) => {
+        // SPEC_044: 빈칸 결과 → 학습 기록(다음 날 「오늘의 문장」 재료)
+        if (this.session) void this.plugin.learning.recordBlank(this.session.videoId, s.start, word, ok);
+      },
       onUnlockStepChange: async () => {
         await this.persistCurrentSession(true);
       },
@@ -696,9 +708,8 @@ export class EarCoachView extends ItemView {
     if (!this.session) return null;
 
     const filterGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
-    const now = Date.now();
-    const tz = new Date().getTimezoneOffset();
-    const dueCount = this.session.segments.filter((s) => isReviewDue(s, now, tz)).length;
+    const today = this.todayIndices();
+    const dueCount = today.length;
     // SPEC_027: 모바일은 아이콘+숫자만(가로 목록 362px에 「⏰ 오늘」까지 들어가게), 뜻은 aria-label
     const pinCount = this.session.segments.filter((s) => s.isPinned).length;
     const spikeCount = this.session.segments.filter((s) => s.isSpeedSpike).length;
@@ -708,7 +719,7 @@ export class EarCoachView extends ItemView {
       { mode: "PINNED", label: compact ? `📌 ${pinCount}` : `📌 안 들림 핀 (${pinCount})`, aria: "안 들림 핀 문장" },
       // 오늘 다시 들을 핀 문장(차례인 것이 있거나 보고 있을 때만)
       ...(dueCount > 0 || this.filterMode === "DUE"
-        ? [{ mode: "DUE" as FilterMode, label: compact ? `⏰ ${dueCount}` : `⏰ 오늘 다시 듣기 (${dueCount})`, aria: "오늘 다시 들을 핀 문장" }]
+        ? [{ mode: "DUE" as FilterMode, label: compact ? `⏰ ${dueCount}` : `⏰ 오늘의 문장 (${dueCount})`, aria: "오늘의 문장" }]
         : []),
       { mode: "SPEED_SPIKE", label: compact ? `🚀 ${spikeCount}` : `🚀 과속 구간 (${spikeCount})`, aria: "과속 구간" },
     ];
@@ -719,14 +730,23 @@ export class EarCoachView extends ItemView {
         text: f.label,
         attr: { "aria-label": f.aria, "data-filter": f.mode },
       });
-      btn.addEventListener("click", () => {
-        // SPEC_027: 오늘 다시 들을 문장은 블라인드(0단계)부터
-        if (f.mode === "DUE" && this.session) for (const s of this.session.segments) if (isReviewDue(s, now, tz)) s.unlockStep = 0;
-        this.filterMode = f.mode;
-        this.updateVirtualListSegments();
-        toolbar.empty();
-        this.renderToolbar(toolbar);
-      });
+      btn.addEventListener("click", () => this.applyFilter(f.mode, toolbar));
+    }
+    // SPEC_044: 오늘의 문장이 있으면 맨 위 한 줄(전체 목록일 때만, 닫으면 이 화면에선 안 보임)
+    if (dueCount > 0 && this.filterMode === "ALL" && !this.warmupClosed) {
+      renderWarmupBanner(
+        toolbar,
+        dueCount,
+        () => {
+          this.applyFilter("DUE", toolbar);
+          const first = this.session?.segments[today[0]];
+          if (first) this.playerBar?.playSegment(first, false);
+        },
+        () => {
+          this.warmupClosed = true;
+          this.applyFilter(this.filterMode, toolbar);
+        }
+      );
     }
 
     const actionGroup = toolbar.createDiv({ cls: "ear-coach-toolbar-group" });
@@ -746,6 +766,38 @@ export class EarCoachView extends ItemView {
     return actionGroup;
   }
 
+  /** SPEC_027·044: 필터 바꾸기 — 오늘의 문장은 블라인드(0단계)부터 */
+  private applyFilter(mode: FilterMode, toolbar: HTMLElement): void {
+    if (mode === "DUE" && this.session) for (const i of this.todayIndices()) this.session.segments[i].unlockStep = 0;
+    this.filterMode = mode;
+    this.updateVirtualListSegments();
+    toolbar.empty();
+    this.renderToolbar(toolbar);
+  }
+
+  /** SPEC_044: 차례인 핀 + 지난날 틀린 빈칸 문장, 최대 5개 */
+  private todayIndices(): number[] {
+    if (!this.session) return [];
+    const [now, tz] = [Date.now(), new Date().getTimezoneOffset()];
+    const due = this.session.segments.filter((s) => isReviewDue(s, now, tz)).map((s) => s.index);
+    return pickTodaySentences(due, this.wrongBlankIdx);
+  }
+
+  /** SPEC_044: learning.json의 틀린 빈칸 → 이 영상 문장 번호, 툴바 다시 그림 */
+  public async loadWrongBlanks(): Promise<void> {
+    const session = this.session;
+    if (!session) return;
+    try {
+      const blanks = await this.plugin.learning.wrongBlanks();
+      if (this.session !== session) return;
+      this.wrongBlankIdx = wrongBlankSegmentIndices(session.segments, blanks, session.videoId, Date.now(), new Date().getTimezoneOffset());
+    } catch (err) {
+      diagnostics.record("learning.wrongBlanks", err);
+      return;
+    }
+    if (this.toolbarEl) this.applyFilter(this.filterMode, this.toolbarEl);
+  }
+
   /** SPEC_021: 바깥(AI 분석)에서 카드 내용을 다시 그릴 때 */
   public refreshSegments(): void {
     this.updateVirtualListSegments();
@@ -753,11 +805,10 @@ export class EarCoachView extends ItemView {
 
   private updateVirtualListSegments(): void {
     if (!this.virtualList || !this.session) return;
-    const now = Date.now();
-    const tz = new Date().getTimezoneOffset();
+    const today = new Set(this.todayIndices());
     const filtered = this.session.segments.filter((seg) => {
       if (this.filterMode === "PINNED") return seg.isPinned;
-      if (this.filterMode === "DUE") return isReviewDue(seg, now, tz);
+      if (this.filterMode === "DUE") return today.has(seg.index);
       if (this.filterMode === "SPEED_SPIKE") return seg.isSpeedSpike;
       return true;
     });

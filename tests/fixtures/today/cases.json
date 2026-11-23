@@ -1,0 +1,32 @@
+{
+  "_doc": "SPEC_044 오늘의 문장. now = 2026-11-23 09:00 KST(00:00Z), tz -540. wrong: wrongBlankSegmentIndices 기대값. pick: pickTodaySentences 기대값.",
+  "now": "2026-11-23T00:00:00.000Z",
+  "tz": -540,
+  "segments": [
+    { "index": 0, "start": 0 },
+    { "index": 1, "start": 3.2 },
+    { "index": 2, "start": 7.5 },
+    { "index": 3, "start": 12 }
+  ],
+  "wrong": [
+    { "name": "어제 틀림 → 그 문장", "blanks": [{ "videoId": "v1", "start": 3.2, "at": "2026-11-22T05:00:00.000Z" }], "expect": [1] },
+    { "name": "오늘(KST) 틀림은 빠짐 — UTC로는 어제여도", "blanks": [{ "videoId": "v1", "start": 3.2, "at": "2026-11-22T16:00:00.000Z" }], "expect": [] },
+    { "name": "어젯밤 11시(KST) 틀림은 들어감", "blanks": [{ "videoId": "v1", "start": 7.5, "at": "2026-11-22T14:00:00.000Z" }], "expect": [2] },
+    { "name": "다른 영상은 빠짐", "blanks": [{ "videoId": "v2", "start": 3.2, "at": "2026-11-20T05:00:00.000Z" }], "expect": [] },
+    { "name": "0.5초 안이면 그 문장", "blanks": [{ "videoId": "v1", "start": 12.4, "at": "2026-11-20T05:00:00.000Z" }], "expect": [3] },
+    { "name": "0.5초 넘게 떨어지면 못 찾음", "blanks": [{ "videoId": "v1", "start": 5.0, "at": "2026-11-20T05:00:00.000Z" }], "expect": [] },
+    { "name": "같은 문장 두 낱말 → 한 번, 순서는 blanks 순서", "blanks": [
+      { "videoId": "v1", "start": 7.5, "at": "2026-11-21T05:00:00.000Z" },
+      { "videoId": "v1", "start": 0, "at": "2026-11-21T04:00:00.000Z" },
+      { "videoId": "v1", "start": 7.5, "at": "2026-11-20T05:00:00.000Z" }
+    ], "expect": [2, 0] },
+    { "name": "시각 깨짐은 빠짐", "blanks": [{ "videoId": "v1", "start": 0, "at": "어제" }], "expect": [] }
+  ],
+  "pick": [
+    { "name": "0개 → 빈 배열(줄 안 띄움)", "due": [], "wrong": [], "expect": [] },
+    { "name": "있는 만큼만", "due": [4], "wrong": [9], "expect": [4, 9] },
+    { "name": "핀 먼저, 겹치면 한 번", "due": [7, 2], "wrong": [2, 5], "expect": [7, 2, 5] },
+    { "name": "5개 상한 — 핀이 먼저 자리를 차지", "due": [1, 2, 3], "wrong": [10, 11, 12, 13], "expect": [1, 2, 3, 10, 11] },
+    { "name": "틀린 빈칸만", "due": [], "wrong": [8, 6], "expect": [8, 6] }
+  ]
+}

@@ -6,6 +6,8 @@ import { dictationBlanksFor } from "../../services/soundHint";
 export interface MicroDictationCallbacks {
   onDictationSolved: (segment: TranscriptSegment) => void;
   onAskTutorWithHeardText: (segment: TranscriptSegment, userHeardText: string) => void;
+  /** SPEC_044: 빈칸 결과 — 맞음으로 바뀔 때 true, 칸을 떠날 때 틀린 글자가 남아 있으면 false(같은 결과 연달아 두 번 없음) */
+  onBlankResult?: (segment: TranscriptSegment, word: string, ok: boolean) => void;
 }
 
 /**
@@ -52,12 +54,24 @@ export class MicroDictationBox {
           this.validateSingleInput(inputEl, cleanExpected);
         }
 
+        // SPEC_044: 학습 기록용 빈칸 결과
+        let lastReported: boolean | null = null;
+        const report = (ok: boolean) => {
+          if (lastReported === ok) return;
+          lastReported = ok;
+          this.callbacks.onBlankResult?.(this.segment, cleanExpected, ok);
+        };
+        inputEl.addEventListener("change", () => {
+          if (inputEl.value.trim() && !dictationMatches(inputEl.value, cleanExpected)) report(false);
+        });
+
         inputEl.addEventListener("input", () => {
           if (!this.segment.userDictationAttempts) {
             this.segment.userDictationAttempts = {};
           }
           this.segment.userDictationAttempts[idx] = inputEl.value;
           const solved = this.validateSingleInput(inputEl, cleanExpected);
+          if (solved) report(true);
           if (solved) this.focusNextBlank(inputs, inputEl);
           this.checkAllSolved(inputs);
         });

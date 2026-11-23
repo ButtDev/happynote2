@@ -153,6 +153,21 @@ function evaluateExpect(vp, m, nums) {
     const ok = !!r && !r.error && r.pinned >= 2 && r.due.length === r.pinned - 1 && r.label === `⏰ ${r.due.length}` && JSON.stringify(r.shown) === JSON.stringify(r.due) && r.blind && Array.isArray(r.reviews) && r.reviews.length === 1 && r.reviews[0].ok === false;
     add("reviewQueue", ok, JSON.stringify(r));
   }
+  if (e.todaySentences) {
+    const t = m.todaySentences;
+    const ok = !!t && !t.error && t.banner === "☀️ 오늘의 문장 2개" && t.due === "⏰ 2" && t.bannerTop && t.bannerInside && t.overflow <= 0
+      && JSON.stringify(t.shown) === JSON.stringify(t.expected) && t.blind && t.active === "DUE" && t.afterStart.banner === null
+      && t.backAll.banner === "☀️ 오늘의 문장 2개" && t.empty.banner === null && t.empty.due === null
+      && t.again.banner === "☀️ 오늘의 문장 2개" && t.closed.banner === null && t.closed.due === "⏰ 2"
+      && t.closedH > 0 && t.closedH <= e.todaySentences.toolbarMaxH;
+    add("todaySentences", ok, JSON.stringify(t));
+  }
+  if (e.blankRecord) {
+    const b = m.blankRecord;
+    const w = b?.want;
+    const ok = !!b && !b.error && b.recs.length === 2 && b.recs.every((r) => r.videoId === w.videoId && r.start === w.start && r.word === w.word) && b.recs[0].ok === false && b.recs[1].ok === true;
+    add("blankRecord", ok, JSON.stringify(b));
+  }
   // SPEC_026: 핀 카드에만 「➕ Anki」 → 문장 듣기 카드 addNote 1회
   // SPEC_031: 정답 단계 「🔊 발음 포인트」 = 계산한 [한글] /IPA/
   if (e.soundHintStep3) {
@@ -930,6 +945,119 @@ for (const vp of cases.viewports) {
     });
     await page.screenshot({ path: path.join(outDir, `review-${vp.name}.png`) });
     await page.evaluate(() => [...document.querySelectorAll(".ear-coach-mobile-toolbar button")].find((b) => /^전체/.test(b.textContent ?? ""))?.click());
+  }
+
+  // SPEC_044: 오늘의 문장 — 차례 핀 A + 어제 틀린 빈칸 C(+ 오늘 틀림 D·다른 영상 E·A와 겹침) → 줄 「2개」·⏰ 2, 시작 → 목록 [A, C]
+  m.todaySentences = null;
+  if (vp.expect?.todaySentences) {
+    m.todaySentences = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      const view = window.__earCoachView;
+      const segs = view?.session?.segments ?? [];
+      if (segs.length < 7) return { error: "segments < 7" };
+      window.__todaySaved = segs.map((s) => ({ isPinned: s.isPinned, pinnedAt: s.pinnedAt, reviews: s.reviews, unlockStep: s.unlockStep }));
+      const vid = view.session.videoId;
+      for (const s of segs) { s.isPinned = false; delete s.pinnedAt; delete s.reviews; }
+      const [A, B, C, D, E] = [segs[1], segs[2], segs[4], segs[5], segs[6]];
+      A.isPinned = true;
+      B.isPinned = true;
+      B.pinnedAt = new Date().toISOString();
+      const y = new Date(Date.now() - 86_400_000).toISOString();
+      const t = new Date().toISOString();
+      window.__todayMaterial = [
+        { videoId: vid, start: C.start, word: "x", ok: false, at: y },
+        { videoId: vid, start: D.start, word: "x", ok: false, at: t },
+        { videoId: "other-video", start: E.start, word: "x", ok: false, at: y },
+        { videoId: vid, start: A.start, word: "x", ok: false, at: y },
+      ];
+      window.__wrongBlanks = window.__todayMaterial;
+      await view.loadWrongBlanks();
+      await wait(150);
+      const tb = document.querySelector(".ear-coach-mobile-toolbar");
+      const bn = tb?.querySelector(".ear-coach-warmup");
+      const tr = tb?.getBoundingClientRect();
+      const br = bn?.getBoundingClientRect();
+      return {
+        expected: [A.index, C.index],
+        banner: tb?.querySelector(".ear-coach-warmup-text")?.textContent ?? null,
+        due: tb?.querySelector('button[data-filter="DUE"]')?.textContent ?? null,
+        bannerTop: !!(br && tr && [...tb.children].every((c) => c === bn || c.getBoundingClientRect().top >= br.bottom - 1)),
+        overflow: tb ? tb.scrollWidth - tb.clientWidth : null,
+        bannerInside: !!(br && tr && br.left >= tr.left - 0.5 && br.right <= tr.right + 0.5),
+      };
+    });
+    await page.screenshot({ path: path.join(outDir, `today-${vp.name}.png`) });
+    const rest = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const view = window.__earCoachView;
+      const segs = view.session.segments;
+      const tb = () => document.querySelector(".ear-coach-mobile-toolbar");
+      const read = () => ({ banner: tb()?.querySelector(".ear-coach-warmup-text")?.textContent ?? null, due: tb()?.querySelector('button[data-filter="DUE"]')?.textContent ?? null });
+      tb().querySelector(".ear-coach-warmup .ear-coach-btn-primary")?.click();
+      await wait(300);
+      const cards = [...document.querySelectorAll(".ear-coach-segment-card")];
+      const shown = cards.map((c) => Number(c.dataset.segmentIndex));
+      const blind = cards[0]?.querySelector(".ear-coach-step-btn.is-current-step")?.dataset.step === "0";
+      const active = tb()?.querySelector(".ear-coach-btn.is-active")?.dataset.filter ?? null;
+      const afterStart = read();
+      [...tb().querySelectorAll("button")].find((b) => b.dataset.filter === "ALL")?.click();
+      await wait(150);
+      const backAll = read();
+      window.__wrongBlanks = [];
+      segs[1].isPinned = false;
+      await view.loadWrongBlanks();
+      await wait(150);
+      const empty = read();
+      segs[1].isPinned = true;
+      window.__wrongBlanks = window.__todayMaterial;
+      await view.loadWrongBlanks();
+      await wait(150);
+      const again = read();
+      tb().querySelector('.ear-coach-warmup button[aria-label="오늘은 닫기"]')?.click();
+      await wait(150);
+      const closed = read();
+      const closedH = tb().getBoundingClientRect().height;
+      // 원래 상태로
+      window.__todaySaved.forEach((o, i) => { const s = segs[i]; s.isPinned = o.isPinned; s.unlockStep = o.unlockStep; if (o.pinnedAt) s.pinnedAt = o.pinnedAt; else delete s.pinnedAt; if (o.reviews) s.reviews = o.reviews; else delete s.reviews; });
+      window.__wrongBlanks = [];
+      await view.loadWrongBlanks();
+      view.refreshSegments();
+      return { shown, blind, active, afterStart, backAll, empty, again, closed, closedH };
+    });
+    m.todaySentences = { ...m.todaySentences, ...rest };
+  }
+
+  // SPEC_044: 빈칸 결과 기록 — 틀린 말 입력 후 떠남(두 번) → false 1번, 정답 → true 1번
+  m.blankRecord = null;
+  if (vp.expect?.blankRecord) {
+    m.blankRecord = await page.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelectorAll(".modal-container").forEach((e) => e.remove());
+      const view = window.__earCoachView;
+      const segs = view.session.segments;
+      window.__blankRecords = [];
+      for (const card of document.querySelectorAll(".ear-coach-segment-card")) {
+        card.querySelector('.ear-coach-step-btn[data-step="1"]')?.click();
+        await wait(150);
+        const live = document.querySelector(`.ear-coach-segment-card[data-segment-index="${card.dataset.segmentIndex}"]`);
+        const input = live?.querySelector(".ear-coach-blank-input");
+        if (!input) continue;
+        const seg = segs[Number(card.dataset.segmentIndex)];
+        const wi = Number(/(\d+)$/.exec(input.getAttribute("aria-label") ?? "")?.[1]) - 1;
+        const word = (seg.words[wi] ?? "").replace(/^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$/g, "");
+        input.value = "zzzq";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        input.value = word;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        await wait(150);
+        const recs = (window.__blankRecords ?? []).map((a) => ({ videoId: a[0], start: a[1], word: a[2], ok: a[3] }));
+        return { recs, want: { videoId: view.session.videoId, start: seg.start, word } };
+      }
+      return { error: "no blank input" };
+    });
   }
 
   // SPEC_033: 설정 「🗑 저장된 영상」 — 행 2개 → 첫 행 지우기 → 확인 창 → 휴지통으로 → 행 1개, 휴지통 호출은 그 영상 파일만

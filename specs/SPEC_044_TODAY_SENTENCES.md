@@ -1,8 +1,8 @@
 ---
 id: SPEC_044
 title: 오늘의 문장 워밍업 — 차례인 핀·지난날 틀린 빈칸 문장 최대 5개 + 빈칸 결과 기록
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_027, SPEC_040]
 ---
@@ -35,10 +35,10 @@ depends_on: [SPEC_027, SPEC_040]
 여러 영상을 모은 전역 워밍업, 1분 타이머, 알림·푸시, 빈칸 통계 화면, 옛 핀(learning.json에 없는 것) 옮기기.
 
 ## 5. 완료 조건 — 체크박스, 끝에 [자동]/[수동]. [수동]은 마지막 하나로
-1. [ ] Test 30 `wrongBlankSegmentIndices` 사례(오늘 것 빠짐·다른 영상 빠짐·0.5초 안 맞춤·못 찾음·중복)와 `pickTodaySentences` 사례(핀 먼저·중복·5개 상한·0개 → 빈 배열) 기대값과 같음 + 변이 실패 [자동]
-2. [ ] 화면 검사 `expect.todaySentences`(세로·가로): 차례 핀 1 + 어제 틀린 빈칸 문장 1(+ 오늘 틀림·다른 영상·핀과 겹침 각 1) → 줄 「☀️ 오늘의 문장 2개」, ⏰ 「⏰ 2」, 「시작」 → ⏰ 활성·목록 = 기대 문장 2개·첫 카드 블라인드·줄 사라짐, 재료 0개로 바꾸면 줄·⏰ 둘 다 없음, ✕ 누르면 줄 없음. 툴바 넘침 없음. `today-<뷰>.png` 열어 봄 [자동]
-3. [ ] 화면 검사 `expect.blankRecord`: 빈칸에 틀린 말 입력 후 떠남 → `recordBlank(…, false)` 1번, 정답 입력 → `true` 1번(낱말 = 정답 낱말, start = 문장 시작). 변이(콜백 안 부름) 실패 [자동]
-4. [ ] 회귀 `verify.mjs --set regression`(기존 `reviewQueue` 검사 포함) [자동]
+1. [x] Test 30 `wrongBlankSegmentIndices` 사례(오늘 것 빠짐·다른 영상 빠짐·0.5초 안 맞춤·못 찾음·중복)와 `pickTodaySentences` 사례(핀 먼저·중복·5개 상한·0개 → 빈 배열) 기대값과 같음 + 변이 실패 [자동]
+2. [x] 화면 검사 `expect.todaySentences`(세로·가로): 차례 핀 1 + 어제 틀린 빈칸 문장 1(+ 오늘 틀림·다른 영상·핀과 겹침 각 1) → 줄 「☀️ 오늘의 문장 2개」, ⏰ 「⏰ 2」, 「시작」 → ⏰ 활성·목록 = 기대 문장 2개·첫 카드 블라인드·줄 사라짐, 재료 0개로 바꾸면 줄·⏰ 둘 다 없음, ✕ 누르면 줄 없음. 툴바 넘침 없음. `today-<뷰>.png` 열어 봄 [자동]
+3. [x] 화면 검사 `expect.blankRecord`: 빈칸에 틀린 말 입력 후 떠남 → `recordBlank(…, false)` 1번, 정답 입력 → `true` 1번(낱말 = 정답 낱말, start = 문장 시작). 변이(콜백 안 부름) 실패 [자동]
+4. [x] 회귀 `verify.mjs --set regression`(기존 `reviewQueue` 검사 포함) [자동]
 5. [ ] 실기기: BRAT 업데이트 뒤 영상 하나에서 빈칸에 일부러 틀린 말을 넣고 칸을 떠난 뒤, **내일** 그 영상을 다시 열어 맨 위 「☀️ 오늘의 문장」 줄 → 「시작」을 눌러 그 문장이 블라인드로 나오는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법
@@ -58,4 +58,8 @@ depends_on: [SPEC_027, SPEC_040]
 - 알림 줄 = 툴바 맨 위 한 줄(목록 안이 아님) · 이유: 가상 목록 위치 계산을 안 건드림 · 대안: 목록 첫 카드 자리.
 - 5개 고르는 순서 = 핀 먼저 · 이유: 사람이 직접 「안 들림」으로 고른 문장이 더 중요 · 대안: 틀린 빈칸 먼저.
 
+- 툴바 높이 상한(cases.json `maxHeight .ear-coach-mobile-toolbar`) 48→86(세로)·44→82(가로) · 이유: 화면 검사 가짜 데이터에 차례 핀이 있어 기본 화면에 줄이 떠 툴바가 두 줄이 됨(설계대로). 한 줄 보장은 `todaySentences`가 줄을 닫은 뒤 툴바 높이 ≤ 48/44로 계속 검사 · 대안: 줄을 목록 안에 넣기.
+- 데스크톱 ⏰ 필터 글자 「⏰ 오늘 다시 듣기」 → 「⏰ 오늘의 문장」(모바일은 그대로 「⏰ N」) · 이유: 이제 틀린 빈칸 문장도 들어감.
+
 ## 실행 기록
+- 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 30 「8 wrong-blank cases, 5 pick cases」 PASS, 변이 today1(오늘 것 안 뺌) → 「wrongBlankSegmentIndices: 오늘(KST) 틀림은 빠짐 — UTC로는 어제여도」, today2(5개 상한 뺌) → 「pickTodaySentences: 5개 상한」 실패 · 2 ✅ ui `todaySentences` 세로·가로 ok: banner 「☀️ 오늘의 문장 2개」·⏰ 2·맨 위·넘침 0, 시작 → DUE·shown [1,4]=expected·블라인드·줄 사라짐, 재료 0 → 줄·⏰ 없음, ✕ → 줄 없음, 닫은 뒤 툴바 46/43px(≤48/44). 처음엔 모바일 툴바 nowrap이라 줄이 같은 행에 붙어 넘침 703>412 → `:has(> .ear-coach-warmup)`일 때만 wrap. `today-portrait/landscape.png` 열어 봄: 영상 컨트롤 아래 「☀️ 오늘의 문장 2개 [시작] [✕]」 한 줄, 그 아래 필터 줄 그대로 · 3 ✅ ui `blankRecord` 세로·가로 ok: recs [going false, going true] start 3, 변이(콜백 안 부름) → recs [] 실패 후 원복 · 4 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(reviewQueue 포함) · 5 ⏳ 실기기(다음 날).

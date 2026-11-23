@@ -45,6 +45,8 @@
           "title": "go to"
         },
         "reviewQueue": true,
+        "todaySentences": { "toolbarMaxH": 48 },
+        "blankRecord": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening",
           "soundOnBack": true
@@ -73,7 +75,7 @@
         },
         "maxHeight": {
           ".ear-coach-player-controls": 44,
-          ".ear-coach-mobile-toolbar": 48
+          ".ear-coach-mobile-toolbar": 86
         },
         "noOverflowX": [
           ".ear-coach-mobile-toolbar",
@@ -130,7 +132,7 @@
           "top": 30
         },
         "maxHeight": {
-          ".ear-coach-mobile-toolbar": 44,
+          ".ear-coach-mobile-toolbar": 82,
           ".ear-coach-player-controls": 44,
           ".ear-coach-step-bar": 36
         },
@@ -167,6 +169,8 @@
           "title": "go to"
         },
         "reviewQueue": true,
+        "todaySentences": { "toolbarMaxH": 44 },
+        "blankRecord": true,
         "sentenceAnki": {
           "modelName": "happynote2 Listening",
           "soundOnBack": true
