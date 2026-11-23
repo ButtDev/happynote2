@@ -1,8 +1,8 @@
 ---
 id: SPEC_049
 title: 문장 끊기 심화 — 영상 종류 넓히기 · 시간 길이 · 자르는 자리 품질
-status: READY
-iterations: 0
+status: IMPLEMENTED
+iterations: 1
 max_iterations: 3
 depends_on: [SPEC_048]
 after_implemented: true
@@ -61,3 +61,6 @@ BRAT로 새 버전 업데이트 → 말이 빠른 새 영상(팟캐스트·인�
 - 기준값은 「고친 뒤 수치 + 약간의 여유」로 정하되 고치기 전 코드가 실패하도록 · SPEC_048과 같은 방식
 
 ## 실행 기록
+- 2026-11-24 회차 1: IMPLEMENTED (야간, night/SPEC_049) — 1 ✅ 새 실제 자막 5개 `tests/fixtures/transcript/`(sinek-interview-asr hER0Qp6QJNU 인터뷰·casey-vlog-asr jG7dSXcfVqE 브이로그·mit-lecture-manual/asr HtSuA80QTyo 강의(asr은 앞 28분 150KB로 자름)·treasure-talk-manual eIho2S0ZahI 또렷한 강연), `segment-length/cases.json` real에 video·style·fetched 2026-11-24 5건(grep 5) · 2 ✅ Test 31이 8개 영상 모두 최대 낱말·짧은·긴·말 걸림·글자 없음 검사(회귀 PASS) · 3 ✅ 시간 지표 underSec(<1초)·overSec(>10초) 영상별 기준값(rick은 노래라 timeExempt) · 4 ✅ 구동사·말버릇·숫자/고유명·badCut 지표, 회귀 출력 before049→after: ted-asr badCut 0.062→0.048 phrasal 0.01→0, sinek 0.039→0.012, casey 0.042→0.04, mit-asr 0.057→0.033 (filler 0.007→0), mit-manual >10초 0.078→0.047, 나머지 0→0 · 5 ✅ 합성 4건 글자 그대로(「I asked my brother」/「To pick up the phone when it rang」, 「…and said」/「You know what we should do」, 넘침 → 「…old board games」/「Because the rain…」, 쉼표 없는 26낱말 → because 앞) · 6 ✅ 모든 영상 badCut ≤ 전, 4개 영상에서 줄어듦 · 7 ✅ `git diff 745ed98`: shortWords·longWords·기존 3영상 max* 값 그대로, 기존 합성 6건 그대로, transcript/cases.json(Test 14) 바뀜 없음 · 8 ✅ 옛 코드(13e6955 transcriptProcessor+segmentBalance)로 `EAR_COACH_SEGMENT_MODULE` → Test 31 「ted-asr.srv3.xml: 구동사 쪼갬 0.01 > 0.005」 실패, 항목별로는 phrasal·filler·badCut·overSec·합성 4건 실패; underSec·properNum은 옛 코드가 더 나빠지지 않아 별도 변이(ASR_MAX_WORDS 3·PUNCT_MAX_WORDS 7)로 underSec 6영상·properNum mit-asr 0.001>0 실패 확인 · 9 ✅ `node --experimental-strip-types scripts/segment-report.ts <파일> [--before <ref>] [--examples n]` sinek 출력: 231→241 카드, 바뀐 93장, 예 「…they get a job and ‖ The thrust and turn it…」 → 「…they get a job」/「And the thrust and turn it into the real world」, 「…the entire self-image ‖ Is shattered and so…」 → 「…the entire self-image is shattered」/「And so you have an entire generation…」; mit-manual: 563→577, >10초 44→27장, 예 「…modules on hashing, where we do things like genome comparison.」(10초) → 「…modules on hashing,」/「where we do things like genome comparison.」 · 10 ✅ worktree `verify.mjs --set regression` harness·build·test·ui 모두 ok(exit 0) · 11 ⏳ 실기기 새 영상.
+  - 가결정: 나쁜 자름 벌점 0.5초·접속사 가산 0.15초(쉼 0.25초 기준 위에서 벌점이 쉼 두 배를 넘어야 자리를 옮김) · 대안 벌점 0.3. 구동사 쪼갬은 동사를 다음 카드로 보냄(조사를 앞으로 당기면 「to pick up」의 to가 남음) · 쉼표 없는 긴 문장 자르기는 가운데에 가장 가까운 절 낱말 · 구두점 카드가 10초를 넘으면 쉼표 자리에서 자르는 규칙(`PUNCT_SOFT_MAX_SEC` 10) 추가(SPEC 정의의 시간 지표를 고치는 쪽) · 지표 계산은 `tests/segmentMetrics.ts`(러너·리포트 공용), 목록은 데이터 `cut`, 코드 상수와 같은지 Test 31이 확인 · 「set」은 명사(problem set) 오탐이 많아 구동사 목록에서 뺌 · ted-asr <1초 카드 0.039→0.045(동사·관사 이동 부작용, 기준 0.05) · mit-manual 옛 지표 dangling 0→0.003(「and--」로 끝나는 카드 1장, 기준 0.01 안).
+

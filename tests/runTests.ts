@@ -46,6 +46,7 @@ import * as todaySrc from "../src/utils/todaySentences.ts";
 import * as shadowSrc from "../src/utils/shadowing.ts";
 import * as resumeSrc from "../src/utils/resume.ts";
 import * as dictCacheSrc from "../src/services/dictCache.ts";
+import { cardMetrics } from "./segmentMetrics.ts";
 import { DictionaryApiDevProvider, normalizeLookupWord, parseCommonsAudioUrl, parseDictionaryApiDev, phraseCandidates, phraseCandidatesAround, lemmaVariants, pickPronunciation, pickUsIpa } from "../src/services/dictionary.ts";
 
 const logs: string[] = [];
@@ -1318,7 +1319,7 @@ async function runAllTests() {
   log(`  -> PASS: ${td.wrong.length} wrong-blank cases, ${td.pick.length} pick cases.`);
   log("");
 
-  log("[Test 31] Card length quality — 너무 짧은·너무 긴·말이 걸린 카드 (data-driven, SPEC_048)");
+  log("[Test 31] Card length quality — 너무 짧은·너무 긴·말이 걸린 카드·시간·자르는 자리 (data-driven, SPEC_048·049)");
   const slMod = process.env.EAR_COACH_SEGMENT_MODULE ? await import(path.resolve(process.env.EAR_COACH_SEGMENT_MODULE)) : transcriptProcSrc;
   const sl = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/segment-length/cases.json"), "utf8"));
   const slOpts = { speedSpikeWpmThreshold: 180, defaultUnlockStep: 0 as const };
@@ -1338,8 +1339,28 @@ async function runAllTests() {
     assert.ok(long <= r.maxLongRatio, `${r.file}: 긴 카드(>${sl.longWords}낱말) ${long.toFixed(3)} > ${r.maxLongRatio}`);
     assert.ok(dangling <= r.maxDanglingRatio, `${r.file}: 말이 걸린 카드 ${dangling.toFixed(3)} > ${r.maxDanglingRatio}`);
     assert.equal(letterless, 0, `${r.file}: 글자 없는 카드 ${letterless}개`);
+    // SPEC_049: time and cut quality (definitions in tests/segmentMetrics.ts, lists from the data).
+    const m = cardMetrics(segs as Array<{ start: number; end: number; text: string }>, {
+      shortWords: sl.shortWords, longWords: sl.longWords, minCardSec: sl.minCardSec, maxCardSec: sl.maxCardSec, manual: r.kind === "manual", lists: sl.cut,
+    });
+    if (!r.timeExempt) {
+      assert.ok(m.underSec <= r.maxUnderSecRatio, `${r.file}: ${sl.minCardSec}초보다 짧은 카드 ${m.underSec} > ${r.maxUnderSecRatio}`);
+      assert.ok(m.overSec <= r.maxOverSecRatio, `${r.file}: ${sl.maxCardSec}초보다 긴 카드 ${m.overSec} > ${r.maxOverSecRatio}`);
+    }
+    assert.ok(m.phrasal <= r.maxPhrasalRatio, `${r.file}: 구동사 쪼갬 ${m.phrasal} > ${r.maxPhrasalRatio}`);
+    assert.ok(m.filler <= r.maxFillerRatio, `${r.file}: 말버릇 쪼갬 ${m.filler} > ${r.maxFillerRatio}`);
+    assert.ok(m.properNum <= r.maxProperNumRatio, `${r.file}: 숫자·고유명 쪼갬 ${m.properNum} > ${r.maxProperNumRatio}`);
+    assert.ok(m.badCut <= r.maxBadCutRatio, `${r.file}: 나쁜 자름 ${m.badCut} > ${r.maxBadCutRatio}`);
+    const b9 = r.before049;
+    slSummary.push(`${r.file} [049] cards ${b9.cards}->${m.cards}, <${sl.minCardSec}s ${b9.underSec}->${m.underSec}, >${sl.maxCardSec}s ${b9.overSec}->${m.overSec}, phrasal ${b9.phrasal}->${m.phrasal}, filler ${b9.filler}->${m.filler}, properNum ${b9.properNum}->${m.properNum}, badCut ${b9.badCut}->${m.badCut}`);
     slSummary.push(`${r.file} ${r.before.cards}->${segs.length} cards, max ${r.before.maxWords}->${max}w, short ${r.before.short}->${short.toFixed(3)}, long ${r.before.long}->${long.toFixed(3)}, dangling ${r.before.dangling}->${dangling.toFixed(3)}`);
   }
+  // SPEC_049: the code's cut lists are the data's lists (the metric must not drift from the fix).
+  assert.deepEqual([...segmentBalanceSrc.PHRASAL_PARTICLES], sl.cut.particles, "PHRASAL_PARTICLES = cut.particles");
+  assert.deepEqual([...segmentBalanceSrc.PHRASAL_VERBS], sl.cut.phrasalVerbs, "PHRASAL_VERBS = cut.phrasalVerbs");
+  assert.deepEqual(segmentBalanceSrc.PHRASAL_IRREGULAR, sl.cut.irregularVerbs, "PHRASAL_IRREGULAR = cut.irregularVerbs");
+  assert.deepEqual(segmentBalanceSrc.FILLER_PAIRS, sl.cut.fillerPairs, "FILLER_PAIRS = cut.fillerPairs");
+  assert.deepEqual([...segmentBalanceSrc.DANGLING_TAIL_WORDS], sl.cut.danglingTails, "DANGLING_TAIL_WORDS = cut.danglingTails");
   for (const c of sl.cases) {
     const cues: RawTranscriptCue[] = c.asr
       ? c.asr.map((line: [number, string][]) => ({

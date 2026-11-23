@@ -3,63 +3,1003 @@
   "shortWords": 3,
   "longWords": 20,
   "real": [
-    { "file": "ted-asr.srv3.xml", "maxWords": 18, "maxShortRatio": 0.06, "maxLongRatio": 0, "maxDanglingRatio": 0.06,
-      "before": { "cards": 312, "maxWords": 18, "short": 0.077, "long": 0, "dangling": 0.125, "letterless": 0 } },
-    { "file": "ted-manual.srv3.xml", "maxWords": 28, "maxShortRatio": 0.04, "maxLongRatio": 0.05, "maxDanglingRatio": 0.01,
-      "before": { "cards": 273, "maxWords": 52, "short": 0.136, "long": 0.15, "dangling": 0, "letterless": 1 } },
-    { "file": "rick-asr.srv3.xml", "maxWords": 18, "maxShortRatio": 0.05, "maxLongRatio": 0, "maxDanglingRatio": 0.01,
-      "before": { "cards": 43, "maxWords": 17, "short": 0.093, "long": 0, "dangling": 0, "letterless": 0 } }
+    {
+      "file": "ted-asr.srv3.xml",
+      "maxWords": 18,
+      "maxShortRatio": 0.06,
+      "maxLongRatio": 0,
+      "maxDanglingRatio": 0.06,
+      "before": {
+        "cards": 312,
+        "maxWords": 18,
+        "short": 0.077,
+        "long": 0,
+        "dangling": 0.125,
+        "letterless": 0
+      },
+      "kind": "asr",
+      "maxUnderSecRatio": 0.05,
+      "maxOverSecRatio": 0,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.052,
+      "before049": {
+        "cards": 305,
+        "underSec": 0.039,
+        "overSec": 0,
+        "phrasal": 0.01,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0.062
+      }
+    },
+    {
+      "file": "ted-manual.srv3.xml",
+      "maxWords": 28,
+      "maxShortRatio": 0.04,
+      "maxLongRatio": 0.05,
+      "maxDanglingRatio": 0.01,
+      "before": {
+        "cards": 273,
+        "maxWords": 52,
+        "short": 0.136,
+        "long": 0.15,
+        "dangling": 0,
+        "letterless": 1
+      },
+      "kind": "manual",
+      "maxUnderSecRatio": 0.01,
+      "maxOverSecRatio": 0.01,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.005,
+      "before049": {
+        "cards": 283,
+        "underSec": 0.004,
+        "overSec": 0,
+        "phrasal": 0,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0
+      }
+    },
+    {
+      "file": "rick-asr.srv3.xml",
+      "maxWords": 18,
+      "maxShortRatio": 0.05,
+      "maxLongRatio": 0,
+      "maxDanglingRatio": 0.01,
+      "before": {
+        "cards": 43,
+        "maxWords": 17,
+        "short": 0.093,
+        "long": 0,
+        "dangling": 0,
+        "letterless": 0
+      },
+      "kind": "asr",
+      "timeExempt": true,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.005,
+      "before049": {
+        "cards": 40,
+        "underSec": 0.05,
+        "overSec": 0.025,
+        "phrasal": 0,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0
+      }
+    },
+    {
+      "file": "sinek-interview-asr.srv3.xml",
+      "kind": "asr",
+      "video": "hER0Qp6QJNU",
+      "style": "interview, two speakers, fast conversational (Simon Sinek on Millennials, Inside Quest), auto captions only",
+      "fetched": "2026-11-24",
+      "maxWords": 18,
+      "maxShortRatio": 0.01,
+      "maxLongRatio": 0,
+      "maxDanglingRatio": 0.02,
+      "maxUnderSecRatio": 0.01,
+      "maxOverSecRatio": 0,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.02,
+      "before049": {
+        "cards": 231,
+        "maxWords": 18,
+        "short": 0.004,
+        "long": 0,
+        "dangling": 0.03,
+        "underSec": 0,
+        "overSec": 0,
+        "phrasal": 0.009,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0.039
+      },
+      "before": {
+        "cards": 231,
+        "maxWords": 18,
+        "short": 0.004,
+        "long": 0,
+        "dangling": 0.03,
+        "letterless": 0
+      }
+    },
+    {
+      "file": "casey-vlog-asr.srv3.xml",
+      "kind": "asr",
+      "video": "jG7dSXcfVqE",
+      "style": "vlog, one speaker over music (Casey Neistat, DO WHAT YOU CAN'T), auto captions only",
+      "fetched": "2026-11-24",
+      "maxWords": 18,
+      "maxShortRatio": 0.01,
+      "maxLongRatio": 0,
+      "maxDanglingRatio": 0.045,
+      "maxUnderSecRatio": 0.01,
+      "maxOverSecRatio": 0.01,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.04,
+      "before049": {
+        "cards": 48,
+        "maxWords": 18,
+        "short": 0,
+        "long": 0,
+        "dangling": 0.042,
+        "underSec": 0,
+        "overSec": 0,
+        "phrasal": 0,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0.042
+      },
+      "before": {
+        "cards": 48,
+        "maxWords": 18,
+        "short": 0,
+        "long": 0,
+        "dangling": 0.042,
+        "letterless": 0
+      }
+    },
+    {
+      "file": "mit-lecture-manual.srv3.xml",
+      "kind": "manual",
+      "video": "HtSuA80QTyo",
+      "style": "lecture, slow and clear, one speaker (MIT 6.006 Lecture 1), manual captions, whole file",
+      "fetched": "2026-11-24",
+      "maxWords": 28,
+      "maxShortRatio": 0.03,
+      "maxLongRatio": 0.08,
+      "maxDanglingRatio": 0.01,
+      "maxUnderSecRatio": 0.03,
+      "maxOverSecRatio": 0.05,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0.005,
+      "maxBadCutRatio": 0.005,
+      "before049": {
+        "cards": 563,
+        "maxWords": 28,
+        "short": 0.027,
+        "long": 0.083,
+        "dangling": 0,
+        "underSec": 0.023,
+        "overSec": 0.078,
+        "phrasal": 0,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0
+      },
+      "before": {
+        "cards": 563,
+        "maxWords": 28,
+        "short": 0.027,
+        "long": 0.083,
+        "dangling": 0,
+        "letterless": 0
+      }
+    },
+    {
+      "file": "mit-lecture-asr.srv3.xml",
+      "kind": "asr",
+      "video": "HtSuA80QTyo",
+      "style": "same lecture, auto captions; truncated to the first 28 minutes (file 150KB of 267KB)",
+      "fetched": "2026-11-24",
+      "maxWords": 18,
+      "maxShortRatio": 0.015,
+      "maxLongRatio": 0,
+      "maxDanglingRatio": 0.04,
+      "maxUnderSecRatio": 0.015,
+      "maxOverSecRatio": 0.005,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0,
+      "maxBadCutRatio": 0.04,
+      "before049": {
+        "cards": 402,
+        "maxWords": 18,
+        "short": 0.01,
+        "long": 0,
+        "dangling": 0.045,
+        "underSec": 0.012,
+        "overSec": 0,
+        "phrasal": 0.005,
+        "filler": 0.007,
+        "properNum": 0,
+        "badCut": 0.057
+      },
+      "before": {
+        "cards": 402,
+        "maxWords": 18,
+        "short": 0.01,
+        "long": 0,
+        "dangling": 0.045,
+        "letterless": 0
+      }
+    },
+    {
+      "file": "treasure-talk-manual.srv3.xml",
+      "kind": "manual",
+      "video": "eIho2S0ZahI",
+      "style": "talk about clear speaking, deliberate pace (Julian Treasure, TED), manual captions",
+      "fetched": "2026-11-24",
+      "maxWords": 28,
+      "maxShortRatio": 0.035,
+      "maxLongRatio": 0.04,
+      "maxDanglingRatio": 0.01,
+      "maxUnderSecRatio": 0.01,
+      "maxOverSecRatio": 0.01,
+      "maxPhrasalRatio": 0.005,
+      "maxFillerRatio": 0.005,
+      "maxProperNumRatio": 0.005,
+      "maxBadCutRatio": 0.005,
+      "before049": {
+        "cards": 145,
+        "maxWords": 25,
+        "short": 0.028,
+        "long": 0.034,
+        "dangling": 0,
+        "underSec": 0,
+        "overSec": 0,
+        "phrasal": 0,
+        "filler": 0,
+        "properNum": 0,
+        "badCut": 0
+      },
+      "before": {
+        "cards": 145,
+        "maxWords": 25,
+        "short": 0.028,
+        "long": 0.034,
+        "dangling": 0,
+        "letterless": 0
+      }
+    }
   ],
   "cases": [
     {
       "name": "ASR: dangling 'to the' moves to the next card, short head folds in",
       "asr": [
-        [[0, "we"], [0.3, "went"], [0.6, "to"], [0.9, "the"]],
-        [[2.4, "store"], [2.7, "yesterday"], [3.0, "and"], [3.3, "bought"], [3.6, "milk"]]
+        [
+          [
+            0,
+            "we"
+          ],
+          [
+            0.3,
+            "went"
+          ],
+          [
+            0.6,
+            "to"
+          ],
+          [
+            0.9,
+            "the"
+          ]
+        ],
+        [
+          [
+            2.4,
+            "store"
+          ],
+          [
+            2.7,
+            "yesterday"
+          ],
+          [
+            3.0,
+            "and"
+          ],
+          [
+            3.3,
+            "bought"
+          ],
+          [
+            3.6,
+            "milk"
+          ]
+        ]
       ],
-      "expect": ["We went to the store yesterday and bought milk"]
+      "expect": [
+        "We went to the store yesterday and bought milk"
+      ]
     },
     {
       "name": "ASR: long silence keeps the cut even after a dangling word",
       "asr": [
-        [[0, "we"], [0.3, "went"], [0.6, "to"], [0.9, "the"]],
-        [[4.0, "store"], [4.3, "yesterday"], [4.6, "and"], [4.9, "bought"], [5.2, "milk"]]
+        [
+          [
+            0,
+            "we"
+          ],
+          [
+            0.3,
+            "went"
+          ],
+          [
+            0.6,
+            "to"
+          ],
+          [
+            0.9,
+            "the"
+          ]
+        ],
+        [
+          [
+            4.0,
+            "store"
+          ],
+          [
+            4.3,
+            "yesterday"
+          ],
+          [
+            4.6,
+            "and"
+          ],
+          [
+            4.9,
+            "bought"
+          ],
+          [
+            5.2,
+            "milk"
+          ]
+        ]
       ],
-      "expect": ["We went to the", "Store yesterday and bought milk"]
+      "expect": [
+        "We went to the",
+        "Store yesterday and bought milk"
+      ]
     },
     {
       "name": "ASR: one-word leftover joins the nearer card",
       "asr": [
-        [[0, "i"], [0.3, "loved"], [0.6, "every"], [0.9, "minute"], [1.2, "of"], [1.5, "this"]],
-        [[2.4, "talk"], [4.6, "next"], [4.9, "we"], [5.2, "will"], [5.5, "look"], [5.8, "at"], [6.1, "data"]]
+        [
+          [
+            0,
+            "i"
+          ],
+          [
+            0.3,
+            "loved"
+          ],
+          [
+            0.6,
+            "every"
+          ],
+          [
+            0.9,
+            "minute"
+          ],
+          [
+            1.2,
+            "of"
+          ],
+          [
+            1.5,
+            "this"
+          ]
+        ],
+        [
+          [
+            2.4,
+            "talk"
+          ],
+          [
+            4.6,
+            "next"
+          ],
+          [
+            4.9,
+            "we"
+          ],
+          [
+            5.2,
+            "will"
+          ],
+          [
+            5.5,
+            "look"
+          ],
+          [
+            5.8,
+            "at"
+          ],
+          [
+            6.1,
+            "data"
+          ]
+        ]
       ],
-      "expect": ["I loved every minute of this talk", "Next we will look at data"]
+      "expect": [
+        "I loved every minute of this talk",
+        "Next we will look at data"
+      ]
     },
     {
       "name": "punct: short greeting lines pair up, speaker label stays alone",
       "cues": [
-        [0, 1.3, "Good morning."],
-        [1.32, 1.18, "How are you?"],
-        [2.52, 0.98, "(Audience) Good."],
-        [3.52, 1.5, "It's been great, hasn't it?"]
+        [
+          0,
+          1.3,
+          "Good morning."
+        ],
+        [
+          1.32,
+          1.18,
+          "How are you?"
+        ],
+        [
+          2.52,
+          0.98,
+          "(Audience) Good."
+        ],
+        [
+          3.52,
+          1.5,
+          "It's been great, hasn't it?"
+        ]
       ],
-      "expect": ["Good morning. How are you?", "(Audience) Good.", "It's been great, hasn't it?"]
+      "expect": [
+        "Good morning. How are you?",
+        "(Audience) Good.",
+        "It's been great, hasn't it?"
+      ]
     },
     {
       "name": "punct: a lone quote mark joins the previous card",
       "cues": [
-        [0, 3, "He said, \"Well, I was born ... \""],
-        [6.2, 3, "I heard a great story recently."]
+        [
+          0,
+          3,
+          "He said, \"Well, I was born ... \""
+        ],
+        [
+          6.2,
+          3,
+          "I heard a great story recently."
+        ]
       ],
-      "expect": ["He said, \"Well, I was born ... \"", "I heard a great story recently."]
+      "expect": [
+        "He said, \"Well, I was born ... \"",
+        "I heard a great story recently."
+      ]
     },
     {
       "name": "punct: long sentence is cut at a clause comma",
       "cues": [
-        [0, 3, "But if you ask about their education, they pin you to the wall,"],
-        [3, 3, "because it's one of those things that goes deep with people, am I right?"]
+        [
+          0,
+          3,
+          "But if you ask about their education, they pin you to the wall,"
+        ],
+        [
+          3,
+          3,
+          "because it's one of those things that goes deep with people, am I right?"
+        ]
       ],
-      "expect": ["But if you ask about their education, they pin you to the wall,", "because it's one of those things that goes deep with people, am I right?"]
+      "expect": [
+        "But if you ask about their education, they pin you to the wall,",
+        "because it's one of those things that goes deep with people, am I right?"
+      ]
+    },
+    {
+      "name": "SPEC_049 ASR: phrasal verb is not cut from its particle ('pick | up the phone')",
+      "asr": [
+        [
+          [
+            0.0,
+            "i"
+          ],
+          [
+            0.3,
+            "asked"
+          ],
+          [
+            0.6,
+            "my"
+          ],
+          [
+            0.9,
+            "brother"
+          ],
+          [
+            1.2,
+            "to"
+          ],
+          [
+            1.5,
+            "pick"
+          ]
+        ],
+        [
+          [
+            2.4,
+            "up"
+          ],
+          [
+            2.7,
+            "the"
+          ],
+          [
+            3.0,
+            "phone"
+          ],
+          [
+            3.3,
+            "when"
+          ],
+          [
+            3.6,
+            "it"
+          ],
+          [
+            3.9,
+            "rang"
+          ]
+        ]
+      ],
+      "expect": [
+        "I asked my brother",
+        "To pick up the phone when it rang"
+      ]
+    },
+    {
+      "name": "SPEC_049 ASR: 'you | know' stays together",
+      "asr": [
+        [
+          [
+            0.0,
+            "and"
+          ],
+          [
+            0.3,
+            "then"
+          ],
+          [
+            0.6,
+            "he"
+          ],
+          [
+            0.9,
+            "looked"
+          ],
+          [
+            1.2,
+            "at"
+          ],
+          [
+            1.5,
+            "me"
+          ],
+          [
+            1.8,
+            "and"
+          ],
+          [
+            2.1,
+            "said"
+          ],
+          [
+            2.4,
+            "you"
+          ]
+        ],
+        [
+          [
+            3.3,
+            "know"
+          ],
+          [
+            3.6,
+            "what"
+          ],
+          [
+            3.9,
+            "we"
+          ],
+          [
+            4.2,
+            "should"
+          ],
+          [
+            4.5,
+            "do"
+          ]
+        ]
+      ],
+      "expect": [
+        "And then he looked at me and said",
+        "You know what we should do"
+      ]
+    },
+    {
+      "name": "SPEC_049 ASR: overflow (no pauses) is cut before a conjunction",
+      "asr": [
+        [
+          [
+            0.0,
+            "we"
+          ],
+          [
+            0.3,
+            "stayed"
+          ],
+          [
+            0.6,
+            "inside"
+          ],
+          [
+            0.9,
+            "the"
+          ],
+          [
+            1.2,
+            "whole"
+          ],
+          [
+            1.5,
+            "afternoon"
+          ],
+          [
+            1.8,
+            "playing"
+          ],
+          [
+            2.1,
+            "old"
+          ],
+          [
+            2.4,
+            "board"
+          ],
+          [
+            2.7,
+            "games"
+          ],
+          [
+            3.0,
+            "because"
+          ],
+          [
+            3.3,
+            "the"
+          ],
+          [
+            3.6,
+            "rain"
+          ],
+          [
+            3.9,
+            "outside"
+          ],
+          [
+            4.2,
+            "was"
+          ],
+          [
+            4.5,
+            "heavy"
+          ],
+          [
+            4.8,
+            "all"
+          ],
+          [
+            5.1,
+            "day"
+          ],
+          [
+            5.4,
+            "long"
+          ]
+        ]
+      ],
+      "expect": [
+        "We stayed inside the whole afternoon playing old board games",
+        "Because the rain outside was heavy all day long"
+      ]
+    },
+    {
+      "name": "SPEC_049 punct: long sentence without commas is cut before a clause word",
+      "cues": [
+        [
+          0,
+          8,
+          "I went to the market early this morning to buy some fresh vegetables because my sister was coming over for dinner with her two kids tonight."
+        ],
+        [
+          9,
+          2,
+          "It was a long day."
+        ]
+      ],
+      "expect": [
+        "I went to the market early this morning to buy some fresh vegetables",
+        "because my sister was coming over for dinner with her two kids tonight.",
+        "It was a long day."
+      ]
     }
-  ]
+  ],
+  "cut": {
+    "particles": [
+      "up",
+      "down",
+      "out",
+      "off",
+      "on",
+      "in",
+      "back",
+      "away",
+      "over"
+    ],
+    "phrasalVerbs": [
+      "pick",
+      "give",
+      "take",
+      "get",
+      "come",
+      "go",
+      "look",
+      "turn",
+      "put",
+      "find",
+      "figure",
+      "make",
+      "run",
+      "break",
+      "bring",
+      "carry",
+      "check",
+      "end",
+      "fill",
+      "hang",
+      "hold",
+      "keep",
+      "let",
+      "log",
+      "move",
+      "pass",
+      "point",
+      "pull",
+      "push",
+      "show",
+      "shut",
+      "sit",
+      "stand",
+      "start",
+      "throw",
+      "wake",
+      "work",
+      "call",
+      "cut",
+      "sort",
+      "write",
+      "grow",
+      "sign",
+      "settle",
+      "wear",
+      "back",
+      "calm",
+      "clean",
+      "close",
+      "cool",
+      "drop",
+      "fall",
+      "finish",
+      "freak",
+      "hand",
+      "head",
+      "hurry",
+      "kick",
+      "knock",
+      "lay",
+      "line",
+      "lock",
+      "mess",
+      "miss",
+      "open",
+      "pay",
+      "play",
+      "print",
+      "sell",
+      "shake",
+      "slow",
+      "speed",
+      "step",
+      "stay",
+      "switch",
+      "talk",
+      "think",
+      "tie",
+      "try",
+      "use",
+      "wash",
+      "wind",
+      "wipe",
+      "zoom",
+      "blow",
+      "burn",
+      "catch",
+      "cheer",
+      "chill",
+      "clear",
+      "count",
+      "dig",
+      "dress",
+      "drag",
+      "eat",
+      "grab",
+      "hook",
+      "jump",
+      "light",
+      "mix",
+      "pile",
+      "pop",
+      "rip",
+      "roll",
+      "scroll",
+      "sum",
+      "tune",
+      "warm",
+      "walk",
+      "bounce",
+      "plug",
+      "act",
+      "stick",
+      "boot",
+      "fire",
+      "bear",
+      "build"
+    ],
+    "irregularVerbs": {
+      "got": "get",
+      "gotten": "get",
+      "gave": "give",
+      "given": "give",
+      "took": "take",
+      "taken": "take",
+      "came": "come",
+      "went": "go",
+      "gone": "go",
+      "goes": "go",
+      "ran": "run",
+      "broke": "break",
+      "broken": "break",
+      "brought": "bring",
+      "held": "hold",
+      "kept": "keep",
+      "threw": "throw",
+      "thrown": "throw",
+      "woke": "wake",
+      "wore": "wear",
+      "worn": "wear",
+      "grew": "grow",
+      "grown": "grow",
+      "wrote": "write",
+      "written": "write",
+      "found": "find",
+      "made": "make",
+      "sat": "sit",
+      "stood": "stand",
+      "shown": "show",
+      "fell": "fall",
+      "ate": "eat",
+      "dug": "dig",
+      "laid": "lay",
+      "paid": "pay",
+      "sold": "sell",
+      "shook": "shake",
+      "thought": "think",
+      "caught": "catch",
+      "built": "build",
+      "lit": "light",
+      "blew": "blow",
+      "burnt": "burn",
+      "stuck": "stick",
+      "led": "lead",
+      "bore": "bear",
+      "carried": "carry",
+      "tried": "try",
+      "hurried": "hurry"
+    },
+    "fillerPairs": [
+      [
+        "you",
+        "know"
+      ],
+      [
+        "i",
+        "mean"
+      ],
+      [
+        "kind",
+        "of"
+      ],
+      [
+        "sort",
+        "of"
+      ],
+      [
+        "lot",
+        "of"
+      ]
+    ],
+    "danglingTails": [
+      "a",
+      "an",
+      "the",
+      "to",
+      "of",
+      "in",
+      "on",
+      "at",
+      "for",
+      "with",
+      "from",
+      "by",
+      "into",
+      "onto",
+      "and",
+      "but",
+      "or",
+      "nor",
+      "so",
+      "because",
+      "if",
+      "when",
+      "while",
+      "than",
+      "my",
+      "your",
+      "his",
+      "their",
+      "our",
+      "its",
+      "it's",
+      "i'm",
+      "you're",
+      "we're",
+      "they're",
+      "he's",
+      "she's"
+    ]
+  },
+  "minCardSec": 1.0,
+  "maxCardSec": 10,
+  "_about049": "SPEC_049: real[] also checks time (underSec = share of cards shorter than minCardSec, overSec = longer than maxCardSec; rick is a song with held notes, so timeExempt) and cut quality (classifyCut in tests/segmentMetrics.ts with the `cut` lists: phrasal = verb | particle, filler = 'you | know'-type pair, properNum = number|number or Capital|Capital in manual captions, badCut = dangling+phrasal+filler+properNum per card). before049 = numbers from the pre-SPEC_049 code (commit 13e6955), printed, not checked. New captions were fetched 2026-11-24 via the Android innertube player baseUrl (fmt=srv3)."
 }

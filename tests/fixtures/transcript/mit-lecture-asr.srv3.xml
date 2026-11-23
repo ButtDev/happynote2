@@ -1,0 +1,1621 @@
+<?xml version="1.0" encoding="utf-8" ?><timedtext format="3">
+<head>
+<ws id="0"/>
+<ws id="1" mh="2" ju="0" sd="3"/>
+<wp id="0"/>
+<wp id="1" ap="6" ah="20" av="100" rc="2" cc="40"/>
+</head>
+<body>
+<w t="0" id="1" wp="1" ws="1"/>
+<p t="30" d="4559" w="1"><s ac="252">the</s><s t="119" ac="252"> following</s><s t="450" ac="207"> content</s><s t="1020" ac="252"> is</s><s t="1230" ac="252"> provided</s><s t="1289" ac="252"> under</s></p>
+<p t="1819" d="2770" w="1" a="1">
+</p>
+<p t="1829" d="5010" w="1"><s ac="252">a</s><s t="150" ac="252"> Creative</s><s t="271" ac="252"> Commons</s><s t="661" ac="226"> license</s><s t="1441" ac="200"> your</s><s t="2251" ac="227"> support</s></p>
+<p t="4579" d="2260" w="1" a="1">
+</p>
+<p t="4589" d="4171" w="1"><s ac="217">will</s><s t="241" ac="252"> help</s><s t="270" ac="252"> MIT</s><s t="781" ac="252"> OpenCourseWare</s><s t="901" ac="214"> continue</s><s t="1801" ac="208"> to</s></p>
+<p t="6829" d="1931" w="1" a="1">
+</p>
+<p t="6839" d="3061" w="1"><s ac="252">offer</s><s t="121" ac="255"> high</s><s t="690" ac="255"> quality</s><s t="721" ac="252"> educational</s><s t="1201" ac="216"> resources</s></p>
+<p t="8750" d="1150" w="1" a="1">
+</p>
+<p t="8760" d="3419" w="1"><s ac="252">for</s><s t="540" ac="206"> free</s></p>
+<p t="9890" d="2289" w="1" a="1">
+</p>
+<p t="9900" d="4500" w="1"><s ac="252">to</s><s t="810" ac="252"> make</s><s t="960" ac="252"> a</s><s t="989" ac="215"> donation</s><s t="1380" ac="252"> or</s><s t="1710" ac="237"> view</s><s t="1800" ac="252"> additional</s></p>
+<p t="12169" d="2231" w="1" a="1">
+</p>
+<p t="12179" d="8211" w="1"><s ac="252">materials</s><s t="661" ac="128"> from</s><s t="1170" ac="252"> hundreds</s><s t="1710" ac="252"> of</s><s t="1801" ac="252"> MIT</s><s t="1920" ac="252"> courses</s></p>
+<p t="14390" d="6000" w="1" a="1">
+</p>
+<p t="14400" d="5990" w="1"><s ac="209">visit</s><s t="630" ac="252"> MIT</s><s t="1470" ac="252"> opencourseware</s><s t="1770" ac="252"> at</s><s t="2990" ac="220"> ocw.mit.edu</s></p>
+<p t="21860" w="1" a="1">
+</p>
+<p t="21870" d="5140" w="1"><s ac="252">hi</s><s t="1000" ac="83"> I&#39;m</s><s t="1630" ac="108"> Sweeney</s><s t="2320" ac="241"> davidís</s><s t="2710" ac="252"> I&#39;m</s><s t="2980" ac="252"> a</s><s t="3010" ac="252"> professor</s></p>
+<p t="25290" d="1720" w="1" a="1">
+</p>
+<p t="25300" d="3870" w="1"><s ac="252">of</s><s t="180" ac="237"> election</s><s t="930" ac="207"> engineering</s><s t="1290" ac="252"> and</s><s t="1410" ac="252"> computer</s></p>
+<p t="27000" d="2170" w="1" a="1">
+</p>
+<p t="27010" d="2930" w="1"><s ac="252">science</s><s t="30" ac="64"> I&#39;m</s><s t="660" ac="233"> gonna</s><s t="960" ac="252"> be</s><s t="1050" ac="217"> Co</s><s t="1230" ac="252"> lecturing</s><s t="1710" ac="207"> six</s></p>
+<p t="29160" d="780" w="1" a="1">
+</p>
+<p t="29170" d="2760" w="1"><s ac="180">double-o</s><s t="330" ac="212"> six</s></p>
+<p t="29930" d="2000" w="1" a="1">
+</p>
+<p t="29940" d="4360" w="1"><s ac="226">introduction</s><s t="1000" ac="176"> to</s><s t="1120" ac="252"> algorithms</s><s t="1360" ac="228"> this</s><s t="1780" ac="252"> term</s></p>
+<p t="31920" d="2380" w="1" a="1">
+</p>
+<p t="31930" d="8280" w="1"><s ac="225">with</s><s t="740" ac="207"> Professor</s><s t="1740" ac="237"> Erik</s><s t="2040" ac="240"> Demaine</s></p>
+<p t="34290" d="5920" w="1" a="1">
+</p>
+<p t="34300" d="8910" w="1"><s ac="144">Erik</s><s t="840" ac="227"> say</s><s t="1020" ac="221"> hi</s><s t="2630" ac="218"> and</s><s t="4189" ac="244"> we</s><s t="5189" ac="252"> hope</s><s t="5340" ac="250"> you&#39;re</s><s t="5759" ac="79"> gonna</s></p>
+<p t="40200" d="3010" w="1" a="1">
+</p>
+<p t="40210" d="6090" w="1"><s ac="208">have</s><s t="150" ac="252"> a</s><s t="180" ac="252"> fun</s><s t="390" ac="212"> time</s><s t="599" ac="217"> in</s><s t="779" ac="220"> 6006</s><s t="1790" ac="207"> learning</s><s t="2790" ac="242"> a</s></p>
+<p t="43200" d="3100" w="1" a="1">
+</p>
+<p t="43210" d="7410" w="1"><s ac="216">variety</s><s t="900" ac="252"> of</s><s t="930" ac="201"> algorithms</s><s t="1700" ac="235"> what</s><s t="2700" ac="208"> I</s><s t="2730" ac="252"> want</s><s t="2910" ac="237"> to</s><s t="3000" ac="252"> do</s></p>
+<p t="46290" d="4330" w="1" a="1">
+</p>
+<p t="46300" d="4759" w="1"><s ac="249">today</s><s t="180" ac="213"> is</s><s t="540" ac="252"> spend</s><s t="1939" ac="227"> literally</s><s t="2939" ac="252"> a</s><s t="3000" ac="227"> minute</s><s t="3960" ac="252"> or</s><s t="4110" ac="252"> so</s></p>
+<p t="50610" d="449" w="1" a="1">
+</p>
+<p t="50620" d="3600" w="1"><s ac="252">on</s></p>
+<p t="51049" d="3171" w="1" a="1">
+</p>
+<p t="51059" d="5591" w="1"><s ac="252">administrative</s><s t="1000" ac="222"> details</s><s t="1711" ac="206"> maybe</s><s t="2711" ac="226"> even</s><s t="2951" ac="252"> less</s></p>
+<p t="54210" d="2440" w="1" a="1">
+</p>
+<p t="54220" d="3870" w="1"><s ac="200">what</s><s t="930" ac="247"> I&#39;d</s><s t="1050" ac="252"> like</s><s t="1170" ac="252"> to</s><s t="1230" ac="211"> do</s><s t="1410" ac="252"> is</s><s t="1560" ac="252"> to</s><s t="1710" ac="252"> tell</s><s t="1890" ac="252"> you</s><s t="2100" ac="206"> to</s><s t="2310" ac="252"> go</s></p>
+<p t="56640" d="1450" w="1" a="1">
+</p>
+<p t="56650" d="4860" w="1"><s ac="252">to</s><s t="30" ac="214"> the</s><s t="210" ac="204"> website</s><s t="630" ac="209"> that&#39;s</s><s t="929" ac="252"> listed</s><s t="1110" ac="252"> up</s><s t="1410" ac="252"> there</s></p>
+<p t="58080" d="3430" w="1" a="1">
+</p>
+<p t="58090" d="6480" w="1"><s ac="177">and</s><s t="450" ac="252"> read</s><s t="1230" ac="156"> it</s><s t="1380" ac="236"> and</s><s t="1910" ac="244"> you&#39;ll</s><s t="2910" ac="252"> get</s><s t="3030" ac="226"> all</s><s t="3090" ac="200"> the</s></p>
+<p t="61500" d="3070" w="1" a="1">
+</p>
+<p t="61510" d="4980" w="1"><s ac="106">information</s><s t="540" ac="166"> you</s><s t="720" ac="252"> need</s><s t="1010" ac="143"> about</s><s t="2010" ac="239"> what</s><s t="2880" ac="252"> this</s></p>
+<p t="64560" d="1930" w="1" a="1">
+</p>
+<p t="64570" d="6210" w="1"><s ac="231">class</s><s t="239" ac="252"> is</s><s t="299" ac="172"> about</s><s t="540" ac="225"> from</s><s t="1110" ac="200"> a</s><s t="1200" ac="226"> standpoint</s><s t="1650" ac="186"> of</s></p>
+<p t="66480" d="4300" w="1" a="1">
+</p>
+<p t="66490" d="6870" w="1"><s ac="252">syllabus</s><s t="480" ac="207"> what&#39;s</s><s t="1080" ac="252"> expected</s><s t="1530" ac="252"> of</s><s t="1830" ac="211"> you</s><s t="3290" ac="219"> the</s></p>
+<p t="70770" d="2590" w="1" a="1">
+</p>
+<p t="70780" d="5369" w="1"><s ac="252">problem</s><s t="540" ac="255"> set</s><s t="750" ac="229"> schedule</s><s t="1290" ac="218"> the</s><s t="1860" ac="252"> quiz</s><s t="2070" ac="243"> schedule</s></p>
+<p t="73350" d="2799" w="1" a="1">
+</p>
+<p t="73360" d="5160" w="1"><s ac="202">and</s><s t="270" ac="252"> so</s><s t="840" ac="252"> on</s><s t="960" ac="252"> and</s><s t="1110" ac="252"> so</s><s t="1230" ac="252"> forth</s><s t="1470" ac="175"> I</s><s t="1680" ac="252"> want</s><s t="2580" ac="243"> to</s><s t="2640" ac="252"> dive</s></p>
+<p t="76139" d="2381" w="1" a="1">
+</p>
+<p t="76149" d="6931" w="1"><s ac="252">right</s><s t="31" ac="203"> in</s><s t="391" ac="252"> and</s><s t="421" ac="217"> tell</s><s t="1051" ac="231"> you</s><s t="1231" ac="252"> about</s><s t="1371" ac="227"> interesting</s></p>
+<p t="78510" d="4570" w="1" a="1">
+</p>
+<p t="78520" d="6830" w="1"><s ac="203">things</s><s t="239" ac="200"> like</s><s t="1220" ac="220"> algorithms</s><s t="2220" ac="252"> and</s><s t="3410" ac="252"> complexity</s><s t="4410" ac="252"> of</s></p>
+<p t="83070" d="2280" w="1" a="1">
+</p>
+<p t="83080" d="4649" w="1"><s ac="255">algorithms</s><s t="330" ac="0"> I</s><s t="800" ac="238"> want</s><s t="1800" ac="246"> to</s><s t="1860" ac="236"> spend</s><s t="2039" ac="176"> some</s><s t="2220" ac="252"> time</s></p>
+<p t="85340" d="2389" w="1" a="1">
+</p>
+<p t="85350" d="5950" w="1"><s ac="224">giving</s><s t="1000" ac="252"> you</s><s t="1090" ac="252"> an</s><s t="1210" ac="186"> overview</s><s t="1540" ac="252"> of</s><s t="1719" ac="232"> the</s><s t="1960" ac="252"> course</s></p>
+<p t="87719" d="3581" w="1" a="1">
+</p>
+<p t="87729" d="5631" w="1"><s ac="252">content</s><s t="361" ac="201"> and</s><s t="1280" ac="233"> then</s><s t="2280" ac="252"> we&#39;re</s><s t="2521" ac="252"> going</s><s t="2640" ac="112"> to</s><s t="2851" ac="252"> dive</s></p>
+<p t="91290" d="2070" w="1" a="1">
+</p>
+<p t="91300" d="5429" w="1"><s ac="252">right</s><s t="30" ac="203"> in</s><s t="450" ac="252"> and</s><s t="629" ac="227"> look</s><s t="989" ac="219"> at</s><s t="1230" ac="252"> a</s><s t="1590" ac="252"> particular</s></p>
+<p t="93350" d="3379" w="1" a="1">
+</p>
+<p t="93360" d="4990" w="1"><s ac="164">problem</s><s t="1000" ac="239"> of</s><s t="1119" ac="216"> peak</s><s t="1780" ac="252"> finding</s><s t="2110" ac="219"> both</s><s t="3039" ac="252"> the</s><s t="3190" ac="201"> one</s></p>
+<p t="96719" d="1631" w="1" a="1">
+</p>
+<p t="96729" d="3450" w="1"><s ac="207">dimensional</s><s t="571" ac="248"> version</s><s t="780" ac="196"> and</s><s t="1261" ac="252"> a</s><s t="1471" ac="145"> two</s></p>
+<p t="98340" d="1839" w="1" a="1">
+</p>
+<p t="98350" d="4320" w="1"><s ac="159">dimensional</s><s t="420" ac="221"> version</s><s t="629" ac="217"> and</s><s t="1049" ac="233"> talk</s><s t="1710" ac="252"> about</s></p>
+<p t="100169" d="2501" w="1" a="1">
+</p>
+<p t="100179" d="6811" w="1"><s ac="202">algorithms</s><s t="390" ac="147"> to</s><s t="780" ac="252"> solve</s><s t="991" ac="236"> the</s><s t="1860" ac="248"> speak</s><s t="2101" ac="252"> finding</s></p>
+<p t="102660" d="4330" w="1" a="1">
+</p>
+<p t="102670" d="7880" w="1"><s ac="252">problem</s><s t="1100" ac="228"> both</s><s t="2130" ac="215"> varieties</s><s t="2729" ac="252"> of</s><s t="2759" ac="226"> it</s><s t="3030" ac="200"> and</s><s t="3320" ac="252"> you&#39;ll</s></p>
+<p t="106980" d="3570" w="1" a="1">
+</p>
+<p t="106990" d="6180" w="1"><s ac="227">find</s><s t="299" ac="203"> that</s><s t="799" ac="252"> there&#39;s</s><s t="1799" ac="252"> really</s><s t="2040" ac="252"> a</s><s t="2519" ac="165"> difference</s></p>
+<p t="110540" d="2630" w="1" a="1">
+</p>
+<p t="110550" d="4269" w="1"><s ac="252">between</s><s t="1000" ac="208"> these</s><s t="1629" ac="218"> various</s><s t="2019" ac="252"> algorithms</s><s t="2290" ac="252"> that</s></p>
+<p t="113160" d="1659" w="1" a="1">
+</p>
+<p t="113170" d="4880" w="1"><s ac="222">we&#39;ll</s><s t="179" ac="252"> look</s><s t="360" ac="224"> at</s><s t="570" ac="252"> in</s><s t="809" ac="252"> terms</s><s t="1140" ac="200"> of</s><s t="1530" ac="172"> their</s></p>
+<p t="114809" d="3241" w="1" a="1">
+</p>
+<p t="114819" d="6511" w="1"><s ac="239">complexity</s><s t="601" ac="201"> and</s><s t="1140" ac="252"> what</s><s t="1981" ac="234"> I</s><s t="2011" ac="239"> mean</s><s t="2250" ac="160"> by</s><s t="2311" ac="127"> that</s><s t="2550" ac="247"> is</s></p>
+<p t="118040" d="3290" w="1" a="1">
+</p>
+<p t="118050" d="5409" w="1"><s ac="249">you&#39;re</s><s t="1000" ac="208"> going</s><s t="1150" ac="200"> to</s><s t="1239" ac="227"> have</s><s t="1560" ac="249"> different</s><s t="2560" ac="197"> runtimes</s></p>
+<p t="121320" d="2139" w="1" a="1">
+</p>
+<p t="121330" d="5399" w="1"><s ac="252">of</s><s t="239" ac="252"> these</s><s t="360" ac="252"> algorithms</s><s t="709" ac="200"> depending</s><s t="1709" ac="224"> on</s><s t="1800" ac="252"> input</s></p>
+<p t="123449" d="3280" w="1" a="1">
+</p>
+<p t="123459" d="7981" w="1"><s ac="252">size</s><s t="1160" ac="245"> based</s><s t="2160" ac="252"> on</s><s t="2401" ac="221"> how</s><s t="2671" ac="252"> efficient</s><s t="3151" ac="252"> these</s></p>
+<p t="126719" d="4721" w="1" a="1">
+</p>
+<p t="126729" d="9301" w="1"><s ac="223">algorithms</s><s t="301" ac="252"> are</s><s t="661" ac="243"> and</s><s t="3471" ac="158"> prerequisite</s><s t="4471" ac="252"> for</s><s t="4501" ac="252"> this</s></p>
+<p t="131430" d="4600" w="1" a="1">
+</p>
+<p t="131440" d="6680" w="1"><s ac="252">class</s><s t="180" ac="234"> is</s><s t="830" ac="226"> 604</s><s t="1830" ac="94"> two</s><s t="2040" ac="234"> and</s><s t="2340" ac="252"> in</s><s t="3330" ac="226"> 604</s><s t="3840" ac="215"> 2</s><s t="4019" ac="246"> you</s></p>
+<p t="136020" d="2100" w="1" a="1">
+</p>
+<p t="136030" d="5510" w="1"><s ac="201">learned</s><s t="30" ac="207"> about</s><s t="360" ac="232"> asymptotic</s><s t="990" ac="238"> complexity</s><s t="1590" ac="216"> and</s></p>
+<p t="138110" d="3430" w="1" a="1">
+</p>
+<p t="138120" d="6520" w="1"><s ac="252">you&#39;ll</s><s t="1000" ac="252"> see</s><s t="1210" ac="236"> that</s><s t="1360" ac="234"> in</s><s t="2050" ac="216"> this</s><s t="2290" ac="200"> lecture</s><s t="2680" ac="236"> we&#39;ll</s></p>
+<p t="141530" d="3110" w="1" a="1">
+</p>
+<p t="141540" d="5470" w="1"><s ac="248">analyze</s><s t="1320" ac="243"> relatively</s><s t="2320" ac="242"> simple</s><s t="2650" ac="252"> algorithms</s></p>
+<p t="144630" d="2380" w="1" a="1">
+</p>
+<p t="144640" d="4530" w="1"><s ac="252">today</s><s t="120" ac="166"> in</s><s t="510" ac="252"> terms</s><s t="1110" ac="226"> of</s><s t="1319" ac="231"> their</s><s t="1590" ac="241"> asymptotic</s></p>
+<p t="147000" d="2170" w="1" a="1">
+</p>
+<p t="147010" d="4620" w="1"><s ac="252">complexity</s><s t="420" ac="229"> and</s><s t="780" ac="252"> you&#39;ll</s><s t="1380" ac="252"> be</s><s t="1530" ac="252"> able</s><s t="1620" ac="224"> to</s><s t="1770" ac="252"> compare</s></p>
+<p t="149160" d="2470" w="1" a="1">
+</p>
+<p t="149170" d="5010" w="1"><s ac="210">and</s><s t="270" ac="241"> say</s><s t="1110" ac="252"> that</s><s t="1320" ac="252"> this</s><s t="1440" ac="155"> algorithm</s><s t="1920" ac="233"> is</s><s t="2040" ac="252"> faster</s></p>
+<p t="151620" d="2560" w="1" a="1">
+</p>
+<p t="151630" d="3750" w="1"><s ac="252">than</s><s t="90" ac="206"> this</s><s t="240" ac="208"> other</s><s t="420" ac="252"> one</s><s t="1280" ac="227"> assuming</s><s t="2280" ac="166"> that</s><s t="2430" ac="252"> you</s></p>
+<p t="154170" d="1210" w="1" a="1">
+</p>
+<p t="154180" d="5780" w="1"><s ac="252">have</s><s t="150" ac="252"> large</s><s t="390" ac="252"> inputs</s></p>
+<p t="155370" d="4590" w="1" a="1">
+</p>
+<p t="155380" d="7230" w="1"><s ac="252">because</s><s t="450" ac="227"> it&#39;s</s><s t="900" ac="120"> hasn&#39;t</s><s t="1890" ac="117"> totally</s><s t="2430" ac="164"> less</s><s t="3000" ac="252"> complex</s></p>
+<p t="159950" d="2660" w="1" a="1">
+</p>
+<p t="159960" d="13780" w="1"><s ac="230">so</s><s t="1000" ac="252"> let&#39;s</s><s t="1210" ac="252"> dive</s><s t="1690" ac="144"> right</s><s t="1870" ac="252"> in</s><s t="2050" ac="252"> and</s><s t="2080" ac="204"> talk</s><s t="2590" ac="213"> about</s></p>
+<p t="162600" d="11140" w="1" a="1">
+</p>
+<p t="162610" d="14120" w="1"><s ac="200">the</s><s t="270" ac="248"> class</s><s t="8960" ac="244"> so</s><s t="9960" ac="252"> the</s><s t="10050" ac="252"> one</s><s t="10200" ac="252"> sentence</s><s t="10650" ac="252"> summary</s><s t="10860" ac="205"> of</s></p>
+<p t="173730" d="3000" w="1" a="1">
+</p>
+<p t="173740" d="6300" w="1"><s ac="252">this</s><s t="150" ac="226"> class</s><s t="420" ac="239"> is</s><s t="780" ac="252"> that</s><s t="1490" ac="215"> this</s><s t="2490" ac="252"> is</s><s t="2700" ac="230"> about</s></p>
+<p t="176720" d="3320" w="1" a="1">
+</p>
+<p t="176730" d="8590" w="1"><s ac="204">efficient</s><s t="1000" ac="252"> procedures</s><s t="1540" ac="252"> for</s><s t="2410" ac="152"> solving</s></p>
+<p t="180030" d="5290" w="1" a="1">
+</p>
+<p t="180040" d="8880" w="1"><s ac="252">problems</s><s t="630" ac="164"> on</s><s t="1280" ac="241"> large</s><s t="2280" ac="252"> inputs</s><s t="2850" ac="208"> and</s><s t="4070" ac="252"> when</s><s t="5070" ac="252"> I</s><s t="5130" ac="252"> say</s></p>
+<p t="185310" d="3610" w="1" a="1">
+</p>
+<p t="185320" d="6060" w="1"><s ac="205">large</s><s t="270" ac="252"> inputs</s><s t="660" ac="205"> I</s><s t="930" ac="252"> mean</s><s t="1110" ac="252"> things</s><s t="1350" ac="252"> like</s><s t="2300" ac="236"> the</s><s t="3300" ac="153"> US</s></p>
+<p t="188910" d="2470" w="1" a="1">
+</p>
+<p t="188920" d="5790" w="1"><s ac="241">highway</s><s t="420" ac="244"> system</s><s t="1050" ac="204"> a</s><s t="1230" ac="252"> map</s><s t="1650" ac="217"> of</s><s t="1890" ac="248"> all</s><s t="2190" ac="252"> of</s><s t="2220" ac="186"> the</s></p>
+<p t="191370" d="3340" w="1" a="1">
+</p>
+<p t="191380" d="6210" w="1"><s ac="220">highways</s><s t="900" ac="143"> in</s><s t="1050" ac="252"> the</s><s t="1080" ac="208"> United</s><s t="1140" ac="180"> States</s><s t="1910" ac="217"> the</s><s t="2910" ac="252"> human</s></p>
+<p t="194700" d="2890" w="1" a="1">
+</p>
+<p t="194710" d="6930" w="1"><s ac="230">genome</s><s t="390" ac="237"> which</s><s t="1380" ac="252"> has</s><s t="1590" ac="252"> a</s><s t="1950" ac="207"> billion</s><s t="2520" ac="252"> letters</s><s t="2850" ac="252"> in</s></p>
+<p t="197580" d="4060" w="1" a="1">
+</p>
+<p t="197590" d="6450" w="1"><s ac="169">its</s><s t="510" ac="252"> alphabet</s><s t="1070" ac="125"> a</s><s t="2660" ac="255"> social</s><s t="3660" ac="255"> network</s></p>
+<p t="201630" d="2410" w="1" a="1">
+</p>
+<p t="201640" d="5790" w="1"><s ac="255">corresponding</s><s t="600" ac="252"> to</s><s t="720" ac="236"> Facebook</s><s t="1200" ac="204"> that</s><s t="1800" ac="244"> I</s><s t="2130" ac="252"> guess</s></p>
+<p t="204030" d="3400" w="1" a="1">
+</p>
+<p t="204040" d="5310" w="1"><s ac="252">has</s><s t="180" ac="217"> 500</s><s t="930" ac="252"> million</s><s t="1140" ac="252"> nodes</s><s t="1470" ac="236"> or</s><s t="1830" ac="252"> so</s><s t="2010" ac="213"> so</s><s t="2910" ac="252"> these</s><s t="3180" ac="249"> are</s></p>
+<p t="207420" d="1930" w="1" a="1">
+</p>
+<p t="207430" d="4350" w="1"><s ac="207">large</s><s t="210" ac="252"> inputs</s><s t="660" ac="211"> now</s><s t="930" ac="252"> our</s><s t="1050" ac="252"> definition</s><s t="1530" ac="217"> of</s><s t="1650" ac="252"> large</s></p>
+<p t="209340" d="2440" w="1" a="1">
+</p>
+<p t="209350" d="4670" w="1"><s ac="246">has</s><s t="420" ac="252"> really</s><s t="660" ac="252"> changed</s><s t="1110" ac="252"> with</s><s t="1260" ac="252"> the</s><s t="1350" ac="252"> times</s><s t="1380" ac="134"> and</s><s t="1980" ac="252"> so</s></p>
+<p t="211770" d="2250" w="1" a="1">
+</p>
+<p t="211780" d="5880" w="1"><s ac="201">really</s><s t="270" ac="252"> the</s><s t="390" ac="252"> 21st</s><s t="870" ac="252"> century</s><s t="1290" ac="252"> definition</s><s t="1950" ac="252"> of</s></p>
+<p t="214010" d="3650" w="1" a="1">
+</p>
+<p t="214020" d="6130" w="1"><s ac="234">large</s><s t="1000" ac="210"> is</s><s t="1390" ac="242"> I</s><s t="1930" ac="252"> guess</s><s t="2110" ac="226"> a</s><s t="2140" ac="236"> trillion</s><s t="2770" ac="217"> right</s><s t="3220" ac="233"> back</s></p>
+<p t="217650" d="2500" w="1" a="1">
+</p>
+<p t="217660" d="5580" w="1"><s ac="252">when</s><s t="180" ac="250"> I</s><s t="240" ac="246"> was</s><s t="330" ac="208"> your</s><s t="540" ac="136"> age</s><s t="750" ac="201"> large</s><s t="1710" ac="252"> was</s><s t="2010" ac="252"> like</s><s t="2250" ac="240"> a</s></p>
+<p t="220140" d="3100" w="1" a="1">
+</p>
+<p t="220150" d="6120" w="1"><s ac="252">thousand</s><s t="480" ac="236"> right</s><s t="1040" ac="248"> I</s><s t="2040" ac="252"> guess</s><s t="2460" ac="241"> I&#39;m</s><s t="2580" ac="251"> dating</s><s t="2910" ac="242"> myself</s></p>
+<p t="223230" d="3040" w="1" a="1">
+</p>
+<p t="223240" d="7910" w="1"><s ac="252">here</s><s t="950" ac="145"> back</s><s t="1950" ac="252"> when</s><s t="2100" ac="255"> Eric</s><s t="2340" ac="252"> was</s><s t="2430" ac="231"> your</s><s t="2640" ac="252"> age</s><s t="2760" ac="165"> it</s><s t="2940" ac="252"> was</s></p>
+<p t="226260" d="4890" w="1" a="1">
+</p>
+<p t="226270" d="8850" w="1"><s ac="206">a</s><s t="60" ac="216"> million</s><s t="420" ac="244"> right</s><s t="1580" ac="167"> but</s><s t="3170" ac="225"> what&#39;s</s><s t="4170" ac="252"> happening</s><s t="4560" ac="108"> I</s></p>
+<p t="231140" d="3980" w="1" a="1">
+</p>
+<p t="231150" d="6580" w="1"><s ac="255">really</s><s t="1080" ac="247"> the</s><s t="2080" ac="252"> world</s><s t="2260" ac="252"> is</s><s t="2620" ac="225"> moving</s><s t="3190" ac="248"> faster</s><s t="3730" ac="249"> things</s></p>
+<p t="235110" d="2620" w="1" a="1">
+</p>
+<p t="235120" d="4980" w="1"><s ac="206">are</s><s t="180" ac="252"> getting</s><s t="360" ac="252"> bigger</s><s t="540" ac="216"> we</s><s t="1380" ac="245"> have</s><s t="1740" ac="159"> the</s></p>
+<p t="237720" d="2380" w="1" a="1">
+</p>
+<p t="237730" d="5190" w="1"><s ac="252">capability</s><s t="630" ac="252"> of</s><s t="660" ac="242"> computing</s><s t="1560" ac="252"> on</s><s t="1650" ac="216"> large</s><s t="1950" ac="252"> inputs</s></p>
+<p t="240090" d="2830" w="1" a="1">
+</p>
+<p t="240100" d="6090" w="1"><s ac="208">but</s><s t="960" ac="252"> that</s><s t="1560" ac="252"> doesn&#39;t</s><s t="1860" ac="252"> mean</s><s t="1950" ac="99"> that</s><s t="2190" ac="227"> efficiency</s></p>
+<p t="242910" d="3280" w="1" a="1">
+</p>
+<p t="242920" d="7100" w="1"><s ac="207">isn&#39;t</s><s t="420" ac="207"> of</s><s t="810" ac="251"> paramount</s><s t="1350" ac="252"> concern</s><s t="1970" ac="207"> the</s><s t="2970" ac="179"> fact</s><s t="3180" ac="252"> of</s></p>
+<p t="246180" d="3840" w="1" a="1">
+</p>
+<p t="246190" d="6690" w="1"><s ac="242">the</s><s t="120" ac="252"> matter</s><s t="150" ac="201"> is</s><s t="480" ac="252"> that</s><s t="770" ac="236"> you</s><s t="1770" ac="252"> can</s><s t="2010" ac="242"> maybe</s><s t="2400" ac="252"> scan</s><s t="2880" ac="201"> a</s></p>
+<p t="250010" d="2870" w="1" a="1">
+</p>
+<p t="250020" d="5320" w="1"><s ac="252">billion</s><s t="1000" ac="252"> elements</s><s t="1150" ac="200"> in</s><s t="1900" ac="252"> a</s><s t="2050" ac="232"> matter</s><s t="2200" ac="252"> of</s><s t="2320" ac="252"> seconds</s></p>
+<p t="252870" d="2470" w="1" a="1">
+</p>
+<p t="252880" d="5280" w="1"><s ac="227">but</s><s t="840" ac="255"> if</s><s t="1140" ac="252"> you</s><s t="1320" ac="252"> had</s><s t="1530" ac="252"> an</s><s t="1770" ac="250"> algorithm</s><s t="2010" ac="142"> that</s></p>
+<p t="255330" d="2830" w="1" a="1">
+</p>
+<p t="255340" d="4320" w="1"><s ac="252">required</s><s t="780" ac="234"> cubic</s><s t="1230" ac="252"> complexity</s><s t="1820" ac="233"> suddenly</s></p>
+<p t="258150" d="1510" w="1" a="1">
+</p>
+<p t="258160" d="4130" w="1"><s ac="228">you&#39;re</s><s t="270" ac="252"> not</s><s t="329" ac="218"> talking</s><s t="660" ac="252"> about</s><s t="690" ac="211"> 10</s><s t="960" ac="205"> raise</s><s t="1139" ac="165"> to</s><s t="1199" ac="252"> 9</s></p>
+<p t="259650" d="2640" w="1" a="1">
+</p>
+<p t="259660" d="4860" w="1"><s ac="205">you&#39;re</s><s t="360" ac="252"> talking</s><s t="660" ac="225"> about</s><s t="750" ac="216"> 10</s><s t="1050" ac="214"> raise</s><s t="1199" ac="252"> to</s><s t="1230" ac="245"> 27</s><s t="1949" ac="227"> and</s></p>
+<p t="262280" d="2240" w="1" a="1">
+</p>
+<p t="262290" d="4600" w="1"><s ac="236">even</s><s t="1000" ac="252"> current</s><s t="1150" ac="207"> computers</s><s t="1720" ac="252"> can&#39;t</s><s t="2020" ac="252"> really</s></p>
+<p t="264510" d="2380" w="1" a="1">
+</p>
+<p t="264520" d="6420" w="1"><s ac="252">handle</s><s t="180" ac="204"> that</s><s t="990" ac="206"> kind</s><s t="1230" ac="252"> of</s><s t="1320" ac="237"> those</s><s t="1980" ac="232"> kinds</s><s t="2280" ac="217"> of</s></p>
+<p t="266880" d="4060" w="1" a="1">
+</p>
+<p t="266890" d="6690" w="1"><s ac="232">numbers</s><s t="620" ac="233"> so</s><s t="1620" ac="244"> efficiency</s><s t="2070" ac="204"> is</s><s t="2190" ac="154"> a</s><s t="2370" ac="252"> concern</s><s t="3050" ac="215"> and</s></p>
+<p t="270930" d="2650" w="1" a="1">
+</p>
+<p t="270940" d="9170" w="1"><s ac="249">as</s><s t="450" ac="252"> inputs</s><s t="1350" ac="122"> get</s><s t="1500" ac="237"> larger</s><s t="1890" ac="201"> it</s><s t="2070" ac="252"> becomes</s><s t="2190" ac="228"> more</s><s t="2520" ac="202"> of</s></p>
+<p t="273570" d="6540" w="1" a="1">
+</p>
+<p t="273580" d="6530" w="1"><s ac="252">a</s><s t="90" ac="252"> concern</s><s t="440" ac="203"> all</s><s t="1440" ac="236"> right</s><s t="1560" ac="200"> so</s><s t="2720" ac="244"> we</s><s t="3720" ac="249"> concern</s><s t="4080" ac="231"> about</s></p>
+<p t="283110" w="1" a="1">
+</p>
+<p t="283120" d="15010" w="1"><s ac="252">efficient</s><s t="1000" ac="255"> procedures</s><s t="5460" ac="252"> for</s><s t="6460" ac="252"> solving</s></p>
+<p t="289680" d="8450" w="1" a="1">
+</p>
+<p t="289690" d="11069" w="1"><s ac="137">large-scale</s><s t="1000" ac="252"> problems</s><s t="1300" ac="205"> in</s><s t="1720" ac="209"> this</s><s t="1870" ac="240"> class</s><s t="7440" ac="233"> and</s></p>
+<p t="298120" d="2639" w="1" a="1">
+</p>
+<p t="298130" d="9599" w="1"><s ac="234">we&#39;re</s><s t="900" ac="220"> concerned</s><s t="1200" ac="217"> about</s><s t="1379" ac="252"> scalability</s></p>
+<p t="300749" d="6980" w="1" a="1">
+</p>
+<p t="300759" d="9160" w="1"><s ac="208">because</s><s t="1891" ac="226"> just</s><s t="2891" ac="252"> as</s><s t="4530" ac="183"> you</s><s t="5530" ac="252"> know</s><s t="5621" ac="97"> 1,000</s><s t="6280" ac="252"> was</s><s t="6401" ac="233"> a</s><s t="6701" ac="252"> big</s></p>
+<p t="307719" d="2200" w="1" a="1">
+</p>
+<p t="307729" d="3720" w="1"><s ac="252">number</s><s t="181" ac="65"> a</s><s t="601" ac="246"> couple</s><s t="1111" ac="252"> of</s><s t="1171" ac="240"> decades</s><s t="1440" ac="252"> ago</s><s t="1620" ac="207"> and</s><s t="1951" ac="246"> and</s></p>
+<p t="309909" d="1540" w="1" a="1">
+</p>
+<p t="309919" d="5641" w="1"><s ac="252">now</s><s t="120" ac="252"> it&#39;s</s><s t="301" ac="242"> it&#39;s</s><s t="601" ac="252"> kind</s><s t="810" ac="252"> of</s><s t="840" ac="241"> a</s><s t="930" ac="252"> small</s><s t="1261" ac="222"> number</s></p>
+<p t="311439" d="4121" w="1" a="1">
+</p>
+<p t="311449" d="5521" w="1"><s ac="207">it&#39;s</s><s t="661" ac="252"> quite</s><s t="840" ac="219"> possible</s><s t="1321" ac="252"> that</s><s t="2060" ac="136"> by</s><s t="3060" ac="177"> the</s><s t="3361" ac="227"> time</s><s t="3601" ac="252"> you</s></p>
+<p t="315550" d="1420" w="1" a="1">
+</p>
+<p t="315560" d="3660" w="1"><s ac="252">guys</s><s t="120" ac="235"> are</s><s t="180" ac="227"> professors</s><s t="720" ac="245"> teaching</s><s t="1050" ac="206"> this</s><s t="1260" ac="252"> class</s></p>
+<p t="316960" d="2260" w="1" a="1">
+</p>
+<p t="316970" d="4530" w="1"><s ac="231">in</s><s t="360" ac="252"> some</s><s t="569" ac="248"> university</s><s t="1110" ac="252"> that</s><s t="1410" ac="208"> a</s><s t="1590" ac="251"> trillion</s><s t="2129" ac="252"> is</s></p>
+<p t="319210" d="2290" w="1" a="1">
+</p>
+<p t="319220" d="5550" w="1"><s ac="252">going</s><s t="120" ac="252"> to</s><s t="180" ac="252"> be</s><s t="270" ac="252"> a</s><s t="300" ac="252"> small</s><s t="600" ac="131"> number</s><s t="810" ac="215"> and</s><s t="1280" ac="241"> we&#39;re</s></p>
+<p t="321490" d="3280" w="1" a="1">
+</p>
+<p t="321500" d="8250" w="1"><s ac="239">going</s><s t="120" ac="252"> to</s><s t="150" ac="201"> be</s><s t="240" ac="202"> talking</s><s t="509" ac="252"> about</s><s t="1759" ac="62"> at</s><s t="2759" ac="146"> no</s><s t="2910" ac="228"> 10</s><s t="3090" ac="201"> raise</s></p>
+<p t="324760" d="4990" w="1" a="1">
+</p>
+<p t="324770" d="7110" w="1"><s ac="252">to</s><s t="30" ac="216"> 18</s><s t="570" ac="235"> as</s><s t="840" ac="246"> being</s><s t="1579" ac="252"> something</s><s t="2579" ac="252"> that</s><s t="3980" ac="247"> we&#39;re</s></p>
+<p t="329740" d="2140" w="1" a="1">
+</p>
+<p t="329750" d="4889" w="1"><s ac="252">concerned</s><s t="300" ac="214"> with</s><s t="539" ac="241"> from</s><s t="1199" ac="252"> a</s><s t="1289" ac="232"> standpoint</s><s t="1560" ac="209"> of</s><s t="1949" ac="252"> a</s></p>
+<p t="331870" d="2769" w="1" a="1">
+</p>
+<p t="331880" d="6900" w="1"><s ac="252">common</s><s t="420" ac="210"> case</s><s t="599" ac="243"> input</s><s t="900" ac="216"> for</s><s t="1440" ac="252"> an</s><s t="1529" ac="252"> algorithm</s><s t="1759" ac="141"> so</s></p>
+<p t="334629" d="4151" w="1" a="1">
+</p>
+<p t="334639" d="6691" w="1"><s ac="252">scalability</s><s t="691" ac="236"> is</s><s t="1941" ac="255"> important</s><s t="2941" ac="238"> and</s><s t="3120" ac="248"> we</s><s t="3931" ac="252"> want</s><s t="4020" ac="203"> to</s></p>
+<p t="338770" d="2560" w="1" a="1">
+</p>
+<p t="338780" d="4770" w="1"><s ac="252">be</s><s t="90" ac="252"> able</s><s t="270" ac="166"> to</s><s t="479" ac="252"> track</s><s t="810" ac="243"> how</s><s t="1680" ac="252"> our</s><s t="1979" ac="252"> algorithms</s><s t="2460" ac="252"> are</s></p>
+<p t="341320" d="2230" w="1" a="1">
+</p>
+<p t="341330" d="7860" w="1"><s ac="125">going</s><s t="149" ac="252"> to</s><s t="209" ac="252"> do</s><s t="390" ac="242"> as</s><s t="660" ac="252"> inputs</s><s t="1559" ac="252"> get</s><s t="1709" ac="252"> larger</s><s t="2100" ac="252"> and</s></p>
+<p t="343540" d="5650" w="1" a="1">
+</p>
+<p t="343550" d="8970" w="1"><s ac="208">larger</s><s t="2780" ac="206"> you&#39;re</s><s t="3780" ac="165"> going</s><s t="3929" ac="204"> to</s><s t="3989" ac="252"> learn</s><s t="4109" ac="225"> a</s><s t="4429" ac="252"> bunch</s><s t="5429" ac="237"> of</s></p>
+<p t="349180" d="3340" w="1" a="1">
+</p>
+<p t="349190" d="8430" w="1"><s ac="250">different</s><s t="420" ac="241"> data</s><s t="1319" ac="252"> structures</s><s t="2150" ac="120"> we&#39;ll</s><s t="3150" ac="250"> call</s></p>
+<p t="352510" d="5110" w="1" a="1">
+</p>
+<p t="352520" d="9149" w="1"><s ac="252">them</s><s t="1040" ac="226"> classic</s><s t="2040" ac="226"> data</s><s t="2280" ac="252"> structures</s><s t="2790" ac="205"> like</s><s t="4100" ac="134"> binary</s></p>
+<p t="357610" d="4059" w="1" a="1">
+</p>
+<p t="357620" d="8340" w="1"><s ac="174">search</s><s t="419" ac="252"> trees</s><s t="1280" ac="209"> hash</s><s t="2280" ac="252"> tables</s><s t="2820" ac="238"> that</s><s t="3780" ac="205"> are</s><s t="3840" ac="202"> called</s></p>
+<p t="361659" d="4301" w="1" a="1">
+</p>
+<p t="361669" d="6840" w="1"><s ac="252">dictionaries</s><s t="421" ac="252"> in</s><s t="631" ac="252"> Python</s><s t="661" ac="209"> and</s><s t="3291" ac="255"> data</s></p>
+<p t="365950" d="2559" w="1" a="1">
+</p>
+<p t="365960" d="4590" w="1"><s ac="218">structures</s><s t="389" ac="252"> such</s><s t="600" ac="203"> as</s><s t="1190" ac="242"> balanced</s><s t="2190" ac="252"> binary</s></p>
+<p t="368499" d="2051" w="1" a="1">
+</p>
+<p t="368509" d="3421" w="1"><s ac="204">search</s><s t="361" ac="252"> trees</s><s t="630" ac="252"> that</s><s t="931" ac="252"> are</s><s t="1111" ac="252"> more</s><s t="1561" ac="252"> efficient</s></p>
+<p t="370540" d="1390" w="1" a="1">
+</p>
+<p t="370550" d="3660" w="1"><s ac="252">than</s><s t="60" ac="252"> just</s><s t="480" ac="252"> the</s><s t="540" ac="135"> regular</s><s t="839" ac="252"> binary</s><s t="1049" ac="219"> search</s></p>
+<p t="371920" d="2290" w="1" a="1">
+</p>
+<p t="371930" d="6690" w="1"><s ac="252">trees</s><s t="299" ac="221"> and</s><s t="570" ac="244"> these</s><s t="1500" ac="252"> are</s><s t="1590" ac="252"> all</s><s t="1680" ac="252"> data</s><s t="1859" ac="242"> structures</s></p>
+<p t="374200" d="4420" w="1" a="1">
+</p>
+<p t="374210" d="7470" w="1"><s ac="252">that</s><s t="410" ac="233"> were</s><s t="1410" ac="200"> invented</s><s t="2060" ac="217"> many</s><s t="3060" ac="225"> decades</s><s t="3449" ac="202"> ago</s><s t="3780" ac="225"> but</s></p>
+<p t="378610" d="3070" w="1" a="1">
+</p>
+<p t="378620" d="5370" w="1"><s ac="217">they&#39;ve</s><s t="180" ac="255"> stood</s><s t="389" ac="223"> the</s><s t="539" ac="243"> test</s><s t="780" ac="252"> of</s><s t="900" ac="252"> time</s><s t="960" ac="163"> and</s><s t="2060" ac="250"> they</s></p>
+<p t="381670" d="2320" w="1" a="1">
+</p>
+<p t="381680" d="4109" w="1"><s ac="227">continue</s><s t="359" ac="252"> to</s><s t="390" ac="206"> be</s><s t="570" ac="232"> useful</s><s t="1130" ac="201"> we&#39;re</s><s t="2130" ac="255"> going</s><s t="2250" ac="248"> to</s></p>
+<p t="383980" d="1809" w="1" a="1">
+</p>
+<p t="383990" d="4140" w="1"><s ac="252">augment</s><s t="330" ac="252"> these</s><s t="540" ac="221"> data</s><s t="780" ac="216"> structures</s><s t="1200" ac="252"> in</s><s t="1470" ac="252"> various</s></p>
+<p t="385779" d="2351" w="1" a="1">
+</p>
+<p t="385789" d="5401" w="1"><s ac="252">ways</s><s t="211" ac="252"> to</s><s t="241" ac="206"> make</s><s t="541" ac="200"> them</s><s t="781" ac="252"> more</s><s t="810" ac="203"> efficient</s><s t="1591" ac="216"> for</s></p>
+<p t="388120" d="3070" w="1" a="1">
+</p>
+<p t="388130" d="4920" w="1"><s ac="219">certain</s><s t="569" ac="252"> kinds</s><s t="1020" ac="252"> of</s><s t="1110" ac="201"> problems</s><s t="1589" ac="232"> and</s><s t="2060" ac="237"> while</s></p>
+<p t="391180" d="1870" w="1" a="1">
+</p>
+<p t="391190" d="4680" w="1"><s ac="217">you&#39;re</s><s t="509" ac="252"> not</s><s t="599" ac="252"> going</s><s t="810" ac="241"> to</s><s t="870" ac="252"> be</s><s t="960" ac="252"> doing</s><s t="1080" ac="204"> a</s><s t="1409" ac="252"> whole</s><s t="1800" ac="200"> lot</s></p>
+<p t="393040" d="2830" w="1" a="1">
+</p>
+<p t="393050" d="4679" w="1"><s ac="187">of</s><s t="270" ac="222"> algorithm</s><s t="899" ac="252"> design</s><s t="929" ac="252"> in</s><s t="1530" ac="252"> this</s><s t="1649" ac="228"> class</s><s t="1919" ac="236"> you</s></p>
+<p t="395860" d="1869" w="1" a="1">
+</p>
+<p t="395870" d="7710" w="1"><s ac="162">will</s><s t="150" ac="252"> be</s><s t="180" ac="161"> doing</s><s t="539" ac="252"> some</s><s t="780" ac="252"> design</s><s t="1139" ac="215"> and</s><s t="1470" ac="252"> a</s><s t="1710" ac="252"> whole</s></p>
+<p t="397719" d="5861" w="1" a="1">
+</p>
+<p t="397729" d="8430" w="1"><s ac="239">lot</s><s t="151" ac="130"> of</s><s t="240" ac="252"> analysis</s><s t="2361" ac="247"> the</s><s t="3801" ac="239"> class</s><s t="4801" ac="202"> following</s><s t="5641" ac="202"> this</s></p>
+<p t="403570" d="2589" w="1" a="1">
+</p>
+<p t="403580" d="5130" w="1"><s ac="246">one</s><s t="209" ac="201"> 604</s><s t="1170" ac="71"> six</s><s t="1440" ac="213"> design</s><s t="1860" ac="252"> analysis</s><s t="2459" ac="252"> of</s></p>
+<p t="406149" d="2561" w="1" a="1">
+</p>
+<p t="406159" d="6570" w="1"><s ac="252">algorithms</s><s t="451" ac="212"> is</s><s t="630" ac="231"> a</s><s t="1230" ac="252"> class</s><s t="1560" ac="246"> that</s><s t="2010" ac="223"> you</s><s t="2371" ac="252"> should</s></p>
+<p t="408700" d="4029" w="1" a="1">
+</p>
+<p t="408710" d="5819" w="1"><s ac="227">take</s><s t="209" ac="239"> if</s><s t="1310" ac="252"> you</s><s t="2310" ac="246"> like</s><s t="2519" ac="252"> this</s><s t="2670" ac="215"> one</s><s t="2910" ac="230"> and</s><s t="3120" ac="161"> you</s><s t="3810" ac="121"> can</s><s t="3929" ac="252"> do</s></p>
+<p t="412719" d="1810" w="1" a="1">
+</p>
+<p t="412729" d="5760" w="1"><s ac="252">a</s><s t="31" ac="252"> whole</s><s t="180" ac="205"> lot</s><s t="240" ac="156"> more</s><s t="571" ac="236"> design</s><s t="961" ac="227"> of</s></p>
+<p t="414519" d="3970" w="1" a="1">
+</p>
+<p t="414529" d="6780" w="1"><s ac="160">in</s><s t="510" ac="149"> six</s><s t="750" ac="73"> oh</s><s t="810" ac="123"> four</s><s t="960" ac="203"> six</s><s t="1790" ac="217"> but</s><s t="2790" ac="238"> you</s><s t="3480" ac="239"> will</s><s t="3660" ac="227"> look</s><s t="3810" ac="252"> at</s></p>
+<p t="418479" d="2830" w="1" a="1">
+</p>
+<p t="418489" d="7010" w="1"><s ac="245">classic</s><s t="570" ac="252"> data</s><s t="720" ac="236"> structures</s><s t="1170" ac="240"> and</s><s t="1820" ac="238"> classical</s></p>
+<p t="421299" d="4200" w="1" a="1">
+</p>
+<p t="421309" d="7890" w="1"><s ac="252">algorithms</s><s t="1640" ac="248"> for</s><s t="2640" ac="240"> these</s><s t="3480" ac="252"> data</s><s t="3690" ac="203"> structures</s></p>
+<p t="425489" d="3710" w="1" a="1">
+</p>
+<p t="425499" d="7960" w="1"><s ac="250">including</s><s t="1000" ac="219"> things</s><s t="1360" ac="167"> like</s><s t="2460" ac="247"> sorting</s><s t="3460" ac="227"> and</s></p>
+<p t="429189" d="4270" w="1" a="1">
+</p>
+<p t="429199" d="8580" w="1"><s ac="243">matching</s><s t="570" ac="220"> and</s><s t="840" ac="226"> so</s><s t="1620" ac="252"> on</s><s t="1770" ac="234"> and</s><s t="2960" ac="252"> one</s><s t="3960" ac="252"> of</s><s t="3990" ac="200"> the</s><s t="4110" ac="252"> nice</s></p>
+<p t="433449" d="4330" w="1" a="1">
+</p>
+<p t="433459" d="8040" w="1"><s ac="252">things</s><s t="30" ac="127"> about</s><s t="270" ac="252"> this</s><s t="540" ac="187"> class</s><s t="780" ac="252"> is</s><s t="3170" ac="135"> that</s><s t="4170" ac="252"> you&#39;ll</s></p>
+<p t="437769" d="3730" w="1" a="1">
+</p>
+<p t="437779" d="9320" w="1"><s ac="200">be</s><s t="150" ac="165"> doing</s><s t="360" ac="252"> real</s><s t="570" ac="252"> implementations</s><s t="1410" ac="252"> of</s><s t="2720" ac="252"> these</s></p>
+<p t="441489" d="5610" w="1" a="1">
+</p>
+<p t="441499" d="9360" w="1"><s ac="225">data</s><s t="240" ac="187"> structures</s><s t="750" ac="252"> and</s><s t="1110" ac="249"> algorithms</s><s t="2090" ac="208"> in</s><s t="3090" ac="238"> Python</s></p>
+<p t="447089" d="3770" w="1" a="1">
+</p>
+<p t="447099" d="8050" w="1"><s ac="249">and</s><s t="1000" ac="227"> in</s><s t="1330" ac="252"> particular</s><s t="2160" ac="233"> each</s><s t="3160" ac="252"> of</s><s t="3400" ac="252"> the</s><s t="3490" ac="252"> problem</s></p>
+<p t="450849" d="4300" w="1" a="1">
+</p>
+<p t="450859" d="9360" w="1"><s ac="252">sets</s><s t="300" ac="221"> in</s><s t="1230" ac="242"> this</s><s t="2130" ac="252"> class</s><s t="2720" ac="247"> are</s><s t="3720" ac="99"> going</s><s t="4020" ac="204"> to</s><s t="4110" ac="252"> have</s></p>
+<p t="455139" d="5080" w="1" a="1">
+</p>
+<p t="455149" d="7080" w="1"><s ac="248">both</s><s t="960" ac="230"> a</s><s t="2150" ac="255"> theory</s><s t="3150" ac="216"> part</s><s t="3720" ac="224"> to</s><s t="3990" ac="252"> them</s><s t="4170" ac="236"> and</s><s t="4350" ac="252"> a</s></p>
+<p t="460209" d="2020" w="1" a="1">
+</p>
+<p t="460219" d="3630" w="1"><s ac="252">programming</s><s t="480" ac="252"> part</s><s t="690" ac="252"> to</s><s t="810" ac="252"> them</s><s t="960" ac="233"> so</s><s t="1800" ac="252"> hopefully</s></p>
+<p t="462219" d="1630" w="1" a="1">
+</p>
+<p t="462229" d="2550" w="1"><s ac="125">it&#39;ll</s><s t="300" ac="248"> all</s><s t="420" ac="224"> tie</s><s t="720" ac="251"> together</s><s t="780" ac="255"> the</s><s t="1140" ac="202"> kinds</s><s t="1560" ac="252"> of</s></p>
+<p t="463839" d="940" w="1" a="1">
+</p>
+<p t="463849" d="5100" w="1"><s ac="226">things</s><s t="150" ac="252"> we&#39;re</s><s t="300" ac="252"> going</s><s t="420" ac="201"> to</s><s t="480" ac="231"> be</s><s t="540" ac="252"> talking</s><s t="750" ac="252"> about</s></p>
+<p t="464769" d="4180" w="1" a="1">
+</p>
+<p t="464779" d="6990" w="1"><s ac="252">in</s><s t="300" ac="252"> lectures</s><s t="720" ac="252"> and</s><s t="860" ac="211"> recitations</s><s t="1860" ac="201"> are</s><s t="2990" ac="252"> going</s><s t="3990" ac="252"> to</s></p>
+<p t="468939" d="2830" w="1" a="1">
+</p>
+<p t="468949" d="4650" w="1"><s ac="252">be</s><s t="180" ac="252"> directly</s><s t="840" ac="252"> connected</s><s t="960" ac="161"> to</s><s t="1740" ac="252"> the</s><s t="2370" ac="203"> theory</s></p>
+<p t="471759" d="1840" w="1" a="1">
+</p>
+<p t="471769" d="3540" w="1"><s ac="252">parts</s><s t="270" ac="252"> of</s><s t="390" ac="252"> the</s><s t="480" ac="207"> problem</s><s t="750" ac="252"> sets</s><s t="990" ac="91"> and</s><s t="1230" ac="217"> you&#39;ll</s><s t="1710" ac="252"> be</s></p>
+<p t="473589" d="1720" w="1" a="1">
+</p>
+<p t="473599" d="3330" w="1"><s ac="255">programming</s><s t="540" ac="250"> the</s><s t="1110" ac="252"> algorithms</s><s t="1530" ac="252"> that</s><s t="1590" ac="252"> we</s></p>
+<p t="475299" d="1630" w="1" a="1">
+</p>
+<p t="475309" d="4460" w="1"><s ac="195">talked</s><s t="210" ac="252"> about</s><s t="240" ac="201"> in</s><s t="570" ac="252"> lecture</s><s t="690" ac="201"> or</s><s t="1140" ac="252"> augmenting</s></p>
+<p t="476919" d="2850" w="1" a="1">
+</p>
+<p t="476929" d="5640" w="1"><s ac="252">them</s><s t="180" ac="209"> running</s><s t="1080" ac="235"> them</s><s t="1260" ac="239"> figuring</s><s t="2010" ac="226"> out</s><s t="2190" ac="252"> whether</s></p>
+<p t="479759" d="2810" w="1" a="1">
+</p>
+<p t="479769" d="8220" w="1"><s ac="225">and</s><s t="1000" ac="252"> they</s><s t="1091" ac="252"> work</s><s t="1480" ac="236"> well</s><s t="1720" ac="252"> on</s><s t="1930" ac="252"> large</s><s t="2170" ac="252"> inputs</s><s t="2560" ac="218"> or</s></p>
+<p t="482559" d="5430" w="1" a="1">
+</p>
+<p t="482569" d="7890" w="1"><s ac="252">not</s><s t="3110" ac="236"> so</s><s t="4110" ac="252"> let</s><s t="4590" ac="199"> me</s><s t="4650" ac="252"> talk</s><s t="4770" ac="217"> a</s><s t="4830" ac="252"> little</s><s t="4920" ac="204"> bit</s><s t="5220" ac="252"> about</s></p>
+<p t="487979" d="2480" w="1" a="1">
+</p>
+<p t="487989" d="4300" w="1"><s ac="241">the</s><s t="1000" ac="252"> modules</s><s t="1450" ac="252"> in</s><s t="1630" ac="217"> this</s><s t="1750" ac="252"> class</s><s t="1990" ac="242"> and</s><s t="2290" ac="207"> the</s></p>
+<p t="490449" d="1840" w="1" a="1">
+</p>
+<p t="490459" d="4040" w="1"><s ac="252">problem</s><s t="300" ac="243"> sets</s><s t="540" ac="166"> and</s><s t="780" ac="225"> we</s><s t="1440" ac="252"> hope</s><s t="1590" ac="252"> that</s><s t="1620" ac="155"> these</s></p>
+<p t="492279" d="2220" w="1" a="1">
+</p>
+<p t="492289" d="6690" w="1"><s ac="252">problem</s><s t="330" ac="252"> sets</s><s t="360" ac="202"> are</s><s t="690" ac="252"> going</s><s t="720" ac="165"> to</s><s t="870" ac="252"> be</s><s t="960" ac="252"> fun</s><s t="1650" ac="125"> for</s><s t="1860" ac="251"> you</s></p>
+<p t="494489" d="4490" w="1" a="1">
+</p>
+<p t="494499" d="7570" w="1"><s ac="221">and</s><s t="1000" ac="238"> by</s><s t="1630" ac="228"> fun</s><s t="1900" ac="216"> I</s><s t="2080" ac="204"> don&#39;t</s><s t="2350" ac="236"> mean</s><s t="2500" ac="249"> easy</s></p>
+<p t="498969" d="3100" w="1" a="1">
+</p>
+<p t="498979" d="4260" w="1"><s ac="158">I</s><s t="60" ac="247"> mean</s><s t="800" ac="215"> challenging</s><s t="1800" ac="225"> and</s><s t="1950" ac="252"> worthwhile</s><s t="2100" ac="202"> so</s><s t="2910" ac="252"> at</s></p>
+<p t="502059" d="1180" w="1" a="1">
+</p>
+<p t="502069" d="3360" w="1"><s ac="252">the</s><s t="90" ac="227"> end</s><s t="210" ac="230"> of</s><s t="330" ac="211"> it</s><s t="510" ac="238"> you</s><s t="660" ac="227"> feel</s><s t="870" ac="252"> like</s><s t="900" ac="216"> you&#39;ve</s></p>
+<p t="503229" d="2200" w="1" a="1">
+</p>
+<p t="503239" d="2850" w="1"><s ac="252">learned</s><s t="150" ac="228"> something</s><s t="480" ac="215"> and</s><s t="870" ac="154"> you&#39;ve</s><s t="1860" ac="226"> had</s><s t="2010" ac="201"> some</s></p>
+<p t="505419" d="670" w="1" a="1">
+</p>
+<p t="505429" d="13681" w="1"><s ac="252">fun</s><s t="150" ac="202"> along</s><s t="360" ac="252"> the</s><s t="420" ac="252"> way</s></p>
+<p t="506079" d="13031" w="1" a="1">
+</p>
+<p t="506089" d="16340" w="1"><s ac="204">right</s><s t="1670" ac="243"> so</s><s t="2670" ac="249"> content</s><s t="3150" ac="227"> wise</s><s t="10370" ac="246"> we</s><s t="11370" ac="252"> have</s><s t="12021" ac="214"> eight</s></p>
+<p t="519100" d="3329" w="1" a="1">
+</p>
+<p t="519110" d="5940" w="1"><s ac="252">modules</s><s t="359" ac="206"> in</s><s t="779" ac="252"> the</s><s t="869" ac="252"> class</s><s t="1789" ac="214"> each</s><s t="2789" ac="252"> of</s><s t="3029" ac="203"> which</s></p>
+<p t="522419" d="2631" w="1" a="1">
+</p>
+<p t="522429" d="5140" w="1"><s ac="238">roughly</s><s t="1000" ac="206"> speaking</s><s t="1330" ac="252"> has</s><s t="1750" ac="255"> a</s><s t="2051" ac="216"> problem</s><s t="2441" ac="252"> set</s></p>
+<p t="525040" d="2529" w="1" a="1">
+</p>
+<p t="525050" d="6420" w="1"><s ac="252">associated</s><s t="360" ac="209"> with</s><s t="629" ac="252"> it</s><s t="779" ac="72"> are</s><s t="1129" ac="62"> the</s><s t="2129" ac="231"> first</s><s t="2370" ac="252"> of</s></p>
+<p t="527559" d="3911" w="1" a="1">
+</p>
+<p t="527569" d="9360" w="1"><s ac="232">these</s><s t="710" ac="127"> is</s><s t="2031" ac="252"> what</s><s t="3031" ac="252"> we</s><s t="3151" ac="252"> call</s><s t="3330" ac="252"> algorithmic</s></p>
+<p t="531460" d="5469" w="1" a="1">
+</p>
+<p t="531470" d="9000" w="1"><s ac="252">thinking</s><s t="3320" ac="242"> and</s><s t="4320" ac="243"> with</s><s t="4559" ac="82"> kickstart</s><s t="5070" ac="210"> that</s><s t="5219" ac="244"> one</s></p>
+<p t="536919" d="3551" w="1" a="1">
+</p>
+<p t="536929" d="5070" w="1"><s ac="240">today</s><s t="210" ac="78"> I</s><s t="1311" ac="196"> will</s><s t="2311" ac="252"> look</s><s t="2491" ac="236"> at</s><s t="2671" ac="252"> a</s><s t="3090" ac="244"> particular</s></p>
+<p t="540460" d="1539" w="1" a="1">
+</p>
+<p t="540470" d="4080" w="1"><s ac="227">problem</s><s t="179" ac="167"> as</s><s t="570" ac="252"> I</s><s t="659" ac="252"> mentioned</s><s t="1020" ac="216"> of</s><s t="1109" ac="251"> peak</s><s t="1289" ac="252"> finding</s></p>
+<p t="541989" d="2561" w="1" a="1">
+</p>
+<p t="541999" d="4680" w="1"><s ac="213">and</s><s t="421" ac="252"> as</s><s t="1291" ac="240"> part</s><s t="1650" ac="252"> of</s><s t="1710" ac="252"> this</s><s t="1890" ac="215"> you&#39;re</s><s t="2190" ac="195"> going</s><s t="2310" ac="207"> to</s><s t="2430" ac="228"> have</s></p>
+<p t="544540" d="2139" w="1" a="1">
+</p>
+<p t="544550" d="2729" w="1"><s ac="252">a</s><s t="29" ac="220"> plumb</s><s t="750" ac="252"> set</s><s t="1079" ac="213"> that&#39;s</s><s t="1320" ac="201"> going</s><s t="1560" ac="252"> to</s><s t="1620" ac="252"> go</s><s t="1709" ac="252"> out</s><s t="1740" ac="130"> today</s></p>
+<p t="546669" d="610" w="1" a="1">
+</p>
+<p t="546679" d="2131" w="1"><s ac="252">as</s><s t="90" ac="252"> well</s></p>
+<p t="547269" d="1541" w="1" a="1">
+</p>
+<p t="547279" d="5461" w="1"><s ac="248">and</s><s t="331" ac="252"> you</s></p>
+<p t="548800" d="3940" w="1" a="1">
+</p>
+<p t="548810" d="5580" w="1"><s ac="232">that</s><s t="630" ac="252"> in</s><s t="750" ac="217"> this</s><s t="900" ac="252"> problem</s><s t="1080" ac="210"> said</s><s t="2750" ac="235"> some</s><s t="3750" ac="249"> of</s><s t="3840" ac="252"> these</s></p>
+<p t="552730" d="1660" w="1" a="1">
+</p>
+<p t="552740" d="3650" w="1"><s ac="252">algorithms</s><s t="300" ac="206"> I&#39;ve</s><s t="630" ac="252"> talked</s><s t="810" ac="233"> about</s><s t="930" ac="215"> today</s><s t="1200" ac="237"> will</s></p>
+<p t="554380" d="2010" w="1" a="1">
+</p>
+<p t="554390" d="4020" w="1"><s ac="252">be</s><s t="120" ac="200"> coded</s><s t="330" ac="200"> in</s><s t="540" ac="207"> Python</s><s t="1020" ac="215"> and</s><s t="1260" ac="252"> given</s><s t="1500" ac="252"> to</s><s t="1620" ac="252"> you</s><s t="1740" ac="201"> a</s></p>
+<p t="556380" d="2030" w="1" a="1">
+</p>
+<p t="556390" d="6580" w="1"><s ac="235">couple</s><s t="1000" ac="252"> of</s><s t="1030" ac="201"> them</s><s t="1240" ac="252"> are</s><s t="1300" ac="152"> gonna</s><s t="1450" ac="208"> have</s><s t="1570" ac="252"> bugs</s><s t="1810" ac="226"> in</s></p>
+<p t="558400" d="4570" w="1" a="1">
+</p>
+<p t="558410" d="6960" w="1"><s ac="252">them</s><s t="1040" ac="202"> you</s><s t="2040" ac="243"> have</s><s t="2310" ac="143"> to</s><s t="2640" ac="245"> analyze</s><s t="3050" ac="232"> the</s><s t="4050" ac="209"> complexity</s></p>
+<p t="562960" d="2410" w="1" a="1">
+</p>
+<p t="562970" d="5190" w="1"><s ac="252">of</s><s t="30" ac="252"> these</s><s t="210" ac="252"> algorithms</s><s t="620" ac="210"> figure</s><s t="1620" ac="200"> out</s><s t="1740" ac="239"> which</s></p>
+<p t="565360" d="2800" w="1" a="1">
+</p>
+<p t="565370" d="4920" w="1"><s ac="252">ones</s><s t="240" ac="229"> are</s><s t="450" ac="252"> correct</s><s t="570" ac="218"> inefficient</s><s t="1470" ac="207"> and</s><s t="1760" ac="236"> write</s><s t="2760" ac="252"> a</s></p>
+<p t="568150" d="2140" w="1" a="1">
+</p>
+<p t="568160" d="4950" w="1"><s ac="252">proof</s><s t="270" ac="227"> for</s><s t="510" ac="227"> one</s><s t="690" ac="252"> of</s><s t="810" ac="252"> them</s><s t="930" ac="222"> all</s><s t="1860" ac="201"> right</s><s t="1950" ac="252"> so</s></p>
+<p t="570280" d="2830" w="1" a="1">
+</p>
+<p t="570290" d="6720" w="1"><s ac="252">that&#39;s</s><s t="120" ac="205"> sort</s><s t="390" ac="252"> of</s><s t="650" ac="252"> an</s><s t="1650" ac="252"> example</s><s t="1830" ac="214"> problem</s><s t="2580" ac="252"> set</s></p>
+<p t="573100" d="3910" w="1" a="1">
+</p>
+<p t="573110" d="5670" w="1"><s ac="232">and</s><s t="210" ac="243"> you</s><s t="1170" ac="252"> can</s><s t="1200" ac="206"> expect</s><s t="1680" ac="240"> that</s><s t="2630" ac="218"> most</s><s t="3630" ac="252"> of</s><s t="3810" ac="252"> the</s></p>
+<p t="577000" d="1780" w="1" a="1">
+</p>
+<p t="577010" d="5490" w="1"><s ac="252">problem</s><s t="270" ac="252"> sets</s><s t="480" ac="252"> are</s><s t="660" ac="210"> going</s><s t="720" ac="162"> to</s><s t="960" ac="252"> follow</s><s t="1110" ac="228"> that</s></p>
+<p t="578770" d="3730" w="1" a="1">
+</p>
+<p t="578780" d="6480" w="1"><s ac="198">sort</s><s t="270" ac="252"> of</s><s t="300" ac="234"> template</s><s t="720" ac="213"> right</s><s t="1680" ac="245"> so</s><s t="2570" ac="236"> you&#39;ll</s><s t="3570" ac="203"> get</s><s t="3690" ac="252"> a</s></p>
+<p t="582490" d="2770" w="1" a="1">
+</p>
+<p t="582500" d="4650" w="1"><s ac="252">better</s><s t="120" ac="229"> sense</s><s t="390" ac="216"> of</s><s t="540" ac="252"> this</s><s t="690" ac="248"> in</s><s t="1260" ac="232"> in</s><s t="1650" ac="245"> by</s><s t="2460" ac="252"> the</s><s t="2520" ac="248"> end</s><s t="2670" ac="201"> of</s></p>
+<p t="585250" d="1900" w="1" a="1">
+</p>
+<p t="585260" d="3930" w="1"><s ac="252">the</s><s t="60" ac="252"> day</s><s t="150" ac="205"> today</s><s t="480" ac="187"> for</s><s t="870" ac="252"> sure</s><s t="1020" ac="242"> or</s><s t="1320" ac="252"> a</s><s t="1500" ac="252"> concrete</s></p>
+<p t="587140" d="2050" w="1" a="1">
+</p>
+<p t="587150" d="4020" w="1"><s ac="226">sense</s><s t="300" ac="252"> of</s><s t="450" ac="252"> this</s><s t="600" ac="219"> because</s><s t="1530" ac="252"> we&#39;ll</s><s t="1770" ac="252"> be</s><s t="1800" ac="168"> done</s><s t="1980" ac="252"> with</s></p>
+<p t="589180" d="1990" w="1" a="1">
+</p>
+<p t="589190" d="4620" w="1"><s ac="252">lecture</s><s t="450" ac="252"> and</s><s t="660" ac="248"> you&#39;ll</s><s t="1140" ac="252"> see</s><s t="1680" ac="217"> your</s><s t="1800" ac="199"> first</s></p>
+<p t="591160" d="2650" w="1" a="1">
+</p>
+<p t="591170" d="6900" w="1"><s ac="207">problem</s><s t="330" ac="252"> set</s><s t="800" ac="206"> you&#39;re</s><s t="1800" ac="207"> gonna</s><s t="1920" ac="252"> be</s><s t="2040" ac="229"> doing</s><s t="2370" ac="201"> a</s></p>
+<p t="593800" d="4270" w="1" a="1">
+</p>
+<p t="593810" d="6290" w="1"><s ac="235">module</s><s t="840" ac="209"> on</s><s t="1050" ac="250"> sorting</s><s t="1560" ac="252"> in</s><s t="1740" ac="238"> trees</s><s t="3140" ac="229"> sorting</s><s t="4140" ac="252"> you</s></p>
+<p t="598060" d="2040" w="1" a="1">
+</p>
+<p t="598070" d="3990" w="1"><s ac="252">know</s><s t="150" ac="252"> about</s><s t="390" ac="226"> sorting</s><s t="1140" ac="245"> a</s><s t="1230" ac="240"> bunch</s><s t="1410" ac="252"> of</s><s t="1500" ac="242"> numbers</s></p>
+<p t="600090" d="1970" w="1" a="1">
+</p>
+<p t="600100" d="4690" w="1"><s ac="186">imagine</s><s t="1000" ac="252"> if</s><s t="1090" ac="252"> you</s><s t="1150" ac="207"> had</s><s t="1240" ac="252"> a</s><s t="1270" ac="252"> trillion</s><s t="1660" ac="252"> numbers</s></p>
+<p t="602050" d="2740" w="1" a="1">
+</p>
+<p t="602060" d="4760" w="1"><s ac="252">and</s><s t="180" ac="252"> you</s><s t="240" ac="252"> wanted</s><s t="510" ac="201"> to</s><s t="600" ac="252"> sort</s><s t="810" ac="233"> them</s><s t="1430" ac="241"> what</s><s t="2430" ac="252"> kind</s><s t="2640" ac="252"> of</s></p>
+<p t="604780" d="2040" w="1" a="1">
+</p>
+<p t="604790" d="4820" w="1"><s ac="207">algorithm</s><s t="690" ac="252"> could</s><s t="810" ac="227"> you</s><s t="930" ac="252"> use</s><s t="1110" ac="252"> for</s><s t="1320" ac="252"> that</s></p>
+<p t="606810" d="2800" w="1" a="1">
+</p>
+<p t="606820" d="5800" w="1"><s ac="217">trees</s><s t="1000" ac="252"> are</s><s t="1030" ac="252"> a</s><s t="1270" ac="211"> wonderful</s><s t="1780" ac="252"> data</s><s t="1960" ac="236"> structure</s></p>
+<p t="609600" d="3020" w="1" a="1">
+</p>
+<p t="609610" d="6250" w="1"><s ac="239">there&#39;s</s><s t="1000" ac="255"> different</s><s t="1450" ac="186"> varieties</s><s t="1830" ac="202"> the</s><s t="2830" ac="252"> most</s></p>
+<p t="612610" d="3250" w="1" a="1">
+</p>
+<p t="612620" d="5210" w="1"><s ac="252">common</s><s t="330" ac="218"> being</s><s t="480" ac="252"> binary</s><s t="900" ac="252"> trees</s><s t="1230" ac="206"> and</s><s t="2000" ac="146"> these</s><s t="3000" ac="227"> ways</s></p>
+<p t="615850" d="1980" w="1" a="1">
+</p>
+<p t="615860" d="6000" w="1"><s ac="220">of</s><s t="330" ac="228"> doing</s><s t="540" ac="252"> all</s><s t="900" ac="252"> sorts</s><s t="1320" ac="252"> of</s><s t="1380" ac="216"> things</s><s t="1560" ac="216"> like</s></p>
+<p t="617820" d="4040" w="1" a="1">
+</p>
+<p t="617830" d="5680" w="1"><s ac="201">scheduling</s><s t="1000" ac="251"> and</s><s t="1240" ac="252"> sorting</s><s t="2170" ac="207"> using</s><s t="3100" ac="255"> various</s></p>
+<p t="621850" d="1660" w="1" a="1">
+</p>
+<p t="621860" d="5700" w="1"><s ac="252">kinds</s><s t="150" ac="197"> of</s><s t="330" ac="242"> trees</s><s t="570" ac="252"> including</s><s t="990" ac="228"> binary</s><s t="1230" ac="207"> trees</s></p>
+<p t="623500" d="4060" w="1" a="1">
+</p>
+<p t="623510" d="9810" w="1"><s ac="236">and</s><s t="330" ac="252"> we</s><s t="960" ac="252"> have</s><s t="1080" ac="252"> a</s><s t="1110" ac="243"> problem</s><s t="1350" ac="194"> set</s><s t="1650" ac="233"> on</s><s t="3050" ac="208"> simulating</s></p>
+<p t="627550" d="5770" w="1" a="1">
+</p>
+<p t="627560" d="9060" w="1"><s ac="249">a</s><s t="1400" ac="252"> logic</s><s t="2400" ac="187"> network</s><s t="3200" ac="226"> using</s><s t="4200" ac="252"> a</s><s t="4320" ac="252"> particular</s><s t="5310" ac="225"> kind</s></p>
+<p t="633310" d="3310" w="1" a="1">
+</p>
+<p t="633320" d="5940" w="1"><s ac="213">of</s><s t="560" ac="243"> sorting</s><s t="1560" ac="252"> algorithm</s><s t="2010" ac="249"> and</s><s t="2640" ac="252"> a</s><s t="3030" ac="240"> data</s></p>
+<p t="636610" d="2650" w="1" a="1">
+</p>
+<p t="636620" d="5420" w="1"><s ac="207">structure</s><s t="450" ac="194"> and</s><s t="1230" ac="216"> that</s><s t="1860" ac="232"> is</s><s t="2190" ac="245"> going</s><s t="2340" ac="202"> to</s><s t="2400" ac="208"> be</s><s t="2490" ac="252"> your</s></p>
+<p t="639250" d="2790" w="1" a="1">
+</p>
+<p t="639260" d="7260" w="1"><s ac="225">second</s><s t="270" ac="152"> problem</s><s t="480" ac="252"> set</s><s t="690" ac="225"> and</s><s t="1370" ac="242"> more</s><s t="2370" ac="252"> quickly</s></p>
+<p t="642030" d="4490" w="1" a="1">
+</p>
+<p t="642040" d="7720" w="1"><s ac="204">we&#39;re</s><s t="1000" ac="196"> going</s><s t="1180" ac="252"> to</s><s t="1240" ac="252"> have</s><s t="2730" ac="227"> modules</s><s t="3730" ac="252"> on</s><s t="3940" ac="252"> hashing</s></p>
+<p t="646510" d="3250" w="1" a="1">
+</p>
+<p t="646520" d="7080" w="1"><s ac="244">where</s><s t="810" ac="252"> we</s><s t="1050" ac="252"> do</s><s t="1230" ac="217"> things</s><s t="1470" ac="252"> like</s><s t="2240" ac="240"> genome</s></p>
+<p t="649750" d="3850" w="1" a="1">
+</p>
+<p t="649760" d="5850" w="1"><s ac="252">comparison</s><s t="780" ac="223"> in</s><s t="1260" ac="166"> pass</s><s t="1860" ac="237"> terms</s><s t="2720" ac="201"> have</s><s t="3720" ac="202"> you</s></p>
+<p t="653590" d="2020" w="1" a="1">
+</p>
+<p t="653600" d="5540" w="1"><s ac="252">compared</s><s t="300" ac="252"> a</s><s t="420" ac="252"> human</s><s t="750" ac="239"> genome</s><s t="1110" ac="157"> to</s><s t="1290" ac="252"> a</s><s t="1320" ac="252"> rat</s><s t="1530" ac="152"> genome</s></p>
+<p t="655600" d="3540" w="1" a="1">
+</p>
+<p t="655610" d="6420" w="1"><s ac="217">and</s><s t="290" ac="252"> discovered</s><s t="1290" ac="252"> they</s><s t="1440" ac="252"> were</s><s t="1500" ac="228"> pretty</s><s t="1920" ac="251"> similar</s></p>
+<p t="659130" d="2900" w="1" a="1">
+</p>
+<p t="659140" d="5620" w="1"><s ac="207">99%</s><s t="1000" ac="252"> similar</s><s t="1150" ac="229"> which</s><s t="1480" ac="252"> is</s><s t="1510" ac="201"> kind</s><s t="1750" ac="252"> of</s><s t="1780" ac="227"> amazing</s><s t="2080" ac="207"> but</s></p>
+<p t="662020" d="2740" w="1" a="1">
+</p>
+<p t="662030" d="4560" w="1"><s ac="252">again</s><s t="240" ac="235"> these</s><s t="510" ac="230"> things</s><s t="750" ac="213"> are</s><s t="990" ac="252"> so</s><s t="1260" ac="252"> large</s><s t="1530" ac="249"> that</s><s t="2040" ac="252"> you</s></p>
+<p t="664750" d="1840" w="1" a="1">
+</p>
+<p t="664760" d="3450" w="1"><s ac="207">have</s><s t="330" ac="252"> to</s><s t="420" ac="252"> have</s><s t="540" ac="252"> efficiency</s><s t="1170" ac="252"> in</s><s t="1410" ac="252"> the</s></p>
+<p t="666580" d="1630" w="1" a="1">
+</p>
+<p t="666590" d="4080" w="1"><s ac="252">comparison</s><s t="510" ac="252"> methods</s><s t="840" ac="252"> that</s><s t="960" ac="252"> you</s><s t="1110" ac="252"> use</s><s t="1140" ac="214"> and</s></p>
+<p t="668200" d="2470" w="1" a="1">
+</p>
+<p t="668210" d="4650" w="1"><s ac="252">you&#39;ll</s><s t="510" ac="252"> find</s><s t="810" ac="205"> that</s><s t="1080" ac="244"> if</s><s t="1800" ac="252"> you</s><s t="1890" ac="202"> don&#39;t</s><s t="2040" ac="252"> get</s><s t="2190" ac="252"> the</s></p>
+<p t="670660" d="2200" w="1" a="1">
+</p>
+<p t="670670" d="5580" w="1"><s ac="252">complexity</s><s t="750" ac="252"> low</s><s t="930" ac="252"> enough</s><s t="1200" ac="225"> you</s><s t="1500" ac="82"> just</s><s t="1890" ac="252"> won&#39;t</s><s t="2040" ac="238"> be</s></p>
+<p t="672850" d="3400" w="1" a="1">
+</p>
+<p t="672860" d="6390" w="1"><s ac="252">able</s><s t="30" ac="160"> to</s><s t="270" ac="235"> complete</s><s t="630" ac="252"> the</s><s t="1760" ac="244"> your</s><s t="2760" ac="252"> program</s><s t="3240" ac="252"> won&#39;t</s></p>
+<p t="676240" d="3010" w="1" a="1">
+</p>
+<p t="676250" d="4410" w="1"><s ac="206">be</s><s t="150" ac="252"> able</s><s t="270" ac="177"> to</s><s t="480" ac="252"> finish</s><s t="900" ac="252"> running</s><s t="1340" ac="168"> bitten</s><s t="2340" ac="217"> you</s></p>
+<p t="679240" d="1420" w="1" a="1">
+</p>
+<p t="679250" d="3029" w="1"><s ac="248">know</s><s t="120" ac="221"> the</s><s t="390" ac="252"> time</s><s t="600" ac="212"> that</s><s t="810" ac="0"> you&#39;re</s><s t="900" ac="244"> problem</s><s t="1080" ac="207"> set</s><s t="1290" ac="252"> is</s></p>
+<p t="680650" d="1629" w="1" a="1">
+</p>
+<p t="680660" d="4799" w="1"><s ac="0">due</s><s t="240" ac="131"> right</s><s t="480" ac="157"> which</s><s t="1200" ac="197"> is</s><s t="1320" ac="252"> a</s><s t="1350" ac="252"> bit</s></p>
+<p t="682269" d="3190" w="1" a="1">
+</p>
+<p t="682279" d="6930" w="1"><s ac="232">a problem</s><s t="620" ac="138"> so</s><s t="1620" ac="248"> so</s><s t="2490" ac="207"> that&#39;s</s><s t="2670" ac="252"> something</s><s t="2850" ac="213"> to</s><s t="3060" ac="252"> keep</s></p>
+<p t="685449" d="3760" w="1" a="1">
+</p>
+<p t="685459" d="5430" w="1"><s ac="252">in</s><s t="120" ac="145"> mind</s><s t="360" ac="234"> as</s><s t="630" ac="252"> you</s><s t="1201" ac="252"> test</s><s t="1771" ac="208"> your</s><s t="1980" ac="252"> code</s><s t="2540" ac="146"> the</s><s t="3540" ac="252"> fact</s></p>
+<p t="689199" d="1690" w="1" a="1">
+</p>
+<p t="689209" d="4740" w="1"><s ac="252">is</s><s t="180" ac="252"> that</s><s t="211" ac="227"> you</s><s t="451" ac="252"> will</s><s t="570" ac="224"> get</s><s t="750" ac="252"> large</s><s t="1021" ac="252"> inputs</s><s t="1411" ac="252"> to</s><s t="1531" ac="252"> run</s></p>
+<p t="690879" d="3070" w="1" a="1">
+</p>
+<p t="690889" d="5461" w="1"><s ac="252">your</s><s t="151" ac="241"> code</s><s t="390" ac="206"> and</s><s t="1041" ac="233"> I</s><s t="2041" ac="255"> you</s><s t="2731" ac="225"> want</s><s t="2880" ac="205"> to</s><s t="2940" ac="207"> keep</s></p>
+<p t="693939" d="2411" w="1" a="1">
+</p>
+<p t="693949" d="6180" w="1"><s ac="252">complexity</s><s t="541" ac="252"> in</s><s t="630" ac="252"> mind</s><s t="870" ac="252"> as</s><s t="1080" ac="248"> you&#39;re</s><s t="1500" ac="242"> coding</s><s t="2250" ac="252"> and</s></p>
+<p t="696340" d="3789" w="1" a="1">
+</p>
+<p t="696350" d="6229" w="1"><s ac="252">thinking</s><s t="270" ac="252"> about</s><s t="440" ac="236"> the</s><s t="2120" ac="184"> the</s><s t="3120" ac="217"> pseudo</s><s t="3419" ac="132"> code</s><s t="3599" ac="252"> if</s></p>
+<p t="700119" d="2460" w="1" a="1">
+</p>
+<p t="700129" d="7471" w="1"><s ac="252">you</s><s t="120" ac="252"> will</s><s t="270" ac="252"> of</s><s t="450" ac="252"> your</s><s t="481" ac="183"> algorithm</s><s t="960" ac="252"> itself</s></p>
+<p t="702569" d="5031" w="1" a="1">
+</p>
+<p t="702579" d="7240" w="1"><s ac="0">I&#39;ve</s><s t="1000" ac="113"> people</s><s t="1331" ac="203"> to</s><s t="1391" ac="252"> talk</s><s t="1510" ac="205"> about</s><s t="1750" ac="0"> numerix</s><s t="2820" ac="0"> a</s><s t="4021" ac="252"> lot</s></p>
+<p t="707590" d="2229" w="1" a="1">
+</p>
+<p t="707600" d="6179" w="1"><s ac="196">of</s><s t="120" ac="252"> the</s><s t="179" ac="252"> time</s><s t="390" ac="218"> you</s><s t="1229" ac="252"> talk</s><s t="1440" ac="107"> about</s><s t="1649" ac="252"> such</s><s t="1919" ac="252"> large</s></p>
+<p t="709809" d="3970" w="1" a="1">
+</p>
+<p t="709819" d="6031" w="1"><s ac="252">numbers</s><s t="541" ac="223"> that</s><s t="1111" ac="238"> 32</s><s t="1591" ac="243"> bits</s><s t="1861" ac="211"> isn&#39;t</s><s t="2430" ac="252"> enough</s><s t="2700" ac="0"> um</s><s t="3330" ac="201"> and</s></p>
+<p t="713769" d="2081" w="1" a="1">
+</p>
+<p t="713779" d="3810" w="1"><s ac="63">or</s><s t="511" ac="233"> 64</s><s t="1050" ac="242"> bits</s><s t="1261" ac="252"> isn&#39;t</s><s t="1410" ac="202"> enough</s><s t="1740" ac="252"> to</s><s t="1920" ac="252"> represent</s></p>
+<p t="715840" d="1749" w="1" a="1">
+</p>
+<p t="715850" d="3779" w="1"><s ac="155">these</s><s t="359" ac="252"> numbers</s><s t="719" ac="252"> these</s><s t="1229" ac="102"> numbers</s><s t="1589" ac="252"> have</s></p>
+<p t="717579" d="2050" w="1" a="1">
+</p>
+<p t="717589" d="6480" w="1"><s ac="233">thousands</s><s t="451" ac="233"> of</s><s t="571" ac="207"> bits</s><s t="810" ac="144"> a</s><s t="1050" ac="252"> good</s><s t="1500" ac="229"> example</s><s t="1831" ac="200"> this</s></p>
+<p t="719619" d="4450" w="1" a="1">
+</p>
+<p t="719629" d="8731" w="1"><s ac="248">RSA</s><s t="481" ac="252"> encryption</s><s t="601" ac="176"> that</s><s t="1560" ac="208"> is</s><s t="1710" ac="252"> used</s><s t="2091" ac="252"> in</s><s t="3411" ac="236"> SSL</s><s t="4411" ac="252"> for</s></p>
+<p t="724059" d="4301" w="1" a="1">
+</p>
+<p t="724069" d="8330" w="1"><s ac="206">example</s><s t="601" ac="235"> and</s><s t="890" ac="250"> when</s><s t="1890" ac="252"> you</s><s t="2010" ac="252"> go</s><s t="2820" ac="242"> use</s><s t="3240" ac="205"> HTTPS</s><s t="4080" ac="252"> on</s></p>
+<p t="728350" d="4049" w="1" a="1">
+</p>
+<p t="728360" d="6539" w="1"><s ac="200">websites</s><s t="769" ac="208"> RSA</s><s t="1769" ac="248"> is</s><s t="2070" ac="252"> used</s><s t="2490" ac="237"> at</s><s t="3209" ac="207"> the</s><s t="3389" ac="205"> back</s><s t="3539" ac="203"> end</s><s t="3810" ac="203"> and</s></p>
+<p t="732389" d="2510" w="1" a="1">
+</p>
+<p t="732399" d="5620" w="1"><s ac="236">typically</s><s t="1000" ac="252"> you</s><s t="1211" ac="252"> work</s><s t="1420" ac="252"> with</s><s t="1841" ac="236"> prime</s><s t="2471" ac="252"> numbers</s></p>
+<p t="734889" d="3130" w="1" a="1">
+</p>
+<p t="734899" d="4711" w="1"><s ac="138">there</s><s t="571" ac="252"> are</s><s t="600" ac="227"> thousands</s><s t="1201" ac="252"> of</s><s t="1290" ac="218"> bits</s><s t="1531" ac="244"> long</s><s t="2250" ac="236"> in</s><s t="2641" ac="252"> RSA</s></p>
+<p t="738009" d="1601" w="1" a="1">
+</p>
+<p t="738019" d="3451" w="1"><s ac="201">so</s><s t="630" ac="252"> how</s><s t="810" ac="252"> do</s><s t="870" ac="224"> you</s><s t="961" ac="208"> handle</s><s t="1201" ac="252"> that</s></p>
+<p t="739600" d="1870" w="1" a="1">
+</p>
+<p t="739610" d="4529" w="1"><s ac="252">how</s><s t="329" ac="252"> does</s><s t="479" ac="206"> Python</s><s t="690" ac="221"> handle</s><s t="1169" ac="252"> that</s><s t="1320" ac="198"> how</s><s t="1680" ac="252"> do</s><s t="1740" ac="216"> you</s></p>
+<p t="741460" d="2679" w="1" a="1">
+</p>
+<p t="741470" d="4919" w="1"><s ac="236">write</s><s t="150" ac="252"> algorithms</s><s t="539" ac="252"> that</s><s t="1229" ac="252"> can</s><s t="1409" ac="224"> deal</s><s t="1650" ac="113"> with</s><s t="1919" ac="252"> what</s></p>
+<p t="744129" d="2260" w="1" a="1">
+</p>
+<p t="744139" d="4740" w="1"><s ac="185">are</s><s t="91" ac="252"> called</s><s t="120" ac="217"> infinite</s><s t="690" ac="252"> precision</s><s t="841" ac="252"> numbers</s><s t="1351" ac="212"> so</s></p>
+<p t="746379" d="2500" w="1" a="1">
+</p>
+<p t="746389" d="4760" w="1"><s ac="252">we</s><s t="450" ac="252"> have</s><s t="570" ac="252"> a</s><s t="601" ac="200"> module</s><s t="961" ac="252"> on</s><s t="1050" ac="83"> numerix</s><s t="1531" ac="227"> in</s><s t="2250" ac="252"> the</s></p>
+<p t="748869" d="2280" w="1" a="1">
+</p>
+<p t="748879" d="6421" w="1"><s ac="252">middle</s><s t="180" ac="240"> of</s><s t="270" ac="252"> the</s><s t="330" ac="252"> term</s><s t="510" ac="252"> that</s><s t="801" ac="248"> talks</s><s t="1801" ac="168"> about</s><s t="2010" ac="206"> that</s></p>
+<p t="751139" d="4161" w="1" a="1">
+</p>
+<p t="751149" d="7060" w="1"><s ac="238">graphs</s><s t="1261" ac="226"> really</s><s t="2261" ac="226"> fundamental</s><s t="3101" ac="247"> data</s><s t="3701" ac="204"> structure</s></p>
+<p t="755290" d="2919" w="1" a="1">
+</p>
+<p t="755300" d="6320" w="1"><s ac="252">in</s><s t="240" ac="239"> all</s><s t="479" ac="252"> of</s><s t="719" ac="252"> computer</s><s t="959" ac="226"> science</s><s t="1759" ac="92"> you</s><s t="2759" ac="249"> might</s></p>
+<p t="758199" d="3421" w="1" a="1">
+</p>
+<p t="758209" d="6570" w="1"><s ac="226">have</s><s t="120" ac="252"> heard</s><s t="271" ac="252"> of</s><s t="860" ac="240"> the</s><s t="1860" ac="223"> famous</s><s t="2100" ac="229"> Rubik&#39;s</s><s t="2610" ac="229"> Cube</s></p>
+<p t="761610" d="3169" w="1" a="1">
+</p>
+<p t="761620" d="5800" w="1"><s ac="217">assignment</s><s t="1000" ac="252"> from</s><s t="1089" ac="202"> double</s><s t="1389" ac="200"> O</s><s t="1449" ac="204"> six</s><s t="1829" ac="154"> at</s><s t="2829" ac="249"> two</s><s t="3009" ac="252"> by</s></p>
+<p t="764769" d="2651" w="1" a="1">
+</p>
+<p t="764779" d="5641" w="1"><s ac="198">two</s><s t="60" ac="252"> by</s><s t="360" ac="249"> two</s><s t="420" ac="165"> rubik&#39;s</s><s t="901" ac="165"> cube</s><s t="1280" ac="213"> what&#39;s</s><s t="2280" ac="252"> the</s></p>
+<p t="767410" d="3010" w="1" a="1">
+</p>
+<p t="767420" d="5909" w="1"><s ac="231">minimum</s><s t="389" ac="124"> number</s><s t="659" ac="252"> of</s><s t="690" ac="124"> moves</s><s t="1050" ac="252"> necessary</s><s t="1800" ac="244"> to</s><s t="2789" ac="252"> go</s></p>
+<p t="770410" d="2919" w="1" a="1">
+</p>
+<p t="770420" d="4859" w="1"><s ac="239">from</s><s t="300" ac="252"> a</s><s t="389" ac="252"> given</s><s t="750" ac="252"> starting</s><s t="1260" ac="240"> configuration</s><s t="1909" ac="204"> to</s></p>
+<p t="773319" d="1960" w="1" a="1">
+</p>
+<p t="773329" d="4471" w="1"><s ac="252">the</s><s t="300" ac="252"> final</s><s t="661" ac="252"> end</s><s t="841" ac="252"> configuration</s><s t="1500" ac="245"> where</s><s t="1680" ac="252"> all</s><s t="1800" ac="252"> of</s></p>
+<p t="775269" d="2531" w="1" a="1">
+</p>
+<p t="775279" d="5341" w="1"><s ac="252">the</s><s t="60" ac="234"> faces</s><s t="511" ac="228"> each</s><s t="1290" ac="252"> of</s><s t="1410" ac="252"> the</s><s t="1500" ac="246"> faces</s><s t="1860" ac="252"> has</s><s t="2011" ac="252"> uniform</s></p>
+<p t="777790" d="2830" w="1" a="1">
+</p>
+<p t="777800" d="5849" w="1"><s ac="238">color</s><s t="289" ac="225"> and</s><s t="1289" ac="196"> that</s><s t="1409" ac="226"> can</s><s t="2009" ac="144"> be</s><s t="2130" ac="252"> posed</s><s t="2339" ac="252"> as</s><s t="2550" ac="252"> a</s><s t="2579" ac="252"> graph</s></p>
+<p t="780610" d="3039" w="1" a="1">
+</p>
+<p t="780620" d="4740" w="1"><s ac="252">problem</s><s t="300" ac="137"> I</s><s t="659" ac="255"> will</s><s t="1350" ac="201"> probably</s><s t="1680" ac="242"> do</s><s t="1920" ac="201"> that</s><s t="2069" ac="255"> one</s><s t="2250" ac="227"> this</s></p>
+<p t="783639" d="1721" w="1" a="1">
+</p>
+<p t="783649" d="4471" w="1"><s ac="226">term</s><s t="240" ac="241"> in</s><s t="511" ac="242"> previous</s><s t="990" ac="252"> terms</s><s t="1201" ac="180"> we&#39;ve</s><s t="1471" ac="252"> done</s><s t="1560" ac="216"> other</s></p>
+<p t="785350" d="2770" w="1" a="1">
+</p>
+<p t="785360" d="5490" w="1"><s ac="252">things</s><s t="89" ac="205"> like</s><s t="510" ac="236"> the</s><s t="690" ac="252"> 15</s><s t="990" ac="226"> puzzle</s><s t="1260" ac="216"> and</s><s t="1620" ac="252"> so</s><s t="2310" ac="252"> some</s><s t="2729" ac="252"> of</s></p>
+<p t="788110" d="2740" w="1" a="1">
+</p>
+<p t="788120" d="4500" w="1"><s ac="252">these</s><s t="120" ac="144"> are</s><s t="360" ac="252"> tentative</s><s t="829" ac="172"> we</s><s t="1829" ac="213"> definitely</s><s t="2610" ac="252"> know</s></p>
+<p t="790840" d="1780" w="1" a="1">
+</p>
+<p t="790850" d="3599" w="1"><s ac="252">what</s><s t="89" ac="229"> the</s><s t="209" ac="252"> first</s><s t="299" ac="216"> problem</s><s t="659" ac="252"> set</s><s t="839" ac="252"> is</s><s t="959" ac="230"> like</s><s t="1140" ac="251"> but</s></p>
+<p t="792610" d="1839" w="1" a="1">
+</p>
+<p t="792620" d="5969" w="1"><s ac="255">the</s><s t="540" ac="252"> rest</s><s t="899" ac="206"> of</s><s t="1019" ac="228"> them</s><s t="1170" ac="252"> are</s><s t="1350" ac="252"> at</s><s t="1589" ac="252"> this</s><s t="1769" ac="252"> moment</s></p>
+<p t="794439" d="4150" w="1" a="1">
+</p>
+<p t="794449" d="8550" w="1"><s ac="235">tentative</s><s t="781" ac="229"> um</s><s t="1051" ac="241"> and</s><s t="1921" ac="228"> to</s><s t="2430" ac="233"> finish</s><s t="2700" ac="206"> up</s><s t="3140" ac="228"> by</s></p>
+<p t="798579" d="4420" w="1" a="1">
+</p>
+<p t="798589" d="7680" w="1"><s ac="252">shortest</s><s t="451" ac="252"> paths</s><s t="980" ac="201"> again</s><s t="1980" ac="228"> in</s><s t="2641" ac="168"> terms</s><s t="2940" ac="215"> past</s><s t="3410" ac="204"> we&#39;ve</s></p>
+<p t="802989" d="3280" w="1" a="1">
+</p>
+<p t="802999" d="4710" w="1"><s ac="248">asked</s><s t="390" ac="252"> you</s><s t="661" ac="202"> to</s><s t="1650" ac="200"> write</s><s t="1921" ac="252"> code</s><s t="2210" ac="207"> using</s><s t="3210" ac="252"> a</s></p>
+<p t="806259" d="1450" w="1" a="1">
+</p>
+<p t="806269" d="4010" w="1"><s ac="216">particular</s><s t="391" ac="252"> algorithm</s><s t="660" ac="201"> that</s><s t="1021" ac="252"> finds</s><s t="1290" ac="252"> the</s></p>
+<p t="807699" d="2580" w="1" a="1">
+</p>
+<p t="807709" d="4800" w="1"><s ac="164">shortest</s><s t="331" ac="241"> path</s><s t="480" ac="156"> from</s><s t="690" ac="247"> Caltech</s><s t="1141" ac="188"> to</s><s t="1261" ac="252"> MIT</s></p>
+<p t="810269" d="2240" w="1" a="1">
+</p>
+<p t="810279" d="4451" w="1"><s ac="252">this</s><s t="1000" ac="252"> time</s><s t="1211" ac="252"> we</s><s t="1391" ac="203"> may</s><s t="1480" ac="239"> do</s><s t="1691" ac="200"> things</s><s t="1900" ac="252"> a</s><s t="1961" ac="252"> little</s><s t="2050" ac="219"> bit</s></p>
+<p t="812499" d="2231" w="1" a="1">
+</p>
+<p t="812509" d="3361" w="1"><s ac="252">differently</s><s t="330" ac="200"> we</s><s t="841" ac="226"> we&#39;re</s><s t="1170" ac="231"> thinking</s><s t="1531" ac="236"> maybe</s></p>
+<p t="814720" d="1150" w="1" a="1">
+</p>
+<p t="814730" d="4920" w="1"><s ac="205">we&#39;ll</s><s t="180" ac="215"> give</s><s t="359" ac="252"> you</s><s t="449" ac="252"> a</s><s t="539" ac="236"> street</s></p>
+<p t="815860" d="3790" w="1" a="1">
+</p>
+<p t="815870" d="7080" w="1"><s ac="227">Boston</s><s t="719" ac="238"> and</s><s t="1760" ac="206"> and</s><s t="2760" ac="252"> you</s><s t="3030" ac="239"> know</s><s t="3150" ac="252"> go</s><s t="3270" ac="252"> figure</s><s t="3420" ac="165"> out</s><s t="3659" ac="249"> if</s></p>
+<p t="819640" d="3310" w="1" a="1">
+</p>
+<p t="819650" d="4860" w="1"><s ac="248">Paul</s><s t="240" ac="248"> Revere</s><s t="720" ac="236"> used</s><s t="1590" ac="252"> to</s><s t="1770" ac="236"> shot</s><s t="1980" ac="248"> a</s><s t="2010" ac="248"> spat</s><s t="2340" ac="208"> to</s><s t="3150" ac="252"> get</s></p>
+<p t="822940" d="1570" w="1" a="1">
+</p>
+<p t="822950" d="4800" w="1"><s ac="252">to</s><s t="120" ac="220"> where</s><s t="240" ac="124"> he</s><s t="360" ac="252"> was</s><s t="450" ac="163"> going</s><s t="780" ac="145"> or</s><s t="960" ac="223"> things</s><s t="1470" ac="252"> like</s></p>
+<p t="824500" d="3250" w="1" a="1">
+</p>
+<p t="824510" d="8970" w="1"><s ac="201">that</s><s t="150" ac="95"> we</s><s t="690" ac="167"> will</s><s t="810" ac="241"> try</s><s t="960" ac="252"> and</s><s t="990" ac="148"> make</s><s t="1079" ac="154"> it</s><s t="1170" ac="167"> fun</s><s t="2240" ac="213"> dynamic</s></p>
+<p t="827740" d="5740" w="1" a="1">
+</p>
+<p t="827750" d="9540" w="1"><s ac="148">programming</s><s t="779" ac="255"> is</s><s t="2390" ac="252"> an</s><s t="3390" ac="252"> important</s><s t="4730" ac="244"> algorithm</s></p>
+<p t="833470" d="3820" w="1" a="1">
+</p>
+<p t="833480" d="9390" w="1"><s ac="252">design</s><s t="810" ac="252"> technique</s><s t="1290" ac="252"> that&#39;s</s><s t="1980" ac="252"> used</s><s t="2070" ac="252"> in</s><s t="2810" ac="247"> many</s></p>
+<p t="837280" d="5590" w="1" a="1">
+</p>
+<p t="837290" d="7380" w="1"><s ac="200">many</s><s t="1130" ac="248"> problems</s><s t="2420" ac="200"> and</s><s t="3420" ac="219"> it</s><s t="3870" ac="252"> can</s><s t="4020" ac="252"> be</s><s t="4110" ac="240"> used</s><s t="4290" ac="217"> to</s><s t="4830" ac="252"> do</s><s t="4950" ac="252"> a</s></p>
+<p t="842860" d="1810" w="1" a="1">
+</p>
+<p t="842870" d="4740" w="1"><s ac="252">variety</s><s t="630" ac="207"> of</s><s t="810" ac="231"> things</s><s t="1080" ac="252"> including</s><s t="1320" ac="252"> image</s></p>
+<p t="844660" d="2950" w="1" a="1">
+</p>
+<p t="844670" d="7080" w="1"><s ac="252">compression</s><s t="1010" ac="208"> how</s><s t="2010" ac="252"> do</s><s t="2070" ac="252"> you</s><s t="2190" ac="252"> compress</s><s t="2490" ac="252"> an</s><s t="2669" ac="252"> image</s></p>
+<p t="847600" d="4150" w="1" a="1">
+</p>
+<p t="847610" d="6000" w="1"><s ac="226">so</s><s t="870" ac="248"> the</s><s t="1590" ac="252"> number</s><s t="1770" ac="149"> of</s><s t="1890" ac="214"> pixels</s><s t="2250" ac="236"> reduces</s><s t="3020" ac="227"> but</s><s t="4020" ac="244"> it</s></p>
+<p t="851740" d="1870" w="1" a="1">
+</p>
+<p t="851750" d="3270" w="1"><s ac="234">still</s><s t="180" ac="200"> looks</s><s t="450" ac="252"> like</s><s t="570" ac="207"> the</s><s t="870" ac="252"> image</s><s t="960" ac="200"> that</s><s t="1320" ac="243"> you</s></p>
+<p t="853600" d="1420" w="1" a="1">
+</p>
+<p t="853610" d="3450" w="1"><s ac="252">started</s><s t="330" ac="252"> out</s><s t="419" ac="147"> with</s><s t="660" ac="252"> that</s><s t="810" ac="236"> had</s><s t="990" ac="252"> many</s><s t="1229" ac="252"> more</s></p>
+<p t="855010" d="2050" w="1" a="1">
+</p>
+<p t="855020" d="4340" w="1"><s ac="217">pixels</s><s t="380" ac="217"> actually</s><s t="1380" ac="239"> could</s><s t="1500" ac="252"> use</s><s t="1620" ac="252"> dynamic</s></p>
+<p t="857050" d="2310" w="1" a="1">
+</p>
+<p t="857060" d="5180" w="1"><s ac="59">programming</s><s t="390" ac="252"> for</s><s t="420" ac="208"> that</s><s t="830" ac="122"> and</s><s t="1830" ac="252"> finally</s></p>
+<p t="859350" d="2890" w="1" a="1">
+</p>
+<p t="859360" d="7300" w="1"><s ac="246">advanced</s><s t="1000" ac="224"> topics</s><s t="1510" ac="232"> complexity</s><s t="2260" ac="252"> theory</s></p>
+<p t="862230" d="4430" w="1" a="1">
+</p>
+<p t="862240" d="6310" w="1"><s ac="219">research</s><s t="1000" ac="238"> in</s><s t="1210" ac="252"> algorithms</s><s t="2820" ac="207"> hopefully</s><s t="3820" ac="252"> by</s><s t="3940" ac="215"> now</s></p>
+<p t="866650" d="1900" w="1" a="1">
+</p>
+<p t="866660" d="5280" w="1"><s ac="241">by</s><s t="450" ac="252"> this</s><s t="510" ac="201"> time</s><s t="900" ac="252"> in</s><s t="1050" ac="252"> the</s><s t="1080" ac="214"> in</s><s t="1380" ac="252"> the</s><s t="1500" ac="252"> course</s><s t="1710" ac="231"> you</s></p>
+<p t="868540" d="3400" w="1" a="1">
+</p>
+<p t="868550" d="4530" w="1"><s ac="187">have</s><s t="150" ac="201"> been</s><s t="270" ac="252"> sold</s><s t="660" ac="252"> on</s><s t="840" ac="216"> algorithms</s><s t="1140" ac="202"> and</s><s t="2210" ac="212"> most</s><s t="3210" ac="252"> if</s></p>
+<p t="871930" d="1150" w="1" a="1">
+</p>
+<p t="871940" d="3810" w="1"><s ac="252">not</s><s t="30" ac="252"> all</s><s t="149" ac="252"> of</s><s t="300" ac="219"> you</s><s t="510" ac="204"> would</s><s t="630" ac="154"> want</s><s t="780" ac="252"> to</s><s t="839" ac="228"> pursue</s><s t="990" ac="151"> a</s></p>
+<p t="873070" d="2680" w="1" a="1">
+</p>
+<p t="873080" d="4890" w="1"><s ac="252">career</s><s t="300" ac="252"> in</s><s t="540" ac="252"> algorithms</s><s t="1110" ac="221"> and</s><s t="1460" ac="149"> we&#39;ll</s><s t="2460" ac="252"> give</s><s t="2580" ac="226"> you</s></p>
+<p t="875740" d="2230" w="1" a="1">
+</p>
+<p t="875750" d="4589" w="1"><s ac="252">a</s><s t="60" ac="249"> sense</s><s t="270" ac="252"> of</s><s t="390" ac="218"> what</s><s t="1260" ac="252"> else</s><s t="1410" ac="228"> is</s><s t="1589" ac="252"> there</s><s t="1800" ac="237"> we&#39;re</s><s t="2040" ac="240"> just</s></p>
+<p t="877960" d="2379" w="1" a="1">
+</p>
+<p t="877970" d="4020" w="1"><s ac="252">scratching</s><s t="119" ac="236"> the</s><s t="390" ac="232"> surface</s><s t="619" ac="215"> in</s><s t="1619" ac="227"> this</s><s t="1830" ac="252"> class</s><s t="2040" ac="229"> and</s></p>
+<p t="880329" d="1661" w="1" a="1">
+</p>
+<p t="880339" d="4821" w="1"><s ac="237">there&#39;s</s><s t="571" ac="252"> many</s><s t="750" ac="205"> many</s><s t="961" ac="252"> classes</s><s t="1171" ac="136"> that</s><s t="1411" ac="175"> you</s><s t="1620" ac="252"> can</s></p>
+<p t="881980" d="3180" w="1" a="1">
+</p>
+<p t="881990" d="5880" w="1"><s ac="166">possibly</s><s t="270" ac="200"> take</s><s t="690" ac="247"> if</s><s t="1620" ac="252"> you</s><s t="1800" ac="233"> want</s><s t="1980" ac="252"> to</s><s t="2039" ac="183"> continue</s><s t="2430" ac="236"> I</s></p>
+<p t="885150" d="2720" w="1" a="1">
+</p>
+<p t="885160" d="6580" w="1"><s ac="247">in</s><s t="1000" ac="235"> to</s><s t="1630" ac="235"> learn</s><s t="1750" ac="252"> about</s><s t="1900" ac="252"> algorithms</s><s t="2410" ac="247"> or</s><s t="2560" ac="252"> to</s></p>
+<p t="887860" d="3880" w="1" a="1">
+</p>
+<p t="887870" d="6180" w="1"><s ac="249">pursue</s><s t="270" ac="234"> a</s><s t="300" ac="255"> career</s><s t="510" ac="241"> in</s><s t="719" ac="239"> algorithms</s><s t="1200" ac="89"> alright</s><s t="2870" ac="234"> so</s></p>
+<p t="891730" d="2320" w="1" a="1">
+</p>
+<p t="891740" d="5730" w="1"><s ac="161">that&#39;s</s><s t="539" ac="252"> the</s><s t="630" ac="211"> story</s><s t="870" ac="228"> of</s><s t="1200" ac="252"> the</s><s t="1770" ac="255"> class</s><s t="1980" ac="226"> of</s><s t="2250" ac="226"> the</s></p>
+<p t="894040" d="3430" w="1" a="1">
+</p>
+<p t="894050" d="7080" w="1"><s ac="255">synopsis</s><s t="300" ac="163"> of</s><s t="479" ac="227"> the</s><s t="659" ac="252"> class</s><s t="870" ac="215"> and</s><s t="1430" ac="240"> I</s><s t="2430" ac="247"> encourage</s></p>
+<p t="897460" d="3670" w="1" a="1">
+</p>
+<p t="897470" d="6420" w="1"><s ac="252">you</s><s t="30" ac="125"> to</s><s t="210" ac="215"> go</s><s t="1080" ac="245"> spend</s><s t="1710" ac="252"> a</s><s t="2220" ac="247"> few</s><s t="3150" ac="252"> minutes</s><s t="3270" ac="252"> on</s><s t="3510" ac="213"> the</s></p>
+<p t="901120" d="2770" w="1" a="1">
+</p>
+<p t="901130" d="5160" w="1"><s ac="215">website</s><s t="360" ac="234"> in</s><s t="660" ac="201"> particular</s><s t="1230" ac="226"> please</s><s t="2100" ac="252"> read</s><s t="2550" ac="252"> the</s></p>
+<p t="903880" d="2410" w="1" a="1">
+</p>
+<p t="903890" d="6150" w="1"><s ac="252">collaboration</s><s t="540" ac="252"> policy</s><s t="1020" ac="202"> and</s><s t="1290" ac="243"> get</s><s t="1949" ac="252"> a</s><s t="1980" ac="226"> sense</s><s t="2220" ac="252"> of</s></p>
+<p t="906280" d="3760" w="1" a="1">
+</p>
+<p t="906290" d="6660" w="1"><s ac="218">what</s><s t="210" ac="252"> is</s><s t="299" ac="252"> expected</s><s t="780" ac="207"> of</s><s t="1140" ac="252"> you</s><s t="1340" ac="238"> what</s><s t="2540" ac="252"> the</s><s t="3540" ac="227"> rules</s></p>
+<p t="910030" d="2920" w="1" a="1">
+</p>
+<p t="910040" d="7230" w="1"><s ac="252">are</s><s t="239" ac="252"> in</s><s t="299" ac="177"> terms</s><s t="720" ac="236"> of</s><s t="1160" ac="248"> doing</s><s t="2160" ac="206"> the</s><s t="2280" ac="197"> problem</s><s t="2640" ac="252"> sets</s></p>
+<p t="912940" d="4330" w="1" a="1">
+</p>
+<p t="912950" d="6300" w="1"><s ac="219">and</s><s t="1070" ac="208"> the</s><s t="2070" ac="233"> course</s><s t="2579" ac="252"> grading</s><s t="3480" ac="231"> breakdown</s><s t="3990" ac="244"> and</s><s t="4259" ac="252"> the</s></p>
+<p t="917260" d="1990" w="1" a="1">
+</p>
+<p t="917270" d="8009" w="1"><s ac="232">grading</s><s t="330" ac="252"> policies</s><s t="780" ac="241"> are</s><s t="1200" ac="252"> all</s><s t="1470" ac="252"> listed</s><s t="1710" ac="200"> on</s><s t="1860" ac="217"> the</s></p>
+<p t="919240" d="6039" w="1" a="1">
+</p>
+<p t="919250" d="8610" w="1"><s ac="252">website</s><s t="150" ac="180"> as</s><s t="450" ac="252"> well</s><s t="1220" ac="204"> right</s><s t="2990" ac="105"> ok</s><s t="3990" ac="150"> so</s><s t="4910" ac="160"> let&#39;s</s><s t="5910" ac="252"> get</s></p>
+<p t="925269" d="2591" w="1" a="1">
+</p>
+<p t="925279" d="5071" w="1"><s ac="216">started</s><s t="361" ac="146"> I</s><s t="631" ac="247"> want</s><s t="1231" ac="227"> to</s><s t="1291" ac="241"> talk</s><s t="1411" ac="241"> about</s><s t="1560" ac="223"> a</s><s t="1861" ac="200"> specific</s></p>
+<p t="927850" d="2500" w="1" a="1">
+</p>
+<p t="927860" d="5040" w="1"><s ac="252">problem</s><s t="210" ac="215"> and</s><s t="570" ac="239"> talk</s><s t="1560" ac="218"> about</s><s t="1770" ac="207"> algorithms</s><s t="2220" ac="252"> for</s><s t="2430" ac="205"> a</s></p>
+<p t="930340" d="2560" w="1" a="1">
+</p>
+<p t="930350" d="4910" w="1"><s ac="203">specific</s><s t="570" ac="252"> problem</s><s t="780" ac="201"> we</s><s t="1739" ac="201"> picked</s><s t="1980" ac="252"> this</s><s t="2100" ac="248"> problem</s></p>
+<p t="932890" d="2370" w="1" a="1">
+</p>
+<p t="932900" d="4710" w="1"><s ac="252">because</s><s t="270" ac="252"> it&#39;s</s><s t="450" ac="252"> so</s><s t="629" ac="252"> easy</s><s t="960" ac="200"> to</s><s t="1290" ac="252"> understand</s><s t="1770" ac="227"> and</s></p>
+<p t="935250" d="2360" w="1" a="1">
+</p>
+<p t="935260" d="4329" w="1"><s ac="246">they&#39;re</s><s t="1000" ac="242"> fairly</s><s t="1449" ac="236"> straightforward</s></p>
+<p t="937600" d="1989" w="1" a="1">
+</p>
+<p t="937610" d="5160" w="1"><s ac="236">algorithms</s><s t="630" ac="252"> that</s><s t="1260" ac="252"> are</s><s t="1320" ac="203"> not</s><s t="1530" ac="252"> particularly</s></p>
+<p t="939579" d="3191" w="1" a="1">
+</p>
+<p t="939589" d="7441" w="1"><s ac="252">efficient</s><s t="811" ac="205"> to</s><s t="1321" ac="227"> solve</s><s t="1591" ac="252"> this</s><s t="1771" ac="134"> problem</s><s t="2221" ac="229"> and</s><s t="2341" ac="236"> so</s></p>
+<p t="942760" d="4270" w="1" a="1">
+</p>
+<p t="942770" d="6100" w="1"><s ac="234">this</s><s t="240" ac="252"> is</s><s t="420" ac="252"> a</s><s t="450" ac="221"> kind</s><s t="870" ac="252"> of</s><s t="900" ac="242"> a</s><s t="990" ac="252"> toy</s><s t="1200" ac="187"> problem</s><s t="1710" ac="242"> but</s><s t="3260" ac="248"> like</s></p>
+<p t="947020" d="1850" w="1" a="1">
+</p>
+<p t="947030" d="5080" w="1"><s ac="228">a</s><s t="299" ac="234"> lot</s><s t="450" ac="156"> of</s><s t="510" ac="200"> toy</s><s t="720" ac="252"> problems</s></p>
+<p t="948860" d="3250" w="1" a="1">
+</p>
+<p t="948870" d="5990" w="1"><s ac="252">it&#39;s</s><s t="300" ac="236"> it&#39;s</s><s t="750" ac="252"> very</s><s t="810" ac="210"> evocative</s><s t="1770" ac="124"> in</s><s t="2220" ac="231"> that</s><s t="2850" ac="245"> it</s></p>
+<p t="952100" d="2760" w="1" a="1">
+</p>
+<p t="952110" d="5880" w="1"><s ac="252">points</s><s t="600" ac="252"> out</s><s t="720" ac="220"> the</s><s t="800" ac="165"> issues</s><s t="1800" ac="239"> involved</s><s t="2430" ac="252"> in</s></p>
+<p t="954850" d="3140" w="1" a="1">
+</p>
+<p t="954860" d="4990" w="1"><s ac="249">designing</s><s t="1000" ac="252"> efficient</s><s t="1510" ac="252"> algorithms</s><s t="2010" ac="227"> so</s><s t="3010" ac="236"> if</s><s t="3070" ac="187"> we</s></p>
+<p t="957980" d="1870" w="1" a="1">
+</p>
+<p t="957990" d="8880" w="1"><s ac="236">start</s><s t="270" ac="252"> with</s><s t="330" ac="145"> a</s><s t="480" ac="236"> one</s><s t="720" ac="250"> dimensional</s><s t="1230" ac="175"> version</s><s t="1710" ac="252"> of</s></p>
+<p t="959840" d="7030" w="1" a="1">
+</p>
+<p t="959850" d="9990" w="1"><s ac="252">what</s><s t="630" ac="252"> we</s><s t="750" ac="252"> call</s><s t="1130" ac="236"> peak</s><s t="2130" ac="179"> finding</s><s t="3770" ac="255"> and</s><s t="5540" ac="251"> a</s><s t="6540" ac="255"> peak</s></p>
+<p t="966860" d="2980" w="1" a="1">
+</p>
+<p t="966870" d="8460" w="1"><s ac="237">finder</s><s t="480" ac="203"> is</s><s t="1070" ac="252"> something</s><s t="2070" ac="226"> in</s><s t="2700" ac="252"> the</s><s t="2850" ac="227"> one</s></p>
+<p t="969830" d="5500" w="1" a="1">
+</p>
+<p t="969840" d="13530" w="1"><s ac="227">dimensional</s><s t="150" ac="136"> case</s><s t="3560" ac="242"> runs</s><s t="4560" ac="236"> on</s><s t="4800" ac="252"> an</s><s t="4890" ac="252"> array</s><s t="5220" ac="201"> of</s></p>
+<p t="975320" d="8050" w="1" a="1">
+</p>
+<p t="975330" d="13650" w="1"><s ac="252">numbers</s><s t="1430" ac="217"> and</s><s t="2430" ac="252"> I&#39;m</s><s t="3270" ac="214"> just</s><s t="3390" ac="231"> putting</s><s t="6890" ac="237"> symbols</s><s t="7890" ac="252"> for</s></p>
+<p t="983360" d="5620" w="1" a="1">
+</p>
+<p t="983370" d="8640" w="1"><s ac="217">each</s><s t="60" ac="216"> of</s><s t="270" ac="252"> these</s><s t="360" ac="124"> numbers</s><s t="750" ac="252"> here</s><s t="1910" ac="204"> and</s><s t="4610" ac="252"> the</s></p>
+<p t="988970" d="3040" w="1" a="1">
+</p>
+<p t="988980" d="4290" w="1"><s ac="252">numbers</s><s t="270" ac="241"> are</s><s t="540" ac="252"> positive</s><s t="1410" ac="208"> negative</s><s t="1950" ac="207"> we&#39;ll</s><s t="2790" ac="241"> just</s></p>
+<p t="992000" d="1270" w="1" a="1">
+</p>
+<p t="992010" d="3540" w="1"><s ac="251">assume</s><s t="270" ac="233"> they&#39;re</s><s t="480" ac="156"> all</s><s t="630" ac="252"> positive</s><s t="870" ac="202"> it</s><s t="1230" ac="252"> doesn&#39;t</s></p>
+<p t="993260" d="2290" w="1" a="1">
+</p>
+<p t="993270" d="6750" w="1"><s ac="149">really</s><s t="270" ac="235"> matter</s><s t="480" ac="108"> the</s><s t="1200" ac="248"> algorithms</s><s t="1710" ac="142"> we</s><s t="1890" ac="150"> describe</s></p>
+<p t="995540" d="4480" w="1" a="1">
+</p>
+<p t="995550" d="6270" w="1"><s ac="228">will</s><s t="900" ac="252"> work</s><s t="1340" ac="255"> and</s><s t="2340" ac="252"> so</s><s t="3240" ac="208"> we</s><s t="3390" ac="252"> have</s><s t="3540" ac="252"> this</s><s t="3750" ac="228"> one</s></p>
+<p t="1000010" d="1810" w="1" a="1">
+</p>
+<p t="1000020" d="6990" w="1"><s ac="226">dimensional</s><s t="180" ac="188"> array</s><s t="630" ac="247"> that</s><s t="1410" ac="252"> has</s><s t="1440" ac="202"> nine</s></p>
+<p t="1001810" d="5200" w="1" a="1">
+</p>
+<p t="1001820" d="10520" w="1"><s ac="252">different</s><s t="30" ac="236"> positions</s><s t="900" ac="221"> and</s><s t="1220" ac="236"> a</s><s t="2750" ac="248"> through</s><s t="3750" ac="217"> I</s><s t="4190" ac="142"> are</s></p>
+<p t="1007000" d="5340" w="1" a="1">
+</p>
+<p t="1007010" d="7710" w="1"><s ac="252">numbers</s><s t="450" ac="238"> and</s><s t="2300" ac="146"> we</s><s t="3300" ac="252"> want</s><s t="3330" ac="205"> to</s><s t="3540" ac="243"> find</s><s t="3750" ac="242"> a</s><s t="4050" ac="250"> peak</s><s t="4830" ac="216"> and</s></p>
+<p t="1012330" d="2390" w="1" a="1">
+</p>
+<p t="1012340" d="7560" w="1"><s ac="99">so</s><s t="1000" ac="252"> we</s><s t="1090" ac="252"> have</s><s t="1180" ac="252"> to</s><s t="1270" ac="200"> define</s><s t="1570" ac="210"> what</s><s t="1840" ac="149"> we</s><s t="1990" ac="252"> mean</s><s t="2020" ac="252"> by</s><s t="2200" ac="167"> a</s></p>
+<p t="1014710" d="5190" w="1" a="1">
+</p>
+<p t="1014720" d="17340" w="1"><s ac="252">peak</s><s t="300" ac="245"> and</s><s t="540" ac="218"> so</s><s t="1430" ac="158"> in</s><s t="2430" ac="200"> particular</s><s t="3120" ac="212"> as</s><s t="3510" ac="252"> an</s><s t="4230" ac="252"> example</s></p>
+<p t="1019890" d="12170" w="1" a="1">
+</p>
+<p t="1019900" d="16450" w="1"><s ac="231">position</s><s t="1000" ac="195"> two</s><s t="1270" ac="227"> is</s><s t="2130" ac="225"> a</s><s t="3130" ac="251"> peak</s><s t="5340" ac="226"> if</s><s t="6340" ac="252"> and</s><s t="7150" ac="252"> only</s><s t="7240" ac="252"> if</s><s t="11160" ac="100"> B</s></p>
+<p t="1032050" d="4300" w="1" a="1">
+</p>
+<p t="1032060" d="6810" w="1"><s ac="248">greater</s><s t="450" ac="252"> than</s><s t="540" ac="128"> or</s><s t="750" ac="252"> equal</s><s t="810" ac="211"> to</s><s t="990" ac="72"> a</s><s t="1110" ac="217"> and</s><s t="2990" ac="204"> B</s><s t="3990" ac="249"> greater</s></p>
+<p t="1036340" d="2530" w="1" a="1">
+</p>
+<p t="1036350" d="5370" w="1"><s ac="252">than</s><s t="60" ac="166"> or</s><s t="240" ac="58"> equal</s><s t="450" ac="207"> to</s><s t="540" ac="255"> C</s><s t="800" ac="247"> so</s><s t="1800" ac="252"> it&#39;s</s><s t="2220" ac="252"> really</s><s t="2370" ac="227"> a</s><s t="2490" ac="252"> very</s></p>
+<p t="1038860" d="2860" w="1" a="1">
+</p>
+<p t="1038870" d="5640" w="1"><s ac="228">local</s><s t="870" ac="252"> property</s><s t="1440" ac="207"> corresponding</s><s t="2430" ac="251"> to</s><s t="2550" ac="252"> a</s><s t="2580" ac="252"> peak</s></p>
+<p t="1041710" d="2800" w="1" a="1">
+</p>
+<p t="1041720" d="6300" w="1"><s ac="245">in</s><s t="239" ac="252"> the</s><s t="720" ac="217"> one</s><s t="840" ac="142"> dimensional</s><s t="1260" ac="240"> case</s><s t="1350" ac="227"> it&#39;s</s><s t="1830" ac="246"> trivial</s></p>
+<p t="1044500" d="3520" w="1" a="1">
+</p>
+<p t="1044510" d="7080" w="1"><s ac="205">look</s><s t="690" ac="252"> to</s><s t="810" ac="207"> your</s><s t="930" ac="206"> left</s><s t="1110" ac="201"> look</s><s t="1800" ac="252"> to</s><s t="1860" ac="206"> your</s><s t="2100" ac="252"> right</s><s t="2510" ac="187"> if</s></p>
+<p t="1048010" d="3580" w="1" a="1">
+</p>
+<p t="1048020" d="5100" w="1"><s ac="203">your</s><s t="240" ac="255"> equal</s><s t="780" ac="252"> or</s><s t="960" ac="252"> greater</s><s t="990" ac="252"> than</s><s t="2330" ac="231"> both</s><s t="3330" ac="252"> of</s><s t="3360" ac="143"> the</s></p>
+<p t="1051580" d="1540" w="1" a="1">
+</p>
+<p t="1051590" d="2070" w="1"><s ac="252">elements</s><s t="390" ac="252"> that</s><s t="420" ac="200"> you</s><s t="570" ac="97"> see</s><s t="660" ac="205"> on</s><s t="1050" ac="252"> the</s><s t="1170" ac="252"> left</s><s t="1350" ac="252"> and</s></p>
+<p t="1053110" d="550" w="1" a="1">
+</p>
+<p t="1053120" d="3480" w="1"><s ac="252">the</s><s t="60" ac="252"> right</s></p>
+<p t="1053650" d="2950" w="1" a="1">
+</p>
+<p t="1053660" d="5790" w="1"><s ac="204">you&#39;re</s><s t="300" ac="252"> a</s><s t="330" ac="255"> peak</s><s t="650" ac="219"> okay</s><s t="1860" ac="252"> and</s><s t="2010" ac="252"> in</s><s t="2460" ac="252"> the</s><s t="2580" ac="252"> case</s><s t="2760" ac="201"> of</s></p>
+<p t="1056590" d="2860" w="1" a="1">
+</p>
+<p t="1056600" d="13490" w="1"><s ac="252">the</s><s t="180" ac="239"> edges</s><s t="1110" ac="236"> you</s><s t="1860" ac="252"> only</s><s t="1980" ac="252"> have</s><s t="2220" ac="252"> to</s><s t="2340" ac="217"> look</s><s t="2520" ac="252"> to</s><s t="2700" ac="252"> one</s></p>
+<p t="1059440" d="10650" w="1" a="1">
+</p>
+<p t="1059450" d="14760" w="1"><s ac="252">side</s><s t="410" ac="207"> so</s><s t="1410" ac="245"> position</s><s t="1800" ac="85"> 9</s><s t="4160" ac="247"> is</s><s t="5160" ac="252"> a</s><s t="5670" ac="252"> peak</s><s t="8060" ac="236"> if</s><s t="9170" ac="244"> I</s></p>
+<p t="1070080" d="4130" w="1" a="1">
+</p>
+<p t="1070090" d="5410" w="1"><s ac="252">greater</s><s t="1000" ac="166"> than</s><s t="1180" ac="252"> equal</s><s t="1420" ac="252"> to</s><s t="1450" ac="220"> H</s><s t="2790" ac="245"> so</s><s t="3790" ac="252"> you</s><s t="3820" ac="200"> just</s><s t="4030" ac="252"> have</s></p>
+<p t="1074200" d="1300" w="1" a="1">
+</p>
+<p t="1074210" d="2340" w="1"><s ac="216">to</s><s t="60" ac="252"> look</s><s t="180" ac="223"> to</s><s t="300" ac="144"> your</s><s t="480" ac="252"> left</s><s t="840" ac="221"> there</s><s t="1140" ac="252"> because</s></p>
+<p t="1075490" d="1060" w="1" a="1">
+</p>
+<p t="1075500" d="1260" w="1"><s ac="169">you&#39;re</s><s t="240" ac="252"> all</s><s t="360" ac="253"> the</s><s t="480" ac="200"> way</s><s t="570" ac="252"> on</s><s t="690" ac="252"> the</s><s t="780" ac="74"> right-hand</s></p>
+<p t="1076540" d="220" w="1" a="1">
+</p>
+<p t="1076550" d="4710" w="1"><s ac="252">side</s></p>
+<p t="1076750" d="4510" w="1" a="1">
+</p>
+<p t="1076760" d="5910" w="1"><s ac="186">all</s><s t="660" ac="215"> right</s><s t="810" ac="217"> so</s><s t="1650" ac="246"> so</s><s t="2040" ac="216"> that&#39;s</s><s t="2220" ac="252"> it</s><s t="2750" ac="138"> and</s><s t="3750" ac="223"> the</s></p>
+<p t="1081250" d="1420" w="1" a="1">
+</p>
+<p t="1081260" d="7830" w="1"><s ac="252">statement</s><s t="540" ac="252"> of</s><s t="600" ac="220"> the</s><s t="690" ac="252"> problem</s></p>
+<p t="1082660" d="6430" w="1" a="1">
+</p>
+<p t="1082670" d="19680" w="1"><s ac="252">the</s><s t="629" ac="208"> one</s><s t="810" ac="217"> dimensional</s><s t="1200" ac="164"> version</s><s t="1650" ac="234"> is</s><s t="5270" ac="236"> find</s><s t="6270" ac="252"> the</s></p>
+<p t="1089080" d="13270" w="1" a="1">
+</p>
+<p t="1089090" d="14750" w="1"><s ac="236">peak</s><s t="2570" ac="246"> if</s><s t="3570" ac="252"> it</s><s t="4380" ac="252"> exists</s><s t="9469" ac="201"> all</s><s t="10469" ac="201"> right</s><s t="12140" ac="233"> that&#39;s</s><s t="13140" ac="241"> all</s></p>
+<p t="1102340" d="1500" w="1" a="1">
+</p>
+<p t="1102350" d="3510" w="1"><s ac="252">there</s><s t="150" ac="208"> is</s><s t="270" ac="252"> to</s><s t="390" ac="252"> it</s></p>
+<p t="1103830" d="2030" w="1" a="1">
+</p>
+<p t="1103840" d="5950" w="1"><s ac="245">I&#39;m</s><s t="1000" ac="252"> gonna</s><s t="1120" ac="208"> give</s><s t="1330" ac="242"> you</s><s t="1390" ac="252"> a</s><s t="1450" ac="206"> straightforward</s></p>
+<p t="1105850" d="3940" w="1" a="1">
+</p>
+<p t="1105860" d="5939" w="1"><s ac="252">algorithm</s><s t="170" ac="208"> and</s><s t="1970" ac="248"> then</s><s t="2970" ac="152"> you&#39;ll</s><s t="3540" ac="252"> see</s><s t="3689" ac="237"> if</s><s t="3750" ac="215"> you</s><s t="3810" ac="216"> can</s></p>
+<p t="1109780" d="2019" w="1" a="1">
+</p>
+<p t="1109790" d="4050" w="1"><s ac="209">improve</s><s t="210" ac="244"> it</s><s t="389" ac="201"> all</s><s t="1259" ac="217"> right</s><s t="1380" ac="249"> you</s><s t="1590" ac="241"> can</s><s t="1680" ac="133"> imagine</s></p>
+<p t="1111789" d="2051" w="1" a="1">
+</p>
+<p t="1111799" d="3841" w="1"><s ac="200">that</s><s t="91" ac="252"> the</s><s t="181" ac="252"> straightforward</s><s t="391" ac="201"> algorithm</s><s t="1041" ac="237"> is</s></p>
+<p t="1113830" d="1810" w="1" a="1">
+</p>
+<p t="1113840" d="7500" w="1"><s ac="229">something</s><s t="570" ac="252"> that</s><s t="719" ac="217"> just</s><s t="959" ac="210"> we</s><s t="1260" ac="202"> know</s><s t="1380" ac="252"> walks</s><s t="1620" ac="252"> across</s></p>
+<p t="1115630" d="5710" w="1" a="1">
+</p>
+<p t="1115640" d="8340" w="1"><s ac="230">the</s><s t="740" ac="127"> array</s><s t="2930" ac="218"> but</s><s t="4010" ac="253"> we</s><s t="5010" ac="252"> need</s><s t="5159" ac="201"> that</s><s t="5279" ac="230"> as</s><s t="5460" ac="252"> a</s><s t="5490" ac="252"> starting</s></p>
+<p t="1121330" d="2650" w="1" a="1">
+</p>
+<p t="1121340" d="9270" w="1"><s ac="214">point</s><s t="329" ac="252"> for</s><s t="1160" ac="165"> building</s><s t="2160" ac="252"> something</s><s t="2310" ac="206"> more</s></p>
+<p t="1123970" d="6640" w="1" a="1">
+</p>
+<p t="1123980" d="17010" w="1"><s ac="252">sophisticated</s><s t="4730" ac="226"> so</s><s t="5730" ac="252"> let&#39;s</s><s t="6000" ac="252"> say</s><s t="6060" ac="252"> we</s><s t="6180" ac="252"> start</s><s t="6210" ac="213"> from</s></p>
+<p t="1130600" d="10390" w="1" a="1">
+</p>
+<p t="1130610" d="17220" w="1"><s ac="252">left</s><s t="270" ac="187"> and</s><s t="5569" ac="126"> all</s><s t="6569" ac="252"> we</s><s t="6840" ac="252"> have</s><s t="7050" ac="208"> is</s><s t="8720" ac="208"> one</s><s t="9720" ac="248"> traversal</s></p>
+<p t="1140980" d="6850" w="1" a="1">
+</p>
+<p t="1140990" d="9750" w="1"><s ac="252">really</s><s t="3559" ac="249"> so</s><s t="4559" ac="252"> let&#39;s</s><s t="4800" ac="252"> say</s><s t="4860" ac="252"> we</s><s t="4980" ac="252"> have</s><s t="5069" ac="122"> 1</s><s t="5280" ac="121"> 2</s><s t="5640" ac="202"> and</s><s t="6569" ac="222"> then</s></p>
+<p t="1147820" d="2920" w="1" a="1">
+</p>
+<p t="1147830" d="5729" w="1"><s ac="252">we</s><s t="89" ac="252"> have</s><s t="120" ac="201"> n</s><s t="390" ac="204"> over</s><s t="630" ac="241"> 2</s><s t="839" ac="255"> over</s><s t="990" ac="167"> here</s><s t="1910" ac="197"> corresponding</s></p>
+<p t="1150730" d="2829" w="1" a="1">
+</p>
+<p t="1150740" d="8370" w="1"><s ac="158">to</s><s t="59" ac="165"> the</s><s t="270" ac="252"> middle</s><s t="600" ac="215"> of</s><s t="809" ac="252"> this</s><s t="1050" ac="230"> n</s><s t="1260" ac="249"> element</s><s t="2010" ac="252"> array</s></p>
+<p t="1153549" d="5561" w="1" a="1">
+</p>
+<p t="1153559" d="7500" w="1"><s ac="205">and</s><s t="360" ac="252"> then</s><s t="1291" ac="186"> we</s><s t="1500" ac="252"> have</s><s t="1651" ac="252"> n</s><s t="1801" ac="144"> minus</s><s t="2131" ac="252"> 1</s><s t="2511" ac="153"> and</s><s t="3651" ac="200"> n</s><s t="4651" ac="250"> what</s></p>
+<p t="1159100" d="1959" w="1" a="1">
+</p>
+<p t="1159110" d="4350" w="1"><s ac="252">I&#39;m</s><s t="120" ac="238"> interested</s><s t="300" ac="217"> in</s><s t="540" ac="201"> doing</s><s t="600" ac="183"> is</s><s t="1020" ac="227"> not</s><s t="1710" ac="141"> only</s></p>
+<p t="1161049" d="2411" w="1" a="1">
+</p>
+<p t="1161059" d="6531" w="1"><s ac="226">coming</s><s t="240" ac="228"> up</s><s t="481" ac="255"> with</s><s t="1231" ac="252"> a</s><s t="1401" ac="246"> straightforward</s></p>
+<p t="1163450" d="4140" w="1" a="1">
+</p>
+<p t="1163460" d="7620" w="1"><s ac="217">algorithm</s><s t="589" ac="197"> but</s><s t="1589" ac="249"> also</s><s t="3050" ac="229"> precisely</s></p>
+<p t="1167580" d="3500" w="1" a="1">
+</p>
+<p t="1167590" d="7300" w="1"><s ac="252">characterizing</s><s t="1000" ac="248"> what</s><s t="1260" ac="165"> its</s><s t="2260" ac="252"> complexity</s><s t="3010" ac="252"> is</s><s t="3190" ac="240"> in</s></p>
+<p t="1171070" d="3820" w="1" a="1">
+</p>
+<p t="1171080" d="6830" w="1"><s ac="252">relation</s><s t="870" ac="252"> to</s><s t="900" ac="231"> M</s><s t="1520" ac="252"> which</s><s t="2520" ac="167"> is</s><s t="2580" ac="201"> the</s><s t="3450" ac="145"> number</s><s t="3780" ac="252"> of</s></p>
+<p t="1174880" d="3030" w="1" a="1">
+</p>
+<p t="1174890" d="3020" w="1"><s ac="201">inputs</s><s t="419" ac="209"> yeah</s><s t="779" ac="252"> question</s></p>
+<p t="1180919" w="1" a="1">
+</p>
+<p t="1180929" d="5080" w="1"><s ac="252">that&#39;s</s><s t="1000" ac="252"> exactly</s><s t="1360" ac="216"> right</s></p>
+<p t="1182669" d="3340" w="1" a="1">
+</p>
+<p t="1182679" d="8011" w="1"><s ac="240">I</s><s t="30" ac="252"> was</s><s t="240" ac="227"> going</s><s t="391" ac="227"> to</s><s t="450" ac="249"> get</s><s t="540" ac="172"> to</s><s t="630" ac="149"> that</s><s t="1011" ac="135"> so</s><s t="2210" ac="252"> if</s><s t="3210" ac="252"> you</s></p>
+<p t="1185999" d="4691" w="1" a="1">
+</p>
+<p t="1186009" d="8010" w="1"><s ac="252">look</s><s t="150" ac="220"> at</s><s t="240" ac="252"> the</s><s t="330" ac="252"> definition</s><s t="450" ac="128"> of</s><s t="1220" ac="203"> the</s><s t="2220" ac="239"> peak</s><s t="3681" ac="236"> then</s></p>
+<p t="1190680" d="3339" w="1" a="1">
+</p>
+<p t="1190690" d="7289" w="1"><s ac="227">what</s><s t="689" ac="237"> I</s><s t="719" ac="232"> have</s><s t="959" ac="252"> here</s><s t="1319" ac="240"> is</s><s t="1559" ac="214"> a</s><s t="2099" ac="252"> greater</s><s t="3029" ac="252"> than</s><s t="3119" ac="153"> or</s></p>
+<p t="1194009" d="3970" w="1" a="1">
+</p>
+<p t="1194019" d="5940" w="1"><s ac="149">equal</s><s t="240" ac="156"> to</s><s t="480" ac="206"> okay</s><s t="1410" ac="225"> and</s><s t="1620" ac="251"> so</s><s t="2250" ac="252"> there&#39;s</s><s t="2490" ac="252"> a</s><s t="2940" ac="230"> that&#39;s</s><s t="3900" ac="252"> a</s></p>
+<p t="1197969" d="1990" w="1" a="1">
+</p>
+<p t="1197979" d="6630" w="1"><s ac="205">great</s><s t="150" ac="248"> question</s><s t="450" ac="135"> that</s><s t="601" ac="252"> was</s><s t="690" ac="252"> asked</s><s t="1020" ac="238"> why</s><s t="1920" ac="252"> is</s></p>
+<p t="1199949" d="4660" w="1" a="1">
+</p>
+<p t="1199959" d="7050" w="1"><s ac="249">there</s><s t="481" ac="200"> if</s><s t="750" ac="252"> it</s><s t="1410" ac="252"> exists</s><s t="1861" ac="250"> in</s><s t="2010" ac="224"> this</s><s t="2520" ac="204"> problem</s><s t="3650" ac="143"> now</s></p>
+<p t="1204599" d="2410" w="1" a="1">
+</p>
+<p t="1204609" d="5940" w="1"><s ac="217">in</s><s t="780" ac="252"> the</s><s t="1260" ac="252"> case</s><s t="1440" ac="252"> where</s><s t="1711" ac="237"> I</s><s t="1740" ac="252"> have</s><s t="1890" ac="245"> greater</s><s t="2221" ac="252"> than</s><s t="2280" ac="123"> or</s></p>
+<p t="1206999" d="3550" w="1" a="1">
+</p>
+<p t="1207009" d="5820" w="1"><s ac="113">equal</s><s t="90" ac="181"> to</s><s t="590" ac="233"> then</s><s t="1590" ac="233"> I</s><s t="2120" ac="236"> this</s><s t="3120" ac="248"> is</s><s t="3270" ac="252"> a</s><s t="3300" ac="252"> homework</s></p>
+<p t="1210539" d="2290" w="1" a="1">
+</p>
+<p t="1210549" d="7651" w="1"><s ac="201">question</s><s t="180" ac="210"> for</s><s t="690" ac="244"> for</s><s t="1141" ac="252"> you</s><s t="1290" ac="207"> and</s><s t="1590" ac="248"> for</s><s t="1980" ac="252"> the</s><s t="2040" ac="252"> rest</s><s t="2070" ac="150"> of</s></p>
+<p t="1212819" d="5381" w="1" a="1">
+</p>
+<p t="1212829" d="9361" w="1"><s ac="226">you</s><s t="861" ac="248"> argue</s><s t="1861" ac="252"> that</s><s t="1890" ac="203"> any</s><s t="2820" ac="220"> array</s><s t="4070" ac="247"> will</s><s t="5070" ac="251"> always</s></p>
+<p t="1218190" d="4000" w="1" a="1">
+</p>
+<p t="1218200" d="6449" w="1"><s ac="249">have</s><s t="179" ac="252"> a</s><s t="209" ac="219"> peak</s><s t="649" ac="226"> okay</s><s t="1699" ac="218"> now</s><s t="2699" ac="246"> if</s><s t="3120" ac="252"> you</s><s t="3659" ac="227"> didn&#39;t</s><s t="3929" ac="206"> have</s></p>
+<p t="1222180" d="2469" w="1" a="1">
+</p>
+<p t="1222190" d="5429" w="1"><s ac="222">the</s><s t="149" ac="252"> greater</s><s t="359" ac="252"> than</s><s t="449" ac="200"> or</s><s t="899" ac="202"> equal</s><s t="989" ac="206"> to</s><s t="1799" ac="207"> and</s><s t="2039" ac="252"> you</s><s t="2309" ac="252"> had</s></p>
+<p t="1224639" d="2980" w="1" a="1">
+</p>
+<p t="1224649" d="7740" w="1"><s ac="252">a</s><s t="30" ac="252"> greater</s><s t="360" ac="160"> than</s><s t="630" ac="240"> then</s><s t="1671" ac="232"> can</s><s t="2671" ac="239"> you</s><s t="2730" ac="218"> make</s><s t="2850" ac="142"> that</s></p>
+<p t="1227609" d="4780" w="1" a="1">
+</p>
+<p t="1227619" d="7800" w="1"><s ac="239">argument</s><s t="560" ac="207"> no</s><s t="1560" ac="252"> you</s><s t="1620" ac="249"> can</s><s t="1920" ac="143"> right</s><s t="2670" ac="201"> so</s><s t="3331" ac="242"> a</s><s t="4260" ac="245"> great</s></p>
+<p t="1232379" d="3040" w="1" a="1">
+</p>
+<p t="1232389" d="4320" w="1"><s ac="236">question</s><s t="330" ac="198"> in</s><s t="1020" ac="252"> this</s><s t="1170" ac="226"> case</s><s t="1730" ac="228"> it&#39;s</s><s t="2730" ac="158"> just</s><s t="2940" ac="114"> the</s></p>
+<p t="1235409" d="1300" w="1" a="1">
+</p>
+<p t="1235419" d="2970" w="1"><s ac="252">question</s><s t="120" ac="200"> is</s><s t="390" ac="252"> you</s><s t="660" ac="251"> would</s><s t="810" ac="252"> want</s><s t="960" ac="252"> to</s><s t="1021" ac="220"> modify</s></p>
+<p t="1236699" d="1690" w="1" a="1">
+</p>
+<p t="1236709" d="4920" w="1"><s ac="128">this</s><s t="361" ac="252"> problem</s><s t="690" ac="252"> statement</s><s t="870" ac="144"> to</s><s t="1140" ac="216"> find</s><s t="1410" ac="255"> a</s><s t="1500" ac="248"> peak</s></p>
+<p t="1238379" d="3250" w="1" a="1">
+</p>
+<p t="1238389" d="5760" w="1"><s ac="150">but</s><s t="720" ac="252"> if</s><s t="900" ac="246"> I</s><s t="990" ac="206"> if</s><s t="1890" ac="246"> I</s><s t="2010" ac="252"> had</s><s t="2040" ac="207"> a</s><s t="2460" ac="211"> different</s><s t="2910" ac="252"> definition</s></p>
+<p t="1241619" d="2530" w="1" a="1">
+</p>
+<p t="1241629" d="4740" w="1"><s ac="240">of</s><s t="480" ac="228"> a</s><s t="600" ac="252"> peak</s><s t="811" ac="216"> and</s><s t="1040" ac="233"> this</s><s t="2040" ac="252"> is</s><s t="2191" ac="252"> part</s><s t="2430" ac="252"> of</s></p>
+<p t="1244139" d="2230" w="1" a="1">
+</p>
+<p t="1244149" d="5610" w="1"><s ac="252">algorithmic</s><s t="360" ac="202"> thinking</s><s t="830" ac="237"> you</s><s t="1830" ac="252"> want</s><s t="2010" ac="252"> to</s><s t="2041" ac="201"> be</s><s t="2130" ac="252"> able</s></p>
+<p t="1246359" d="3400" w="1" a="1">
+</p>
+<p t="1246369" d="5581" w="1"><s ac="164">to</s><s t="210" ac="252"> create</s><s t="1160" ac="247"> algorithms</s><s t="2160" ac="162"> that</s><s t="2550" ac="252"> are</s><s t="2610" ac="224"> general</s><s t="3120" ac="255"> so</s></p>
+<p t="1249749" d="2201" w="1" a="1">
+</p>
+<p t="1249759" d="3990" w="1"><s ac="252">if</s><s t="240" ac="255"> the</s><s t="600" ac="203"> problem</s><s t="960" ac="252"> definition</s><s t="1110" ac="236"> changes</s><s t="1830" ac="252"> on</s><s t="2010" ac="252"> you</s></p>
+<p t="1251940" d="1809" w="1" a="1">
+</p>
+<p t="1251950" d="4019" w="1"><s ac="233">you</s><s t="449" ac="252"> still</s><s t="689" ac="201"> have</s><s t="839" ac="252"> a</s><s t="870" ac="226"> starting</s><s t="1259" ac="161"> point</s><s t="1439" ac="202"> to</s><s t="1679" ac="252"> go</s></p>
+<p t="1253739" d="2230" w="1" a="1">
+</p>
+<p t="1253749" d="3150" w="1"><s ac="252">attack</s><s t="330" ac="223"> the</s><s t="691" ac="252"> second</s><s t="1441" ac="252"> version</s><s t="1590" ac="252"> of</s><s t="1770" ac="216"> the</s><s t="1890" ac="174"> problem</s></p>
+<p t="1255959" d="940" w="1" a="1">
+</p>
+<p t="1255969" d="5610" w="1"><s ac="232">okay</s></p>
+<p t="1256889" d="4690" w="1" a="1">
+</p>
+<p t="1256899" d="5791" w="1"><s ac="214">so</s><s t="1730" ac="252"> you</s><s t="2730" ac="221"> could</s><s t="2850" ac="231"> eliminate</s><s t="3060" ac="252"> this</s><s t="3421" ac="187"> in</s><s t="3810" ac="252"> the</s><s t="4470" ac="252"> case</s></p>
+<p t="1261569" d="1121" w="1" a="1">
+</p>
+<p t="1261579" d="2760" w="1"><s ac="205">of</s><s t="180" ac="221"> the</s><s t="300" ac="240"> greater</s><s t="600" ac="209"> than</s><s t="750" ac="207"> or</s><s t="840" ac="252"> equal</s><s t="900" ac="146"> to</s></p>
+<p t="1262680" d="1659" w="1" a="1">
+</p>
+<p t="1262690" d="3479" w="1"><s ac="214">definition</s><s t="419" ac="164"> the</s><s t="659" ac="252"> if</s><s t="779" ac="252"> it</s><s t="929" ac="252"> exists</s><s t="1349" ac="207"> because</s><s t="1469" ac="255"> the</s></p>
+<p t="1264329" d="1840" w="1" a="1">
+</p>
+<p t="1264339" d="3420" w="1"><s ac="252">peak</s><s t="180" ac="252"> will</s><s t="330" ac="252"> always</s><s t="601" ac="252"> exist</s><s t="780" ac="201"> but</s><s t="1500" ac="187"> you</s><s t="1560" ac="204"> probably</s></p>
+<p t="1266159" d="1600" w="1" a="1">
+</p>
+<p t="1266169" d="4651" w="1"><s ac="202">want</s><s t="271" ac="252"> to</s><s t="300" ac="146"> argue</s><s t="570" ac="236"> that</s><s t="750" ac="226"> when</s><s t="1140" ac="252"> you</s><s t="1230" ac="252"> want</s><s t="1380" ac="252"> to</s><s t="1410" ac="226"> show</s></p>
+<p t="1267749" d="3071" w="1" a="1">
+</p>
+<p t="1267759" d="4650" w="1"><s ac="252">the</s><s t="150" ac="252"> correctness</s><s t="480" ac="252"> of</s><s t="691" ac="130"> your</s><s t="840" ac="252"> algorithm</s><s t="1250" ac="205"> and</s><s t="2250" ac="255"> if</s></p>
+<p t="1270810" d="1599" w="1" a="1">
+</p>
+<p t="1270820" d="6109" w="1"><s ac="252">in</s><s t="239" ac="66"> fact</s><s t="449" ac="252"> you</s><s t="959" ac="252"> had</s><s t="1139" ac="252"> a</s><s t="1169" ac="252"> different</s><s t="1380" ac="151"> definition</s></p>
+<p t="1272399" d="4530" w="1" a="1">
+</p>
+<p t="1272409" d="7950" w="1"><s ac="214">well</s><s t="930" ac="245"> you</s><s t="1680" ac="252"> would</s><s t="1830" ac="236"> have</s><s t="1950" ac="216"> to</s><s t="2480" ac="227"> create</s><s t="3480" ac="246"> a</s></p>
+<p t="1276919" d="3440" w="1" a="1">
+</p>
+<p t="1276929" d="6340" w="1"><s ac="230">algorithm</s><s t="1000" ac="252"> that</s><s t="1511" ac="204"> tells</s><s t="1870" ac="252"> you</s><s t="2110" ac="140"> for</s><s t="2410" ac="252"> sure</s><s t="2680" ac="207"> that</s><s t="3400" ac="252"> a</s></p>
+<p t="1280349" d="2920" w="1" a="1">
+</p>
+<p t="1280359" d="4560" w="1"><s ac="243">peak</s><s t="240" ac="252"> doesn&#39;t</s><s t="420" ac="249"> exist</s><s t="930" ac="207"> or</s><s t="1140" ac="252"> find</s><s t="1860" ac="243"> a</s><s t="2010" ac="252"> peak</s><s t="2220" ac="201"> if</s><s t="2461" ac="252"> it</s></p>
+<p t="1283259" d="1660" w="1" a="1">
+</p>
+<p t="1283269" d="4560" w="1"><s ac="252">exists</s><s t="450" ac="144"> right</s><s t="960" ac="236"> so</s><s t="1230" ac="252"> that&#39;s</s><s t="1350" ac="200"> really</s><s t="1530" ac="252"> the</s></p>
+<p t="1284909" d="2920" w="1" a="1">
+</p>
+<p t="1284919" d="4500" w="1"><s ac="166">general</s><s t="390" ac="252"> case</s><s t="800" ac="217"> many</s><s t="1800" ac="247"> a</s><s t="1860" ac="247"> time</s><s t="2160" ac="240"> it&#39;s</s><s t="2490" ac="200"> possible</s></p>
+<p t="1287819" d="1600" w="1" a="1">
+</p>
+<p t="1287829" d="4950" w="1"><s ac="239">that</s><s t="180" ac="127"> you&#39;re</s><s t="361" ac="217"> you&#39;re</s><s t="750" ac="247"> asked</s><s t="930" ac="195"> to</s><s t="1080" ac="252"> do</s><s t="1200" ac="202"> something</s></p>
+<p t="1289409" d="3370" w="1" a="1">
+</p>
+<p t="1289419" d="5970" w="1"><s ac="244">and</s><s t="151" ac="245"> you</s><s t="840" ac="252"> can&#39;t</s><s t="1050" ac="255"> actually</s><s t="1310" ac="252"> give</s><s t="2310" ac="252"> an</s><s t="2521" ac="252"> answer</s><s t="2820" ac="229"> to</s></p>
+<p t="1292769" d="2620" w="1" a="1">
+</p>
+<p t="1292779" d="4500" w="1"><s ac="143">the</s><s t="840" ac="255"> to</s><s t="1080" ac="252"> the</s><s t="1200" ac="252"> to</s><s t="1740" ac="252"> the</s><s t="1830" ac="217"> question</s><s t="1980" ac="212"> or</s><s t="2280" ac="228"> find</s></p>
+<p t="1295379" d="1900" w="1" a="1">
+</p>
+<p t="1295389" d="4710" w="1"><s ac="252">something</s><s t="360" ac="216"> that</s><s t="690" ac="252"> satisfies</s><s t="900" ac="201"> all</s><s t="1500" ac="252"> the</s></p>
+<p t="1297269" d="2830" w="1" a="1">
+</p>
+<p t="1297279" d="4320" w="1"><s ac="252">constraints</s><s t="830" ac="206"> required</s><s t="1830" ac="227"> and</s><s t="2100" ac="252"> in</s><s t="2520" ac="246"> that</s><s t="2671" ac="252"> case</s></p>
+<p t="1300089" d="1510" w="1" a="1">
+</p>
+<p t="1300099" d="3060" w="1"><s ac="226">you</s><s t="210" ac="252"> want</s><s t="300" ac="141"> to</s><s t="420" ac="252"> be</s><s t="480" ac="252"> able</s><s t="540" ac="186"> to</s><s t="750" ac="252"> put</s><s t="1020" ac="252"> up</s><s t="1050" ac="208"> your</s><s t="1200" ac="252"> hand</s></p>
+<p t="1301589" d="1570" w="1" a="1">
+</p>
+<p t="1301599" d="3721" w="1"><s ac="252">and</s><s t="150" ac="140"> say</s><s t="420" ac="252"> you</s><s t="690" ac="186"> know</s><s t="1170" ac="252"> what</s></p>
+<p t="1303149" d="2171" w="1" a="1">
+</p>
+<p t="1303159" d="5551" w="1"><s ac="224">I</s><s t="31" ac="252"> searched</s><s t="690" ac="218"> long</s><s t="990" ac="127"> and</s><s t="1200" ac="252"> hard</s><s t="1650" ac="252"> I</s><s t="1680" ac="252"> searched</s></p>
+<p t="1305310" d="3400" w="1" a="1">
+</p>
+<p t="1305320" d="5159" w="1"><s ac="248">exhaustively</s><s t="809" ac="207"> here&#39;s</s><s t="1620" ac="252"> my</s><s t="1769" ac="252"> argument</s><s t="2359" ac="133"> that</s><s t="3359" ac="252"> I</s></p>
+<p t="1308700" d="1779" w="1" a="1">
+</p>
+<p t="1308710" d="3420" w="1"><s ac="249">searched</s><s t="329" ac="252"> exhaustively</s><s t="929" ac="200"> and</s><s t="1230" ac="246"> I</s><s t="1559" ac="235"> couldn&#39;t</s></p>
+<p t="1310469" d="1661" w="1" a="1">
+</p>
+<p t="1310479" d="3321" w="1"><s ac="227">find</s><s t="180" ac="214"> it</s><s t="360" ac="231"> right</s><s t="930" ac="219"> if</s><s t="1440" ac="252"> you</s><s t="1471" ac="202"> do</s></p>
+<p t="1312120" d="1680" w="1" a="1">
+</p>
+<p t="1312130" d="4950" w="1"><s ac="252">that</s><s t="150" ac="252"> you</s><s t="300" ac="252"> get</s><s t="390" ac="202"> to</s><s t="510" ac="252"> keep</s><s t="630" ac="201"> your</s><s t="780" ac="252"> job</s><s t="1020" ac="202"> right</s></p>
+<p t="1313790" d="3290" w="1" a="1">
+</p>
+<p t="1313800" d="4750" w="1"><s ac="231">otherwise</s><s t="1140" ac="227"> there&#39;s</s><s t="2140" ac="252"> there&#39;s</s><s t="2380" ac="252"> always</s><s t="2500" ac="252"> the</s><s t="2800" ac="149"> the</s></p>
+<p t="1317070" d="1480" w="1" a="1">
+</p>
+<p t="1317080" d="5250" w="1"><s ac="237">case</s><s t="180" ac="200"> that</s><s t="420" ac="217"> you</s><s t="510" ac="252"> didn&#39;t</s><s t="720" ac="228"> search</s><s t="930" ac="252"> hard</s><s t="1230" ac="170"> enough</s></p>
+<p t="1318540" d="3790" w="1" a="1">
+</p>
+<p t="1318550" d="5340" w="1"><s ac="167">so</s><s t="300" ac="134"> it&#39;s</s><s t="750" ac="252"> nice</s><s t="900" ac="150"> to</s><s t="1050" ac="202"> have</s><s t="1170" ac="214"> that</s><s t="1350" ac="252"> argument</s><s t="2780" ac="219"> all</s></p>
+<p t="1322320" d="1570" w="1" a="1">
+</p>
+<p t="1322330" d="3180" w="1"><s ac="227">right</s><s t="210" ac="236"> great</s><s t="570" ac="247"> thanks</s><s t="930" ac="252"> for</s><s t="990" ac="216"> the</s><s t="1110" ac="252"> question</s></p>
+<p t="1323880" d="1630" w="1" a="1">
+</p>
+<p t="1323890" d="4050" w="1"><s ac="204">now</s><s t="240" ac="252"> feel</s><s t="450" ac="154"> free</s><s t="630" ac="252"> to</s><s t="660" ac="252"> interrupt</s><s t="1050" ac="212"> raise</s><s t="1440" ac="224"> your</s></p>
+<p t="1325500" d="2440" w="1" a="1">
+</p>
+<p t="1325510" d="3900" w="1"><s ac="252">hand</s><s t="210" ac="252"> and</s><s t="480" ac="230"> and</s><s t="690" ac="214"> I&#39;m</s><s t="1380" ac="218"> watching</s><s t="1920" ac="249"> you</s><s t="1980" ac="207"> guys</s><s t="2160" ac="168"> and</s></p>
+<p t="1327930" d="1480" w="1" a="1">
+</p>
+<p t="1327940" d="5070" w="1"><s ac="248">I&#39;m</s><s t="60" ac="249"> happy</s><s t="240" ac="252"> to</s><s t="330" ac="200"> answer</s><s t="540" ac="252"> questions</s><s t="690" ac="202"> at</s><s t="1230" ac="232"> any</s></p>
+<p t="1329400" d="3610" w="1" a="1">
+</p>
+<p t="1329410" d="5250" w="1"><s ac="233">time</s><s t="1190" ac="216"> so</s><s t="2190" ac="252"> let&#39;s</s><s t="2760" ac="252"> talk</s><s t="3240" ac="223"> about</s><s t="3300" ac="207"> the</s></p>
+<p t="1333000" d="1660" w="1" a="1">
+</p>
+<p t="1333010" d="3360" w="1"><s ac="185">straightforward</s><s t="480" ac="252"> algorithm</s><s t="650" ac="229"> the</s></p>
+<p t="1334650" d="1720" w="1" a="1">
+</p>
+<p t="1334660" d="4620" w="1"><s ac="216">straightforward</s><s t="540" ac="231"> algorithm</s><s t="780" ac="211"> is</s><s t="1170" ac="252"> something</s></p>
+<p t="1336360" d="2920" w="1" a="1">
+</p>
+<p t="1336370" d="6660" w="1"><s ac="206">that</s><s t="270" ac="252"> starts</s><s t="600" ac="252"> from</s><s t="690" ac="200"> the</s><s t="870" ac="124"> left</s><s t="1110" ac="216"> and</s><s t="1670" ac="237"> just</s><s t="2670" ac="252"> walks</s></p>
+<p t="1339270" d="3760" w="1" a="1">
+</p>
+<p t="1339280" d="6090" w="1"><s ac="252">across</s><s t="710" ac="217"> and</s><s t="1710" ac="225"> you</s><s t="2670" ac="252"> might</s><s t="2850" ac="225"> have</s><s t="3120" ac="252"> something</s><s t="3480" ac="201"> that</s></p>
+<p t="1343020" d="2350" w="1" a="1">
+</p>
+<p t="1343030" d="4560" w="1"><s ac="252">looks</s><s t="120" ac="212"> like</s><s t="240" ac="233"> that</s><s t="650" ac="207"> all</s><s t="1650" ac="221"> right</s><s t="1800" ac="236"> by</s><s t="2010" ac="217"> that</s><s t="2190" ac="252"> by</s></p>
+<p t="1345360" d="2230" w="1" a="1">
+</p>
+<p t="1345370" d="4770" w="1"><s ac="252">this</s><s t="60" ac="240"> I</s><s t="360" ac="98"> mean</s><s t="570" ac="216"> the</s><s t="1170" ac="252"> numbers</s><s t="1470" ac="252"> are</s><s t="1620" ac="133"> increasing</s></p>
+<p t="1347580" d="2560" w="1" a="1">
+</p>
+<p t="1347590" d="4770" w="1"><s ac="235">as</s><s t="150" ac="252"> you</s><s t="210" ac="187"> start</s><s t="840" ac="252"> from</s><s t="1020" ac="252"> the</s><s t="1140" ac="252"> left</s><s t="1320" ac="202"> the</s><s t="2070" ac="252"> peak</s><s t="2310" ac="240"> is</s></p>
+<p t="1350130" d="2230" w="1" a="1">
+</p>
+<p t="1350140" d="6630" w="1"><s ac="245">somewhere</s><s t="540" ac="251"> in</s><s t="690" ac="252"> the</s><s t="780" ac="252"> middle</s><s t="810" ac="129"> and</s><s t="1290" ac="252"> then</s><s t="1830" ac="252"> things</s></p>
+<p t="1352350" d="4420" w="1" a="1">
+</p>
+<p t="1352360" d="14640" w="1"><s ac="252">start</s><s t="270" ac="252"> decreasing</s><s t="660" ac="200"> right</s><s t="1620" ac="224"> so</s><s t="1980" ac="236"> I&#39;m</s><s t="3230" ac="249"> in</s><s t="4230" ac="252"> this</s></p>
+<p t="1356760" d="10240" w="1" a="1">
+</p>
+<p t="1356770" d="12960" w="1"><s ac="227">case</s><s t="500" ac="249"> you</s><s t="1500" ac="252"> know</s><s t="1620" ac="226"> this</s><s t="1800" ac="245"> might</s><s t="2070" ac="131"> be</s><s t="2250" ac="198"> the</s><s t="2370" ac="252"> peak</s><s t="9230" ac="240"> it</s></p>
+<p t="1366990" d="2740" w="1" a="1">
+</p>
+<p t="1367000" d="4350" w="1"><s ac="252">you</s><s t="270" ac="252"> also</s><s t="510" ac="252"> may</s><s t="750" ac="252"> have</s><s t="780" ac="135"> a</s><s t="960" ac="252"> situation</s><s t="1170" ac="206"> where</s><s t="1730" ac="251"> the</s></p>
+<p t="1369720" d="1630" w="1" a="1">
+</p>
+<p t="1369730" d="3840" w="1"><s ac="252">peak</s><s t="210" ac="252"> is</s><s t="360" ac="252"> all</s><s t="480" ac="252"> the</s><s t="600" ac="252"> way</s><s t="690" ac="208"> on</s><s t="810" ac="252"> the</s><s t="930" ac="252"> right</s><s t="960" ac="68"> you&#39;ll</s></p>
+<p t="1371340" d="2230" w="1" a="1">
+</p>
+<p t="1371350" d="3990" w="1"><s ac="250">start</s><s t="240" ac="250"> it</s><s t="330" ac="133"> from</s><s t="450" ac="166"> the</s><s t="540" ac="252"> left</s><s t="780" ac="217"> and</s><s t="1080" ac="246"> it&#39;s</s><s t="1920" ac="200"> one</s><s t="2070" ac="148"> two</s></p>
+<p t="1373560" d="1780" w="1" a="1">
+</p>
+<p t="1373570" d="3600" w="1"><s ac="200">three</s><s t="30" ac="143"> four</s><s t="420" ac="200"> five</s><s t="600" ac="200"> six</s><s t="840" ac="252"> literally</s><s t="1440" ac="252"> in</s><s t="1560" ac="227"> terms</s></p>
+<p t="1375330" d="1840" w="1" a="1">
+</p>
+<p t="1375340" d="5820" w="1"><s ac="252">of</s><s t="150" ac="252"> the</s><s t="210" ac="252"> numbers</s><s t="540" ac="240"> and</s><s t="750" ac="250"> you&#39;re</s><s t="1470" ac="207"> going</s><s t="1650" ac="188"> to</s><s t="1740" ac="252"> look</s></p>
+<p t="1377160" d="4000" w="1" a="1">
+</p>
+<p t="1377170" d="8010" w="1"><s ac="218">at</s><s t="210" ac="206"> n</s><s t="860" ac="230"> elements</s><s t="2480" ac="218"> going</s><s t="3480" ac="252"> all</s><s t="3630" ac="248"> the</s><s t="3720" ac="252"> way</s><s t="3750" ac="203"> to</s><s t="3870" ac="252"> the</s></p>
+<p t="1381150" d="4030" w="1" a="1">
+</p>
+<p t="1381160" d="8250" w="1"><s ac="221">right</s><s t="210" ac="226"> in</s><s t="1170" ac="232"> in</s><s t="1500" ac="241"> order</s><s t="1650" ac="212"> to</s><s t="1740" ac="201"> find</s><s t="2100" ac="67"> the</s><s t="2460" ac="235"> peak</s><s t="2750" ac="226"> so</s><s t="3750" ac="252"> in</s></p>
+<p t="1385170" d="4240" w="1" a="1">
+</p>
+<p t="1385180" d="9390" w="1"><s ac="252">the</s><s t="90" ac="252"> case</s><s t="210" ac="202"> of</s><s t="360" ac="252"> the</s><s t="420" ac="252"> middle</s><s t="1100" ac="221"> you&#39;d</s><s t="2100" ac="241"> look</s><s t="2340" ac="252"> at</s><s t="3230" ac="247"> n</s></p>
+<p t="1389400" d="5170" w="1" a="1">
+</p>
+<p t="1389410" d="10500" w="1"><s ac="252">over</s><s t="870" ac="223"> two</s><s t="1110" ac="252"> elements</s><s t="2960" ac="220"> if</s><s t="3960" ac="252"> it</s><s t="4710" ac="252"> was</s><s t="4830" ac="249"> right</s><s t="4980" ac="252"> in</s><s t="5100" ac="252"> the</s></p>
+<p t="1394560" d="5350" w="1" a="1">
+</p>
+<p t="1394570" d="15080" w="1"><s ac="167">middle</s><s t="1130" ac="234"> and</s><s t="3230" ac="252"> the</s><s t="4230" ac="248"> complexity</s><s t="4800" ac="248"> worst</s><s t="5040" ac="248"> case</s></p>
+<p t="1399900" d="9750" w="1" a="1">
+</p>
+<p t="1399910" d="13140" w="1"><s ac="252">complexity</s><s t="5480" ac="247"> is</s><s t="6480" ac="252"> what</s><s t="6750" ac="252"> we</s><s t="6870" ac="252"> call</s><s t="7080" ac="255"> theta</s><s t="7590" ac="227"> N</s><s t="7950" ac="247"> and</s></p>
+<p t="1409640" d="3410" w="1" a="1">
+</p>
+<p t="1409650" d="6190" w="1"><s ac="223">it&#39;s</s><s t="1000" ac="238"> theta</s><s t="1300" ac="252"> n</s><s t="1540" ac="216"> because</s><s t="2530" ac="247"> in</s><s t="2770" ac="252"> the</s><s t="2950" ac="252"> worst</s><s t="3100" ac="227"> case</s></p>
+<p t="1413040" d="2800" w="1" a="1">
+</p>
+<p t="1413050" d="4410" w="1"><s ac="255">you</s><s t="330" ac="203"> may</s><s t="780" ac="252"> have</s><s t="810" ac="127"> to</s><s t="1020" ac="145"> look</s><s t="1260" ac="252"> at</s><s t="1440" ac="238"> all</s><s t="1620" ac="237"> n</s><s t="2220" ac="252"> elements</s></p>
+<p t="1415830" d="1630" w="1" a="1">
+</p>
+<p t="1415840" d="3360" w="1"><s ac="236">and</s><s t="120" ac="229"> that</s><s t="810" ac="252"> would</s><s t="930" ac="252"> be</s><s t="1020" ac="252"> the</s><s t="1110" ac="252"> case</s><s t="1260" ac="238"> where</s><s t="1500" ac="202"> you</s></p>
+<p t="1417450" d="1750" w="1" a="1">
+</p>
+<p t="1417460" d="3840" w="1"><s ac="227">started</s><s t="330" ac="237"> from</s><s t="390" ac="200"> the</s><s t="570" ac="252"> left</s><s t="810" ac="237"> and</s><s t="1050" ac="222"> you</s><s t="1410" ac="252"> had</s><s t="1530" ac="237"> to</s><s t="1650" ac="252"> go</s></p>
+<p t="1419190" d="2110" w="1" a="1">
+</p>
+<p t="1419200" d="4680" w="1"><s ac="252">all</s><s t="210" ac="252"> the</s><s t="240" ac="150"> way</s><s t="360" ac="252"> to</s><s t="480" ac="252"> the</s><s t="630" ac="252"> right</s><s t="750" ac="241"> now</s><s t="1740" ac="207"> remember</s></p>
+<p t="1421290" d="2590" w="1" a="1">
+</p>
+<p t="1421300" d="5070" w="1"><s ac="239">theta</s><s t="240" ac="187"> M</s><s t="540" ac="224"> is</s><s t="1220" ac="235"> essentially</s><s t="2220" ac="252"> something</s><s t="2430" ac="201"> that</s></p>
+<p t="1423870" d="2500" w="1" a="1">
+</p>
+<p t="1423880" d="4730" w="1"><s ac="205">says</s><s t="300" ac="240"> of</s><s t="540" ac="252"> the</s><s t="1020" ac="245"> order</s><s t="1380" ac="252"> of</s><s t="1530" ac="252"> M</s><s t="1710" ac="238"> so</s><s t="2130" ac="252"> it</s><s t="2190" ac="247"> gives</s><s t="2370" ac="252"> you</s></p>
+<p t="1426360" d="2250" w="1" a="1">
+</p>
+<p t="1426370" d="5690" w="1"><s ac="237">both</s><s t="210" ac="249"> the</s><s t="390" ac="252"> lower</s><s t="570" ac="252"> bound</s><s t="900" ac="252"> and</s><s t="1110" ac="226"> an</s><s t="1410" ac="252"> upper</s><s t="1470" ac="252"> bound</s></p>
+<p t="1428600" d="3460" w="1" a="1">
+</p>
+<p t="1428610" d="5640" w="1"><s ac="226">Big</s><s t="1000" ac="244"> O</s><s t="1150" ac="252"> of</s><s t="1180" ac="86"> N</s><s t="1450" ac="252"> is</s><s t="1690" ac="150"> just</s><s t="2290" ac="244"> the</s><s t="2350" ac="186"> upper</s><s t="2560" ac="252"> bound</s><s t="2770" ac="205"> and</s></p>
+<p t="1432050" d="2200" w="1" a="1">
+</p>
+<p t="1432060" d="5070" w="1"><s ac="227">what</s><s t="1000" ac="252"> we&#39;re</s><s t="1150" ac="252"> saying</s><s t="1300" ac="243"> here</s><s t="1420" ac="159"> is</s><s t="1600" ac="205"> we&#39;re</s><s t="1930" ac="252"> saying</s></p>
+<p t="1434240" d="2890" w="1" a="1">
+</p>
+<p t="1434250" d="7690" w="1"><s ac="227">this</s><s t="1000" ac="223"> algorithm</s><s t="1450" ac="160"> that</s><s t="1630" ac="252"> starts</s><s t="1930" ac="252"> from</s><s t="2020" ac="200"> the</s><s t="2170" ac="252"> left</s></p>
+<p t="1437120" d="4820" w="1" a="1">
+</p>
+<p t="1437130" d="8320" w="1"><s ac="206">is</s><s t="1000" ac="181"> going</s><s t="1480" ac="208"> to</s><s t="1660" ac="247"> essentially</s><s t="3540" ac="236"> require</s><s t="4540" ac="252"> in</s><s t="4720" ac="252"> the</s></p>
+<p t="1441930" d="3520" w="1" a="1">
+</p>
+<p t="1441940" d="4040" w="1"><s ac="248">worst</s><s t="150" ac="248"> case</s><s t="950" ac="207"> something</s><s t="1950" ac="252"> that&#39;s</s><s t="2220" ac="247"> a</s><s t="2510" ac="252"> constant</s></p>
+<p t="1445440" d="540" w="1" a="1">
+</p>
+<p t="1445450" d="3630" w="1"><s ac="220">times</s><s t="270" ac="209"> a</s></p>
+<p t="1445970" d="3110" w="1" a="1">
+</p>
+<p t="1445980" d="5919" w="1"><s ac="206">okay</s><s t="1000" ac="208"> and</s><s t="1990" ac="252"> you</s><s t="2199" ac="244"> know</s><s t="2290" ac="236"> that</s><s t="2410" ac="252"> constant</s><s t="2829" ac="252"> could</s><s t="2949" ac="252"> be</s></p>
+<p t="1449070" d="2829" w="1" a="1">
+</p>
+<p t="1449080" d="5310" w="1"><s ac="242">could</s><s t="540" ac="147"> be</s><s t="660" ac="242"> one</s><s t="870" ac="201"> eye</s><s t="1140" ac="206"> you</s><s t="1800" ac="72"> could</s><s t="2430" ac="150"> certainly</s><s t="2550" ac="225"> set</s></p>
+<p t="1451889" d="2501" w="1" a="1">
+</p>
+<p t="1451899" d="4321" w="1"><s ac="252">things</s><s t="181" ac="252"> up</s><s t="270" ac="252"> that</s><s t="481" ac="252"> way</s><s t="530" ac="207"> or</s><s t="1530" ac="248"> if</s><s t="2071" ac="252"> you</s><s t="2250" ac="252"> had</s><s t="2461" ac="252"> a</s></p>
+<p t="1454380" d="1840" w="1" a="1">
+</p>
+<p t="1454390" d="3659" w="1"><s ac="227">different</s><s t="210" ac="212"> kind</s><s t="360" ac="149"> of</s><s t="539" ac="252"> algorithm</s><s t="930" ac="212"> maybe</s><s t="1649" ac="217"> you</s></p>
+<p t="1456210" d="1839" w="1" a="1">
+</p>
+<p t="1456220" d="5250" w="1"><s ac="252">could</s><s t="150" ac="252"> work</s><s t="300" ac="229"> on</s><s t="510" ac="210"> the</s><s t="660" ac="234"> on</s><s t="809" ac="252"> the</s><s t="1050" ac="207"> on</s><s t="1170" ac="252"> the</s><s t="1319" ac="252"> constant</s></p>
+<p t="1458039" d="3431" w="1" a="1">
+</p>
+<p t="1458049" d="6151" w="1"><s ac="238">but</s><s t="571" ac="250"> bottom</s><s t="1411" ac="136"> line</s><s t="1591" ac="226"> we</s><s t="2461" ac="207"> are</s><s t="2521" ac="207"> only</s><s t="2671" ac="216"> concerned</s><s t="3061" ac="236"> at</s></p>
+<p t="1461460" d="2740" w="1" a="1">
+</p>
+<p t="1461470" d="4920" w="1"><s ac="226">this</s><s t="270" ac="252"> moment</s><s t="449" ac="203"> about</s><s t="1160" ac="226"> asymptotic</s><s t="2160" ac="227"> complexity</s></p>
+<p t="1464190" d="2200" w="1" a="1">
+</p>
+<p t="1464200" d="5790" w="1"><s ac="252">and</s><s t="329" ac="252"> the</s><s t="959" ac="252"> asymptotic</s><s t="1469" ac="252"> complexity</s><s t="1829" ac="252"> of</s><s t="1979" ac="252"> this</s></p>
+<p t="1466380" d="3610" w="1" a="1">
+</p>
+<p t="1466390" d="11570" w="1"><s ac="252">algorithm</s><s t="300" ac="227"> is</s><s t="630" ac="252"> linear</s><s t="1669" ac="182"> all</s><s t="2669" ac="230"> right</s><s t="2820" ac="209"> that</s><s t="3419" ac="224"> makes</s></p>
+<p t="1469980" d="7980" w="1" a="1">
+</p>
+<p t="1469990" d="10439" w="1"><s ac="248">sense</s><s t="1280" ac="204"> okay</s><s t="2309" ac="252"> so</s><s t="5630" ac="249"> someone</s><s t="6630" ac="252"> help</s><s t="6809" ac="252"> me</s><s t="6929" ac="215"> do</s><s t="7559" ac="165"> better</s></p>
+<p t="1477950" d="2479" w="1" a="1">
+</p>
+<p t="1477960" d="5439" w="1"><s ac="218">how</s><s t="1000" ac="211"> can</s><s t="1150" ac="252"> we</s><s t="1240" ac="252"> do</s><s t="1360" ac="252"> better</s><s t="1390" ac="162"> how</s><s t="1930" ac="206"> can</s><s t="2079" ac="252"> we</s><s t="2199" ac="252"> lower</s></p>
+<p t="1480419" d="2980" w="1" a="1">
+</p>
+<p t="1480429" d="6961" w="1"><s ac="245">the</s><s t="811" ac="252"> asymptotic</s><s t="1441" ac="252"> complexity</s><s t="1951" ac="228"> of</s><s t="2250" ac="249"> a</s><s t="2791" ac="164"> one</s></p>
+<p t="1483389" d="4001" w="1" a="1">
+</p>
+<p t="1483399" d="7581" w="1"><s ac="109">dimensional</s><s t="541" ac="243"> peak</s><s t="811" ac="255"> finder</s><s t="2780" ac="221"> anybody</s><s t="3780" ac="252"> want</s><s t="3961" ac="252"> to</s></p>
+<p t="1487380" d="3600" w="1" a="1">
+</p>
+<p t="1487390" d="3590" w="1"><s ac="200">take</s><s t="120" ac="252"> a</s><s t="149" ac="252"> stab</s><s t="330" ac="214"> at</s><s t="480" ac="252"> that</s><s t="509" ac="205"> yeah</s><s t="1169" ac="252"> back</s><s t="1380" ac="252"> there</s></p>
+<p t="1508310" w="1" a="1">
+</p>
+<p t="1508320" d="5830" w="1"><s ac="252">excellent</s><s t="1000" ac="251"> excellent</s><s t="1330" ac="217"> that&#39;s</s><s t="1540" ac="238"> exactly</s><s t="1930" ac="252"> right</s></p>
+<p t="1510300" d="3850" w="1" a="1">
+</p>
+<p t="1510310" d="7070" w="1"><s ac="131">so</s><s t="330" ac="114"> you</s><s t="780" ac="252"> can</s><s t="1760" ac="233"> you</s><s t="2760" ac="187"> can</s><s t="2910" ac="252"> do</s><s t="3510" ac="252"> something</s></p>
+<p t="1514140" d="3240" w="1" a="1">
+</p>
+<p t="1514150" d="5790" w="1"><s ac="252">different</s><s t="150" ac="133"> which</s><s t="630" ac="186"> is</s><s t="1160" ac="252"> essentially</s><s t="2160" ac="252"> try</s><s t="2460" ac="252"> and</s></p>
+<p t="1517370" d="2570" w="1" a="1">
+</p>
+<p t="1517380" d="5200" w="1"><s ac="252">break</s><s t="1000" ac="252"> up</s><s t="1180" ac="252"> this</s><s t="1360" ac="252"> problem</s><s t="1630" ac="210"> use</s><s t="1990" ac="243"> a</s><s t="2020" ac="245"> divide</s><s t="2410" ac="245"> and</s></p>
+<p t="1519930" d="2650" w="1" a="1">
+</p>
+<p t="1519940" d="5160" w="1"><s ac="127">conquer</s><s t="420" ac="252"> strategy</s><s t="450" ac="228"> and</s><s t="1310" ac="236"> recursively</s><s t="2310" ac="249"> break</s></p>
+<p t="1522570" d="2530" w="1" a="1">
+</p>
+<p t="1522580" d="6360" w="1"><s ac="249">up</s><s t="180" ac="206"> this</s><s t="600" ac="124"> one-dimensional</s><s t="1170" ac="124"> array</s><s t="1860" ac="255"> into</s></p>
+<p t="1525090" d="3850" w="1" a="1">
+</p>
+<p t="1525100" d="7130" w="1"><s ac="252">smaller</s><s t="300" ac="252"> arrays</s><s t="750" ac="236"> and</s><s t="2150" ac="225"> and</s><s t="3150" ac="255"> try</s><s t="3420" ac="252"> and</s><s t="3540" ac="252"> get</s><s t="3690" ac="252"> this</s></p>
+<p t="1528930" d="3300" w="1" a="1">
+</p>
+<p t="1528940" d="3290" w="1"><s ac="234">complexity</s><s t="420" ac="252"> down</s><s t="660" ac="230"> yeah</s></p>
+<p t="1532700" w="1" a="1">
+</p>
+<p t="1532710" d="8170" w="1"><s ac="142">nobody</s><s t="1000" ac="221"> not</s><s t="1150" ac="252"> if</s><s t="2080" ac="252"> it&#39;s</s><s t="2730" ac="252"> fine</s><s t="3730" ac="0"> a</s><s t="4320" ac="167"> peak</s><s t="5320" ac="236"> if</s><s t="5560" ac="252"> it</s></p>
+<p t="1538860" d="2020" w="1" a="1">
+</p>
+<p t="1538870" d="3990" w="1"><s ac="252">exists</s><s t="480" ac="216"> and</s><s t="570" ac="200"> in</s><s t="720" ac="252"> this</s><s t="810" ac="237"> case</s><s t="1050" ac="252"> it&#39;s</s><s t="1290" ac="252"> fine</s><s t="1560" ac="135"> Oh</s><s t="1770" ac="135"> P</s></p>
+<p t="1540870" d="1990" w="1" a="1">
+</p>
+<p t="1540880" d="5100" w="1"><s ac="207">because</s><s t="570" ac="252"> of</s><s t="720" ac="252"> the</s><s t="810" ac="252"> definition</s><s t="1080" ac="145"> we</s><s t="1800" ac="252"> don&#39;t</s></p>
+<p t="1542850" d="3130" w="1" a="1">
+</p>
+<p t="1542860" d="6900" w="1"><s ac="200">really</s><s t="180" ac="252"> need</s><s t="330" ac="252"> this</s><s t="570" ac="219"> as</s><s t="1010" ac="249"> it</s><s t="2010" ac="245"> was</s><s t="2130" ac="252"> discussed</s><s t="2490" ac="213"> all</s></p>
+<p t="1545970" d="3790" w="1" a="1">
+</p>
+<p t="1545980" d="8070" w="1"><s ac="218">right</s><s t="150" ac="160"> okay</s><s t="900" ac="206"> so</s><s t="2210" ac="236"> so</s><s t="3210" ac="205"> that</s><s t="3330" ac="238"> was</s><s t="3390" ac="170"> a</s><s t="3450" ac="229"> great</s><s t="3570" ac="215"> answer</s></p>
+<p t="1549750" d="4300" w="1" a="1">
+</p>
+<p t="1549760" d="6420" w="1"><s ac="203">and</s><s t="1040" ac="234"> you</s><s t="2040" ac="252"> know</s><s t="2160" ac="233"> this</s><s t="2610" ac="223"> class</s><s t="3110" ac="201"> after</s><s t="4110" ac="252"> a</s><s t="4140" ac="252"> while</s></p>
+<p t="1554040" d="2140" w="1" a="1">
+</p>
+<p t="1554050" d="4560" w="1"><s ac="252">it&#39;s</s><s t="210" ac="252"> gonna</s><s t="300" ac="252"> get</s><s t="450" ac="225"> boring</s><s t="630" ac="205"> right</s><s t="990" ac="200"> every</s><s t="1920" ac="252"> class</s></p>
+<p t="1556170" d="2440" w="1" a="1">
+</p>
+<p t="1556180" d="5400" w="1"><s ac="252">gets</s><s t="240" ac="252"> boring</s><s t="620" ac="206"> so</s><s t="1620" ac="211"> if</s><s t="1680" ac="229"> you</s><s t="1740" ac="248"> you</s><s t="2010" ac="252"> know</s><s t="2100" ac="217"> try</s><s t="2310" ac="204"> and</s></p>
+<p t="1558600" d="2980" w="1" a="1">
+</p>
+<p t="1558610" d="4350" w="1"><s ac="252">break</s><s t="210" ac="252"> the</s><s t="420" ac="252"> monotony</s><s t="690" ac="248"> here</s><s t="1200" ac="252"> a</s><s t="1230" ac="252"> bit</s><s t="1500" ac="202"> and</s><s t="2310" ac="252"> so</s><s t="2640" ac="249"> and</s></p>
+<p t="1561570" d="1390" w="1" a="1">
+</p>
+<p t="1561580" d="3150" w="1"><s ac="226">the</s><s t="330" ac="89"> other</s><s t="450" ac="183"> thing</s><s t="660" ac="252"> that</s><s t="690" ac="220"> we</s><s t="870" ac="252"> realized</s><s t="1170" ac="252"> was</s></p>
+<p t="1562950" d="1780" w="1" a="1">
+</p>
+<p t="1562960" d="3300" w="1"><s ac="252">that</s><s t="30" ac="202"> these</s><s t="330" ac="241"> seats</s><s t="990" ac="242"> you&#39;re</s><s t="1200" ac="245"> sitting</s><s t="1470" ac="252"> on</s><s t="1560" ac="223"> this</s></p>
+<p t="1564720" d="1540" w="1" a="1">
+</p>
+<p t="1564730" d="3630" w="1"><s ac="216">is</s><s t="90" ac="252"> a</s><s t="150" ac="220"> nice</s><s t="300" ac="188"> classroom</s><s t="900" ac="252"> but</s><s t="1080" ac="225"> the</s><s t="1170" ac="252"> seats</s><s t="1380" ac="255"> you&#39;re</s></p>
+<p t="1566250" d="2110" w="1" a="1">
+</p>
+<p t="1566260" d="4830" w="1"><s ac="252">sitting</s><s t="300" ac="252"> on</s><s t="390" ac="227"> are</s><s t="570" ac="252"> kind</s><s t="750" ac="252"> of</s><s t="780" ac="211"> hard</s><s t="990" ac="206"> right</s><s t="1830" ac="252"> so</s></p>
+<p t="1568350" d="2740" w="1" a="1">
+</p>
+<p t="1568360" d="4140" w="1"><s ac="245">what</s><s t="480" ac="231"> Eric</s><s t="750" ac="252"> and</s><s t="840" ac="175"> I</s><s t="960" ac="252"> did</s><s t="1170" ac="248"> was</s><s t="1410" ac="202"> we</s><s t="2250" ac="200"> decided</s><s t="2460" ac="201"> we&#39;ll</s></p>
+<p t="1571080" d="1420" w="1" a="1">
+</p>
+<p t="1571090" d="5640" w="1"><s ac="252">help</s><s t="150" ac="248"> you</s><s t="270" ac="252"> guys</s><s t="450" ac="252"> out</s><s t="630" ac="216"> especially</s><s t="870" ac="134"> the</s><s t="1230" ac="252"> ones</s></p>
+<p t="1572490" d="4240" w="1" a="1">
+</p>
+<p t="1572500" d="8790" w="1"><s ac="217">who</s><s t="120" ac="229"> are</s><s t="980" ac="202"> Minh</s><s t="1980" ac="252"> tracting</s><s t="2700" ac="252"> with</s><s t="2820" ac="252"> us</s><s t="2970" ac="233"> and</s><s t="3230" ac="255"> we</s></p>
+<p t="1576720" d="4570" w="1" a="1">
+</p>
+<p t="1576730" d="6390" w="1"><s ac="252">have</s><s t="240" ac="252"> these</s><s t="1490" ac="229"> cushions</s><s t="2490" ac="252"> that</s><s t="3420" ac="250"> are</s><s t="3780" ac="215"> six</s><s t="4290" ac="252"> double</s></p>
+<p t="1581280" d="1840" w="1" a="1">
+</p>
+<p t="1581290" d="3450" w="1"><s ac="252">O</s><s t="60" ac="252"> six</s><s t="360" ac="245"> cushions</s><s t="960" ac="226"> and</s><s t="1260" ac="252"> you</s><s t="1380" ac="252"> know</s><s t="1470" ac="252"> that&#39;s</s><s t="1620" ac="252"> a</s><s t="1710" ac="227"> two</s></p>
+<p t="1583110" d="1630" w="1" a="1">
+</p>
+<p t="1583120" d="3960" w="1"><s ac="241">by</s><s t="120" ac="201"> two</s><s t="180" ac="241"> by</s><s t="450" ac="227"> two</s><s t="510" ac="187"> Rubik&#39;s</s><s t="930" ac="133"> Cube</s><s t="1170" ac="252"> here</s><s t="1410" ac="208"> and</s></p>
+<p t="1584730" d="2350" w="1" a="1">
+</p>
+<p t="1584740" d="4440" w="1"><s ac="248">since</s><s t="960" ac="252"> you</s><s t="1110" ac="252"> answered</s><s t="1380" ac="201"> the</s><s t="1680" ac="252"> first</s><s t="2160" ac="252"> question</s></p>
+<p t="1587070" d="2110" w="1" a="1">
+</p>
+<p t="1587080" d="5040" w="1"><s ac="215">you</s><s t="390" ac="201"> get</s><s t="510" ac="252"> a</s><s t="540" ac="252"> cushion</s><s t="750" ac="157"> this</s><s t="1410" ac="252"> is</s><s t="1560" ac="252"> kind</s><s t="1830" ac="252"> of</s><s t="1890" ac="237"> like</s><s t="2040" ac="139"> a</s></p>
+<p t="1589170" d="2950" w="1" a="1">
+</p>
+<p t="1589180" d="5250" w="1"><s ac="226">frisbee</s><s t="300" ac="145"> but</s><s t="810" ac="207"> not</s><s t="990" ac="249"> really</s><s t="1260" ac="207"> yeah</s><s t="1920" ac="248"> so</s><s t="2520" ac="241"> I&#39;m</s><s t="2880" ac="252"> not</s></p>
+<p t="1592110" d="2320" w="1" a="1">
+</p>
+<p t="1592120" d="4140" w="1"><s ac="137">sure</s><s t="290" ac="217"> I&#39;m</s><s t="1290" ac="252"> not</s><s t="1320" ac="197"> sure</s><s t="1500" ac="252"> I&#39;m</s><s t="1680" ac="168"> gonna</s><s t="1890" ac="217"> get</s><s t="2100" ac="252"> it</s><s t="2190" ac="252"> to</s></p>
+<p t="1594420" d="1840" w="1" a="1">
+</p>
+<p t="1594430" d="3990" w="1"><s ac="216">you</s><s t="90" ac="252"> but</s><s t="870" ac="245"> I</s><s t="900" ac="252"> don&#39;t</s><s t="1050" ac="216"> thing</s><s t="1230" ac="245"> I</s><s t="1290" ac="252"> want</s><s t="1440" ac="255"> to</s><s t="1500" ac="252"> say</s><s t="1650" ac="252"> is</s></p>
+<p t="1596250" d="2170" w="1" a="1">
+</p>
+<p t="1596260" d="3990" w="1"><s ac="252">this</s><s t="240" ac="252"> is</s><s t="300" ac="110"> not</s><s t="420" ac="135"> a</s><s t="570" ac="252"> baseball</s><s t="810" ac="203"> game</s><s t="1200" ac="201"> right</s><s t="1860" ac="242"> where</s></p>
+<p t="1598410" d="1840" w="1" a="1">
+</p>
+<p t="1598420" d="4080" w="1"><s ac="251">you</s><s t="480" ac="252"> just</s><s t="660" ac="225"> grab</s><s t="870" ac="176"> the</s><s t="1080" ac="252"> balls</s><s t="1290" ac="216"> that</s><s t="1530" ac="209"> come</s><s t="1680" ac="252"> by</s></p>
+<p t="1600240" d="2260" w="1" a="1">
+</p>
+<p t="1600250" d="5090" w="1"><s ac="230">this</s><s t="330" ac="252"> is</s><s t="480" ac="252"> meant</s><s t="660" ac="175"> for</s><s t="900" ac="252"> him</s><s t="1080" ac="217"> my</s><s t="1410" ac="252"> friend</s><s t="2070" ac="243"> and</s></p>
+<p t="1602490" d="2850" w="1" a="1">
+</p>
+<p t="1602500" d="4200" w="1"><s ac="227">there</s><s t="90" ac="252"> in</s><s t="270" ac="252"> the</s><s t="360" ac="255"> red</s><s t="510" ac="252"> shirt</s><s t="540" ac="124"> so</s><s t="1320" ac="252"> here</s><s t="1470" ac="252"> you</s><s t="1530" ac="231"> go</s><s t="1650" ac="204"> ah</s></p>
+<p t="1605330" d="1370" w="1" a="1">
+</p>
+<p t="1605340" d="3940" w="1"><s ac="242">too</s><s t="1000" ac="252"> bad</s></p>
+<p t="1606690" d="2590" w="1" a="1">
+</p>
+<p t="1606700" d="5460" w="1"><s ac="63">alright</s><s t="390" ac="216"> it</s><s t="1230" ac="236"> is</s><s t="1350" ac="252"> soft</s><s t="1680" ac="200"> so</s><s t="2070" ac="252"> you</s><s t="2130" ac="252"> know</s><s t="2370" ac="252"> it</s><s t="2460" ac="252"> won&#39;t</s></p>
+<p t="1609270" d="2890" w="1" a="1">
+</p>
+<p t="1609280" d="5810" w="1"><s ac="239">it</s><s t="690" ac="252"> won&#39;t</s><s t="900" ac="252"> hurt</s><s t="1110" ac="226"> you</s><s t="1320" ac="177"> if</s><s t="1410" ac="252"> it</s><s t="1500" ac="252"> hits</s><s t="1680" ac="252"> you</s><s t="1880" ac="0"> alright</s></p>
+<p t="1612150" d="2940" w="1" a="1">
+</p>
+<p t="1612160" d="5370" w="1"><s ac="205">so</s><s t="540" ac="252"> if</s><s t="600" ac="252"> you</s><s t="630" ac="167"> got</s><s t="750" ac="252"> a</s><s t="780" ac="227"> bunch</s><s t="1020" ac="252"> of</s><s t="1110" ac="248"> these</s><s t="1280" ac="201"> and</s><s t="2280" ac="236"> I</s></p>
+<p t="1615080" d="2450" w="1" a="1">
+</p>
+<p t="1615090" d="6130" w="1"><s ac="231">raise</s><s t="1000" ac="255"> your</s><s t="1240" ac="252"> hands</s><s t="1750" ac="232"> you</s><s t="1960" ac="216"> know</s><s t="2050" ac="252"> when</s><s t="2170" ac="252"> I</s><s t="2200" ac="226"> ask</s></p>
+<p t="1617520" d="3700" w="1" a="1">
+</p>
+<p t="1617530" d="4890" w="1"><s ac="227">there&#39;s</s><s t="750" ac="154"> going</s><s t="900" ac="154"> to</s><s t="960" ac="248"> be</s><s t="1020" ac="224"> yeah</s><s t="1770" ac="236"> I</s><s t="2190" ac="252"> think</s><s t="2790" ac="226"> there&#39;s</s></p>
+<p t="1621210" d="1210" w="1" a="1">
+</p>
+<p t="1621220" d="4290" w="1"><s ac="207">some</s><s t="150" ac="252"> trivial</s><s t="510" ac="252"> questions</s><s t="900" ac="252"> that</s><s t="1020" ac="252"> we&#39;re</s><s t="1110" ac="252"> going</s></p>
+<p t="1622410" d="3100" w="1" a="1">
+</p>
+<p t="1622420" d="4650" w="1"><s ac="201">to</s><s t="90" ac="205"> ask</s><s t="300" ac="206"> just</s><s t="720" ac="252"> to</s><s t="810" ac="241"> make</s><s t="930" ac="252"> sure</s><s t="960" ac="81"> you</s><s t="1260" ac="160"> wait</s><s t="1910" ac="180"> so</s><s t="2910" ac="252"> an</s></p>
+<p t="1625500" d="1570" w="1" a="1">
+</p>
+<p t="1625510" d="4560" w="1"><s ac="207">answer</s><s t="300" ac="248"> to</s><s t="420" ac="252"> that</s><s t="450" ac="202"> doesn&#39;t</s><s t="1080" ac="219"> get</s><s t="1170" ac="252"> you</s><s t="1290" ac="252"> a</s><s t="1320" ac="252"> cushion</s></p>
+<p t="1627060" d="3010" w="1" a="1">
+</p>
+<p t="1627070" d="6990" w="1"><s ac="205">but</s><s t="840" ac="251"> you</s><s t="1500" ac="252"> know</s><s t="1620" ac="252"> an</s><s t="1680" ac="146"> answer</s><s t="1950" ac="252"> like</s><s t="2100" ac="224"> what&#39;s</s><s t="2940" ac="216"> the</s></p>
+<p t="1630060" d="4000" w="1" a="1">
+</p>
+<p t="1630070" d="6700" w="1"><s ac="236">name</s><s t="320" ac="67"> Jase</s><s t="1320" ac="246"> answer</s><s t="2220" ac="252"> like</s><s t="2370" ac="255"> Jase</s><s t="2580" ac="251"> just</s><s t="2850" ac="252"> gave</s><s t="3090" ac="240"> is</s></p>
+<p t="1634050" d="2720" w="1" a="1">
+</p>
+<p t="1634060" d="4660" w="1"><s ac="118">a</s><s t="570" ac="216"> that&#39;s</s><s t="1290" ac="202"> a</s><s t="1410" ac="215"> good</s><s t="1530" ac="243"> answer</s><s t="1680" ac="152"> to</s><s t="2010" ac="227"> non-trivial</s></p>
+<p t="1636760" d="1960" w="1" a="1">
+</p>
+<p t="1636770" d="6060" w="1"><s ac="252">shouldn&#39;t</s><s t="300" ac="173"> that</s><s t="480" ac="252"> gets</s><s t="660" ac="252"> you</s><s t="780" ac="252"> a</s><s t="810" ac="252"> cushion</s><s t="1020" ac="216"> okay</s></p>
+<p t="1638710" d="4120" w="1" a="1">
+</p>
+<p t="1638720" d="6270" w="1"><s ac="227">all</s><s t="630" ac="217"> right</s><s t="840" ac="252"> great</s><s t="1020" ac="83"> so</s><s t="1730" ac="187"> let&#39;s</s><s t="2730" ac="252"> put</s><s t="3300" ac="201"> up</s><s t="3450" ac="143"> Jace&#39;s</s></p>
+<p t="1642820" d="2170" w="1" a="1">
+</p>
+<p t="1642830" d="19170" w="1"><s ac="177">algorithm</s><s t="480" ac="242"> up</s><s t="600" ac="252"> here</s><s t="840" ac="201"> I&#39;m</s><s t="1260" ac="224"> gonna</s><s t="1680" ac="252"> write</s><s t="1890" ac="252"> it</s><s t="1920" ac="203"> out</s></p>
+<p t="1644980" d="17020" w="1" a="1">
+</p>
+<p t="1644990" d="38820" w="1"><s ac="252">for</s><s t="240" ac="129"> the</s><s t="900" ac="252"> 1d</s><s t="1230" ac="252"> version</s><s t="15560" ac="248"> so</s><s t="16560" ac="252"> what</s><s t="16710" ac="252"> we</s><s t="16830" ac="252"> have</s><s t="16980" ac="252"> here</s></p>
+<p t="1661990" d="21820" w="1" a="1">
+</p>
+<p t="1662000" d="23100" w="1"><s ac="141">is</s><s t="450" ac="252"> a</s><s t="1910" ac="232"> recursive</s><s t="2910" ac="252"> algorithm</s><s t="20420" ac="238"> so</s><s t="21420" ac="231"> the</s><s t="21540" ac="252"> picture</s></p>
+<p t="1683800" d="1300" w="1" a="1">
+</p>
+<p t="1683810" d="3960" w="1"><s ac="226">you</s><s t="90" ac="252"> want</s><s t="180" ac="203"> to</s><s t="300" ac="217"> keep</s><s t="420" ac="252"> in</s><s t="570" ac="252"> your</s><s t="600" ac="188"> head</s><s t="840" ac="237"> is</s><s t="1080" ac="215"> this</s></p>
+<p t="1685090" d="2680" w="1" a="1">
+</p>
+<p t="1685100" d="6000" w="1"><s ac="204">picture</s><s t="300" ac="228"> that</s><s t="480" ac="67"> I&#39;ve</s><s t="600" ac="226"> put</s><s t="840" ac="216"> up</s><s t="960" ac="202"> there</s><s t="1200" ac="224"> and</s><s t="1670" ac="243"> this</s></p>
+<p t="1687760" d="3340" w="1" a="1">
+</p>
+<p t="1687770" d="5280" w="1"><s ac="207">is</s><s t="210" ac="252"> a</s><s t="260" ac="94"> divide-and-conquer</s><s t="1260" ac="215"> algorithm</s><s t="2330" ac="215"> you&#39;re</s></p>
+<p t="1691090" d="1960" w="1" a="1">
+</p>
+</body></timedtext>

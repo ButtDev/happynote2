@@ -7,7 +7,7 @@ import type {
   UnlockStep,
 } from "../types/transcript";
 import { attachWordStarts } from "../utils/karaoke.ts";
-import { mergeShortSentences, rebalanceTimedChunks } from "./segmentBalance.ts";
+import { cutScore, mergeShortSentences, rebalanceTimedChunks, splitLongPlainSentence } from "./segmentBalance.ts";
 
 export interface TranscriptProcessOptions {
   speedSpikeWpmThreshold: number;
@@ -480,7 +480,7 @@ export function mergeCuesIntoSegments(
       const clauseCutBefore =
         hasSentencePunctuation &&
         currentWords >= 6 &&
-        currentWords + nextWords > PUNCT_SOFT_MAX_WORDS &&
+        (currentWords + nextWords > PUNCT_SOFT_MAX_WORDS || cueEnd - bufferStart > PUNCT_SOFT_MAX_SEC) && // SPEC_049: or a long card in time
         /(?:[,;:]|--|—)["'”’]?$/.test(lastText);
 
       if (
@@ -516,8 +516,26 @@ export function mergeCuesIntoSegments(
     flushBuffer();
   }
 
+  // SPEC_049: a long sentence without commas is cut before a clause word ("… because …"), times by characters.
+  const clauseSplit: Array<TranscriptSegment | { start: number; end: number; text: string }> = [];
+  for (const seg of merged) {
+    const stack: Array<{ start: number; end: number; text: string }> = [seg];
+    let changed = false;
+    while (stack.length > 0) {
+      const cur = stack.shift()!;
+      const parts = hasSentencePunctuation ? splitLongPlainSentence(cur.text, PUNCT_PLAIN_MAX_WORDS, PUNCT_PLAIN_MIN_SIDE) : null;
+      if (!parts) {
+        clauseSplit.push(changed ? { start: cur.start, end: cur.end, text: cur.text } : seg);
+        continue;
+      }
+      changed = true;
+      const at = cur.start + ((cur.end - cur.start) * parts[0].length) / (parts[0].length + parts[1].length);
+      stack.unshift({ start: cur.start, end: at, text: parts[0] }, { start: at, end: cur.end, text: parts[1] });
+    }
+  }
+
   // SPEC_048: fold too-short sentences ("Good morning.", "Isn't it?") and letter-less leftovers into a neighbor.
-  const balanced = mergeShortSentences(merged, {
+  const balanced = mergeShortSentences(clauseSplit, {
     shortWords: SHORT_SENTENCE_WORDS,
     maxWords: SHORT_MERGE_MAX_WORDS,
     maxGap: SHORT_MERGE_MAX_GAP_SEC,
@@ -538,6 +556,11 @@ export const PUNCT_MAX_WORDS = 28;
 export const PUNCT_CLAUSE_MIN_WORDS = 16;
 export const PUNCT_SOFT_MAX_WORDS = 20;
 export const SHORT_SENTENCE_WORDS = 3;
+/** SPEC_049: a punctuated card longer than this with no comma is cut before a clause word, each side >= MIN_SIDE. */
+export const PUNCT_PLAIN_MAX_WORDS = 25;
+export const PUNCT_PLAIN_MIN_SIDE = 6;
+/** SPEC_049: a punctuated card that would last longer than this (seconds) is cut at a clause mark, like PUNCT_SOFT_MAX_WORDS. */
+export const PUNCT_SOFT_MAX_SEC = 10;
 export const SHORT_MERGE_MAX_WORDS = 16;
 export const SHORT_MERGE_MAX_GAP_SEC = 0.6;
 
@@ -661,7 +684,7 @@ export function mergeTimedWords(
       let splitAt = buf.length - 1;
       let best = -Infinity;
       for (let j = ASR_SPLIT_MIN_INDEX; j <= buf.length - 2; j++) {
-        const p = pauseAfter(buf[j]);
+        const p = cutScore(words, buf[j]); // SPEC_049: pause − bad-cut penalty + clause bonus
         if (p >= best) {
           best = p;
           splitAt = j;
