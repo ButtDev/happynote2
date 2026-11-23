@@ -700,6 +700,87 @@
      }
     ]
    }
+  },
+  {
+   "name": "groq 400 json_validate_failed, failed_generation is valid JSON -> salvage items",
+   "provider": "openai",
+   "status": 400,
+   "json": {
+    "error": {
+     "message": "Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.",
+     "type": "invalid_request_error",
+     "code": "json_validate_failed",
+     "failed_generation": "{\"summaryKr\": \"요약\", \"keyListeningPoints\": [\"연음\"], \"items\": [{\"segmentIndex\": 7, \"traps\": [\"LINKING\", \"WEAK_FORM\"], \"phoneticKr\": \"looking forward to -> [루킹포워러]\", \"trapExplanation\": \"to가 약하게 '러'처럼 들립니다.\", \"skeletonWordIndices\": [1, 2, 3], \"dictationBlankIndices\": [3, 4], \"rhythmGuide\": \"I'm **LOOKING** **FORWARD** to it\", \"translationKr\": \"정말 기대돼요.\"}]}"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "items": [
+     {
+      "segmentIndex": 7,
+      "traps": [
+       "LINKING",
+       "WEAK_FORM"
+      ],
+      "skeletonWordIndices": [
+       1,
+       2,
+       3
+      ],
+      "dictationBlankIndices": [
+       3,
+       4
+      ],
+      "translationKr": "정말 기대돼요."
+     }
+    ]
+   }
+  },
+  {
+   "name": "groq 400 json_validate_failed, broken failed_generation -> format (retry), not network",
+   "provider": "openai",
+   "status": 400,
+   "json": {
+    "error": {
+     "message": "Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.",
+     "type": "invalid_request_error",
+     "code": "json_validate_failed",
+     "failed_generation": "{\"items\": [{\"segmentIndex\": 7, \"translationKr\": \"정말"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "name": "400 other -> network",
+   "provider": "openai",
+   "status": 400,
+   "json": {
+    "error": {
+     "message": "model not found"
+    }
+   },
+   "segments": [
+    {
+     "index": 7,
+     "text": "I'm looking forward to it"
+    }
+   ],
+   "expect": {
+    "error": "network"
+   }
   }
  ],
  "runs": [

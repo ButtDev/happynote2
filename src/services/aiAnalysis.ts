@@ -264,12 +264,32 @@ export function parseAiResponse(
   segments: TranscriptSegment[]
 ): { items: AiItem[] } | { error: AiError } {
   const detail = errorMessage(json);
+  // Groq json_object 모드: 모델 출력이 JSON 검사에 걸리면 HTTP 400 json_validate_failed +
+  // error.failed_generation(모델 원문). 네트워크 오류가 아니라 형식 오류 — 원문을 살려 보고, 안 되면 format(한 번 재시도).
+  const failed = jsonValidateFailure(json);
+  if (failed !== null) {
+    const salvaged = failed ? parseItemsText(failed, segments) : null;
+    return salvaged && "items" in salvaged ? salvaged : { error: { kind: "format", message: detail || "json_validate_failed" } };
+  }
   if (status === 401 || status === 403) return { error: { kind: "auth", message: detail || `HTTP ${status}` } };
   if (status === 429) return { error: { kind: "quota", message: detail || "HTTP 429" } };
   if (BUSY_STATUSES.includes(status)) return { error: { kind: "busy", message: detail || `HTTP ${status}` } };
   if (status !== 200) return { error: { kind: "network", message: detail || `HTTP ${status}` } };
   const text = responseText(provider, json);
   if (text === null || !text.trim()) return { error: { kind: "format", message: "empty AI response" } };
+  return parseItemsText(text, segments);
+}
+
+/** Groq 400 json_validate_failed면 failed_generation 문자열(없으면 ""), 아니면 null. */
+function jsonValidateFailure(json: unknown): string | null {
+  const e = (json as { error?: { code?: unknown; message?: unknown; failed_generation?: unknown } } | null)?.error;
+  if (!e || typeof e !== "object") return null;
+  const hit = e.code === "json_validate_failed" || (typeof e.message === "string" && e.message.includes("failed_generation"));
+  if (!hit) return null;
+  return typeof e.failed_generation === "string" ? e.failed_generation : "";
+}
+
+function parseItemsText(text: string, segments: TranscriptSegment[]): { items: AiItem[] } | { error: AiError } {
   let parsed: unknown;
   try {
     parsed = JSON.parse(stripFence(text));
