@@ -145,3 +145,4 @@
 {"ts":"2026-11-23T13:40:13.082Z","cmd":"/spec-new","spec":"SPEC_046","result":"READY","questions":0}
 {"ts":"2026-11-23T13:40:13.126Z","cmd":"/spec-new","spec":"SPEC_047","result":"READY","questions":0}
 {"ts":"2026-11-23T14:08:46.078Z","cmd":"/spec-new+/spec-run","spec":"SPEC_048","result":"IMPLEMENTED","questions":0,"evidence":"Test 31 PASS, mutation fails on old code, regression ok"}
+{"ts":"2026-11-23T14:12:44.548Z","cmd":"/spec-new","spec":"SPEC_049","result":"READY","questions":0,"note":"야간"}
