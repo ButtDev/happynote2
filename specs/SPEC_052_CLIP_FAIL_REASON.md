@@ -1,7 +1,7 @@
 ---
 id: SPEC_052
 title: 원음 실패 이유 알리기 — 앞 1분만 허락하는 영상은 정확히 안내하고 「다시」 없애기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_036, SPEC_042]
@@ -50,7 +50,7 @@ export type ClipOutcome = { data: string } | { data: null; reason: ClipFailReaso
 5. [x] 실제 영상: vOpPMqxLUHg 3~7초 성공, 100초·300초 `limited`; Rick(dQw4w9WgXcQ) 100초 성공 [자동: `.scratch/ytrun/clip.ts` 출력]
 6. [x] 변이(재시도 끔·limited를 network로) 실패 [자동]
 7. [x] 회귀 통과 [자동]
-8. [ ] Android BRAT 업데이트 뒤 vOpPMqxLUHg 영상에서 2분 뒤 핀 문장 「➕ Anki」 → 「앞부분 1분 정도만」 알림이 「다시」 없이 뜨는지 보고 버튼 [수동]
+8. [x] Android BRAT 업데이트 뒤 vOpPMqxLUHg 영상에서 2분 뒤 핀 문장 「➕ Anki」 → 「앞부분 1분 정도만」 알림이 「다시」 없이 뜨는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1·2·6: `npm test` Test 23(+ `EAR_COACH_AUDIOCLIP_MODULE` 변이 사본). 3·4: `runUiCheck.mjs`. 5: `node --experimental-strip-types .scratch/ytrun/clip.ts <id>`. 7: `verify.mjs --set regression`.
@@ -61,3 +61,4 @@ export type ClipOutcome = { data: string } | { data: null; reason: ClipFailReaso
 
 ## 실행 기록
 - 2026-11-24 회차 1: IMPLEMENTED — 1 ✅ Test 23 「clipper order+cache」 PASS · 2 ✅ Test 23 「7 failure reasons」 PASS(limited·URL 만료 뒤 성공·network·blocked×2·오프라인·decode) · 3 ✅ 화면 검사 sentenceAnki.limited ok(세로·가로, notice 문구 그대로, buttons []) · 4 ✅ sentenceAnki.noAudio·retry ok(「다시」) · 5 ✅ `.scratch/ytrun/clip.ts`: vOpPMqxLUHg 3-7 ok / 100-106 FAIL limited / 300-305 FAIL limited (조각 403 → 새 player·머리 200 → 조각 403), dQw4w9WgXcQ 3-7·100-106 ok (300은 영상 길이 밖 blocked) · 6 ✅ 변이: 재시도 끔 → 「요청 순서」, limited→network → 「이유」 실패, 화면 변이(limited 문구→noAudio) → sentenceAnki.limited failed(buttons ["다시"]) · 7 ✅ `verify.mjs --set regression` harness·build·test·ui 모두 ok · 8 ⏳ (BRAT 1.0.61 릴리스 3파일 확인)
+- 2026-11-24 사람 확인: 8 OK (`[Button pressed: SPEC_052 8 OK]`, log/confirmations.jsonl) → DONE.
