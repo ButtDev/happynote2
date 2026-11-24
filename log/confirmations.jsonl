@@ -260,3 +260,5 @@
 {"ts":"2026-11-24T13:58:05.466Z","spec":"SPEC_053","item":5,"result":"NG","raw":"[Button pressed: SPEC_053 5 NG] + 사진(공유 메뉴에 Choose a file…/Today's daily note만, Ear-Coach 줄 없음) 「파일지정 필요해서 불편함」"}
 {"ts":"2026-11-24T13:59:35.188Z","spec":"SPEC_053","item":5,"result":"NG","raw":"[Button pressed: SPEC_053 5 NG] 잘시간이니, 심야작업 뽑아서 리스트에 넣고 밤에 진행하도록해"}
 {"ts":"2026-11-24T22:08:32.927Z","raw":"모두 확인, 허락, 이어진행","meaning":"night 브랜치 5개·worktree 정리 허락, docs/test_result.txt gitignore 허락, SPEC_055 실행(대기작업진행). SPEC_053 5 ⏳는 실기기 판정 아님으로 보고 열어 둠"}
+{"ts":"2026-11-24T22:16:59.134Z","source":"button","question":"**확인할 것 (BRAT에서 1.0.65로 올린 뒤)**\n- **SPEC_053 5:** 유튜브 앱에서 영상을 「공유 → Obsidian」 하면 메뉴에 「🎧 Ear-Coach로 열기」가 보이고, 누르면 그 영상이 열리는지 봐 주세요. 어젯밤 NG 2개는 모두 1.0.62 판 질문에 눌린 거라, 고친 판(1.0.63 이후)으로는 아직 한 번도 확인하지 못했어요. 이번에도 안 되면 NG를 누르고, Obsidian 설정 → Ear-Coach → 「🩺 진단 복사」를 붙여 보내 주세요.\n- **SPEC_055 6:** 어떤 문장에 「📌 안 들림 핀」을 꽂고, Obsidian을 완전히 껐다 켠 뒤 다른 문장에 핀을 하나 더 꽂아 주세요. `My_Listening_Weakness.md`에 두 줄이 모두 보이면 OK예요.","answer":"SPEC_055 6 OK","messageId":1080}
+{"ts":"2026-11-24T22:17:04.588Z","spec":"SPEC_055","item":6,"result":"OK","raw":"[Button pressed: SPEC_055 6 OK]"}
