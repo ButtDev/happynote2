@@ -84,11 +84,11 @@ async function main(): Promise<void> {
       (window as any).__storyboardNone
         ? null
         : { spec: `https://i.ytimg.com/sb/${videoId}/storyboard3_L$L/$N.jpg?sqp=x|320#180#9#3#3#2000#M$M#sig`, durationSec: 60 },
-    // SPEC_036: 가짜 원음(작은 WAV base64), window.__audioNone이면 null
+    // SPEC_036: 가짜 원음(작은 WAV base64), window.__audioNone이면 실패(SPEC_052: 이유 = __audioReason ?? "network")
     audioClip: async (videoId: string, start: number, end: number) => {
       const w = window as any;
       w.__clipArgs = [...(w.__clipArgs ?? []), [videoId, start, end]];
-      return w.__audioNone ? null : "UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
+      return w.__audioNone ? { data: null, reason: w.__audioReason ?? "network" } : { data: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=" };
     },
     // SPEC_015: 가짜 AnkiConnect — 호출 기록, window.__ankiDuplicate면 canAddNotes가 false
     anki: {

@@ -308,5 +308,95 @@
     "byteEnd": 1379
    }
   ]
- }
+ },
+ "failures": [
+  {
+   "name": "조각 403 두 번(새 URL로도) → 앞부분만 허락",
+   "failOn": {
+    "frag": 403
+   },
+   "expectReason": "limited",
+   "expectRequests": [
+    "POST",
+    "HEAD",
+    "FRAG",
+    "POST",
+    "HEAD",
+    "FRAG"
+   ]
+  },
+  {
+   "name": "조각 403 한 번(URL 만료) → 새 URL로 성공",
+   "failOn": {
+    "fragOnce": 403
+   },
+   "expectReason": null,
+   "expectRequests": [
+    "POST",
+    "HEAD",
+    "FRAG",
+    "POST",
+    "HEAD",
+    "FRAG"
+   ]
+  },
+  {
+   "name": "조각 500 두 번 → network",
+   "failOn": {
+    "frag": 500
+   },
+   "expectReason": "network",
+   "expectRequests": [
+    "POST",
+    "HEAD",
+    "FRAG",
+    "POST",
+    "HEAD",
+    "FRAG"
+   ]
+  },
+  {
+   "name": "player 200 아님(LOGIN_REQUIRED 등) → blocked",
+   "failOn": {
+    "post": 403
+   },
+   "expectReason": "blocked",
+   "expectRequests": [
+    "POST"
+   ]
+  },
+  {
+   "name": "머리 403 → blocked",
+   "failOn": {
+    "head": 403
+   },
+   "expectReason": "blocked",
+   "expectRequests": [
+    "POST",
+    "HEAD"
+   ]
+  },
+  {
+   "name": "요청이 던짐(오프라인) → network",
+   "failOn": {
+    "throw": true
+   },
+   "expectReason": "network",
+   "expectRequests": [
+    "POST"
+   ]
+  },
+  {
+   "name": "디코더가 던짐 → decode",
+   "failOn": {
+    "decode": true
+   },
+   "expectReason": "decode",
+   "expectRequests": [
+    "POST",
+    "HEAD",
+    "FRAG"
+   ]
+  }
+ ]
 }

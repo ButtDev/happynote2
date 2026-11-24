@@ -3,13 +3,13 @@
 > 다음 세션이 바로 알아야 할 것만 둔다. 상태는 `node .claude/harness/status.mjs`, 이력은 `log/`·git·`DECISIONS.md`.
 
 ## 지금 하는 일
-- 배포 최신 BRAT 1.0.60. ⏳ 대기: SPEC_049 11만(사람 보류 11-24 — 어색한 카드 발견 시 제보, 다시 묻지 않음). 044·045·046·047·050·051 DONE.
-- READY SPEC 없음(원음 실패 답 오면 새 SPEC). 백로그 「대기」(SPEC 없음): 공유로 바로 열기 → 긴 영상 성능 → 실패 경로 시험. 사람이 「대기작업진행」이면 맨 위부터 SPEC 만들고 실행.
+- 배포 최신 BRAT 1.0.60. ⏳ 대기: SPEC_052 8, SPEC_049 11(사람 보류 — 어색한 카드 발견 시 제보, 다시 묻지 않음). 044·045·046·047·050·051 DONE.
+- READY SPEC 없음. 백로그 「대기」(SPEC 없음): 공유로 바로 열기 → 긴 영상 성능 → 실패 경로 시험. 사람이 「대기작업진행」이면 맨 위부터 SPEC 만들고 실행.
 - EarCoachView 895줄(시험 `<900`) — 새 코드는 반드시 모듈로. MEMORY.md 20KB 한도 근처 — 새 줄 넣을 땐 오래된 「주의」를 줄일 것.
 - 버린 아이디어(사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검·하네스 템플릿 개선. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
-- **원음 실패 처리(11-24, 버튼 보냄 `원음 실패 1 추천대로` / `원음 실패 2 소리 없이 저장`)**: 영상 vOpPMqxLUHg는 ANDROID itag 140 URL이 앞 ~70초(1.13MB)만 200, 뒤는 403(PO 토큰 없음 제한, itag 139·249·251도 ~60초) — Rick 영상은 끝까지 200. ANDROID_VR·IOS·TVHTML5·MWEB·WEB_EMBEDDED 모두 막힘(LOGIN_REQUIRED 등). 1 = 저장 안 함 + 「앞 1분만 허락」 정확한 안내 + 「다시」 없앰(clipper가 실패 이유를 돌려줘야 함, audioClip·sentenceAnki·EarCoachView·시험 → SPEC), 2 = 소리 없이 저장 + 유튜브 시각 링크. TTS 대체는 사람이 거절(SPEC_036 「너무 쉬움」). 재현 스크립트 `.scratch/ytrun/`.
+- 원음 실패 처리는 사람이 1안 선택 → SPEC_052(⏳ 8 실기기 확인 대기).
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
 - main에 합쳐진 night 브랜치(045·046·047·049)와 worktree(`.scratch/wt/`) 정리 여부 — 사람 판단 전엔 지우지 않음.
 
@@ -42,7 +42,7 @@
 - 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말. 숫자는 `expandHintWord`로 영어 낱말(0~9999·연도·쉼표, 서수·5자리는 계산 포기). AI 빈칸은 `alignBlanksToChunk`(aiAnalysis `sanitizeItems`)로 덩어리 안만.
 - 영상 데이터 지우기(SPEC_033): 순수 `src/services/videoData.ts`(저장소 주입, Test 21 + `tests/fixtures/video-data/`, 변이 `EAR_COACH_VIDEODATA_MODULE`), 화면 `src/ui/videoDataSection.ts`(설정 맨 아래, 화면 검사 `expect.videoData` → `video-data-<뷰>.png`). 지우기 = `vault.trash(file,false)`/`adapter.trashLocal`(볼트 `.trash`, 영구 삭제 안 함). `NoteGenerator.forgetSession`은 지운 시각 전 `createdAt` 세션 저장을 막음. 자동 정리·전부 지우기는 안 함(사람이 원하면 새 SPEC).
 - 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
-- 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`. 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
+- 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`. 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. SPEC_052: 클리퍼는 `{data}|{data:null,reason}`(limited = 새 URL로도 조각 403 — PO 토큰 없는 영상은 앞 ~1분만), 문구 `clipFailMessage`, 「다시」는 network만. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
 - 알림(SPEC_042): 실패 알림은 `failureNotice("<무엇>", err)`(`src/services/notices.ts`, 원인 4가지·`KnownFailure`), 다시 할 수 있으면 `notifyRetry(text, retry)`(`src/ui/notify.ts`, 10초). 알림·문구 상수는 해요체 — Test 28이 `new Notice(` 줄의 「니다」·원문(`.message`)을 잡음. 화면 검사 가짜 Notice는 `.notice-container`에 그려 버튼을 누를 수 있음.
 - 진단(SPEC_038): `src/services/diagnostics.ts`(순수, 공용 `diagnostics`, Test 24 + `tests/fixtures/diagnostics/`, 변이 `EAR_COACH_DIAGNOSTICS_MODULE`), 설정 줄·전역 잡기 `src/ui/diagnosticsSection.ts`. 새 오류 catch 자리엔 `diagnostics.record("<단계>", err)` 한 줄. 화면 검사 `expect.diagnostics`(`__diagnostics`·`__diagClip`). 메모리만(앱 다시 켜면 비워짐).
 - 학습 기록(SPEC_040): `src/services/learningStore.ts`(순수, 파일 주입, Test 26 + `tests/fixtures/learning/cases.json`, 변이 `EAR_COACH_LEARNING_MODULE`), `plugin.learning`(`src/features/learning.ts` → `<manifest.dir>/learning.json`). 지금 연결은 핀 토글뿐(`EarCoachView` onTogglePin) — 빈칸 `recordBlank`·위치 `setPosition`·퀴즈 `recordQuiz`는 쓰는 기능 SPEC에서 연결. schemaVersion>1 파일은 읽기 전용. 화면 검사 가짜 플러그인 `tests/ui/entry.ts`에도 `learning` 있음.

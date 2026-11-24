@@ -21,7 +21,19 @@ export const ANKI_MESSAGES = {
   connection: "AnkiConnect Android에 연결하지 못했어요 — 앱에서 서비스를 켜 주세요",
   noSettings: "설정에서 Anki 덱·노트 타입을 골라 주세요",
   noAudio: "원음을 받지 못해 저장하지 않았어요",
+  /** SPEC_052: 유튜브가 앞부분만 허락하는 영상 */
+  noAudioLimited: "이 영상은 유튜브가 앞부분 1분 정도만 받게 해 줘서 원음을 못 받아요 — 저장하지 않았어요",
+  noAudioBlocked: "유튜브가 이 영상의 원음을 막아서 저장하지 않았어요",
+  noAudioDecode: "원음을 풀지 못해 저장하지 않았어요",
 } as const;
+
+/** SPEC_052: 원음 실패 이유 → 문구(「다시」는 network = noAudio일 때만) */
+export function clipFailMessage(reason: "limited" | "blocked" | "network" | "decode" | null | undefined): string {
+  if (reason === "limited") return ANKI_MESSAGES.noAudioLimited;
+  if (reason === "blocked") return ANKI_MESSAGES.noAudioBlocked;
+  if (reason === "decode") return ANKI_MESSAGES.noAudioDecode;
+  return ANKI_MESSAGES.noAudio;
+}
 
 export interface AnkiSettingsLike {
   ankiDeck: string;

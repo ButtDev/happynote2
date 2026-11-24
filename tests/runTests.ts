@@ -1037,7 +1037,6 @@ async function runAllTests() {
   const acPlayer = JSON.stringify({ streamingData: { adaptiveFormats: ac.formats } });
   const acReqs: string[] = [];
   const acDecodes: number[][] = [];
-  let acFail = false;
   const acClip = acMod.createAudioClipper({
     request: async (r: any) => {
       if (r.method === "POST") {
@@ -1047,7 +1046,6 @@ async function runAllTests() {
       }
       const m = /[?&]range=(\d+-\d+)$/.exec(r.url);
       acReqs.push(m ? m[1] : r.url);
-      if (acFail) return { status: 403 };
       if (m?.[1] === `0-${acHead.length - 1}`) return { status: 200, arrayBuffer: acHead.slice().buffer };
       return { status: 200, arrayBuffer: acFrag.slice().buffer };
     },
@@ -1059,16 +1057,49 @@ async function runAllTests() {
       return new Float32Array(Math.round((to - from) * rate));
     },
   });
-  const acB64 = await acClip(ac.videoId, ac.clipper.start, ac.clipper.end);
+  const acB64 = (await acClip(ac.videoId, ac.clipper.start, ac.clipper.end)).data;
   assert.ok(typeof acB64 === "string" && acB64.startsWith("UklGR"), "결과는 WAV base64(RIFF)");
   assert.deepEqual(acReqs, ["POST", ...ac.clipper.expectRanges], "받기 순서");
   assert.ok(Math.abs(acDecodes[0][0] - ac.clipper.expectDecode[0]) < 0.001 && Math.abs(acDecodes[0][1] - ac.clipper.expectDecode[1]) < 0.001 && acDecodes[0][2] === 22050, `디코드 구간 ${JSON.stringify(acDecodes[0])}`);
   acReqs.length = 0;
   await acClip(ac.videoId, ac.clipper.start, ac.clipper.end);
   assert.deepEqual(acReqs, [ac.clipper.expectRanges[1]], "두 번째는 캐시(조각만)");
-  acFail = true;
-  assert.equal(await acClip(ac.videoId, ac.clipper.start, ac.clipper.end), null, "조각 403 → null");
-  log(`  -> PASS: sidx ${acSidx.fragments.length} fragments, ${ac.ranges.length} ranges, ${ac.windows.length} windows, ${ac.pick.length} picks, WAV header, clipper order+cache`);
+  // SPEC_052: 실패 이유 — 매번 새 클리퍼(캐시 없음), 요청 종류 POST·HEAD(0~indexEnd)·FRAG
+  for (const fc of ac.failures) {
+    const reqs: string[] = [];
+    const f = fc.failOn;
+    let fragFails = 0;
+    const clip = acMod.createAudioClipper({
+      request: async (r: any) => {
+        if (f.throw) {
+          reqs.push(r.method === "POST" ? "POST" : "GET");
+          throw new Error("offline");
+        }
+        if (r.method === "POST") {
+          reqs.push("POST");
+          return f.post ? { status: f.post } : { status: 200, text: acPlayer };
+        }
+        const m = /[?&]range=(\d+-\d+)$/.exec(r.url);
+        if (m?.[1] === `0-${acHead.length - 1}`) {
+          reqs.push("HEAD");
+          return f.head ? { status: f.head } : { status: 200, arrayBuffer: acHead.slice().buffer };
+        }
+        reqs.push("FRAG");
+        if (f.frag) return { status: f.frag };
+        if (f.fragOnce && fragFails++ === 0) return { status: f.fragOnce };
+        return { status: 200, arrayBuffer: acFrag.slice().buffer };
+      },
+      decode: async (_b: ArrayBuffer, from: number, to: number, rate: number) => {
+        if (f.decode) throw new Error("bad audio");
+        return new Float32Array(Math.round((to - from) * rate));
+      },
+    });
+    const out = await clip(ac.videoId, ac.clipper.start, ac.clipper.end);
+    if (fc.expectReason === null) assert.ok(typeof out.data === "string" && out.data.startsWith("UklGR"), `${fc.name}: 성공 ${JSON.stringify(out).slice(0, 80)}`);
+    else assert.deepEqual(out, { data: null, reason: fc.expectReason }, `${fc.name}: 이유`);
+    assert.deepEqual(reqs, fc.expectRequests, `${fc.name}: 요청 순서`);
+  }
+  log(`  -> PASS: sidx ${acSidx.fragments.length} fragments, ${ac.ranges.length} ranges, ${ac.windows.length} windows, ${ac.pick.length} picks, WAV header, clipper order+cache, ${ac.failures.length} failure reasons`);
   log("");
 
   log("[Test 24] Diagnostics — 최근 오류 링버퍼·연속 묶음·비밀 가리기·보고 글 (data-driven, SPEC_038)");

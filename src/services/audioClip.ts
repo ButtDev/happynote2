@@ -2,6 +2,7 @@
  * SPEC_036: 유튜브 원음에서 문장 구간을 잘라 WAV(base64)로.
  * Android innertube player → 오디오 전용 itag 140(AAC m4a, DASH 조각) → sidx 색인으로 시각을 덮는 조각만 `&range=` 받기
  * → 디코더(웹뷰 OfflineAudioContext, 주입)로 풀고 자르기 → 모노 22,050Hz 16비트 WAV.
+ * SPEC_052: 실패면 이유(limited·blocked·network·decode)를 돌려준다.
  * obsidian import 없음(요청 함수·디코더 주입) — Test 23.
  */
 
@@ -204,18 +205,20 @@ interface StreamInfo {
   sidx: Sidx;
 }
 
-/** (videoId, start, end) → WAV base64, 무엇이든 실패하면 null. player 응답·색인은 영상별 1시간 캐시. */
-export function createAudioClipper(deps: AudioClipperDeps): (videoId: string, start: number, end: number) => Promise<string | null> {
+/** SPEC_052: 원음 실패 이유. limited = 유튜브가 앞부분만 허락(새 URL로도 조각 403) */
+export type ClipFailReason = "limited" | "blocked" | "network" | "decode";
+export type ClipOutcome = { data: string } | { data: null; reason: ClipFailReason };
+
+const fail = (reason: ClipFailReason): ClipOutcome => ({ data: null, reason });
+
+/** (videoId, start, end) → {data: WAV base64} 또는 {data: null, reason}. player 응답·색인은 영상별 1시간 캐시. */
+export function createAudioClipper(deps: AudioClipperDeps): (videoId: string, start: number, end: number) => Promise<ClipOutcome> {
   const cache = new Map<string, StreamInfo>();
   const now = deps.now ?? (() => Date.now());
-  const bytesOf = async (url: string): Promise<Uint8Array | null> => {
-    const r = await deps.request({ url });
-    if (r.status < 200 || r.status >= 300 || !r.arrayBuffer) return null;
-    return new Uint8Array(r.arrayBuffer);
-  };
-  const stream = async (videoId: string): Promise<StreamInfo | null> => {
+  const stream = async (videoId: string, fresh: boolean): Promise<StreamInfo | null> => {
     const hit = cache.get(videoId);
-    if (hit && now() - hit.at < PLAYER_CACHE_MS) return hit;
+    if (!fresh && hit && now() - hit.at < PLAYER_CACHE_MS) return hit;
+    cache.delete(videoId);
     const r = await deps.request({
       url: "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
       method: "POST",
@@ -224,10 +227,17 @@ export function createAudioClipper(deps: AudioClipperDeps): (videoId: string, st
       body: JSON.stringify({ context: { client: { clientName: "ANDROID", clientVersion: "20.10.38", hl: "en", gl: "US" } }, videoId }),
     });
     if (r.status !== 200 || !r.text) return null;
-    const fmt = pickAudioFormat(JSON.parse(r.text)?.streamingData?.adaptiveFormats);
+    let fmt: AudioFormat | null = null;
+    try {
+      fmt = pickAudioFormat(JSON.parse(r.text)?.streamingData?.adaptiveFormats);
+    } catch {
+      return null;
+    }
     if (!fmt) return null;
-    const head = await bytesOf(withRange(fmt.url, 0, fmt.indexEnd));
-    if (!head || head.length < fmt.indexEnd + 1) return null;
+    const h = await deps.request({ url: withRange(fmt.url, 0, fmt.indexEnd) });
+    if (h.status < 200 || h.status >= 300 || !h.arrayBuffer) return null;
+    const head = new Uint8Array(h.arrayBuffer);
+    if (head.length < fmt.indexEnd + 1) return null;
     const sidx = parseSidx(head, fmt.indexStart);
     if (!sidx) return null;
     const info = { at: now(), fmt, init: head.slice(0, fmt.initEnd + 1), sidx };
@@ -235,23 +245,39 @@ export function createAudioClipper(deps: AudioClipperDeps): (videoId: string, st
     return info;
   };
   return async (videoId, start, end) => {
+    let info: StreamInfo | null;
+    let frag: Uint8Array;
+    let range: ReturnType<typeof fragmentsForRange>;
+    const [a, b] = clipWindow(start, end);
     try {
-      const info = await stream(videoId);
-      if (!info) return null;
-      const [a, b] = clipWindow(start, end);
-      const range = fragmentsForRange(info.sidx, a, b);
-      if (!range) return null;
-      const frag = await bytesOf(withRange(info.fmt.url, range.byteStart, range.byteEnd));
-      if (!frag) {
-        cache.delete(videoId); // URL 만료일 수 있음 — 다음엔 새로
-        return null;
+      let fresh = false;
+      for (;;) {
+        info = await stream(videoId, fresh);
+        if (!info) return fail("blocked");
+        range = fragmentsForRange(info.sidx, a, b);
+        if (!range) return fail("blocked");
+        const r = await deps.request({ url: withRange(info.fmt.url, range.byteStart, range.byteEnd) });
+        if (r.status >= 200 && r.status < 300 && r.arrayBuffer) {
+          frag = new Uint8Array(r.arrayBuffer);
+          break;
+        }
+        cache.delete(videoId); // URL 만료일 수 있음 — 새 URL로 한 번 더
+        if (!fresh) {
+          fresh = true;
+          continue;
+        }
+        return fail(r.status === 403 ? "limited" : "network");
       }
-      const all = concatBytes(info.init, frag);
-      const samples = await deps.decode(all.buffer as ArrayBuffer, a - range.timeStart, b - range.timeStart, CLIP_SAMPLE_RATE);
-      if (!samples || samples.length === 0) return null;
-      return bytesToBase64(encodeWav(samples, CLIP_SAMPLE_RATE));
     } catch {
-      return null;
+      return fail("network");
+    }
+    try {
+      const all = concatBytes(info.init, frag);
+      const samples = await deps.decode(all.buffer as ArrayBuffer, a - range!.timeStart, b - range!.timeStart, CLIP_SAMPLE_RATE);
+      if (!samples || samples.length === 0) return fail("decode");
+      return { data: bytesToBase64(encodeWav(samples, CLIP_SAMPLE_RATE)) };
+    } catch {
+      return fail("decode");
     }
   };
 }

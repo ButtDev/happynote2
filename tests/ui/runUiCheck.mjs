@@ -209,6 +209,8 @@ function evaluateExpect(vp, m, nums) {
     add("sentenceAnki.retry", !!rt && JSON.stringify(rt.buttons) === JSON.stringify(["다시"]) && rt.text === "원음을 받지 못해 저장하지 않았어요" && rt.closed === true && rt.callsAfter?.length > 0 && rt.newNotice?.includes("원음을 받지 못해 저장하지 않았어요"), JSON.stringify(rt));
     // SPEC_036: Chrome에서 실제 조각 디코드 → 창 길이 ±0.05초
     const dc = sa?.decode;
+    const lm = sa?.limited;
+    add("sentenceAnki.limited", !!lm && JSON.stringify(lm.calls) === JSON.stringify(["deckNames", "modelNames", "modelFieldNames"]) && lm.notes === 0 && lm.notice === "이 영상은 유튜브가 앞부분 1분 정도만 받게 해 줘서 원음을 못 받아요 — 저장하지 않았어요" && Array.isArray(lm.buttons) && lm.buttons.length === 0, JSON.stringify(lm));
     add("sentenceAnki.decode", !!dc && !dc.error && Math.abs(dc.sec - dc.want) <= 0.05 && dc.peak > 0.01 && dc.wavHead === "RIFF", JSON.stringify(dc));
   }
   for (const [sel, max] of Object.entries(e.maxHeight ?? {})) {
@@ -938,6 +940,16 @@ for (const vp of cases.viewports) {
         callsAfter: window.__ankiCalls,
         newNotice: (window.__notices ?? []).slice(noticesBefore),
       };
+      // SPEC_052: 앞부분만 허락하는 영상 — 정확한 문구, 「다시」 없음
+      document.querySelectorAll(".notice-container .notice").forEach((x) => x.remove());
+      window.__ankiCalls = [];
+      window.__ankiNotes = [];
+      window.__audioReason = "limited";
+      card.querySelector(".ear-coach-sentence-anki").click();
+      await wait(400);
+      const limEl = [...document.querySelectorAll(".notice-container .notice")].at(-1);
+      const limited = { calls: window.__ankiCalls, notes: window.__ankiNotes.length, notice: (window.__notices ?? []).at(-1) ?? null, buttons: limEl ? [...limEl.querySelectorAll("button")].map((x) => x.textContent) : null };
+      window.__audioReason = undefined;
       window.__audioNone = false;
       // SPEC_036: 실제 조각(초기화+조각 1, 9.98초) 1.0~4.0초 디코드
       let decode;
@@ -950,7 +962,7 @@ for (const vp of cases.viewports) {
       } catch (err) {
         decode = { error: String(err) };
       }
-      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, ...okRun, text: seg?.text ?? null, fail, retry, decode };
+      return { pinned: pinned.length, btnOnPinned, btnOnUnpinned, inside, ...okRun, text: seg?.text ?? null, fail, retry, limited, decode };
     });
     await page.screenshot({ path: path.join(outDir, `sentence-anki-${vp.name}.png`) });
   }

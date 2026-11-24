@@ -53,7 +53,7 @@ export function renderQuizBanner(toolbar: HTMLElement, offer: QuizOffer, plugin:
   };
   renderWarmupBanner(toolbar, offer.text, "퀴즈 닫기", () => {
     new QuizModal(plugin.app, offer.items, {
-      clip: (id, a, b) => (plugin.audioClip ? plugin.audioClip(id, a, b) : Promise.resolve(null)),
+      clip: (id, a, b) => (plugin.audioClip ? plugin.audioClip(id, a, b).then((r) => r.data) : Promise.resolve(null)),
       record: (id, total, correct) => plugin.learning.recordQuiz(id, total, correct),
       onDone: hide,
     }).open();
