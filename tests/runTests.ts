@@ -434,6 +434,22 @@ async function runAllTests() {
   await prov.lookup("HELLO");
   assert.equal(await prov.lookup("qwzxv"), null, "provider 404 → null");
   assert.deepEqual(fetched.filter((u) => u.includes("dictionaryapi.dev")), ["https://api.dictionaryapi.dev/api/v2/entries/en/hello", "https://api.dictionaryapi.dev/api/v2/entries/en/qwzxv"], "provider fetch once per word");
+  // 실패 경로: 서버 상태·send가 던진 오류 → 모달 오류 줄 원인 (data: _errors.json)
+  const dictErr = JSON.parse(fs.readFileSync(path.join(dictDir, "_errors.json"), "utf8"));
+  for (const c of dictErr.cases) {
+    const ep = new dictMod.DictionaryApiDevProvider(async () => {
+      if (c.throw) throw new httpSrc.HttpFailure(c.throw.kind, c.throw.message, null);
+      return { status: c.status, json: {} };
+    });
+    let got: unknown;
+    let thrown: unknown = undefined;
+    try { got = await ep.lookup("word"); } catch (e) { thrown = e; }
+    if (c.expect === null) { assert.equal(thrown, undefined, `dict error [${c.name}] 던지면 안 됨`); assert.equal(got, null, `dict error [${c.name}]`); continue; }
+    assert.ok(thrown !== undefined, `dict error [${c.name}] 던져야 함`);
+    const cause = noticesSrc.failureCause(thrown);
+    assert.equal(cause, c.cause, `dict error [${c.name}]`);
+    if (c.raw) assert.ok(!cause.includes(c.raw), `dict error [${c.name}] 원문 남음: ${cause}`);
+  }
   // 발음: Commons imageinfo 응답 → upload.wikimedia.org 파일(SPEC_013 회차 2, mp3 404 대응)
   const commonsDir = path.join(dictDir, "commons");
   const commonsCases = fs.readdirSync(commonsDir).filter((n) => n.endsWith(".json")).sort();

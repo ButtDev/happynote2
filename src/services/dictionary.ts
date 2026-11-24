@@ -152,7 +152,8 @@ export class DictionaryApiDevProvider implements DictionaryProvider {
       this.cache.set(key, null);
       return null;
     }
-    if (res.status < 200 || res.status >= 300) throw new Error(`dictionaryapi.dev HTTP ${res.status}`);
+    // status를 붙여 둬야 failureCause가 429·503을 「서버가 잠깐 바빠요」로 읽는다(원문은 진단 기록에만)
+    if (res.status < 200 || res.status >= 300) throw Object.assign(new Error(`dictionaryapi.dev HTTP ${res.status}`), { status: res.status });
     const entry = parseDictionaryApiDev(res.json);
     if (entry?.audioUrl) {
       // 죽은 mp3 대신 같은 녹음의 Commons 원본(ogg)으로. 실패하면 원래 주소 유지.
