@@ -4,11 +4,12 @@
 
 ## 지금 하는 일
 - 배포 최신 BRAT 1.0.60. ⏳ 대기: SPEC_049 11만(사람 보류 11-24 — 어색한 카드 발견 시 제보, 다시 묻지 않음). 044·045·046·047·050·051 DONE.
-- READY SPEC 없음. 백로그 「대기」(SPEC 없음): 공유로 바로 열기 → 긴 영상 성능 → 실패 경로 시험. 사람이 「대기작업진행」이면 맨 위부터 SPEC 만들고 실행.
-- EarCoachView 895줄(시험 `<900`) — 새 코드는 반드시 모듈로. MEMORY.md가 20KB 한도 바로 밑(19.9KB) — 새 줄 넣을 땐 오래된 「주의」를 줄일 것.
+- READY SPEC 없음(원음 실패 답 오면 새 SPEC). 백로그 「대기」(SPEC 없음): 공유로 바로 열기 → 긴 영상 성능 → 실패 경로 시험. 사람이 「대기작업진행」이면 맨 위부터 SPEC 만들고 실행.
+- EarCoachView 895줄(시험 `<900`) — 새 코드는 반드시 모듈로. MEMORY.md 20KB 한도 근처 — 새 줄 넣을 땐 오래된 「주의」를 줄일 것.
 - 버린 아이디어(사람, 다시 제안 금지): 영상 클립 카드·속도 사다리·Anki 대기열·빈칸 난이도 자동 조절·소리 현상 도감·블라인드 챌린지·이어폰 버튼·맞힘 피드백·단계 전환 애니메이션·업스트림 확인·설정 정리안·안 쓰는 코드 정리·학습 기록 문서·밝은 테마 점검·하네스 템플릿 개선. 보류: 설정 스키마 한 표·화면 상태 저장소.
 
 ## 열린 질문 (사람에게)
+- **원음 실패 처리(11-24, 버튼 보냄 `원음 실패 1 추천대로` / `원음 실패 2 소리 없이 저장`)**: 영상 vOpPMqxLUHg는 ANDROID itag 140 URL이 앞 ~70초(1.13MB)만 200, 뒤는 403(PO 토큰 없음 제한, itag 139·249·251도 ~60초) — Rick 영상은 끝까지 200. ANDROID_VR·IOS·TVHTML5·MWEB·WEB_EMBEDDED 모두 막힘(LOGIN_REQUIRED 등). 1 = 저장 안 함 + 「앞 1분만 허락」 정확한 안내 + 「다시」 없앰(clipper가 실패 이유를 돌려줘야 함, audioClip·sentenceAnki·EarCoachView·시험 → SPEC), 2 = 소리 없이 저장 + 유튜브 시각 링크. TTS 대체는 사람이 거절(SPEC_036 「너무 쉬움」). 재현 스크립트 `.scratch/ytrun/`.
 - 오래된 영상 자동 정리(SPEC_033 범위 밖) — 사람이 고르면 새 SPEC.
 - main에 합쳐진 night 브랜치(045·046·047·049)와 worktree(`.scratch/wt/`) 정리 여부 — 사람 판단 전엔 지우지 않음.
 
@@ -17,10 +18,9 @@
 - 네트워크(SPEC_041): 모든 요청은 `src/features/network.ts` `send(opts, HTTP_POLICIES.x)` → `src/services/http.ts` `sendWithPolicy`(Test 27, 변이 `EAR_COACH_HTTP_MODULE`). 새 요청도 `requestUrl` 직접 말고 `send`로. Anki는 재시도 0(카드 두 번 방지).
 - 기능 모듈(SPEC_039): `src/main.ts`(150줄)는 필드·위임·등록 순서만. 네트워크 `src/features/network.ts`, 세션 만들기·복구·재정렬·agy `sessionPipeline.ts`, 화면 열기·openFile 가로채기 `workspaceView.ts`, 모바일 AI `mobileAi.ts`, URI·리본·명령·코드 블록 `commands.ts`. 연결 검사 `tests/wiring/runWiringCheck.mjs`(node + esbuild 메모리 번들 + 가짜 obsidian, 기대값 `tests/fixtures/wiring/expected.json`, Test 25, 변이 `EAR_COACH_MAIN`) — 명령·공개 메서드를 늘리면 기대값도 같이. main.ts 상한 600.
 - 빈칸 받아쓰기 낱말은 그릴 때 `dictationBlanksFor`(soundHint.ts, 힌트 덩어리 안·최대 4)로 정함 — 저장된 `dictationBlankIndices`는 원재료일 뿐(SPEC_037).
-- 과속 기준은 사람이 설정에서 직접 조절(11-22) — 다시 묻지 않는다. I(Lucide 아이콘)는 아직 안 물음.
 - 사람이 버튼을 다른 SPEC 행·메모로 누르거나 사진만 보내기도 함 — 내용·시각으로 판단해 기록. 메모에 「잘동작함」처럼 판정이 분명하면 OK로 기록.
 - 옛 데이터 호환 작업·확인을 하지 않는다(사람 11-22: 「어차피 영상하나뿐인데, 호환작업을 하는건 낭비야」). 확인은 새 영상으로.
-- 사람 기기 AI: Gemini 키 사용 중(503 high demand 겪음 → 1.0.28 busy 재시도). Groq는 대안(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
+- 사람 기기 AI: Gemini·Groq(gpt-oss-120b, json_validate_failed → SPEC_051 plain 재시도·묶음 나누기) 둘 다 씀. Groq는(console.groq.com/keys, xAI Grok 아님). 모바일 명령 팔레트를 사람이 못 찾음 — 명령에 기대는 안내 금지.
 - 실기기 ⏳ 요청 문구엔 사람이 할 준비 단계(설정·덱 만들기 등)를 빠뜨리지 않는다(SPEC_015에서 빠뜨려 회차 낭비).
 - 배포: 실기기 ⏳가 필요한 커밋은 묻지 않고 BRAT 배포(version 3파일 올림 → `git push buttdev main` + 같은 이름 태그 → 릴리스 확인은 `curl` GitHub API, `gh` 없음) 후 ⏳ 요청. 그 밖의 push는 사람 지시 때만. `main.js`는 저장소에 없음.
 - Test 7 = 지운 기능(SPEC_005 진단)이 main.js·src에 없음(`tests/fixtures/removed-features/`). 시험 `npm test`는 `PATH=tests/fixtures/bin:$PATH`가 있어야 Test 4(agy) 통과 — `verify.mjs`가 넣어 줌.
@@ -41,7 +41,6 @@
 - 셸 한 줄에 한국어·따옴표 JSON을 길게 넣으면 zsh 파싱 실패로 통째로 안 돎 → 긴 기록·버전 올림은 `.scratch/` 파이썬 스크립트로.
 - 소리 힌트(SPEC_031): `src/services/soundHint.ts`(순수, 사전 주입: 이어 말하기 규칙 → 한글·IPA, `pickHintChunk`, `hangulSimilarity`), 데이터 `src/data/cmudict-lite.txt`(30,000 낱말, `scripts/build-cmudict-lite.mjs`로 생성, 원본은 `.scratch/cmu/`, 라이선스 `src/data/CMUDICT_LICENSE`), 지연 로더 `cmudictLite.ts`(esbuild `.txt` text 로더 — 화면 검사 번들에도 넣음). 보일 때 계산(저장 안 함), 사전에 없으면 AI `phoneticKr`. Test 20 + `tests/fixtures/sound-hint/`(rules = 우리 기대값, blog = 사람 사진 표기 근접도 0.709), 변이 `EAR_COACH_SOUNDHINT_MODULE`. Anki 문장 카드 Hint=함정만, 한글·IPA는 Source 앞(템플릿 안 바꿈). 규칙을 바꾸면 rules.json·blog 평균을 같이 볼 것(블로그에 맞추려 과적합 금지). 덩어리 순서(SPEC_032): chunkWordIndices → 설명 속 영어 구(`explanationChunk`, 따옴표 벗김) → 8낱말 이하 전체 → 빈칸±1 → 앞 6낱말. 숫자는 `expandHintWord`로 영어 낱말(0~9999·연도·쉼표, 서수·5자리는 계산 포기). AI 빈칸은 `alignBlanksToChunk`(aiAnalysis `sanitizeItems`)로 덩어리 안만.
 - 영상 데이터 지우기(SPEC_033): 순수 `src/services/videoData.ts`(저장소 주입, Test 21 + `tests/fixtures/video-data/`, 변이 `EAR_COACH_VIDEODATA_MODULE`), 화면 `src/ui/videoDataSection.ts`(설정 맨 아래, 화면 검사 `expect.videoData` → `video-data-<뷰>.png`). 지우기 = `vault.trash(file,false)`/`adapter.trashLocal`(볼트 `.trash`, 영구 삭제 안 함). `NoteGenerator.forgetSession`은 지운 시각 전 `createdAt` 세션 저장을 막음. 자동 정리·전부 지우기는 안 함(사람이 원하면 새 SPEC).
-- 휴지통 비우기(SPEC_034): `src/services/videoTrash.ts`(Test 22 + `tests/fixtures/video-trash/`, 변이 `EAR_COACH_VIDEOTRASH_MODULE`). 지우기 전후 `.trash` 목록 차이를 설정 `videoDataTrash`에 기록 → 비우기는 기록 + `.trash/` 밑만 `adapter.remove`. 1.0.43으로 이미 휴지통에 간 파일은 안 잡음(호환 안 함). 화면 검사 `expect.videoTrash`.
 - 소리 힌트 v2(SPEC_035): 축약 `CONTRACTIONS`·`hintLookupWords`(덩어리 안, to 뒤 한정사면 안 바꿈), `ipaToArpabet`, `src/services/pronFallback.ts` `PronFallback`(세션 메모리, 실패도 기억, 변이 `EAR_COACH_PRONFALLBACK_MODULE`), 받아 오기는 main.ts `setPronunciationFetcher` → `dictionary.lookup().ipaUs`(`pickUsIpa`). 시험 `tests/fixtures/sound-hint/ipa.json`·`tests/fixtures/dictionary/_ipa-us.json`. f/v+ㅣ → 퓌·뷔 유지(사람 11-22 「퓌니싱 유지」 확정).
 - 원음 구간(SPEC_036): `src/services/audioClip.ts`(순수, request·decode 주입, `createAudioClipper` 영상별 1시간 캐시, Test 23 + `tests/fixtures/audio-clip/` 실제 TED itag 140 바이트, 변이 `EAR_COACH_AUDIOCLIP_MODULE`), 디코드 `src/ui/audioDecode.ts`(OfflineAudioContext), main.ts `audioClip`. 실제 유튜브 sidx는 first_offset 0이라 그 변이는 합성 sidx로만 잡힘. 원음 실패면 카드 저장 안 함. 화면 검사 `sentenceAnki.audio/noAudio/decode`(.m4a esbuild binary 로더).
 - 알림(SPEC_042): 실패 알림은 `failureNotice("<무엇>", err)`(`src/services/notices.ts`, 원인 4가지·`KnownFailure`), 다시 할 수 있으면 `notifyRetry(text, retry)`(`src/ui/notify.ts`, 10초). 알림·문구 상수는 해요체 — Test 28이 `new Notice(` 줄의 「니다」·원문(`.message`)을 잡음. 화면 검사 가짜 Notice는 `.notice-container`에 그려 버튼을 누를 수 있음.
