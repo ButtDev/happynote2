@@ -11,6 +11,7 @@ github.com/sindng-ui/happynote2 포크, 기능개선
 - 검증 명령: `harness.json`의 `verify` (예: 단위 시험, 문법 검사, 화면 검사)
 - 기술 제약·금지 패턴: 대상은 Android(Obsidian 모바일). 모바일 경로에서 Node 내장 모듈(`child_process`·`fs` 등)을 최상위 import하지 않는다(`src/utils/platform.ts`의 지연 로딩만). 네트워크는 Obsidian `requestUrl`로. 데스크톱 동작을 깨지 않는다. 과금이 생기는 API를 쓰지 않는다. API 키는 플러그인 설정에만 두고 저장소·시험 데이터에 넣지 않는다. 유튜브 iframe은 교차 출처라 픽셀 캡처를 가정하지 않는다
 - 사람만 판정할 수 있는 것(⏳): Android 실기기 세로·가로 화면 감각, AnkiDroid 카드 모양·학습감(Fluent Forever 방식), 사전 뜻·스냅샷·AI 번역의 학습 품질
+- **BRAT 배포 — 묻지 않고 배포한 뒤 묻는다**: 실기기 ⏳ 확인이 필요한 커밋이 회귀를 통과하면 `manifest.json`·`package.json`·`package-lock.json` version을 올려 커밋하고 `git push buttdev main` + 같은 이름 태그 push → Actions 릴리스(3파일) 확인 뒤 ⏳ 버튼을 보낸다. 배포 여부를 따로 묻지 않는다. 1장 「외부 배포·네트워크 업로드 금지」와 6장 「push는 사람 지시가 있을 때만」의 예외(remote `buttdev` main push + 버전 태그만).
 
 ## 1. 폴더 경계
 
@@ -24,7 +25,7 @@ github.com/sindng-ui/happynote2 포크, 기능개선
 | 프로젝트 폴더 밖 | 쓰기 금지. 임시 파일은 `.scratch/`(git 밖) |
 
 - 사람이 지시하지 않은 삭제, `git reset --hard`·`git checkout --`·강제 push·rebase를 하지 않는다. 지울 때는 `.scratch/trash/<이름>-<날짜시각>/`로 옮긴다.
-- 외부 배포, 유료 서비스, 네트워크 업로드를 하지 않는다. 예외: 6장 「BRAT 배포」(remote `buttdev` main push + 버전 태그).
+- 외부 배포, 유료 서비스, 네트워크 업로드를 하지 않는다.
 
 ## 2. 상태 (원본은 SPEC front matter)
 
@@ -69,8 +70,7 @@ github.com/sindng-ui/happynote2 포크, 기능개선
 - main에 커밋하기 전 `node .claude/harness/gate.mjs`의 `commitBlockers`(IN_PROGRESS SPEC)가 비어 있고 `verify.mjs --set regression`이 통과해야 한다.
 - 이번 작업에서 바꾼 파일만 `git add <파일>` 한다(`git add -A` 금지). 비밀 값(`.env` 등)은 커밋하지 않는다.
 - 세션을 마칠 때 검증이 안 끝난 변경이 남으면 `wip: <무엇>` 커밋으로 남기고 보고에 적는다(다음 작업이 막히지 않게).
-- 커밋 메시지: `SPEC_NNN: <제목> (<상태>)` / 간이는 `<ID>: <한 줄>`, 본문에 검증 근거 요약. push는 사람 지시가 있을 때만(아래 BRAT 배포는 예외).
-- **BRAT 배포 — 묻지 않고 배포한 뒤 묻는다**: 실기기 ⏳ 확인이 필요한 커밋이 회귀를 통과하면 `manifest.json`·`package.json`·`package-lock.json` version을 올려 커밋하고 `git push buttdev main` + 같은 이름 태그 push → Actions 릴리스(3파일) 확인 뒤 ⏳ 버튼을 보낸다. 배포 여부를 따로 묻지 않는다.
+- 커밋 메시지: `SPEC_NNN: <제목> (<상태>)` / 간이는 `<ID>: <한 줄>`, 본문에 검증 근거 요약. push는 사람 지시가 있을 때만.
 
 ## 7. 작업 방식
 
