@@ -1,6 +1,7 @@
 # 백로그
 
 ## 대기
+- [야간 11-25 발견] 약점 대시보드 기록 사라짐: `src/services/WeaknessTracker.ts` `entries`가 메모리에만 있어, 앱을 다시 켠 뒤 첫 「안 들림 핀」이 `My_Listening_Weakness.md`를 그 1줄로 덮어씀(지난 기록·TOP 횟수 사라짐). 재현 `.scratch/weak/repro.mjs`(가짜 obsidian, 다시 켜기 전 2줄 → 뒤 1줄). 고칠 안: 순수 모듈 `src/utils/weaknessDashboard.ts`(import 없음 — 그리기·읽기) + 대시보드 끝 숨은 주석 `<!-- ear-coach-weakness: [...] -->`에 entries 저장·처음 기록 때 읽기(볼트 파일 하나 유지; 대안 플러그인 폴더 weakness.json) + Test 37·`tests/fixtures/weakness/`. 파일 4개라 night 브랜치 필요 — 열린 night 브랜치 5개(한도 2) 정리 뒤, 또는 낮에 SPEC으로.
 
 ## 끝남
 - 2026-11-25 실패 경로 시험 — 사전 429·503 안내 채움, 나머지는 기존 시험에 있음 (37d71e1)
