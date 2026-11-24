@@ -18,6 +18,8 @@ import { diagnostics } from "../../src/services/diagnostics.ts";
 // SPEC_036: 실제 유튜브 itag 140 초기화+조각 1(TED iG9CE55wbtY) — Chrome 디코드 검사
 import audioFixture from "../fixtures/audio-clip/itag140-frag1.m4a";
 import { decodeAudioClip } from "../../src/ui/audioDecode.ts";
+// SPEC_053: 공유 메뉴 줄 넣기
+import * as shareMenuInjector from "../../src/ui/shareMenuInjector.ts";
 import { encodeWav } from "../../src/services/audioClip.ts";
 
 declare global {
@@ -283,6 +285,7 @@ async function main(): Promise<void> {
       },
     });
   };
+  (window as any).__shareMenu = shareMenuInjector;
   window.__uiReady = true;
 }
 

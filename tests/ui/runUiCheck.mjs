@@ -1364,6 +1364,89 @@ for (const vp of cases.viewports) {
     });
   }
 
+  // SPEC_053 회차 2: 공유 메뉴 DOM 지켜보기 — body에 붙는 공유 메뉴에 줄 1개(첫 options 앞), 누르면 취소 줄 클릭 + 열기
+  if (vp.expect?.shareMenu) {
+    const share = JSON.parse(fs.readFileSync(path.join(root, vp.expect.shareMenu), "utf8"));
+    const res = await page.evaluate(async ({ cases, options }) => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const S = window.__shareMenu;
+      const calls = [];
+      const stop = S.startShareMenuObserver(document, (url, t) => calls.push([url, t ?? null]));
+      window.__shareCalls = calls;
+      window.__shareKeep = { getCancelled: () => 0 };
+      const out = [];
+      for (const c of cases) {
+        calls.length = 0;
+        const menu = document.createElement("div");
+        menu.className = "menu ear-coach-ui-share-menu";
+        menu.style.cssText = "position:fixed;left:16px;right:16px;bottom:16px;z-index:50;background:var(--background-secondary);border-radius:16px;padding:8px";
+        const scroll = menu.appendChild(document.createElement("div"));
+        scroll.className = "menu-scroll";
+        const row = (sec, title, cls = "") => {
+          const it = scroll.appendChild(document.createElement("div"));
+          it.className = `menu-item ${sec === "title" ? "" : "tappable"} ${cls}`;
+          it.setAttribute("data-section", sec);
+          it.appendChild(document.createElement("div")).className = "menu-item-icon";
+          const t = it.appendChild(document.createElement("div"));
+          t.className = "menu-item-title";
+          t.textContent = title;
+          it.style.cssText = "padding:12px;min-height:24px";
+          return it;
+        };
+        row("title", c.text);
+        if (c.preExisting) row("options", "🎧 Ear-Coach로 열기");
+        for (const o of options) row("options", o);
+        let cancelled = 0;
+        row("danger", "Cancel").addEventListener("click", () => { cancelled++; });
+        document.body.appendChild(menu);
+        await wait(120);
+        const items = [...menu.querySelectorAll(".menu-item-title")].filter((t) => t.textContent === "🎧 Ear-Coach로 열기");
+        const ours = menu.querySelector(".ear-coach-share-item");
+        const firstOptionIsOurs = menu.querySelector('[data-section="options"]') === ours;
+        S.injectShareItem(menu, () => {}); // 두 번 불러도 하나
+        const itemsAgain = [...menu.querySelectorAll(".menu-item-title")].filter((t) => t.textContent === "🎧 Ear-Coach로 열기").length;
+        let shot = false;
+        if (ours) {
+          if (c.name.startsWith("유튜브 앱")) shot = true;
+          if (!shot) ours.click();
+        }
+        out.push({ name: c.name, items: items.length, itemsAgain, firstOptionIsOurs: ours ? firstOptionIsOurs : null, shot, menuId: shot ? "keep" : null });
+        if (shot) {
+          menu.id = "ear-coach-ui-share-keep";
+          window.__shareKeep = { getCancelled: () => cancelled };
+          continue;
+        }
+        out[out.length - 1].trigger = calls[0] ?? null;
+        out[out.length - 1].cancelled = cancelled;
+        menu.remove();
+      }
+      window.__shareStop = stop;
+      return out;
+    }, share);
+    await page.screenshot({ path: path.join(outDir, `share-menu-${vp.name}.png`) });
+    const kept = await page.evaluate(() => {
+      const menu = document.getElementById("ear-coach-ui-share-keep");
+      const calls = window.__shareCalls;
+      const before = calls.length;
+      menu?.querySelector(".ear-coach-share-item")?.click();
+      const r = { trigger: calls[before] ?? null, cancelled: window.__shareKeep.getCancelled() };
+      menu?.remove();
+      window.__shareStop();
+      return r;
+    });
+    const keepIdx = res.findIndex((r) => r.shot);
+    if (keepIdx >= 0) Object.assign(res[keepIdx], kept);
+    console.log(`${vp.name} shareMenu: ${JSON.stringify(res)}`);
+    share.cases.forEach((c, i) => {
+      const r = res[i];
+      const ok = r && r.items === c.expectItems && r.itemsAgain === c.expectItems
+        && JSON.stringify(r.trigger ?? null) === JSON.stringify(c.expectTrigger)
+        && (c.expectTrigger ? r.cancelled === 1 && r.firstOptionIsOurs === true : true);
+      if (!ok) errors.push(`${vp.name}: shareMenu ${c.name} ${JSON.stringify(r)}`);
+    });
+    m.shareMenu = res;
+  }
+
   // SPEC_034: 「🧹 휴지통 비우기」 — 처음 0개·disabled → 영상 지우기 → 3개 → 비우기 → 영구 삭제는 기록 3개만(남의 .trash 노트 그대로) → 0개
   if (vp.expect?.videoTrash) {
     await page.evaluate(() => {

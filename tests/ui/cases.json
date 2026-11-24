@@ -100,7 +100,8 @@
         },
         "videoData": true,
         "videoTrash": true,
-        "diagnostics": true
+        "diagnostics": true,
+        "shareMenu": "tests/fixtures/share/menu-dom.json"
       }
     },
     {
@@ -205,7 +206,8 @@
         },
         "videoData": true,
         "videoTrash": true,
-        "diagnostics": true
+        "diagnostics": true,
+        "shareMenu": "tests/fixtures/share/menu-dom.json"
       }
     }
   ],

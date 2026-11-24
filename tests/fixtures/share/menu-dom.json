@@ -1,0 +1,40 @@
+{
+  "_note": "SPEC_053 회차 2: 실기기 공유 메뉴(사람 사진 11-24, Obsidian Android) 모양을 흉내 낸 DOM. data-section 구조는 Share to Save 플러그인 소스 기준.",
+  "cases": [
+    {
+      "name": "유튜브 앱 공유(사진 그대로)",
+      "text": "https://youtube.com/watch?v=FoJZ5_Fkh_4&si=jvk1Dp_vLgxj2Zyk",
+      "expectItems": 1,
+      "expectTrigger": [
+        "https://youtube.com/watch?v=FoJZ5_Fkh_4&si=jvk1Dp_vLgxj2Zyk",
+        null
+      ]
+    },
+    {
+      "name": "youtu.be + 시각",
+      "text": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42",
+      "expectItems": 1,
+      "expectTrigger": [
+        "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42",
+        42
+      ]
+    },
+    {
+      "name": "유튜브 아닌 글",
+      "text": "just a note about programming",
+      "expectItems": 0,
+      "expectTrigger": null
+    },
+    {
+      "name": "이벤트로 이미 줄이 있음",
+      "text": "https://youtu.be/dQw4w9WgXcQ",
+      "preExisting": true,
+      "expectItems": 1,
+      "expectTrigger": null
+    }
+  ],
+  "options": [
+    "Choose a file...",
+    "Today's daily note"
+  ]
+}

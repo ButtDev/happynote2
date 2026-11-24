@@ -1,7 +1,7 @@
 /**
  * SPEC_039: 사람이 Ear-Coach를 부르는 입구 — URI 핸들러, 리본 아이콘, 명령, `ear-coach-session` 코드 블록.
  */
-import { Notice, TFile } from "obsidian";
+import { Notice, TFile, setIcon } from "obsidian";
 import type EarCoachPlugin from "../main";
 import { ListeningSessionData } from "../types/transcript";
 import { findYouTubeInShare, parseTimestampToSeconds, parseYouTubeUrl } from "../utils/youtubeUrlParser";
@@ -10,8 +10,8 @@ import { diagnostics } from "../services/diagnostics";
 import { getActiveEarCoachFile, openEarCoachForNoteFile } from "./workspaceView";
 import { resegmentNoteFile } from "./sessionPipeline";
 
-/** SPEC_053: 공유 메뉴 줄 제목 */
-export const SHARE_MENU_TITLE = "🎧 Ear-Coach로 열기";
+import { SHARE_MENU_TITLE, startShareMenuObserver } from "../ui/shareMenuInjector";
+export { SHARE_MENU_TITLE };
 
 export function registerEntryPoints(plugin: EarCoachPlugin): void {
   // 2. Register Custom URI Handler: obsidian://ear-coach?url=...&t=142&pin=true
@@ -38,6 +38,12 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
       );
     })
   );
+  // SPEC_053 회차 2: 이벤트를 안 부르는 판이 있어 메뉴 DOM도 지켜본다(이벤트로 줄이 생겼으면 건너뜀)
+  if (isMobileApp() && typeof document !== "undefined") {
+    plugin.register(
+      startShareMenuObserver(document, (url, t) => void plugin.handleYouTubeTrigger(url, t), (el, icon) => setIcon(el, icon))
+    );
+  }
 
   // 3. Register Ribbon Icon
   plugin.addRibbonIcon("headphones", "Ear-Coach: 유튜브 영어 리스닝 노트 생성 / 열기", () => {

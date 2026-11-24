@@ -2,7 +2,7 @@
 id: SPEC_053
 title: 유튜브 앱 「공유 → Obsidian」 메뉴에 「🎧 Ear-Coach로 열기」
 status: IMPLEMENTED
-iterations: 1
+iterations: 2
 max_iterations: 3
 depends_on: []
 ---
@@ -42,3 +42,4 @@ depends_on: []
 
 ## 실행 기록
 - 2026-11-24 회차 1: IMPLEMENTED — 1 ✅ Test 36 「11 share cases」 PASS · 2 ✅ Test 25 「wiring OK: 5 commands, 3 events」 + 공유 메뉴 2사례(줄 1개·누름 → [url, 42] / 줄 0개) · 3 ✅ 변이: youtu 거름 끔 → 「11글자 일반 낱말」, 끝 구두점 벗기기 끔 → 「괄호·마침표로 감싼 주소」, 찾기 결과 무시(commands) → 「공유 메뉴 줄: just a note about programming」 실패 · 4 ✅ `verify.mjs --set regression` harness·build·test·ui ok · 5 ⏳ (BRAT 1.0.62 릴리스 3파일 확인)
+- 2026-11-24 회차 2: 사람 5 NG(사진: 공유 메뉴에 Ear-Coach 줄 없음 → 이 판 Obsidian은 `receive-text-menu`를 안 부름). 가결정 대안대로 메뉴 DOM 지켜보기 추가 — `src/ui/shareMenuInjector.ts`(body에 붙는 `.menu` 중 `data-section` title·options·danger가 모두 있으면 제목 글에서 유튜브 주소를 찾아 첫 options 앞에 줄, 누르면 Cancel 클릭으로 닫고 `handleYouTubeTrigger`; 이벤트로 줄이 이미 있으면 건너뜀), 모바일에서만 `commands.ts`가 시작. 화면 검사 `expect.shareMenu` + `tests/fixtures/share/menu-dom.json`(사진 주소 그대로·시각·유튜브 아님·이미 있음) 양 뷰 통과, `share-menu-portrait.png` 확인(Choose a file 위에 줄). 변이: 끝에 붙이기 → firstOptionIsOurs false 실패, 관찰 끔 → items 0 실패. `verify.mjs --set regression` ok. 5 ⏳ (BRAT 1.0.63)
