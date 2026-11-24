@@ -1458,6 +1458,89 @@ for (const vp of cases.viewports) {
     m.shareMenu = res;
   }
 
+  // 야간 11-26: 긴 영상(실기기 439장) — 카드 N장 세션을 열어 첫 그리기·스크롤·따라가기 시간과 DOM 카드 수를 잰다.
+  if (vp.expect?.longList) {
+    const L = vp.expect.longList;
+    const res = await page.evaluate(async ({ n }) => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
+      const view = window.__earCoachView;
+      const orig = view?.session;
+      if (!orig) return { error: "no session" };
+      const base = orig.segments;
+      const segs = Array.from({ length: n }, (_, i) => {
+        const s = structuredClone(base[i % base.length]);
+        const d = 3.5;
+        return { ...s, id: `long-${i}`, index: i, start: i * 4, end: i * 4 + d, duration: d, wordStarts: undefined, isPinned: false, pinnedAt: undefined, reviews: undefined };
+      });
+      const cards = () => document.querySelectorAll(".ear-coach-segment-card").length;
+      const scroller = () => [...document.querySelectorAll(".ear-coach-mobile-list-wrapper, .ear-coach-mobile-list-wrapper *")].find((el) => el.scrollHeight > el.clientHeight + 10 && getComputedStyle(el).overflowY !== "visible");
+      const t0 = performance.now();
+      await view.loadSession({ ...orig, videoId: "longLIST001", pinnedTimestamps: [], segments: segs }, null);
+      const loadMs = performance.now() - t0;
+      await frame();
+      const firstPaintMs = performance.now() - t0;
+      const cardsAfterLoad = cards();
+      const sc = scroller();
+      if (!sc) return { error: "scroller missing", loadMs, cardsAfterLoad };
+      // 기준: 아무것도 안 할 때 두 프레임 시간(헤드리스 rAF 간격) — 스크롤 단계는 이것을 뺀 값으로 본다
+      let idleMs = Infinity;
+      for (let k = 0; k < 5; k++) { const i0 = performance.now(); await frame(); await frame(); idleMs = Math.min(idleMs, performance.now() - i0); }
+      const longTasks = [];
+      const po = typeof PerformanceObserver !== "undefined" ? new PerformanceObserver((l) => l.getEntries().forEach((e) => longTasks.push(Math.round(e.duration)))) : null;
+      try { po?.observe({ type: "longtask", buffered: false }); } catch {}
+      // 스크롤: 목록 끝까지 20단계, 단계마다 한 프레임 — 가장 긴 단계 시간
+      const steps = 20;
+      let maxStepMs = 0, maxCards = 0;
+      for (let k = 1; k <= steps; k++) {
+        // 한 단계의 동기 작업: 스크롤 위치 → 보이는 카드 다시 그리기 → 배치 계산까지(rAF 간격은 빼고)
+        const s0 = performance.now();
+        sc.scrollTop = (sc.scrollHeight - sc.clientHeight) * (k / steps);
+        view.virtualList?.renderVisibleWindow(false);
+        void sc.scrollHeight; document.querySelector(".ear-coach-segment-card")?.getBoundingClientRect();
+        maxStepMs = Math.max(maxStepMs, performance.now() - s0);
+        await frame();
+        await frame();
+        maxCards = Math.max(maxCards, cards());
+      }
+      po?.disconnect();
+      sc.scrollTop = 0;
+      await wait(300);
+      // 따라가기: 400번째 카드 시각으로 → 그 카드가 화면에 들어오기까지
+      const target = Math.min(n - 1, 400);
+      const prevFollow = window.__earCoachSettings.autoFollowPlayback;
+      window.__earCoachSettings.autoFollowPlayback = true;
+      const f0 = performance.now();
+      view.playerBar.seekTo(segs[target].start + 1);
+      let followMs = -1;
+      while (performance.now() - f0 < 5000) {
+        await frame();
+        const el = document.querySelector(`.ear-coach-segment-card[data-segment-index="${target}"]`);
+        const sr = sc.getBoundingClientRect(), cr = el?.getBoundingClientRect();
+        if (cr && cr.top >= sr.top - 1 && cr.bottom <= sr.bottom + 1) { followMs = performance.now() - f0; break; }
+      }
+      await wait(800);
+      const el = document.querySelector(`.ear-coach-segment-card[data-segment-index="${target}"]`);
+      const sr = sc.getBoundingClientRect(), cr = el?.getBoundingClientRect();
+      const settledVisible = !!cr && cr.top >= sr.top - 1 && cr.bottom <= sr.bottom + 1;
+      const activeIdx = [...document.querySelectorAll(".ear-coach-segment-card.is-active-playing")].map((c) => Number(c.getAttribute("data-segment-index")));
+      const cardsAtEnd = cards();
+      // 되돌리기
+      window.__earCoachSettings.autoFollowPlayback = prevFollow;
+      view.playerBar.seekTo(0);
+      await view.loadSession(orig, null);
+      await wait(300);
+      return { n, loadMs: Math.round(loadMs), firstPaintMs: Math.round(firstPaintMs), cardsAfterLoad, maxStepMs: Math.round(maxStepMs), idleMs: Math.round(idleMs), longTasks, maxCards, followMs: Math.round(followMs), settledVisible, activeIdx, target, cardsAtEnd, restored: view.session === orig };
+    }, { n: L.cards });
+    console.log(`${vp.name} longList: ${JSON.stringify(res)}`);
+    const ok = res && !res.error && res.loadMs <= L.maxLoadMs && res.maxStepMs <= L.maxScrollStepMs && res.longTasks.every((d) => d <= L.maxLongTaskMs) &&
+      res.cardsAfterLoad <= L.maxDomCards && res.maxCards <= L.maxDomCards && res.cardsAtEnd <= L.maxDomCards &&
+      res.followMs >= 0 && res.followMs <= L.maxFollowMs && res.settledVisible &&
+      JSON.stringify(res.activeIdx) === JSON.stringify([res.target]) && res.restored;
+    if (!ok) errors.push(`${vp.name}: longList ${JSON.stringify(res)}`);
+    m.longList = res;
+  }
+
   // SPEC_034: 「🧹 휴지통 비우기」 — 처음 0개·disabled → 영상 지우기 → 3개 → 비우기 → 영구 삭제는 기록 3개만(남의 .trash 노트 그대로) → 0개
   if (vp.expect?.videoTrash) {
     await page.evaluate(() => {

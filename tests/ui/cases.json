@@ -101,7 +101,8 @@
         "videoData": true,
         "videoTrash": true,
         "diagnostics": true,
-        "shareMenu": "tests/fixtures/share/menu-dom.json"
+        "shareMenu": "tests/fixtures/share/menu-dom.json",
+        "longList": { "cards": 440, "maxLoadMs": 400, "maxScrollStepMs": 50, "maxLongTaskMs": 100, "maxFollowMs": 2500, "maxDomCards": 40 }
       }
     },
     {
@@ -207,7 +208,8 @@
         "videoData": true,
         "videoTrash": true,
         "diagnostics": true,
-        "shareMenu": "tests/fixtures/share/menu-dom.json"
+        "shareMenu": "tests/fixtures/share/menu-dom.json",
+        "longList": { "cards": 440, "maxLoadMs": 400, "maxScrollStepMs": 50, "maxLongTaskMs": 100, "maxFollowMs": 2500, "maxDomCards": 40 }
       }
     }
   ],
