@@ -1,6 +1,6 @@
 {
   "name": "obsidian-ear-coach",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "description": "YouTube + Obsidian + agy CLI powered interactive English listening & ear-opening coach plugin.",
   "main": "main.js",
   "type": "module",
