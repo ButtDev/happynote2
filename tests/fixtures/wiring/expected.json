@@ -49,9 +49,9 @@
   ],
   "protocolWithoutUrlNotice": "Ear-Coach 링크에 유튜브 주소가 없어요",
   "invalidUrlNotice": "유튜브 링크가 아니에요",
-  "_shareNote": "SPEC_053: 공유 메뉴(receive-text-menu) — 유튜브 글이면 줄 1개, 누르면 handleYouTubeTrigger(url, 시각)",
+  "_shareNote": "SPEC_053: 공유 메뉴(receive-text-menu) — 유튜브 글이면 줄 1개, 누르면 handleYouTubeTrigger(url, 시각). SPEC_054: 줄은 section options(없으면 Obsidian Menu.sort가 Cancel 아래로 보냄), 진단 「공유 이벤트」 한 줄",
   "shareMenu": [
-    { "text": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", "items": [{ "title": "🎧 Ear-Coach로 열기", "icon": "headphones" }], "trigger": ["https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", 42] },
-    { "text": "just a note about programming", "items": [], "trigger": null }
+    { "text": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", "items": [{ "section": "options", "title": "🎧 Ear-Coach로 열기", "icon": "headphones" }], "diag": "유튜브 찾음", "trigger": ["https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", 42] },
+    { "text": "just a note about programming", "items": [], "diag": "유튜브 없음", "trigger": null }
   ]
 }

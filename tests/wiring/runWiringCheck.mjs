@@ -29,7 +29,10 @@ const built = await esbuild.build({
   define: { __INLINE_WORKER_CODE__: '""' },
   logLevel: "silent",
 });
-const code = built.outputFiles[0].text;
+// SPEC_054: 공용 진단 기록(diagnostics)을 꺼내 본다 — 묶인 코드 안 이름을 찾아 내보냄
+const diagName = built.outputFiles[0].text.match(/var (\w+) = new DiagnosticsLog\(/)?.[1];
+assert.ok(diagName, "묶은 코드에서 diagnostics를 못 찾음");
+const code = built.outputFiles[0].text + `\nmodule.exports.__diag = ${diagName};`;
 
 // ---- 가짜 obsidian ----
 const rec = { notices: [], events: [], layoutReady: 0, handlers: {} };
@@ -170,11 +173,17 @@ assert.deepEqual(rec.notices, [expected.invalidUrlNotice], "잘못된 URL 안내
   const realTrigger = plugin.handleYouTubeTrigger;
   for (const c of expected.shareMenu) {
     const items = [];
-    const menu = { addItem: (fn) => { const it = { onClick(cb) { this.click = cb; return this; }, setTitle(t) { this.title = t; return this; }, setIcon(i) { this.icon = i; return this; } }; fn(it); items.push(it); return menu; } };
+    const menu = { addItem: (fn) => { const it = { onClick(cb) { this.click = cb; return this; }, setSection(s) { this.section = s; return this; }, setTitle(t) { this.title = t; return this; }, setIcon(i) { this.icon = i; return this; } }; fn(it); items.push(it); return menu; } };
     let called = null;
     plugin.handleYouTubeTrigger = async (...a) => void (called = a);
+    const diag = mod.exports.__diag;
+    diag.clear();
     rec.handlers["workspace:receive-text-menu"](menu, c.text);
-    assert.deepEqual(items.map((x) => ({ title: x.title, icon: x.icon })), c.items, `공유 메뉴 줄: ${c.text}`);
+    assert.deepEqual(items.map((x) => ({ section: x.section, title: x.title, icon: x.icon })), c.items, `공유 메뉴 줄: ${c.text}`);
+    // SPEC_054: 공유 이벤트마다 진단 한 줄(유튜브 찾음/없음)
+    const d = diag.list().filter((e) => e.stage === "공유 이벤트");
+    assert.equal(d.length, 1, `공유 이벤트 진단 1줄: ${c.text}`);
+    assert.ok(d[0].message.includes(c.diag), `공유 이벤트 진단 「${c.diag}」: ${d[0].message}`);
     items[0]?.click();
     assert.deepEqual(called, c.trigger, `공유 메뉴 누름: ${c.text}`);
   }

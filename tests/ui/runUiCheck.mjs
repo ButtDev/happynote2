@@ -1371,12 +1371,22 @@ for (const vp of cases.viewports) {
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       const S = window.__shareMenu;
       const calls = [];
-      const stop = S.startShareMenuObserver(document, (url, t) => calls.push([url, t ?? null]));
+      const diags = [];
+      const stop = S.startShareMenuObserver(document, (url, t) => calls.push([url, t ?? null]), undefined, (stage, msg) => diags.push(`${stage}: ${msg}`));
       window.__shareCalls = calls;
       window.__shareKeep = { getCancelled: () => 0 };
       const out = [];
+      // SPEC_054: 공유 아닌 일반 메뉴는 진단에 안 남음
+      const plain = document.createElement("div");
+      plain.className = "menu";
+      plain.innerHTML = '<div class="menu-item"><div class="menu-item-title">Copy</div></div>';
+      document.body.appendChild(plain);
+      await wait(120);
+      plain.remove();
+      const plainDiags = diags.length;
       for (const c of cases) {
         calls.length = 0;
+        diags.length = 0;
         const menu = document.createElement("div");
         menu.className = "menu ear-coach-ui-share-menu";
         menu.style.cssText = "position:fixed;left:16px;right:16px;bottom:16px;z-index:50;background:var(--background-secondary);border-radius:16px;padding:8px";
@@ -1410,7 +1420,7 @@ for (const vp of cases.viewports) {
           if (c.name.startsWith("유튜브 앱")) shot = true;
           if (!shot) ours.click();
         }
-        out.push({ name: c.name, items: items.length, itemsAgain, firstOptionIsOurs: ours ? firstOptionIsOurs : null, shot, menuId: shot ? "keep" : null });
+        out.push({ name: c.name, items: items.length, itemsAgain, firstOptionIsOurs: ours ? firstOptionIsOurs : null, shot, menuId: shot ? "keep" : null, diags: [...diags], plainDiags });
         if (shot) {
           menu.id = "ear-coach-ui-share-keep";
           window.__shareKeep = { getCancelled: () => cancelled };
@@ -1441,7 +1451,8 @@ for (const vp of cases.viewports) {
       const r = res[i];
       const ok = r && r.items === c.expectItems && r.itemsAgain === c.expectItems
         && JSON.stringify(r.trigger ?? null) === JSON.stringify(c.expectTrigger)
-        && (c.expectTrigger ? r.cancelled === 1 && r.firstOptionIsOurs === true : true);
+        && (c.expectTrigger ? r.cancelled === 1 && r.firstOptionIsOurs === true : true)
+        && r.plainDiags === 0 && r.diags.length === 1 && r.diags[0].startsWith(`공유 메뉴: ${c.expectDiag} · 묶음 title,options,danger`);
       if (!ok) errors.push(`${vp.name}: shareMenu ${c.name} ${JSON.stringify(r)}`);
     });
     m.shareMenu = res;

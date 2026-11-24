@@ -28,13 +28,23 @@ export function shareTextOf(menu: Element): string {
   return title?.textContent ?? "";
 }
 
+export type ShareInjectReason = "넣음" | "이미 있음" | "유튜브 없음" | "공유 메뉴 아님";
+
+/** SPEC_054: 진단 한 줄 쓰는 곳(주입) */
+export type ShareDiagRecord = (stage: string, message: string) => void;
+
 /** 공유 메뉴에 줄을 넣는다(유튜브 주소가 있고 아직 없을 때만). 넣었으면 true */
 export function injectShareItem(menu: Element, onOpen: ShareOpen, setIcon?: IconSetter): boolean {
-  if (!isShareMenu(menu)) return false;
+  return shareInjectReason(menu, onOpen, setIcon) === "넣음";
+}
+
+/** 줄 넣기를 해 보고 그 결과 이유를 돌려준다 */
+export function shareInjectReason(menu: Element, onOpen: ShareOpen, setIcon?: IconSetter): ShareInjectReason {
+  if (!isShareMenu(menu)) return "공유 메뉴 아님";
   const already = Array.from(menu.querySelectorAll(".menu-item-title")).some((t) => t.textContent === SHARE_MENU_TITLE);
-  if (already || menu.querySelector(`.${SHARE_ITEM_CLASS}`)) return false;
+  if (already || menu.querySelector(`.${SHARE_ITEM_CLASS}`)) return "이미 있음";
   const found = findYouTubeInShare(shareTextOf(menu));
-  if (!found) return false;
+  if (!found) return "유튜브 없음";
 
   const doc = menu.ownerDocument;
   const item = doc.createElement("div");
@@ -58,14 +68,29 @@ export function injectShareItem(menu: Element, onOpen: ShareOpen, setIcon?: Icon
   // 「Add text to file」 묶음보다 위 — 첫 options 칸 앞
   const firstOption = menu.querySelector('[data-section="options"]');
   firstOption?.parentElement?.insertBefore(item, firstOption);
-  return true;
+  return "넣음";
+}
+
+/** 진단 글: `<이유> · 묶음 <data-section 목록> · 줄 N` */
+export function shareMenuDiagLine(menu: Element, reason: ShareInjectReason): string {
+  const secs = Array.from(new Set(Array.from(menu.querySelectorAll("[data-section]")).map((e) => e.getAttribute("data-section"))));
+  const rows = menu.querySelectorAll(".menu-item").length;
+  return `${reason} · 묶음 ${secs.join(",") || "없음"} · 줄 ${rows}`;
 }
 
 /** body에 붙는 메뉴를 지켜보며 줄을 넣는다. 멈추는 함수를 돌려준다 */
-export function startShareMenuObserver(doc: Document, onOpen: ShareOpen, setIcon?: IconSetter): () => void {
+export function startShareMenuObserver(doc: Document, onOpen: ShareOpen, setIcon?: IconSetter, diag?: ShareDiagRecord): () => void {
+  const seen = new WeakSet<Element>();
   const tryMenus = (node: Element) => {
     const menus = node.matches(".menu") ? [node] : Array.from(node.querySelectorAll(".menu"));
-    for (const m of menus) injectShareItem(m, onOpen, setIcon);
+    for (const m of menus) {
+      const reason = shareInjectReason(m, onOpen, setIcon);
+      // 공유 메뉴(또는 유튜브 글이 든 메뉴)만, 메뉴마다 한 번 — 일반 메뉴는 기록 안 함
+      if (!diag || seen.has(m)) continue;
+      if (reason === "공유 메뉴 아님" && !/youtu/i.test(m.textContent ?? "")) continue;
+      seen.add(m);
+      diag("공유 메뉴", shareMenuDiagLine(m, reason));
+    }
   };
   const observer = new MutationObserver((mutations) => {
     for (const mu of mutations) {

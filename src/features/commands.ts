@@ -29,9 +29,13 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
   plugin.registerEvent(
     (plugin.app.workspace as any).on("receive-text-menu", (menu: any, text: string) => {
       const found = findYouTubeInShare(text);
+      const head = String(text ?? "").replace(/\s+/g, " ").slice(0, 60);
+      diagnostics.record("공유 이벤트", `글 ${String(text ?? "").length}자 · 유튜브 ${found ? "찾음" : "없음"} · ${head}`);
       if (!found || !menu?.addItem) return;
+      // SPEC_054: section 없는 줄은 Menu.sort()가 Cancel 아래로 보낸다(Obsidian 1.15.1 app.js) → options 묶음에
       menu.addItem((item: any) =>
         item
+          .setSection("options")
           .setTitle(SHARE_MENU_TITLE)
           .setIcon("headphones")
           .onClick(() => void plugin.handleYouTubeTrigger(found.url, found.timestampSeconds))
@@ -41,7 +45,12 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
   // SPEC_053 회차 2: 이벤트를 안 부르는 판이 있어 메뉴 DOM도 지켜본다(이벤트로 줄이 생겼으면 건너뜀)
   if (isMobileApp() && typeof document !== "undefined") {
     plugin.register(
-      startShareMenuObserver(document, (url, t) => void plugin.handleYouTubeTrigger(url, t), (el, icon) => setIcon(el, icon))
+      startShareMenuObserver(
+        document,
+        (url, t) => void plugin.handleYouTubeTrigger(url, t),
+        (el, icon) => setIcon(el, icon),
+        (stage, msg) => diagnostics.record(stage, msg)
+      )
     );
   }
 
