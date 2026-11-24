@@ -1,7 +1,7 @@
 ---
 id: SPEC_054
 title: 공유 메뉴 줄 자리 고치기 + 공유 진단 기록
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -52,3 +52,4 @@ Obsidian 공식 배포본 1.15.1(`obsidian-1.15.1.asar.gz`의 `app.js`)을 읽�
 
 ## 실행 기록
 - 2026-11-25 회차 1(야간): IMPLEMENTED — 1 ✅ `node tests/wiring/runWiringCheck.mjs` 「wiring OK: 5 commands, 3 events」(줄 section options, 진단 「유튜브 찾음」/「유튜브 없음」) · 2 ✅ 화면 검사 shareMenu 양 뷰 `diags:["공유 메뉴: 넣음 · 묶음 title,options,danger · 줄 5"]`·「유튜브 없음 … 줄 4」·「이미 있음 … 줄 5」, 일반 메뉴 plainDiags 0 · 3 ✅ 변이 4개 실패: section 끔 → 「공유 메뉴 줄」, 이벤트 진단 끔 → 「공유 이벤트 진단 1줄」, DOM 진단 끔 → ui-check FAIL, 일반 메뉴 거름 끔 → plainDiags 1 FAIL · 4 ✅ `verify.mjs --set regression` harness·build·test·ui ok (night/SPEC_054 worktree)
+- 2026-11-25 사람 확인: SPEC_053 5 OK(1.0.65, 공유 메뉴 줄로 영상 열림) → 모아 둔 ⏳ 끝, DONE

@@ -1,7 +1,7 @@
 ---
 id: SPEC_053
 title: 유튜브 앱 「공유 → Obsidian」 메뉴에 「🎧 Ear-Coach로 열기」
-status: IMPLEMENTED
+status: DONE
 iterations: 2
 max_iterations: 3
 depends_on: []
@@ -31,7 +31,7 @@ depends_on: []
 2. [x] 플러그인이 `workspace:receive-text-menu`를 등록, 유튜브 글이면 줄 1개(제목·아이콘 위 글자), 누르면 `handleYouTubeTrigger`가 그 주소·시각으로 불림, 유튜브 아닌 글이면 줄 0개 [자동: wiring check(Test 25)]
 3. [x] 변이(11글자 막기 끔, 구두점 벗기기 끔) 실패 [자동]
 4. [x] 회귀 통과 [자동]
-5. [ ] Android BRAT 업데이트 뒤 유튜브 앱에서 영상 「공유 → Obsidian」 → 뜨는 메뉴에서 「🎧 Ear-Coach로 열기」를 눌러 그 영상이 Ear-Coach로 열리는지 보고 버튼 [수동]
+5. [x] Android BRAT 업데이트 뒤 유튜브 앱에서 영상 「공유 → Obsidian」 → 뜨는 메뉴에서 「🎧 Ear-Coach로 열기」를 눌러 그 영상이 Ear-Coach로 열리는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 1·3: `npm test` Test 36(+`EAR_COACH_SHARE_MODULE` 변이). 2: `npm test` Test 25. 4: `verify.mjs --set regression`.
@@ -45,3 +45,4 @@ depends_on: []
 - 2026-11-24 회차 2: 사람 5 NG(사진: 공유 메뉴에 Ear-Coach 줄 없음 → 이 판 Obsidian은 `receive-text-menu`를 안 부름). 가결정 대안대로 메뉴 DOM 지켜보기 추가 — `src/ui/shareMenuInjector.ts`(body에 붙는 `.menu` 중 `data-section` title·options·danger가 모두 있으면 제목 글에서 유튜브 주소를 찾아 첫 options 앞에 줄, 누르면 Cancel 클릭으로 닫고 `handleYouTubeTrigger`; 이벤트로 줄이 이미 있으면 건너뜀), 모바일에서만 `commands.ts`가 시작. 화면 검사 `expect.shareMenu` + `tests/fixtures/share/menu-dom.json`(사진 주소 그대로·시각·유튜브 아님·이미 있음) 양 뷰 통과, `share-menu-portrait.png` 확인(Choose a file 위에 줄). 변이: 끝에 붙이기 → firstOptionIsOurs false 실패, 관찰 끔 → items 0 실패. `verify.mjs --set regression` ok. 5 ⏳ (BRAT 1.0.63)
 - 2026-11-25 야간 메모(회차 아님): 사람 NG 2건(11-24 22:44·22:47)은 둘 다 회차 1 질문(메시지 1045, 1.0.62)에 눌림 — 회차 2(1.0.63, 22:58 배포)는 실기기 판정 없음. Obsidian 1.15.1 app.js 확인: 공유 메뉴는 `receive-text-menu`를 부름(「Today's daily note」도 이 이벤트), section 없는 줄은 Cancel 아래로 감 → SPEC_054에서 section·진단 추가. 5 ⏳는 새 판으로 다시.
 
+- 2026-11-25 사람 확인: 5 OK (`[Button pressed: SPEC_053 5 OK]`, 1.0.65) → DONE
