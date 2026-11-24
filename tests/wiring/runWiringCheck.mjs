@@ -32,7 +32,7 @@ const built = await esbuild.build({
 const code = built.outputFiles[0].text;
 
 // ---- 가짜 obsidian ----
-const rec = { notices: [], events: [], layoutReady: 0 };
+const rec = { notices: [], events: [], layoutReady: 0, handlers: {} };
 class Notice {
   constructor(m) {
     rec.notices.push(String(m));
@@ -59,7 +59,7 @@ class Dummy {
 const frontmatterByPath = new Map();
 const app = {
   workspace: {
-    on: (name) => (rec.events.push(`workspace:${name}`), { name }),
+    on: (name, cb) => (rec.events.push(`workspace:${name}`), (rec.handlers[`workspace:${name}`] = cb), { name }),
     onLayoutReady: () => void rec.layoutReady++,
     getLeavesOfType: () => [],
     iterateAllLeaves: () => {},
@@ -165,6 +165,21 @@ assert.deepEqual(rec.notices, [expected.protocolWithoutUrlNotice], "URI url 없�
 rec.notices.length = 0;
 await plugin.handleYouTubeTrigger("not a url");
 assert.deepEqual(rec.notices, [expected.invalidUrlNotice], "잘못된 URL 안내");
+// SPEC_053: 공유 메뉴 — 줄 넣기·누르면 handleYouTubeTrigger
+{
+  const realTrigger = plugin.handleYouTubeTrigger;
+  for (const c of expected.shareMenu) {
+    const items = [];
+    const menu = { addItem: (fn) => { const it = { onClick(cb) { this.click = cb; return this; }, setTitle(t) { this.title = t; return this; }, setIcon(i) { this.icon = i; return this; } }; fn(it); items.push(it); return menu; } };
+    let called = null;
+    plugin.handleYouTubeTrigger = async (...a) => void (called = a);
+    rec.handlers["workspace:receive-text-menu"](menu, c.text);
+    assert.deepEqual(items.map((x) => ({ title: x.title, icon: x.icon })), c.items, `공유 메뉴 줄: ${c.text}`);
+    items[0]?.click();
+    assert.deepEqual(called, c.trigger, `공유 메뉴 누름: ${c.text}`);
+  }
+  plugin.handleYouTubeTrigger = realTrigger;
+}
 // 가로채기: Ear-Coach 노트가 아니면 원래 openFile로
 assert.equal(await WorkspaceLeaf.prototype.openFile.call(new WorkspaceLeaf(), new TFile("Other/a.md")), "orig", "일반 노트는 원래 openFile");
 

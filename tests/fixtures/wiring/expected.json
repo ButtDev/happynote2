@@ -14,8 +14,8 @@
     ],
     "codeblocks": ["ear-coach-session"],
     "settingTabs": 1,
-    "events": ["metadataCache:resolved", "workspace:file-open"],
-    "registeredEvents": 2,
+    "events": ["metadataCache:resolved", "workspace:file-open", "workspace:receive-text-menu"],
+    "registeredEvents": 3,
     "layoutReady": 1,
     "openFilePatched": true
   },
@@ -48,5 +48,10 @@
     { "id": "ear-coach-resegment-current-note", "expect": false }
   ],
   "protocolWithoutUrlNotice": "Ear-Coach 링크에 유튜브 주소가 없어요",
-  "invalidUrlNotice": "유튜브 링크가 아니에요"
+  "invalidUrlNotice": "유튜브 링크가 아니에요",
+  "_shareNote": "SPEC_053: 공유 메뉴(receive-text-menu) — 유튜브 글이면 줄 1개, 누르면 handleYouTubeTrigger(url, 시각)",
+  "shareMenu": [
+    { "text": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", "items": [{ "title": "🎧 Ear-Coach로 열기", "icon": "headphones" }], "trigger": ["https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", 42] },
+    { "text": "just a note about programming", "items": [], "trigger": null }
+  ]
 }

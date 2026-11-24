@@ -1,0 +1,16 @@
+{
+ "comment": "SPEC_053 공유 글에서 유튜브 주소 찾기. 유튜브 Android 앱 공유는 보통 `https://youtu.be/ID?si=…` 한 줄, 브라우저·다른 앱은 제목+주소.",
+ "cases": [
+  { "name": "유튜브 앱 기본(si)", "text": "https://youtu.be/vOpPMqxLUHg?si=Xy3kq9ZtPq1aBcDe", "expect": { "url": "https://youtu.be/vOpPMqxLUHg?si=Xy3kq9ZtPq1aBcDe", "videoId": "vOpPMqxLUHg" } },
+  { "name": "시각 붙은 공유", "text": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", "expect": { "url": "https://youtu.be/dQw4w9WgXcQ?si=abc&t=42", "videoId": "dQw4w9WgXcQ", "timestampSeconds": 42 } },
+  { "name": "제목 + 주소(줄바꿈)", "text": "Rick Astley - Never Gonna Give You Up\nhttps://www.youtube.com/watch?v=dQw4w9WgXcQ", "expect": { "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "videoId": "dQw4w9WgXcQ" } },
+  { "name": "괄호·마침표로 감싼 주소", "text": "Watch this (https://m.youtube.com/watch?v=iG9CE55wbtY&t=1m5s).", "expect": { "url": "https://m.youtube.com/watch?v=iG9CE55wbtY&t=1m5s", "videoId": "iG9CE55wbtY", "timestampSeconds": 65 } },
+  { "name": "shorts", "text": "“https://youtube.com/shorts/txqiwrbYGrs?si=q1”", "expect": { "url": "https://youtube.com/shorts/txqiwrbYGrs?si=q1", "videoId": "txqiwrbYGrs" } },
+  { "name": "music", "text": "https://music.youtube.com/watch?v=dQw4w9WgXcQ&si=z", "expect": { "url": "https://music.youtube.com/watch?v=dQw4w9WgXcQ&si=z", "videoId": "dQw4w9WgXcQ" } },
+  { "name": "유튜브 아닌 주소", "text": "https://vimeo.com/123456789", "expect": null },
+  { "name": "11글자 일반 낱말", "text": "programming", "expect": null },
+  { "name": "11글자 낱말 + 글", "text": "I love programming everyday", "expect": null },
+  { "name": "유튜브 채널(영상 아님)", "text": "https://www.youtube.com/@TED", "expect": null },
+  { "name": "빈 글", "text": "", "expect": null }
+ ]
+}

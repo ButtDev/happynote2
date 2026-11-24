@@ -4,11 +4,14 @@
 import { Notice, TFile } from "obsidian";
 import type EarCoachPlugin from "../main";
 import { ListeningSessionData } from "../types/transcript";
-import { parseTimestampToSeconds, parseYouTubeUrl } from "../utils/youtubeUrlParser";
+import { findYouTubeInShare, parseTimestampToSeconds, parseYouTubeUrl } from "../utils/youtubeUrlParser";
 import { isMobileApp } from "../utils/platform";
 import { diagnostics } from "../services/diagnostics";
 import { getActiveEarCoachFile, openEarCoachForNoteFile } from "./workspaceView";
 import { resegmentNoteFile } from "./sessionPipeline";
+
+/** SPEC_053: 공유 메뉴 줄 제목 */
+export const SHARE_MENU_TITLE = "🎧 Ear-Coach로 열기";
 
 export function registerEntryPoints(plugin: EarCoachPlugin): void {
   // 2. Register Custom URI Handler: obsidian://ear-coach?url=...&t=142&pin=true
@@ -21,6 +24,20 @@ export function registerEntryPoints(plugin: EarCoachPlugin): void {
     const pinSec = parseTimestampToSeconds(params.t);
     await plugin.handleYouTubeTrigger(rawUrl, pinSec);
   });
+
+  // SPEC_053: 다른 앱 「공유 → Obsidian」 메뉴에 「🎧 Ear-Coach로 열기」(공개 API에 없는 모바일 이벤트)
+  plugin.registerEvent(
+    (plugin.app.workspace as any).on("receive-text-menu", (menu: any, text: string) => {
+      const found = findYouTubeInShare(text);
+      if (!found || !menu?.addItem) return;
+      menu.addItem((item: any) =>
+        item
+          .setTitle(SHARE_MENU_TITLE)
+          .setIcon("headphones")
+          .onClick(() => void plugin.handleYouTubeTrigger(found.url, found.timestampSeconds))
+      );
+    })
+  );
 
   // 3. Register Ribbon Icon
   plugin.addRibbonIcon("headphones", "Ear-Coach: 유튜브 영어 리스닝 노트 생성 / 열기", () => {

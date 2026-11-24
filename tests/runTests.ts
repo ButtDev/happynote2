@@ -1554,6 +1554,17 @@ async function runAllTests() {
   log(`  -> PASS: ${yq.day.length} day cases, ${yq.pick.length} pick cases, ${yq.grade.length} grade cases.`);
   log("");
 
+  log("[Test 36] Share text — 공유 글에서 유튜브 주소 찾기 (data-driven, SPEC_053)");
+  const shareMod = process.env.EAR_COACH_SHARE_MODULE ? await import(path.resolve(process.env.EAR_COACH_SHARE_MODULE)) : await import("../src/utils/youtubeUrlParser.ts");
+  const shareCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/share/cases.json"), "utf8"));
+  for (const c of shareCases.cases) {
+    const got = shareMod.findYouTubeInShare(c.text);
+    const norm = got ? { url: got.url, videoId: shareMod.parseYouTubeUrl(got.url)?.videoId, ...(got.timestampSeconds !== undefined ? { timestampSeconds: got.timestampSeconds } : {}) } : null;
+    assert.deepEqual(norm, c.expect, `findYouTubeInShare: ${c.name}`);
+  }
+  log(`  -> PASS: ${shareCases.cases.length} share cases.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");

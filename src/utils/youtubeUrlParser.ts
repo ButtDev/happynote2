@@ -120,6 +120,21 @@ export function parseYouTubeUrl(input: string): ParsedYouTubeUrl | null {
 }
 
 /**
+ * SPEC_053: 공유로 받은 글(「제목 https://youtu.be/ID?si=…」 등)에서 첫 유튜브 주소.
+ * `youtu`가 든 낱말만 본다(11글자 일반 낱말을 영상 ID로 읽지 않게). 앞뒤 괄호·따옴표·구두점은 벗긴다.
+ */
+export function findYouTubeInShare(text: string): { url: string; timestampSeconds?: number } | null {
+  if (!text || typeof text !== "string") return null;
+  for (const raw of text.split(/\s+/)) {
+    const word = raw.replace(/^[\s"'“”‘’(<\[{]+/, "").replace(/[\s"'“”‘’)>\]}.,;:!?]+$/, "");
+    if (!/youtu/i.test(word)) continue;
+    const parsed = parseYouTubeUrl(word);
+    if (parsed) return parsed.timestampSeconds !== undefined ? { url: word, timestampSeconds: parsed.timestampSeconds } : { url: word };
+  }
+  return null;
+}
+
+/**
  * Generates a one-click browser bookmarklet that sends the active YouTube URL + current playback second to Obsidian.
  */
 export function generateBookmarkletCode(): string {
