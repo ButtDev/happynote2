@@ -160,3 +160,4 @@
 {"ts":"2026-11-24T13:58:05.510Z","spec":"SPEC_053","iteration":2,"result":"IMPLEMENTED","note":"공유 메뉴 DOM 관찰 추가, 회귀 ok, BRAT 1.0.63"}
 {"ts":"2026-11-24T15:14:15.431Z","cmd":"/night-run","spec":"SPEC_054","iteration":1,"status":"IMPLEMENTED","evidence":"wiring OK(section options·진단), ui shareMenu diags 양 뷰, 변이 4개 실패, regression ok, BRAT 1.0.64 릴리스 3파일","note":"SPEC_053 NG 2건은 1.0.62(메시지 1045)에 눌림 — 1.0.63 미판정"}
 {"ts":"2026-11-24T15:41:21.287Z","id":"night-1126-longlist","kind":"simple","what":"화면 검사 longList: 카드 440장 세션 첫 그리기·스크롤·따라가기 측정","evidence":"verify regression ok; portrait load 3ms, DOM 카드 최대 12, 스크롤 단계 동기 7ms, 긴 작업 0, 따라가기 400번 카드 654ms; 변이 OVERSCAN=1000 → 카드 440 FAIL","decision":"고칠 곳 없음(가상 목록이 이미 ~12장만 유지). 기준: load≤400ms·단계≤50ms·긴작업≤100ms·따라가기≤2500ms·DOM≤40 — rAF 간격(헤드리스 60~140ms)은 빼고 동기 작업만 잼"}
+{"ts":"2026-11-24T15:41:36.722Z","id":"night-1125-report","kind":"simple","what":"backlog·야간 보고 갱신, 주석 날짜 고침"}

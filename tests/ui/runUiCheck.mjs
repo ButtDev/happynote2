@@ -1458,7 +1458,7 @@ for (const vp of cases.viewports) {
     m.shareMenu = res;
   }
 
-  // 야간 11-26: 긴 영상(실기기 439장) — 카드 N장 세션을 열어 첫 그리기·스크롤·따라가기 시간과 DOM 카드 수를 잰다.
+  // 야간 11-25: 긴 영상(실기기 439장) — 카드 N장 세션을 열어 첫 그리기·스크롤·따라가기 시간과 DOM 카드 수를 잰다.
   if (vp.expect?.longList) {
     const L = vp.expect.longList;
     const res = await page.evaluate(async ({ n }) => {
