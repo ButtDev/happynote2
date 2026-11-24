@@ -51,3 +51,6 @@ $RECYCLE.BIN/
 *.bak
 tmp/
 temp/
+
+# npm test가 매번 다시 씀 (사람 11-25 허락)
+docs/test_result.txt
