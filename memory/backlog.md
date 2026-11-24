@@ -1,9 +1,9 @@
 # 백로그
 
 ## 대기
-- [야간 11-25 발견] 약점 대시보드 기록 사라짐: `src/services/WeaknessTracker.ts` `entries`가 메모리에만 있어, 앱을 다시 켠 뒤 첫 「안 들림 핀」이 `My_Listening_Weakness.md`를 그 1줄로 덮어씀(지난 기록·TOP 횟수 사라짐). 재현 `.scratch/weak/repro.mjs`(가짜 obsidian, 다시 켜기 전 2줄 → 뒤 1줄). 고칠 안: 순수 모듈 `src/utils/weaknessDashboard.ts`(import 없음 — 그리기·읽기) + 대시보드 끝 숨은 주석 `<!-- ear-coach-weakness: [...] -->`에 entries 저장·처음 기록 때 읽기(볼트 파일 하나 유지; 대안 플러그인 폴더 weakness.json) + Test 37·`tests/fixtures/weakness/`. 파일 4개라 night 브랜치 필요 — 열린 night 브랜치 5개(한도 2) 정리 뒤, 또는 낮에 SPEC으로. → 초안 `specs/SPEC_055_WEAKNESS_PERSIST.md`(DRAFT).
 
 ## 끝남
+- 약점 대시보드 기록 사라짐 → SPEC_055 IMPLEMENTED (11-25, 1.0.65)
 - 2026-11-25 실패 경로 시험 — 사전 429·503 안내 채움, 나머지는 기존 시험에 있음 (37d71e1)
 - [야간] 긴 영상 성능(11-25): 화면 검사 `longList` 440장 — 열기 3ms·DOM 카드 ≤12·스크롤 단계 7ms·긴 작업 0·따라가기 ~0.6s. 고칠 곳 없음(가상 목록).
 - [야간] SPEC_053 공유 줄 원인 찾기 → SPEC_054(11-25): Obsidian 1.15.1 app.js 근거로 이벤트 줄 section·진단 추가, 1.0.64. 11-24 NG는 1.0.62 대상이었음.

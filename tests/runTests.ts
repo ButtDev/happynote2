@@ -1581,6 +1581,42 @@ async function runAllTests() {
   log(`  -> PASS: ${shareCases.cases.length} share cases.`);
   log("");
 
+  log("[Test 37] Weakness dashboard — 다시 켜도 기록 지키기 (data-driven, SPEC_055)");
+  const weakMod = process.env.EAR_COACH_WEAKNESS_MODULE ? await import(path.resolve(process.env.EAR_COACH_WEAKNESS_MODULE)) : await import("../src/utils/weaknessDashboard.ts");
+  const weakCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/weakness/cases.json"), "utf8"));
+  const weakRows = (md: string) => md.split("\n").filter((l) => l.startsWith("- **[")).map((l) => (l.match(/\|\|(.*)\|\| \$/) ?? [])[1]);
+  const weakCount = (md: string, trap: string) => {
+    const label = weakMod.WEAKNESS_TRAP_LABELS[trap];
+    const row = md.split("\n").find((l) => l.startsWith(`| ${label} |`));
+    return Number((row?.match(/\*\*(\d+)회\*\*/) ?? [])[1]);
+  };
+  for (const c of weakCases.cases) {
+    let entries: any[] = [];
+    for (const st of c.steps) {
+      if (st.record) entries = weakMod.upsertWeaknessEntry(entries, st.record);
+      if (st.restart) entries = weakMod.parseWeaknessDashboard(weakMod.renderWeaknessDashboard(entries, "2026-11-25T00:00:00.000Z"));
+    }
+    const md = weakMod.renderWeaknessDashboard(entries, "2026-11-25T00:00:00.000Z");
+    assert.deepEqual(weakRows(md), c.expect.rows, `weakness rows: ${c.name}`);
+    for (const [trap, n] of Object.entries(c.expect.counts)) assert.equal(weakCount(md, trap), n, `weakness count ${trap}: ${c.name}`);
+    if (c.expect.heard) assert.equal(weakMod.parseWeaknessDashboard(md)[1]?.userHeard, c.expect.heard, `weakness heard: ${c.name}`);
+    assert.deepEqual(weakMod.parseWeaknessDashboard(md), entries, `weakness 숨은 기록 그대로 되읽힘: ${c.name}`);
+  }
+  for (const c of weakCases.parse) assert.equal(weakMod.parseWeaknessDashboard(c.markdown).length, c.expectCount, `weakness parse: ${c.name}`);
+  {
+    const lim = weakCases.limits;
+    let many: any[] = [];
+    for (let i = 0; i < lim.entries; i++) many = weakMod.upsertWeaknessEntry(many, { videoId: "v", videoTitle: "V", notePath: "n", segmentStart: i, segmentText: `s${i}`, phoneticKr: "", traps: ["LINKING"], recordedAt: "2026-11-25" });
+    const md = weakMod.renderWeaknessDashboard(many, "2026-11-25T00:00:00.000Z");
+    assert.equal(weakRows(md).length, lim.visibleMax, "weakness 보이는 줄 상한");
+    assert.equal(weakMod.parseWeaknessDashboard(md).length, lim.storedMax, "weakness 저장 상한");
+    for (const h of weakCases.headings) assert.ok(md.split("\n").includes(h), `weakness 제목 유지: ${h}`);
+    const empty = weakMod.renderWeaknessDashboard([], "2026-11-25T00:00:00.000Z");
+    assert.ok(empty.includes("- 아직 등록된 취약 문장이 없습니다."), "weakness 빈 목록 문구");
+  }
+  log(`  -> PASS: ${weakCases.cases.length} restart cases, ${weakCases.parse.length} parse cases, limits.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");

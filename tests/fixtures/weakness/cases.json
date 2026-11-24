@@ -1,0 +1,209 @@
+{
+  "_note": "SPEC_055: steps = record(기록 하나) / restart(그린 마크다운을 다시 읽어 entries 되살림 = 앱 다시 켬). expect는 마지막 그린 마크다운 기준.",
+  "cases": [
+    {
+      "name": "다시 켬 — 지난 기록 지킴·TOP 누적",
+      "steps": [
+        {
+          "record": {
+            "videoId": "a",
+            "videoTitle": "A",
+            "notePath": "YouTube Listening/a.md",
+            "segmentStart": 1,
+            "segmentText": "first one",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        },
+        {
+          "record": {
+            "videoId": "a",
+            "videoTitle": "A",
+            "notePath": "YouTube Listening/a.md",
+            "segmentStart": 5,
+            "segmentText": "second one",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        },
+        {
+          "restart": true
+        },
+        {
+          "record": {
+            "videoId": "b",
+            "videoTitle": "B",
+            "notePath": "YouTube Listening/b.md",
+            "segmentStart": 9,
+            "segmentText": "third one",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T",
+              "LINKING"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        }
+      ],
+      "expect": {
+        "rows": [
+          "third one",
+          "second one",
+          "first one"
+        ],
+        "counts": {
+          "FLAP_T": 3,
+          "LINKING": 1,
+          "ELISION": 0
+        }
+      }
+    },
+    {
+      "name": "같은 영상 0.5초 안은 덮어씀",
+      "steps": [
+        {
+          "record": {
+            "videoId": "a",
+            "videoTitle": "A",
+            "notePath": "YouTube Listening/a.md",
+            "segmentStart": 10,
+            "segmentText": "old text",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        },
+        {
+          "restart": true
+        },
+        {
+          "record": {
+            "videoId": "a",
+            "videoTitle": "A",
+            "notePath": "YouTube Listening/a.md",
+            "segmentStart": 10.3,
+            "segmentText": "new text",
+            "phoneticKr": "x",
+            "traps": [
+              "ELISION"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        },
+        {
+          "record": {
+            "videoId": "a",
+            "videoTitle": "A",
+            "notePath": "YouTube Listening/a.md",
+            "segmentStart": 11,
+            "segmentText": "next",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        }
+      ],
+      "expect": {
+        "rows": [
+          "next",
+          "new text"
+        ],
+        "counts": {
+          "FLAP_T": 1,
+          "ELISION": 1
+        }
+      }
+    },
+    {
+      "name": "주석을 깨는 글자(-->·>)도 되살림",
+      "steps": [
+        {
+          "record": {
+            "videoId": "c",
+            "videoTitle": "C",
+            "notePath": "YouTube Listening/c.md",
+            "segmentStart": 3,
+            "segmentText": "a --> b > c",
+            "phoneticKr": "x",
+            "traps": [
+              "SLANG"
+            ],
+            "recordedAt": "2026-11-25",
+            "userHeard": "a -- b"
+          }
+        },
+        {
+          "restart": true
+        },
+        {
+          "record": {
+            "videoId": "d",
+            "videoTitle": "D",
+            "notePath": "YouTube Listening/d.md",
+            "segmentStart": 4,
+            "segmentText": "plain",
+            "phoneticKr": "x",
+            "traps": [
+              "FLAP_T"
+            ],
+            "recordedAt": "2026-11-25"
+          }
+        }
+      ],
+      "expect": {
+        "rows": [
+          "plain",
+          "a --> b > c"
+        ],
+        "counts": {
+          "SLANG": 1,
+          "FLAP_T": 1
+        },
+        "heard": "a -- b"
+      }
+    }
+  ],
+  "parse": [
+    {
+      "name": "주석 없음(옛 파일)",
+      "markdown": "# 📊 내 귀의 사각지대\n- **[00:01]** [[n|A]] — ||x|| `FLAP_T`\n",
+      "expectCount": 0
+    },
+    {
+      "name": "망가진 주석",
+      "markdown": "x\n<!-- ear-coach-weakness: [{\"videoId\": -->\n",
+      "expectCount": 0
+    },
+    {
+      "name": "배열 아님",
+      "markdown": "<!-- ear-coach-weakness: {\"a\":1} -->",
+      "expectCount": 0
+    },
+    {
+      "name": "모양 틀린 항목은 뺌",
+      "markdown": "<!-- ear-coach-weakness: [{\"videoId\":\"a\",\"segmentStart\":1,\"traps\":[]},{\"videoId\":2}] -->",
+      "expectCount": 1
+    }
+  ],
+  "limits": {
+    "entries": 510,
+    "visibleMax": 50,
+    "storedMax": 500
+  },
+  "headings": [
+    "# 📊 내 귀의 사각지대 (My Ear Blindspots)",
+    "## 🏆 내가 가장 자주 놓치는 소리 변화 TOP 순위",
+    "| 소리 변화(음운 현상) 유형 | 누적 빈도 |",
+    "## 🔁 집중 복습이 필요한 문장 리스트 (최근 50개)"
+  ]
+}
