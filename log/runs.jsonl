@@ -153,3 +153,4 @@
 {"ts":"2026-11-23T21:40:32.134Z","cmd":"/spec-new+/spec-run","spec":"SPEC_050","result":"IMPLEMENTED","questions":0,"evidence":"Test 35 PASS, 5 mutants caught, ui expect.quiz ok, regression ok"}
 {"ts":"2026-11-23T22:05:53.392Z","id":"fix-ai-400","kind":"simple","summary":"Groq 400 json_validate_failed → failed_generation 살리기/format 재시도 (진단 1.0.58)","evidence":"Test 15 19 response PASS, 변이 실패 확인, verify regression ok","release":"1.0.59"}
 {"ts":"2026-11-23T22:16:48.614Z","spec":"SPEC_051","status":"IMPLEMENTED","release":"1.0.60","evidence":"Test 15 PASS, 변이 3 잡힘, regression ok"}
+{"ts":"2026-11-24T13:12:24.946Z","cmd":"/spec-new","spec":"SPEC_052","result":"READY","questions":0}
