@@ -41,4 +41,4 @@ depends_on: []
 - 11글자 낱말은 안 받음 · 「programming」 같은 낱말을 영상 ID로 잘못 읽지 않게 · 대안 없음(유튜브 앱은 늘 주소를 보냄)
 
 ## 실행 기록
-- 2026-11-24 회차 1: IMPLEMENTED — 1 ✅ Test 36 「11 share cases」 PASS · 2 ✅ Test 25 「wiring OK: 5 commands, 3 events」 + 공유 메뉴 2사례(줄 1개·누름 → [url, 42] / 줄 0개) · 3 ✅ 변이: youtu 거름 끔 → 「11글자 일반 낱말」, 끝 구두점 벗기기 끔 → 「괄호·마침표로 감싼 주소」, 찾기 결과 무시(commands) → 「공유 메뉴 줄: just a note about programming」 실패 · 4 ✅ `verify.mjs --set regression` harness·build·test·ui ok · 5 ⏳
+- 2026-11-24 회차 1: IMPLEMENTED — 1 ✅ Test 36 「11 share cases」 PASS · 2 ✅ Test 25 「wiring OK: 5 commands, 3 events」 + 공유 메뉴 2사례(줄 1개·누름 → [url, 42] / 줄 0개) · 3 ✅ 변이: youtu 거름 끔 → 「11글자 일반 낱말」, 끝 구두점 벗기기 끔 → 「괄호·마침표로 감싼 주소」, 찾기 결과 무시(commands) → 「공유 메뉴 줄: just a note about programming」 실패 · 4 ✅ `verify.mjs --set regression` harness·build·test·ui ok · 5 ⏳ (BRAT 1.0.62 릴리스 3파일 확인)
