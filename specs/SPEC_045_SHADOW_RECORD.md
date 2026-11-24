@@ -1,7 +1,7 @@
 ---
 id: SPEC_045
 title: 쉐도잉 녹음 비교 — 정답 단계에서 따라 말하기 녹음 → 원음·내 녹음 번갈아 듣기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: []
@@ -37,7 +37,7 @@ depends_on: []
 2. [ ] 화면 검사 `expect.shadowing`(세로·가로): 3단계 카드에 `🎙` 1개 → 누름 → 가짜 MediaRecorder start 1번·글자 `⏹ N` → 한도 시각에 자동 stop → `🔁 비교` 보임 → 누름 → `onPlayOriginal` 그 문장 1번, 그 뒤 가짜 Audio play 1번(순서 원음 → 녹음). 1·2단계 카드엔 `🎙` 없음. 카드·버튼 줄 가로 넘침 없음. `shadow-<뷰>.png` 열어 봄 [자동]
 3. [ ] 화면 검사: 가짜 `getUserMedia`가 `NotAllowedError`면 알림에 「마이크 권한」 문구, 「니다」 없음, MediaRecorder 생성 0번. 변이(실패를 삼킴) 실패 [자동]
 4. [ ] 회귀 `verify.mjs --set regression`, `EarCoachView.ts` 900줄 이하 [자동]
-5. [ ] 실기기: BRAT 업데이트 뒤 카드 하나를 정답 단계로 열고 `🎙` → 권한 허용 → 따라 말하기 → `🔁 비교`를 눌러 원음 다음에 내 목소리가 들리는지 보고 버튼 [수동]
+5. [x] 실기기: BRAT 업데이트 뒤 카드 하나를 정답 단계로 열고 `🎙` → 권한 허용 → 따라 말하기 → `🔁 비교`를 눌러 원음 다음에 내 목소리가 들리는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 - 1: `npm test` Test 31, 변이 `EAR_COACH_SHADOWING_MODULE`.
@@ -55,4 +55,4 @@ depends_on: []
 ## 실행 기록
 - 2026-11-24 회차 1 (야간): IMPLEMENTED — 1 ✅ `npm test` Test 32 PASS(7 limit·5 mime·4 label·6 failure), 변이 EAR_COACH_SHADOWING_MODULE 한도(+1)→「shadowLimitSec: 짧은 문장 2.4초 → 4.4 → 3.4」, 형식(항상 "")→「pickRecorderMime: opus 됨」 실패 · 2 ✅ 화면 검사 shadowing 세로·가로 ok: 1·2단계 카드 🎙 [0,0], 3단계 🎙 1개, 누름 → MediaRecorder 1번(opus)·「⏹ 6」, 한도 5.45초에 자동 stop 5454ms, 🔁 비교 보임, 원음 playSegment [[0,false]] 1번 → 3806ms 뒤 Audio play 1번(기대 3750±400), 카드·줄 넘침 0; shadow-portrait/landscape.png 열어 봄 — 정답 문장 아래 「🎙 · 🔁 비교」 한 줄, 겹침 없음 · 3 ✅ shadowing.denied ok: 알림 「❌ 녹음 — 마이크 권한을 허용해 주세요」, MediaRecorder 0번, 진단 shadow.record; 변이(catch 비움) → notices [] 로 세로·가로 실패 · 4 ✅ verify --set regression ok:true exit 0(worktree), EarCoachView 897줄 · 5 ⏳ 실기기
   - 가결정: 시험 번호 Test 32(31은 SPEC_048이 이미 씀) · 대안 없음. 버튼 줄은 새 `src/ui/shadowRow.ts`로(SegmentCard 334줄 유지·상태는 공용 ShadowRecorder) · 대안 SegmentCard 안. 콜백 `onStopOriginal`(= playerBar.pause) 추가 — 내 녹음 직전·비교 멈춤 때 원음을 멈춤(안 그러면 영상이 계속 말함) · 대안 원음을 그대로 둠. 실패 이유 `shadowFailureReason`(거부·마이크 없음·미지원)을 순수 모듈에 둠. 녹음은 메모리 최대 20개(오래된 것 버림).
-
+- 2026-11-24 사람 확인: 5 OK (「나머지 다 확인함 OK.」 — 049 보류 뒤 남은 5건 전부, log/confirmations.jsonl) → DONE.

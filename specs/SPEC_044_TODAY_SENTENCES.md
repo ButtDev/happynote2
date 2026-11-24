@@ -1,7 +1,7 @@
 ---
 id: SPEC_044
 title: 오늘의 문장 워밍업 — 차례인 핀·지난날 틀린 빈칸 문장 최대 5개 + 빈칸 결과 기록
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_027, SPEC_040]
@@ -39,7 +39,7 @@ depends_on: [SPEC_027, SPEC_040]
 2. [x] 화면 검사 `expect.todaySentences`(세로·가로): 차례 핀 1 + 어제 틀린 빈칸 문장 1(+ 오늘 틀림·다른 영상·핀과 겹침 각 1) → 줄 「☀️ 오늘의 문장 2개」, ⏰ 「⏰ 2」, 「시작」 → ⏰ 활성·목록 = 기대 문장 2개·첫 카드 블라인드·줄 사라짐, 재료 0개로 바꾸면 줄·⏰ 둘 다 없음, ✕ 누르면 줄 없음. 툴바 넘침 없음. `today-<뷰>.png` 열어 봄 [자동]
 3. [x] 화면 검사 `expect.blankRecord`: 빈칸에 틀린 말 입력 후 떠남 → `recordBlank(…, false)` 1번, 정답 입력 → `true` 1번(낱말 = 정답 낱말, start = 문장 시작). 변이(콜백 안 부름) 실패 [자동]
 4. [x] 회귀 `verify.mjs --set regression`(기존 `reviewQueue` 검사 포함) [자동]
-5. [ ] 실기기: BRAT 업데이트 뒤 영상 하나에서 빈칸에 일부러 틀린 말을 넣고 칸을 떠난 뒤, **내일** 그 영상을 다시 열어 맨 위 「☀️ 오늘의 문장」 줄 → 「시작」을 눌러 그 문장이 블라인드로 나오는지 보고 버튼 [수동]
+5. [x] 실기기: BRAT 업데이트 뒤 영상 하나에서 빈칸에 일부러 틀린 말을 넣고 칸을 떠난 뒤, **내일** 그 영상을 다시 열어 맨 위 「☀️ 오늘의 문장」 줄 → 「시작」을 눌러 그 문장이 블라인드로 나오는지 보고 버튼 [수동]
 
 ## 6. 자동 검증 — 조건마다 판정 방법
 - 1: `npm test` Test 30(`tests/fixtures/today/cases.json`), 변이 `EAR_COACH_TODAY_MODULE`로 망가뜨린 사본.
@@ -63,3 +63,4 @@ depends_on: [SPEC_027, SPEC_040]
 
 ## 실행 기록
 - 2026-11-23 회차 1: IMPLEMENTED — 1 ✅ Test 30 「8 wrong-blank cases, 5 pick cases」 PASS, 변이 today1(오늘 것 안 뺌) → 「wrongBlankSegmentIndices: 오늘(KST) 틀림은 빠짐 — UTC로는 어제여도」, today2(5개 상한 뺌) → 「pickTodaySentences: 5개 상한」 실패 · 2 ✅ ui `todaySentences` 세로·가로 ok: banner 「☀️ 오늘의 문장 2개」·⏰ 2·맨 위·넘침 0, 시작 → DUE·shown [1,4]=expected·블라인드·줄 사라짐, 재료 0 → 줄·⏰ 없음, ✕ → 줄 없음, 닫은 뒤 툴바 46/43px(≤48/44). 처음엔 모바일 툴바 nowrap이라 줄이 같은 행에 붙어 넘침 703>412 → `:has(> .ear-coach-warmup)`일 때만 wrap. `today-portrait/landscape.png` 열어 봄: 영상 컨트롤 아래 「☀️ 오늘의 문장 2개 [시작] [✕]」 한 줄, 그 아래 필터 줄 그대로 · 3 ✅ ui `blankRecord` 세로·가로 ok: recs [going false, going true] start 3, 변이(콜백 안 부름) → recs [] 실패 후 원복 · 4 ✅ `verify.mjs --set regression --json` harness·build·test·ui ok(reviewQueue 포함) · 5 ⏳ 실기기(다음 날).
+- 2026-11-24 사람 확인: 5 OK (「나머지 다 확인함 OK.」 — 049 보류 뒤 남은 5건 전부, log/confirmations.jsonl) → DONE.

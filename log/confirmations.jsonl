@@ -246,3 +246,8 @@
 {"ts":"2026-11-24T03:02:38.104Z","source":"button","question":"BRAT에서 1.0.60으로 올린 뒤, AI 분석이 안 된 그 영상을 다시 열어 보세요. 「✅ AI 번역·분석 완료」가 뜨면 OK예요. 또 멈추면 NG를 누르고 진단을 복사해서 보내 주세요.","answer":"SPEC_051 6 OK","messageId":872}
 {"ts":"2026-11-24T03:02:45.153Z","spec":"SPEC_051","item":6,"raw":"[Button pressed: SPEC_051 6 OK]","verdict":"OK"}
 {"ts":"2026-11-24T13:04:21.221Z","spec":"SPEC_049","item":11,"raw":"49는 확인보류. 당장 찾기는 힘드니까. 어색한부분 발견하면 제보할게.","verdict":"보류"}
+{"ts":"2026-11-24T13:07:53.370Z","spec":"SPEC_050","item":7,"raw":"나머지 다 확인함 OK.","verdict":"OK"}
+{"ts":"2026-11-24T13:07:53.416Z","spec":"SPEC_047","item":4,"raw":"나머지 다 확인함 OK.","verdict":"OK"}
+{"ts":"2026-11-24T13:07:53.463Z","spec":"SPEC_046","item":5,"raw":"나머지 다 확인함 OK.","verdict":"OK"}
+{"ts":"2026-11-24T13:07:53.509Z","spec":"SPEC_045","item":5,"raw":"나머지 다 확인함 OK.","verdict":"OK"}
+{"ts":"2026-11-24T13:07:53.556Z","spec":"SPEC_044","item":5,"raw":"나머지 다 확인함 OK.","verdict":"OK"}

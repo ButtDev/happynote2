@@ -1,7 +1,7 @@
 ---
 id: SPEC_046
 title: 이어 보기 — 영상별 마지막 재생 위치를 기억하고 다시 열면 그 문장으로
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_040]
@@ -35,7 +35,7 @@ depends_on: [SPEC_040]
 2. [ ] 화면 검사 `expect.resume`(세로·가로): 가짜 `position` = 가운데 문장 시각 → 영상 다시 열기 → `seekTo` 그 시각 1번·그 문장 카드가 목록 보이는 범위 안·알림 「⏩ 지난번 …부터 이어요」, `focusTimestampSec`를 주고 열면 복원 안 함, position 없음 → seekTo 0번·알림 없음 [자동]
 3. [ ] 화면 검사: 재생 시각을 0→25초로 흘리면(`seekTo`로 흉내) `setPosition` 호출이 3번 이하(10초마다), 일시정지 때 1번 더, 값은 그때 시각 ±1초. 변이(간격 무시) 실패 [자동]
 4. [ ] 회귀 `verify.mjs --set regression`, `EarCoachView.ts` 900줄 이하 [자동]
-5. [ ] 실기기: BRAT 업데이트 뒤 영상을 중간쯤까지 보다 닫고 다시 열면 그 문장 근처로 가 있고 「⏩ 지난번 …부터 이어요」가 뜨는지 보고 버튼 [수동]
+5. [x] 실기기: BRAT 업데이트 뒤 영상을 중간쯤까지 보다 닫고 다시 열면 그 문장 근처로 가 있고 「⏩ 지난번 …부터 이어요」가 뜨는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 - 1: `npm test` Test 32, 변이 `EAR_COACH_RESUME_MODULE`.
@@ -53,3 +53,4 @@ depends_on: [SPEC_040]
 ## 실행 기록
 - 2026-11-24 회차 1: IMPLEMENTED — 1 ✅ `npm test` Test 33 PASS(8 resumePoint·5 shouldSave), 변이 2개(5초 하한 뺌 → 「resumePoint: 4초(너무 앞)」, 간격 0 → 「shouldSavePosition: 9초 뒤」) 실패 확인 · 2 ✅ 화면 검사 `resume`(세로·가로): 35.6초 위치 → seekTo [35.6] 1번·00:35 카드 목록 안·알림 「⏩ 지난번 00:35부터 이어요」, 위치 없음 seekTo 0번·알림 0, focusTimestampSec 줌 → 35.6 seek 0번·알림 0. `resume-portrait.png`·`resume-landscape.png` 열어 봄: 맨 위 알림, 00:35 카드 강조, 상태 시각 00:35 · 3 ✅ `resume.save`: 재생 중 0→25초 → 저장 [0,10.1,20.1]/[0.1,10.2,21.2](3번, 흉내 시각 ±1), 멈춤 뒤 1번 [25]. 변이(간격 검사 뺀 resumePosition) → resume.save FAIL(저장 수십 번) · 4 ✅ `verify.mjs --set regression` harness·build·test·ui 모두 ok(night/SPEC_046 worktree), EarCoachView 898줄(시험 한도 lineCount<900) · 5 ⏳ 실기기
   - 가결정: 시험 번호 Test 33(32는 SPEC_045가 씀) · `PlayerBar.ts`도 고침(SPEC 파일 목록 밖, 작음): `isPlayingNow()` 추가(멈춤 감지), `seekTo`가 플레이어 뜨기 전이면 `pendingStartSec`로 미뤄 뜰 때 그 시각(재생 안 함) — 안 그러면 복원 seek가 사라짐 · 대안: 콜백 추가 · 저장은 「재생 중」일 때만(멈춰 있는 동안 0초로 덮어쓰기 방지), 닫기·다른 영상 때는 열고 나서 움직였을 때만 · EarCoachView 한도 맞추려 빈 catch 주석을 한 줄로, 지난 SPEC_005 주석 한 줄 지움.
+- 2026-11-24 사람 확인: 5 OK (「나머지 다 확인함 OK.」 — 049 보류 뒤 남은 5건 전부, log/confirmations.jsonl) → DONE.

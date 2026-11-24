@@ -1,7 +1,7 @@
 ---
 id: SPEC_047
 title: 사전 결과 캐시 — 한 번 찾은 낱말은 네트워크 없이 바로(오프라인에서도)
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_013]
@@ -33,7 +33,7 @@ depends_on: [SPEC_013]
 1. [x] Test 33: 처음 찾기 → 네트워크 1번·저장, 다시 → 네트워크 0번·같은 결과, 404 → null 저장·7일 안 다시 → 네트워크 0번·8일 뒤 → 1번, 네트워크 실패 → 저장 안 함·다음에 다시 1번, 1001개째 → 가장 오래 안 쓴 것 빠짐, 깨진 파일 → 빈 캐시, schemaVersion 2 → 쓰기 0번, 대소문자·구두점 다른 같은 낱말 → 한 키. 변이 실패 [자동]
 2. [x] Test 33 실제 응답: `tests/fixtures/dictionary/`의 실제 응답 하나를 캐시에 넣고 파일을 다시 읽어 `lookup` 결과가 처음과 같음(JSON 왕복) [자동]
 3. [x] 회귀 `verify.mjs --set regression`(사전 화면 검사 `expect.dictionary`·`phrase` 포함) [자동]
-4. [ ] 실기기: BRAT 업데이트 뒤 낱말 하나를 눌러 뜻을 본 다음, 비행기 모드에서 같은 낱말을 다시 누르면 뜻이 바로 뜨는지 보고 버튼 [수동]
+4. [x] 실기기: BRAT 업데이트 뒤 낱말 하나를 눌러 뜻을 본 다음, 비행기 모드에서 같은 낱말을 다시 누르면 뜻이 바로 뜨는지 보고 버튼 [수동]
 
 ## 6. 자동 검증
 - 1·2: `npm test` Test 33(가짜 fetcher 호출 수 세기, 가짜 시계), 변이 `EAR_COACH_DICTCACHE_MODULE`(예: 404를 저장 안 함 / 실패도 저장).
@@ -55,3 +55,4 @@ depends_on: [SPEC_013]
 - 가결정: 시험 번호 34(33은 SPEC_046이 씀) · 찾을 때마다 `used`를 고치므로 쓰기는 「줄 서 있고 아직 시작 안 한 쓰기」 하나로 묶음(연속 찾기에 파일 쓰기 폭주 방지) · 대안: 몇 초 미뤄 쓰기. 연결 검사 기대값은 공개 이름이 그대로라 안 바꿈.
 - 3 ✅ `verify.mjs --set regression --json` → ok:true (harness·build·test·ui, ui에 `expect.dictionary`·`phrase` 포함).
 - 4 ⏳ 실기기 비행기 모드 다시 찾기.
+- 2026-11-24 사람 확인: 4 OK (「나머지 다 확인함 OK.」 — 049 보류 뒤 남은 5건 전부, log/confirmations.jsonl) → DONE.

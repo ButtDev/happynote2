@@ -1,7 +1,7 @@
 ---
 id: SPEC_050
 title: 어제 영상 퀴즈 — 어제 본 영상 원음 3문장 듣고 받아쓰기
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_036, SPEC_040, SPEC_044]
@@ -41,7 +41,7 @@ Ear-Coach 화면을 열면, 어제(없으면 오늘 전 7일 안 가장 최근 �
 4. [x] 새 시험이 망가뜨린 사본(변이)으로 실패 [자동]
 5. [x] 화면 검사: 줄이 뜨고 툴바 한 줄 보장·넘침 0, 시작 → 창(듣기·입력·확인) → 확인 뒤 낱말별 표시 → 끝 화면 「3문제 중 N개 맞힘」, recordQuiz 호출, 스크린샷 [자동: `expect.quiz`, `quiz-<뷰>.png`]
 6. [x] EarCoachView < 900줄, 회귀 통과 [자동]
-7. [ ] Android에서 BRAT 업데이트 뒤 Ear-Coach 화면 맨 위 「🎧 … 퀴즈」 줄 → 시작 → 원음이 들리고 받아쓰기·채점이 되는지 보고 버튼(어제 본 영상이 없으면 줄이 안 뜸 — 그때는 메모로) [수동]
+7. [x] Android에서 BRAT 업데이트 뒤 Ear-Coach 화면 맨 위 「🎧 … 퀴즈」 줄 → 시작 → 원음이 들리고 받아쓰기·채점이 되는지 보고 버튼(어제 본 영상이 없으면 줄이 안 뜸 — 그때는 메모로) [수동]
 
 ## 6. 자동 검증
 1~3 Test 35, 4 `EAR_COACH_QUIZ_MODULE=<망가뜨린 사본>`, 5 `node tests/ui/runUiCheck.mjs`, 6 `verify.mjs --set regression`.
@@ -54,3 +54,4 @@ Ear-Coach 화면을 열면, 어제(없으면 오늘 전 7일 안 가장 최근 �
 ## 실행 기록
 - 2026-11-24 실행 1: Test 35 PASS(날 7·문장 4·채점 6사례). 변이 5개 모두 실패로 잡힘(오늘 포함 `d<=today`, 경계 `>`, 핀 건너뛰기, 최소 낱말 2, 영상 순서 뒤집기). 화면 검사 `expect.quiz` 세로·가로 ok — 오늘의 문장 줄 먼저 → 닫으면 「🎧 어제 본 영상 퀴즈 3문제」(툴바 82/79px, 넘침 0) → 1/3 「맞혔어요 · 9/9」, 2/3 「아쉬워요 · 1/8」(틀린 낱말 밑줄), 3/3 「원음을 못 받았어요 — 건너뛸게요」 → 「2문제 중 1개 맞힘」, recordQuiz `[uiCheck0001, 2, 1]`, 끝나면 줄 사라짐. 스크린샷 `quiz-portrait.png`·`quiz-landscape.png` 열어 봄. EarCoachView 895줄. `verify.mjs --set regression` ok.
 - 가결정 추가: 퀴즈 세션은 노트·사이드카에서만 읽음(유튜브 복구 안 함 — 화면 열기를 늦추지 않게) · 중간에 닫으면 확인한 문제만 기록, 하나도 안 했으면 줄 유지.
+- 2026-11-24 사람 확인: 7 OK (「나머지 다 확인함 OK.」 — 049 보류 뒤 남은 5건 전부, log/confirmations.jsonl) → DONE.
