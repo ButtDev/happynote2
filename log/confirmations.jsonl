@@ -243,3 +243,5 @@
 {"ts":"2026-11-23T14:11:21.987Z","spec":"SPEC_048","item":"5","answer":"OK","raw":"[Button pressed: SPEC_048 5 OK]"}
 {"ts":"2026-11-23T14:12:44.591Z","spec":"SPEC_049","item":"request","answer":"night spec","raw":"이항목은 심야 스펙으로 돔더 심화해봐."}
 {"ts":"2026-11-23T21:40:32.179Z","spec":"SPEC_050","item":"request","answer":"backlog next","raw":"대기작업진행"}
+{"ts":"2026-11-24T03:02:38.104Z","source":"button","question":"BRAT에서 1.0.60으로 올린 뒤, AI 분석이 안 된 그 영상을 다시 열어 보세요. 「✅ AI 번역·분석 완료」가 뜨면 OK예요. 또 멈추면 NG를 누르고 진단을 복사해서 보내 주세요.","answer":"SPEC_051 6 OK","messageId":872}
+{"ts":"2026-11-24T03:02:45.153Z","spec":"SPEC_051","item":6,"raw":"[Button pressed: SPEC_051 6 OK]","verdict":"OK"}

@@ -1,7 +1,7 @@
 ---
 id: SPEC_051
 title: AI 분석 형식 오류 견디기 — JSON 모드 없이 재시도 · 묶음 반으로 나누기 · 진단에 원인
-status: IMPLEMENTED
+status: DONE
 iterations: 1
 max_iterations: 3
 depends_on: [SPEC_021]
@@ -28,7 +28,7 @@ Groq JSON 모드 검사에 걸려도 AI 분석이 멈추지 않고 이어진다.
 3. [x] groq400 → 같은 묶음 plain 재시도, 두 번 형식 오류 20장 → 10+10, 5장 이하는 format으로 멈춤 [자동: Test 15 runs]
 4. [x] 변이(나누기·plain·잡글 처리 끔) 모두 실패 [자동]
 5. [x] 회귀 통과 [자동]
-6. [ ] Android BRAT 업데이트 뒤 AI 분석이 안 된 영상을 열어 「✅ AI 번역·분석 완료」가 뜨는지 보고 버튼(또 멈추면 진단 복사해서 보내기) [수동]
+6. [x] Android BRAT 업데이트 뒤 AI 분석이 안 된 영상을 열어 「✅ AI 번역·분석 완료」가 뜨는지 보고 버튼(또 멈추면 진단 복사해서 보내기) [수동]
 
 ## 8. 가결정
 - 재시도에서 JSON 모드 끔 · Groq 검사가 실패 원인이라 우리 파서(관대)에 맡김 · 대안 json_schema 모드(모델마다 지원 다름)
@@ -36,3 +36,4 @@ Groq JSON 모드 검사에 걸려도 AI 분석이 멈추지 않고 이어진다.
 
 ## 실행 기록
 - 2026-11-24 실행 1: Test 15 PASS(3 request + 20 response + 11 batching). 변이 3개 잡힘 — 나누기 끔→「20 장 형식 오류 두 번」batch sizes, plain 끔→「groq400 then ok」JSON mode, 잡글 처리 끔→「앞뒤 잡글」format. `verify.mjs --set regression` ok.
+- 2026-11-24 사람 확인: 6 OK (`[Button pressed: SPEC_051 6 OK]`, log/confirmations.jsonl) → DONE.
