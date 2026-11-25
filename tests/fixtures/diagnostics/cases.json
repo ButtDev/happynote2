@@ -1,37 +1,183 @@
 {
   "_note": "SPEC_038 진단 기록. 키는 모두 가짜(모양만 흉내).",
-  "ring": { "max": 50, "push": 57, "expectSize": 50, "expectFirstMessage": "오류 7", "expectLastMessage": "오류 56" },
+  "ring": {
+    "max": 50,
+    "push": 57,
+    "expectSize": 50,
+    "expectFirstMessage": "오류 7",
+    "expectLastMessage": "오류 56"
+  },
   "collapse": {
-    "records": [["AI 분석", "429 Too Many Requests"], ["AI 분석", "429 Too Many Requests"], ["AI 분석", "429 Too Many Requests"], ["Anki 저장", "429 Too Many Requests"], ["AI 분석", "429 Too Many Requests"]],
-    "expect": [["AI 분석", 3], ["Anki 저장", 1], ["AI 분석", 1]]
+    "records": [
+      [
+        "AI 분석",
+        "429 Too Many Requests"
+      ],
+      [
+        "AI 분석",
+        "429 Too Many Requests"
+      ],
+      [
+        "AI 분석",
+        "429 Too Many Requests"
+      ],
+      [
+        "Anki 저장",
+        "429 Too Many Requests"
+      ],
+      [
+        "AI 분석",
+        "429 Too Many Requests"
+      ]
+    ],
+    "expect": [
+      [
+        "AI 분석",
+        3
+      ],
+      [
+        "Anki 저장",
+        1
+      ],
+      [
+        "AI 분석",
+        1
+      ]
+    ]
   },
   "redact": [
-    { "in": "GET https://generativelanguage.googleapis.com/v1beta/models/x:generateContent?key=AIzaSyFAKE_fake-FAKE_0123456789abcdefgh failed", "secrets": [], "out": "GET https://generativelanguage.googleapis.com/v1beta/models/x:generateContent?… failed" },
-    { "in": "Authorization: Bearer gsk_FAKEfake0123456789abcdef rejected", "secrets": [], "out": "Authorization: Bearer *** rejected" },
-    { "in": "openai key sk-proj-FAKE0123456789abcd bad", "secrets": [], "out": "openai key *** bad" },
-    { "in": "body {\"token=abc123def\"} and api_key=zzzz9999&x=1", "secrets": [], "out": "body {\"token=***\"} and api_key=***&x=1" },
-    { "in": "my custom key is my-own-secret-777 ok", "secrets": ["my-own-secret-777", "", "abc"], "out": "my custom key is *** ok" },
-    { "in": "short abc stays", "secrets": ["abc"], "out": "short abc stays" },
-    { "in": "https://www.youtube.com/watch?v=abcDEF12345&t=10 no keys", "secrets": [], "out": "https://www.youtube.com/watch?… no keys" },
-    { "in": "plain 503 high demand", "secrets": [], "out": "plain 503 high demand" }
+    {
+      "in": "GET https://generativelanguage.googleapis.com/v1beta/models/x:generateContent?key=AIzaSyFAKE_fake-FAKE_0123456789abcdefgh failed",
+      "secrets": [],
+      "out": "GET https://generativelanguage.googleapis.com/v1beta/models/x:generateContent?… failed"
+    },
+    {
+      "in": "Authorization: Bearer gsk_FAKEfake0123456789abcdef rejected",
+      "secrets": [],
+      "out": "Authorization: Bearer *** rejected"
+    },
+    {
+      "in": "openai key sk-proj-FAKE0123456789abcd bad",
+      "secrets": [],
+      "out": "openai key *** bad"
+    },
+    {
+      "in": "body {\"token=abc123def\"} and api_key=zzzz9999&x=1",
+      "secrets": [],
+      "out": "body {\"token=***\"} and api_key=***&x=1"
+    },
+    {
+      "in": "my custom key is my-own-secret-777 ok",
+      "secrets": [
+        "my-own-secret-777",
+        "",
+        "abc"
+      ],
+      "out": "my custom key is *** ok"
+    },
+    {
+      "in": "short abc stays",
+      "secrets": [
+        "abc"
+      ],
+      "out": "short abc stays"
+    },
+    {
+      "in": "https://www.youtube.com/watch?v=abcDEF12345&t=10 no keys",
+      "secrets": [],
+      "out": "https://www.youtube.com/watch?… no keys"
+    },
+    {
+      "in": "plain 503 high demand",
+      "secrets": [],
+      "out": "plain 503 high demand"
+    }
   ],
   "report": {
-    "env": { "now": "2026-11-23T01:02:03.000Z", "appVersion": "1.0.48", "obsidianVersion": "1.7.7", "platform": "android", "userAgent": "Mozilla/5.0 (Linux; Android 14) Obsidian", "screen": "411×891" },
-    "secrets": ["my-own-secret-777"],
+    "env": {
+      "now": "2026-11-23T01:02:03.000Z",
+      "appVersion": "1.0.48",
+      "obsidianVersion": "1.7.7",
+      "platform": "android",
+      "userAgent": "Mozilla/5.0 (Linux; Android 14) Obsidian",
+      "screen": "411×891"
+    },
+    "secrets": [
+      "my-own-secret-777"
+    ],
     "records": [
-      ["Anki 저장", "Request failed, status 500"],
-      ["AI 분석", "network: fetch https://api.groq.com/openai/v1/chat?key=my-own-secret-777 failed"],
-      ["AI 분석", "network: fetch https://api.groq.com/openai/v1/chat?key=my-own-secret-777 failed"]
+      [
+        "Anki 저장",
+        "Request failed, status 500"
+      ],
+      [
+        "AI 분석",
+        "network: fetch https://api.groq.com/openai/v1/chat?key=my-own-secret-777 failed"
+      ],
+      [
+        "AI 분석",
+        "network: fetch https://api.groq.com/openai/v1/chat?key=my-own-secret-777 failed"
+      ]
     ],
     "expectStartsWith": "Ear-Coach 진단 2026-11-23T01:02:03.000Z\n앱 1.0.48 · Obsidian 1.7.7 · android\n기기 Mozilla/5.0 (Linux; Android 14) Obsidian\n화면 411×891\n오류 2개 (최근 50개까지)",
-    "expectContains": ["] Anki 저장: Request failed, status 500", "] AI 분석 ×2: network: fetch https://api.groq.com/openai/v1/chat?…"],
-    "mustNotContain": ["my-own-secret-777", "key="],
+    "expectContains": [
+      "] Anki 저장: Request failed, status 500",
+      "] AI 분석 ×2: network: fetch https://api.groq.com/openai/v1/chat?…"
+    ],
+    "mustNotContain": [
+      "my-own-secret-777",
+      "key="
+    ],
     "emptyExpect": "Ear-Coach 진단 2026-11-23T01:02:03.000Z\n앱 1.0.48 · Obsidian 1.7.7 · android\n기기 Mozilla/5.0 (Linux; Android 14) Obsidian\n화면 411×891\n오류 없음"
   },
   "describe": [
-    { "kind": "error", "value": "boom\n  second line", "expect": "boom second line" },
-    { "kind": "string", "value": "plain text", "expect": "plain text" },
-    { "kind": "object", "value": { "message": "obj msg" }, "expect": "obj msg" },
-    { "kind": "object", "value": { "status": 429 }, "expect": "{\"status\":429}" }
+    {
+      "kind": "error",
+      "value": "boom\n  second line",
+      "expect": "boom second line"
+    },
+    {
+      "kind": "string",
+      "value": "plain text",
+      "expect": "plain text"
+    },
+    {
+      "kind": "object",
+      "value": {
+        "message": "obj msg"
+      },
+      "expect": "obj msg"
+    },
+    {
+      "kind": "object",
+      "value": {
+        "status": 429
+      },
+      "expect": "{\"status\":429}"
+    },
+    {
+      "kind": "httpFailure",
+      "value": "인터넷 연결이 없어요",
+      "detail": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname",
+      "expect": "인터넷 연결이 없어요 (Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname)"
+    },
+    {
+      "kind": "httpFailure",
+      "value": "요청 실패",
+      "detail": null,
+      "expect": "요청 실패"
+    },
+    {
+      "kind": "httpFailure",
+      "value": "요청 실패",
+      "detail": "  ",
+      "expect": "요청 실패"
+    },
+    {
+      "kind": "httpFailure",
+      "value": "ERR_CONNECTION_RESET",
+      "detail": "ERR_CONNECTION_RESET",
+      "expect": "ERR_CONNECTION_RESET"
+    }
   ]
 }

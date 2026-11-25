@@ -842,7 +842,22 @@ async function runAllTests() {
       assert.equal(sg.words.length, (run.texts[i] as string).split(/\s+/).length, `runAiAnalysis ${run.name}: seg ${i} word count kept`);
     }
   }
-  log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching + ${aiCases.restore.length} restore + ${aiCases.needsRestore.length} needsRestore cases`);
+  // SPEC_057: 요청 throw의 detail 보존·진단 한 줄, 알림 글은 detail과 무관
+  for (const sd of aiCases.stopDetail) {
+    let stoppedBy = sd.stoppedBy;
+    if (sd.throw) {
+      const r = await aiMod.runAiAnalysis([{ index: 0, start: 0, end: 1, text: "a b", words: ["a", "b"] } as any], { provider: "gemini", apiKey: "TEST", model: "m" }, {
+        title: "t", sleep: async () => {},
+        fetch: async () => { throw Object.assign(new Error(sd.throw.message), { name: "HttpFailure", detail: sd.throw.detail }); },
+      });
+      stoppedBy = r.stoppedBy;
+      assert.deepEqual(stoppedBy, sd.expect, `stopDetail ${sd.name}: stoppedBy`);
+      const { detail: _d, ...plain } = stoppedBy;
+      assert.equal(aiMod.aiResultMessage(r), aiMod.aiResultMessage({ ...r, stoppedBy: plain }), `stopDetail ${sd.name}: 알림 글은 detail과 무관`);
+    }
+    assert.equal(aiMod.aiStopDiagnostic(stoppedBy), sd.diagnostic, `stopDetail ${sd.name}: 진단 한 줄`);
+  }
+  log(`  -> PASS: ${aiCases.requests.length} request + ${aiCases.responses.length} response + ${aiCases.runs.length} batching + ${aiCases.restore.length} restore + ${aiCases.needsRestore.length} needsRestore + ${aiCases.stopDetail.length} stopDetail cases`);
   log("");
 
   log("[Test 16] Loop button modes, tick decisions, auto-follow (data-driven, SPEC_023)");
@@ -1135,7 +1150,7 @@ async function runAllTests() {
   assert.deepEqual(dgCol.list().map((e: any) => [e.stage, e.count]), dg.collapse.expect, "연달아 같은 오류만 묶음");
   for (const c of dg.redact) assert.equal(dgMod.redactDiagnostics(c.in, c.secrets), c.out, `redact ${c.in}`);
   for (const c of dg.describe) {
-    const v = c.kind === "error" ? new Error(c.value) : c.value;
+    const v = c.kind === "error" ? new Error(c.value) : c.kind === "httpFailure" ? Object.assign(new Error(c.value), { name: "HttpFailure", detail: c.detail }) : c.value;
     assert.equal(dgMod.describeError(v).message, c.expect, `describeError ${c.kind}`);
   }
   const dgRep = new dgMod.DiagnosticsLog(50, dgClock);

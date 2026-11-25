@@ -1244,5 +1244,53 @@
    "text": "hello",
    "expect": false
   }
+ ],
+ "stopDetail": [
+  {
+   "name": "서버에 못 닿음 → detail 보존",
+   "throw": {
+    "message": "인터넷 연결이 없어요",
+    "detail": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname"
+   },
+   "expect": {
+    "kind": "network",
+    "message": "인터넷 연결이 없어요",
+    "detail": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname"
+   },
+   "diagnostic": "network: 인터넷 연결이 없어요 (Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname)"
+  },
+  {
+   "name": "detail null → 없음",
+   "throw": {
+    "message": "요청 실패",
+    "detail": null
+   },
+   "expect": {
+    "kind": "network",
+    "message": "요청 실패"
+   },
+   "diagnostic": "network: 요청 실패"
+  },
+  {
+   "name": "detail이 message와 같음 → 한 번만",
+   "throw": {
+    "message": "ERR_CONNECTION_RESET",
+    "detail": "ERR_CONNECTION_RESET"
+   },
+   "expect": {
+    "kind": "network",
+    "message": "ERR_CONNECTION_RESET",
+    "detail": "ERR_CONNECTION_RESET"
+   },
+   "diagnostic": "network: ERR_CONNECTION_RESET"
+  },
+  {
+   "name": "응답 오류(던지지 않음)",
+   "stoppedBy": {
+    "kind": "quota",
+    "message": "HTTP 429"
+   },
+   "diagnostic": "quota: HTTP 429"
+  }
  ]
 }

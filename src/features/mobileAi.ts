@@ -5,7 +5,7 @@ import { Notice, TFile } from "obsidian";
 import type EarCoachPlugin from "../main";
 import { EarCoachSettings } from "../types/settings";
 import { ListeningSessionData } from "../types/transcript";
-import { AI_MESSAGES, AiConfig, aiResultMessage, needsAiAnalysis, runAiAnalysis } from "../services/aiAnalysis";
+import { AI_MESSAGES, AiConfig, aiResultMessage, aiStopDiagnostic, needsAiAnalysis, runAiAnalysis } from "../services/aiAnalysis";
 import { diagnostics } from "../services/diagnostics";
 import { failureCause } from "../services/notices";
 import { notifyRetry } from "../ui/notify";
@@ -48,7 +48,7 @@ export function createMobileAiRunner(
           refresh();
         },
       });
-      if (result.stoppedBy) diagnostics.record("AI 분석", `${result.stoppedBy.kind}: ${result.stoppedBy.message}`);
+      if (result.stoppedBy) diagnostics.record("AI 분석", aiStopDiagnostic(result.stoppedBy));
       // SPEC_042: 붐빔·연결 실패는 「다시」(한도·키 거부는 다시 해도 같음)
       const kind = result.stoppedBy?.kind;
       if (kind === "busy" || kind === "network" || kind === "format") notifyRetry(aiResultMessage(result), () => run(session, noteFile));

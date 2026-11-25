@@ -32,6 +32,15 @@ function oneLine(s: string): string {
   return s.replace(/\s+/g, " ").trim();
 }
 
+/** SPEC_057: 오류 객체의 `detail` 문자열(한 줄), 없거나 빈 글이면 null */
+export function errorDetail(err: unknown): string | null {
+  if (!err || typeof err !== "object") return null;
+  const d = (err as { detail?: unknown }).detail;
+  if (typeof d !== "string") return null;
+  const t = oneLine(d);
+  return t || null;
+}
+
 /** 무엇이 throw되든 메시지·스택을 꺼낸다. */
 export function describeError(err: unknown): { message: string; detail?: string } {
   if (err instanceof Error) {
@@ -43,7 +52,10 @@ export function describeError(err: unknown): { message: string; detail?: string 
           .filter(Boolean)
           .join("\n")
       : "";
-    return { message: oneLine(err.message || err.name || "Error"), detail: detail || undefined };
+    const message = oneLine(err.message || err.name || "Error");
+    // SPEC_057: HttpFailure.detail(원래 오류 글)을 한 줄에 덧붙임
+    const extra = errorDetail(err);
+    return { message: extra && !message.includes(extra) ? `${message} (${extra})` : message, detail: detail || undefined };
   }
   if (typeof err === "string") return { message: oneLine(err) };
   if (err && typeof err === "object") {

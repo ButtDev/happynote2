@@ -4,6 +4,7 @@
  * sleep are injected so the logic is testable in Node.
  */
 import { failureCause } from "./notices.ts";
+import { errorDetail } from "./diagnostics.ts";
 import type { ListeningTrapType, SegmentPhoneticAnalysis, TranscriptSegment } from "../types/transcript";
 
 export type AiProvider = "gemini" | "openai";
@@ -33,6 +34,8 @@ export type AiErrorKind = "auth" | "quota" | "busy" | "format" | "network";
 export interface AiError {
   kind: AiErrorKind;
   message: string;
+  /** SPEC_057: 원래 오류 글(HttpFailure.detail) — 진단에만 씀 */
+  detail?: string;
 }
 
 export interface AiItem extends SegmentPhoneticAnalysis {
@@ -348,7 +351,10 @@ export async function runAiAnalysis(
       try {
         res = await deps.fetch(req);
       } catch (err) {
-        return { analyzed, total, stoppedBy: { kind: "network", message: err instanceof Error ? err.message : String(err) } };
+        const stoppedBy: AiError = { kind: "network", message: err instanceof Error ? err.message : String(err) };
+        const detail = errorDetail(err);
+        if (detail) stoppedBy.detail = detail;
+        return { analyzed, total, stoppedBy };
       }
       result = parseAiResponse(config.provider, res.status, res.json, batch);
       if ("items" in result) break;
@@ -420,6 +426,12 @@ export function aiResultMessage(result: AiRunResult): string {
   if (err.kind === "auth") return AI_MESSAGES.auth;
   if (err.kind === "busy") return AI_MESSAGES.busy(result.analyzed, result.total);
   return AI_MESSAGES.failed(failureCause(err));
+}
+
+/** SPEC_057: 진단 기록 한 줄 — `kind: message (detail)` */
+export function aiStopDiagnostic(err: AiError): string {
+  const base = `${err.kind}: ${err.message}`;
+  return err.detail && !err.message.includes(err.detail) ? `${base} (${err.detail})` : base;
 }
 
 /** SPEC_021: 설정 화면 🔌 연결 확인 — 짧은 문장 하나로 요청하고 알림 문구를 돌려줌 */
