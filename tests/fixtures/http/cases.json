@@ -16,6 +16,34 @@
     { "name": "requestUrl이 던진 503 뒤 성공", "policy": "fetch", "steps": [{ "throwStatus": 503, "msg": "Request failed, status 503" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [800] } },
     { "name": "AI는 여기서 재시도 안 함(aiAnalysis busy 재시도가 맡음)", "policy": "ai", "steps": [{ "status": 503 }, { "status": 200 }], "expect": { "status": 503, "attempts": 1, "sleeps": [] } },
     { "name": "Anki는 연결 실패도 재시도 안 함(카드 두 번 방지)", "policy": "anki", "steps": [{ "throw": "net::ERR_CONNECTION_REFUSED" }, { "status": 200 }], "expect": { "error": "network", "message": "net::ERR_CONNECTION_REFUSED", "attempts": 1, "sleeps": [] } },
-    { "name": "대기 목록이 짧으면 마지막 값", "policy": { "timeoutMs": 1000, "retries": 2, "backoffMs": [5] }, "steps": [{ "status": 502 }, { "status": 500 }, { "status": 200 }], "expect": { "status": 200, "attempts": 3, "sleeps": [5, 5] } }
+    { "name": "대기 목록이 짧으면 마지막 값", "policy": { "timeoutMs": 1000, "retries": 2, "backoffMs": [5] }, "steps": [{ "status": 502 }, { "status": 500 }, { "status": 200 }], "expect": { "status": 200, "attempts": 3, "sleeps": [5, 5] } },
+    { "name": "SPEC_056 AI: 서버에 못 닿음 → 2초 뒤 한 번 더, 성공", "policy": "ai", "steps": [{ "throw": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [2000] } },
+    { "name": "SPEC_056 AI: 두 번 다 못 닿음 → offline, 원래 글은 detail", "policy": "ai", "steps": [{ "throw": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname" }, { "throw": "net::ERR_NAME_NOT_RESOLVED" }], "expect": { "error": "offline", "message": "인터넷 연결이 없어요", "detail": "net::ERR_NAME_NOT_RESOLVED", "attempts": 2, "sleeps": [2000] } },
+    { "name": "SPEC_056 AI: 추가 시도가 다른 실패면 그 실패 그대로", "policy": "ai", "steps": [{ "throw": "getaddrinfo ENOTFOUND example.com" }, { "throwStatus": 400, "msg": "Request failed, status 400" }], "expect": { "error": "status", "errStatus": 400, "message": "Request failed, status 400", "attempts": 2, "sleeps": [2000] } },
+    { "name": "SPEC_056 Anki: ECONNREFUSED는 추가 시도 없이 network(카드 두 번 방지)", "policy": "anki", "steps": [{ "throw": "connect ECONNREFUSED 127.0.0.1:8765" }, { "status": 200 }], "expect": { "error": "network", "message": "connect ECONNREFUSED 127.0.0.1:8765", "attempts": 1, "sleeps": [] } },
+    { "name": "SPEC_056 Anki: Failed to connect도 network", "policy": "anki", "steps": [{ "throw": "Failed to connect to /127.0.0.1:8765" }, { "status": 200 }], "expect": { "error": "network", "attempts": 1, "sleeps": [] } },
+    { "name": "SPEC_056 Anki: 못 닿음 → 한 번 더", "policy": "anki", "steps": [{ "throw": "net::ERR_ADDRESS_UNREACHABLE" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [2000] } },
+    { "name": "SPEC_056 fetch: 못 닿음 세 번 → 정책 1회 + 추가 1회, offline", "policy": "fetch", "steps": [{ "throw": "Network is unreachable" }, { "throw": "Network is unreachable" }, { "throw": "Network is unreachable" }, { "status": 200 }], "expect": { "error": "offline", "message": "인터넷 연결이 없어요", "attempts": 3, "sleeps": [800, 2000] } },
+    { "name": "SPEC_056 fetch: 못 닿음 뒤 정책 재시도에서 성공 → 추가 안 씀", "policy": "fetch", "steps": [{ "throw": "getaddrinfo EAI_AGAIN api.dictionaryapi.dev" }, { "status": 200 }], "expect": { "status": 200, "attempts": 2, "sleeps": [800] } },
+    { "name": "SPEC_056 fetch: 못 닿음 → 연결 끊김 → 추가 안 씀(마지막이 unreachable 아님)", "policy": "fetch", "steps": [{ "throw": "net::ERR_INTERNET_DISCONNECTED" }, { "throw": "net::ERR_CONNECTION_RESET" }, { "status": 200 }], "expect": { "error": "network", "message": "net::ERR_CONNECTION_RESET", "attempts": 2, "sleeps": [800] } }
+  ],
+  "_unreachableNote": "SPEC_056 isUnreachableError(text) 기대값",
+  "unreachable": [
+    { "text": "UnknownHostException", "expect": true },
+    { "text": "Unable to resolve host", "expect": true },
+    { "text": "net::ERR_NAME_NOT_RESOLVED", "expect": true },
+    { "text": "net::ERR_INTERNET_DISCONNECTED", "expect": true },
+    { "text": "net::ERR_ADDRESS_UNREACHABLE", "expect": true },
+    { "text": "connect ENETUNREACH: Network is unreachable", "expect": true },
+    { "text": "getaddrinfo ENOTFOUND generativelanguage.googleapis.com", "expect": true },
+    { "text": "getaddrinfo EAI_AGAIN api.dictionaryapi.dev", "expect": true },
+    { "text": "Request Failed. UnknownHostException Unable to resolve host \"generativelanguage.googleapis.com\": No address associated with hostname", "expect": true },
+    { "text": "unknownhostexception (소문자)", "expect": true },
+    { "text": "net::ERR_CONNECTION_RESET", "expect": false },
+    { "text": "connect ECONNREFUSED 127.0.0.1:8765", "expect": false },
+    { "text": "Failed to connect to /127.0.0.1:8765", "expect": false },
+    { "text": "Connection refused", "expect": false },
+    { "text": "Request failed, status 503", "expect": false },
+    { "text": "", "expect": false }
   ]
 }

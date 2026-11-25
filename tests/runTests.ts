@@ -1255,6 +1255,7 @@ async function runAllTests() {
       assert.equal(err.kind, e.error, `${tag} kind`);
       if (e.message !== undefined) assert.equal(err.message, e.message, `${tag} message`);
       if (e.errStatus !== undefined) assert.equal(err.status, e.errStatus, `${tag} status`);
+      if (e.detail !== undefined) assert.equal(err.detail, e.detail, `${tag} detail`);
     } else {
       assert.ok(!err, `${tag} 실패하면 안 됨: ${err?.message}`);
       assert.equal(got.status, e.status, `${tag} status`);
@@ -1262,6 +1263,11 @@ async function runAllTests() {
     assert.equal(attempts, e.attempts, `${tag} attempts`);
     assert.deepEqual(sleeps, e.sleeps, `${tag} sleeps`);
   }
+  for (const u of hc.unreachable ?? []) {
+    assert.equal(typeof httpMod.isUnreachableError, "function", "isUnreachableError export");
+    assert.equal(httpMod.isUnreachableError(u.text), u.expect, `[isUnreachableError ${JSON.stringify(u.text)}]`);
+  }
+  log(`  -> PASS: ${(hc.unreachable ?? []).length} unreachable texts (SPEC_056).`);
   log(`  -> PASS: ${hc.scenarios.length} scenarios (retry 408/429/5xx, no retry 404·AI·Anki, timeout, offline, backoff).`);
   log("");
 

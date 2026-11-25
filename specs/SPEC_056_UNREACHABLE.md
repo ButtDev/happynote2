@@ -1,8 +1,8 @@
 ---
 id: SPEC_056
 title: 서버에 닿지 못한 요청을 「인터넷 연결이 없어요」로 알아보고 한 번 더 시도
-status: READY
-iterations: 0
+status: DONE
+iterations: 1
 max_iterations: 3
 depends_on: []
 ---
@@ -32,12 +32,12 @@ depends_on: []
 알림 문구·`notices.ts` 원인 표, 진단 기록 모양, aiAnalysis의 `stoppedBy` kind 체계, Anki 「앱 꺼짐」 안내, 정책 수치 변경.
 
 ## 5. 완료 조건
-1. [ ] `isUnreachableError`가 3장 목록 8개(실기기 글 `Request Failed. UnknownHostException Unable to resolve host "generativelanguage.googleapis.com": No address associated with hostname` 포함)는 true, `ERR_CONNECTION_RESET`·`ECONNREFUSED`·`Failed to connect to /127.0.0.1:8765`·빈 글은 false [자동: Test 27 데이터]
-2. [ ] 정책 `ai`(재시도 0): unreachable → 2000ms 뒤 성공이면 응답, 시도 2·sleeps `[2000]` / 두 번 다 unreachable이면 error `offline`, message `인터넷 연결이 없어요`, 시도 2 [자동: Test 27]
-3. [ ] 정책 `anki`: `ECONNREFUSED` 한 번 → 추가 시도 없이 `network`, 시도 1 (카드 두 번 방지 유지) / unreachable → 시도 2 [자동: Test 27]
-4. [ ] 정책 `fetch`(재시도 1): unreachable 세 번 → 시도 3, sleeps `[800, 2000]`, `offline` / 기존 Test 27 시나리오 전부 그대로 통과 [자동: Test 27]
-5. [ ] 변이: 분류 끔(항상 false) → Test 27 실패, 추가 재시도 끔 → Test 27 실패 [자동: `EAR_COACH_HTTP_MODULE` 사본]
-6. [ ] 회귀 통과 [자동: `verify.mjs --set regression`]
+1. [x] `isUnreachableError`가 3장 목록 8개(실기기 글 `Request Failed. UnknownHostException Unable to resolve host "generativelanguage.googleapis.com": No address associated with hostname` 포함)는 true, `ERR_CONNECTION_RESET`·`ECONNREFUSED`·`Failed to connect to /127.0.0.1:8765`·빈 글은 false [자동: Test 27 데이터]
+2. [x] 정책 `ai`(재시도 0): unreachable → 2000ms 뒤 성공이면 응답, 시도 2·sleeps `[2000]` / 두 번 다 unreachable이면 error `offline`, message `인터넷 연결이 없어요`, 시도 2 [자동: Test 27]
+3. [x] 정책 `anki`: `ECONNREFUSED` 한 번 → 추가 시도 없이 `network`, 시도 1 (카드 두 번 방지 유지) / unreachable → 시도 2 [자동: Test 27]
+4. [x] 정책 `fetch`(재시도 1): unreachable 세 번 → 시도 3, sleeps `[800, 2000]`, `offline` / 기존 Test 27 시나리오 전부 그대로 통과 [자동: Test 27]
+5. [x] 변이: 분류 끔(항상 false) → Test 27 실패, 추가 재시도 끔 → Test 27 실패 [자동: `EAR_COACH_HTTP_MODULE` 사본]
+6. [x] 회귀 통과 [자동: `verify.mjs --set regression`]
 
 ## 6. 자동 검증
 1~4: `npm test` Test 27(입력·기대는 `tests/fixtures/http/cases.json`). 5: `.scratch/`에 망가뜨린 `http.ts` 사본 → `EAR_COACH_HTTP_MODULE=<사본> npm test`에서 Test 27 FAIL 확인. 6: `node .claude/harness/verify.mjs --set regression`.
@@ -49,3 +49,4 @@ depends_on: []
 - ⏳ 없음 · 화면·문구가 안 바뀌고 실기기에서 DNS 끊김을 일부러 만들기 어려움 · 대안: 비행기 모드 확인(navigator.onLine 경로라 이 변경을 안 탐)
 
 ## 실행 기록
+- 2026-11-25 회차 1: DONE — 1 ✅ Test 27 `PASS: 16 unreachable texts (SPEC_056).` (`tests/fixtures/http/cases.json` `unreachable` 8개 패턴+실기기 글+소문자 true, RESET·ECONNREFUSED·Failed to connect·Connection refused·status 503·빈 글 false; `src/services/http.ts:49`) · 2 ✅ Test 27 `PASS: 25 scenarios` — 「SPEC_056 AI: 서버에 못 닿음 → 2초 뒤 한 번 더, 성공」(시도 2·[2000]), 「두 번 다 못 닿음 → offline」(message 인터넷 연결이 없어요·detail 원문·시도 2) · 3 ✅ 같은 실행 「Anki: ECONNREFUSED… network」 시도 1, 「Anki: 못 닿음 → 한 번 더」 시도 2 · 4 ✅ 「fetch: 못 닿음 세 번」 시도 3·[800,2000]·offline, 기존 16개 시나리오 통과 · 5 ✅ 변이 `.scratch/mut56/http_noclass.ts`(분류 항상 false) → exit 1 `[SPEC_056 AI: 서버에 못 닿음 → 2초 뒤 한 번 더, 성공] 실패하면 안 됨: Request Failed. UnknownHostException…`; `http_noextra.ts`(추가 재시도 끔, `http.ts:135`) → exit 1 `… 실패하면 안 됨: 인터넷 연결이 없어요` · 6 ✅ `verify.mjs --set regression --json` → `{"ok":true}` harness·build·test·ui 전부 ok(exit 0, ui-check: ok). 가결정: 러너 `tests/runTests.ts:1266`에 `unreachable` 배열·`detail` 기대 읽기만 추가(SPEC 2장 「최소한만 고침」); 추가 재시도는 오류 글로 분류된 경우만(throw 뒤 `isOnline()` false로 offline인 경우는 기존대로 추가 없음 — 기존 「보내는 중 끊김」 시나리오 시도 1 유지). 검토(review-1) 참고: 진단에는 `HttpFailure.detail`이 안 남아 원문이 사라짐 → 백로그로.

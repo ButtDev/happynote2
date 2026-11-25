@@ -1,13 +1,14 @@
 # 백로그
 
 ## 대기
-- [야간] 연결 끊김 알아보기(11-25 실기기 진단 계기): `UnknownHostException`·`Unable to resolve host`·`Failed to connect` 같은 「요청이 서버에 안 닿은」 오류를 `http.ts`에서 `offline`으로 분류(지금은 navigator.onLine만 봐서 `network`로 떨어짐) → 기존 문구 「인터넷 연결이 없어요」 그대로 사용. 서버에 안 닿았으니 AI·Anki도 2초 뒤 1회 자동 재시도 안전. 시험 데이터 `tests/fixtures/http/`에 실제 오류 글 추가 + 변이. 새 문구 만들지 않음.
+- 진단에 원래 오류 글 남기기(SPEC_056 검토): 서버에 닿지 못한 실패는 `HttpFailure` kind `offline`·message 「인터넷 연결이 없어요」가 되고 `UnknownHostException …` 원문은 `detail`에만 있음 → `src/services/aiAnalysis.ts:351` 등 진단 기록에는 `network: 인터넷 연결이 없어요`만 남아 원인을 못 봄. 진단 줄에 `detail`을 덧붙이기(알림 문구는 그대로).
 - [야간] EarCoachView 덜어내기: 895줄(시험 상한 <900)이라 다음 기능이 막힘. 화면 안 바뀌는 묶음(이벤트 연결·카드 목록 갱신 등)을 `src/ui/` 모듈로 옮겨 700줄 안팎으로. 화면 검사 양 뷰 좌표·스크린샷 그대로 + 회귀 통과가 기준. night 브랜치.
 - [야간] 모바일 시작 시간·번들 크기 재기: main.js 714KB(cmudict-lite 3만 줄 포함). Playwright로 플러그인 onload~첫 화면 시간을 재고, 사전 데이터를 처음 쓸 때 읽기(지연 로딩)로 바꿀 가치가 있는지 판단 → 이득이 크면(onload 100ms↑ 줄어듦) 바꾸고 시험에 상한 추가, 작으면 숫자만 기록.
 - [야간] 데스크톱 안 깨짐 화면 검사: 0장 규칙 「데스크톱 동작을 깨지 않는다」를 지키는 자동 근거가 없음. `runUiCheck`에 isMobile:false 넓은 뷰(1280×800) 한 장 — 뷰가 열리고, 콘솔 오류 0, 영상·목록 겹침 0. 기준선만 세우고 고칠 게 나오면 백로그에.
 - [야간] MEMORY.md 다이어트: 19.9KB/20KB. 「주의」의 모듈 위치 줄(SPEC_0xx: 파일·시험·변이 이름)을 `memory/modules.md`로 옮기고 MEMORY엔 「모듈 지도는 memory/modules.md」 한 줄만. 내용 삭제 없음.
 
 ## 끝남
+- [야간→짝] 연결 끊김 알아보기 → SPEC_056 DONE (11-25): 서버에 닿지 못한 오류 글 → `offline` + 2초 뒤 1회 추가 시도
 - 약점 대시보드 기록 사라짐 → SPEC_055 IMPLEMENTED (11-25, 1.0.65)
 - 2026-11-25 실패 경로 시험 — 사전 429·503 안내 채움, 나머지는 기존 시험에 있음 (37d71e1)
 - [야간] 긴 영상 성능(11-25): 화면 검사 `longList` 440장 — 열기 3ms·DOM 카드 ≤12·스크롤 단계 7ms·긴 작업 0·따라가기 ~0.6s. 고칠 곳 없음(가상 목록).

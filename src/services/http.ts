@@ -19,14 +19,40 @@ export class HttpFailure extends Error {
   kind: HttpFailureKind;
   status: number | null;
   attempts: number;
-  constructor(kind: HttpFailureKind, message: string, status: number | null = null, attempts = 1) {
+  /** 요청 함수가 던진 원래 글(없으면 null). offline으로 바꿔 알린 경우에도 진단용으로 남김 */
+  detail: string | null;
+  constructor(kind: HttpFailureKind, message: string, status: number | null = null, attempts = 1, detail: string | null = null) {
     super(message);
     this.name = "HttpFailure";
     this.kind = kind;
     this.status = status;
     this.attempts = attempts;
+    this.detail = detail;
   }
 }
+
+/**
+ * SPEC_056: 요청이 서버에 닿지 못한 오류 글인가(DNS 실패·네트워크 없음).
+ * 연결 거부(Anki 앱 꺼짐)·연결 끊김은 인터넷 문제가 아니므로 false.
+ */
+const UNREACHABLE_PATTERNS = [
+  "unknownhostexception",
+  "unable to resolve host",
+  "err_name_not_resolved",
+  "err_internet_disconnected",
+  "err_address_unreachable",
+  "network is unreachable",
+  "enotfound",
+  "eai_again",
+];
+
+export function isUnreachableError(message: string): boolean {
+  const m = (message ?? "").toLowerCase();
+  return UNREACHABLE_PATTERNS.some((p) => m.includes(p));
+}
+
+/** 서버에 닿지 못한 실패 뒤 한 번 더 해 보기 전 대기(ms) */
+export const UNREACHABLE_RETRY_MS = 2000;
 
 /** 잠깐 문제라 다시 해 볼 만한 상태 코드 */
 export const RETRYABLE_STATUS = [408, 429, 500, 502, 503, 504];
@@ -66,12 +92,15 @@ function statusOf(v: unknown): number | null {
  * throw·시간 초과는 재시도 뒤 HttpFailure로.
  */
 export async function sendWithPolicy<R>(request: () => Promise<R>, policy: HttpPolicy, deps: HttpDeps): Promise<R> {
-  const total = policy.retries + 1;
+  let total = policy.retries + 1;
+  let extraUsed = false;
   let lastErr: HttpFailure | null = null;
   for (let attempt = 1; attempt <= total; attempt++) {
     if (attempt > 1) {
       const waits = policy.backoffMs;
-      await deps.sleep(waits.length > 0 ? waits[Math.min(attempt - 2, waits.length - 1)] : 0);
+      // SPEC_056: 정책 재시도를 넘어선 추가 1회는 UNREACHABLE_RETRY_MS 대기
+      const wait = attempt > policy.retries + 1 ? UNREACHABLE_RETRY_MS : waits.length > 0 ? waits[Math.min(attempt - 2, waits.length - 1)] : 0;
+      await deps.sleep(wait);
     }
     if (!deps.isOnline()) {
       lastErr = new HttpFailure("offline", HTTP_MESSAGES.offline, null, attempt);
@@ -99,7 +128,17 @@ export async function sendWithPolicy<R>(request: () => Promise<R>, policy: HttpP
         if (!RETRYABLE_STATUS.includes(st)) throw new HttpFailure("status", msg, st, attempt);
         lastErr = new HttpFailure("status", msg, st, attempt);
       } else {
-        lastErr = new HttpFailure("network", e instanceof Error ? e.message : String(e), null, attempt);
+        const msg = e instanceof Error ? e.message : String(e);
+        if (isUnreachableError(msg)) {
+          // 서버에 닿지 못함(DNS 순간 끊김 등) — 요청이 안 갔으므로 한 번 더 보내도 안전
+          lastErr = new HttpFailure("offline", HTTP_MESSAGES.offline, null, attempt, msg);
+          if (attempt === total && !extraUsed) {
+            extraUsed = true;
+            total++;
+          }
+        } else {
+          lastErr = new HttpFailure("network", msg, null, attempt, msg);
+        }
       }
     } finally {
       if (timer !== null) clearTimeout(timer);
