@@ -12,6 +12,7 @@ github.com/sindng-ui/happynote2 포크, 기능개선
 - 기술 제약·금지 패턴: 대상은 Android(Obsidian 모바일). 모바일 경로에서 Node 내장 모듈(`child_process`·`fs` 등)을 최상위 import하지 않는다(`src/utils/platform.ts`의 지연 로딩만). 네트워크는 Obsidian `requestUrl`로. 데스크톱 동작을 깨지 않는다. 과금이 생기는 API를 쓰지 않는다. API 키는 플러그인 설정에만 두고 저장소·시험 데이터에 넣지 않는다. 유튜브 iframe은 교차 출처라 픽셀 캡처를 가정하지 않는다
 - 사람만 판정할 수 있는 것(⏳): Android 실기기 세로·가로 화면 감각, AnkiDroid 카드 모양·학습감(Fluent Forever 방식), 사전 뜻·스냅샷·AI 번역의 학습 품질
 - **BRAT 배포 — 묻지 않고 배포한 뒤 묻는다**: 실기기 ⏳ 확인이 필요한 커밋이 회귀를 통과하면 `manifest.json`·`package.json`·`package-lock.json` version을 올려 커밋하고 `git push buttdev main` + 같은 이름 태그 push → Actions 릴리스(3파일) 확인 뒤 ⏳ 버튼을 보낸다. 배포 여부를 따로 묻지 않는다. 1장 「외부 배포·네트워크 업로드 금지」와 6장 「push는 사람 지시가 있을 때만」의 예외(remote `buttdev` main push + 버전 태그만).
+- **SPEC 실행은 짝으로**: 낮(사람이 있는 세션)에 SPEC을 실행할 때는 `/spec-run` 대신 `/spec-pair <ID>`를 기본으로 쓴다. `/spec-new`가 질문 없이 바로 실행할 때도 같다. `pair.mjs --check`가 안 되면 `/spec-pair` 절차대로 `/spec-run`으로 넘어간다. 사람 확인(⏳ 버튼)만 기록하는 실행과 야간(`/night-run`)은 지금처럼 `/spec-run`.
 
 ## 1. 폴더 경계
 
