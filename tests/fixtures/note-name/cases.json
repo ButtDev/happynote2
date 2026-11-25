@@ -1,0 +1,75 @@
+{
+  "titles": [
+    {
+      "name": "보통 제목은 그대로",
+      "title": "How to Speak Fast English Like a Native Speaker in 30 Days",
+      "videoId": "abcDEF12345",
+      "expectFile": "How to Speak Fast English Like a Native Speaker in 30 Days [abcDEF12345].md"
+    },
+    {
+      "name": "금지 글자는 빈칸 하나로",
+      "title": "What is \"AI\"? A/B test: <Part 1> | Q&A",
+      "videoId": "abcDEF12345",
+      "expectFile": "What is AI A B test Part 1 Q&A [abcDEF12345].md"
+    },
+    {
+      "name": "70자 끝의 이모지를 반쪽으로 자르지 않음",
+      "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa😀 tail",
+      "videoId": "abcDEF12345",
+      "expectFile": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa😀 [abcDEF12345].md"
+    },
+    {
+      "name": "점으로 시작하면 숨은 파일이 되므로 앞 점을 뺌",
+      "title": ".NET 8 in 100 Seconds",
+      "videoId": "abcDEF12345",
+      "expectFile": "NET 8 in 100 Seconds [abcDEF12345].md"
+    },
+    {
+      "name": "끝의 점·빈칸을 뺌",
+      "title": "Wait for it... ",
+      "videoId": "abcDEF12345",
+      "expectFile": "Wait for it [abcDEF12345].md"
+    },
+    {
+      "name": "남는 게 없으면 YouTube",
+      "title": "???",
+      "videoId": "abcDEF12345",
+      "expectFile": "YouTube [abcDEF12345].md"
+    },
+    {
+      "name": "제어 문자·줄바꿈은 빈칸",
+      "title": "Line one\nLine\ttwo",
+      "videoId": "abcDEF12345",
+      "expectFile": "Line one Line two [abcDEF12345].md"
+    },
+    {
+      "name": "한글 제목도 70자까지",
+      "title": "영어 듣기 연습 — 원어민이 빠르게 말할 때 소리가 어떻게 바뀌는지 하나하나 짚어 보는 아주 긴 강의 영상의 제목입니다 정말로 길어요",
+      "videoId": "abcDEF12345",
+      "expectFile": "영어 듣기 연습 — 원어민이 빠르게 말할 때 소리가 어떻게 바뀌는지 하나하나 짚어 보는 아주 긴 강의 영상의 제목입니다 정말로 [abcDEF12345].md"
+    }
+  ],
+  "ids": [
+    {
+      "name": "앱이 만든 이름",
+      "file": "How to Speak Fast English [abcDEF12345].md",
+      "expect": "abcDEF12345"
+    },
+    {
+      "name": "제목 속 대괄호보다 끝의 ID",
+      "file": "Song [Official] [dQw4w9WgXcQ].md",
+      "expect": "dQw4w9WgXcQ"
+    },
+    {
+      "name": "끝이 아니면 맨 끝 대괄호",
+      "file": "Old [Remaster] [dQw4w9WgXcQ] copy.md",
+      "expect": "dQw4w9WgXcQ"
+    },
+    {
+      "name": "ID 없음",
+      "file": "My notes.md",
+      "expect": null
+    }
+  ],
+  "maxCodePoints": 70
+}

@@ -6,6 +6,7 @@ import {
 } from "../types/transcript";
 import { formatSecondsToTimestamp } from "../utils/youtubeUrlParser";
 import type { TranscriptWorkerManager } from "../workers/WorkerPoolManager";
+import { noteFileName, videoIdFromNoteName } from "../utils/noteName";
 
 const SESSION_CODEBLOCK_START = "```ear-coach-session";
 const SESSION_CODEBLOCK_END = "```";
@@ -90,13 +91,8 @@ export class NoteGenerator {
   }
 
   public getNoteFilePath(title: string, videoId: string): string {
-    const safeTitle = title
-      .replace(/[\\/:*?"<>|]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 70);
     const folder = this.getNotesFolder() || "YouTube Listening";
-    return normalizePath(`${folder}/${safeTitle} [${videoId}].md`);
+    return normalizePath(`${folder}/${noteFileName(title, videoId)}`);
   }
 
   public findExistingNoteByVideoId(videoId: string): TFile | null {
@@ -118,8 +114,7 @@ export class NoteGenerator {
     if (cache?.frontmatter?.video_id) {
       return String(cache.frontmatter.video_id);
     }
-    const match = file.name.match(/\[([a-zA-Z0-9_-]{6,15})\]/);
-    return match ? match[1] : null;
+    return videoIdFromNoteName(file.name);
   }
 
   /**

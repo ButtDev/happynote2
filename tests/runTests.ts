@@ -1638,6 +1638,23 @@ async function runAllTests() {
   log(`  -> PASS: ${weakCases.cases.length} restart cases, ${weakCases.parse.length} parse cases, limits.`);
   log("");
 
+  log("[Test 38] Note file name — 이모지 반쪽·숨은 파일·제목 속 대괄호 (data-driven, SPEC_060)");
+  const nameMod = process.env.EAR_COACH_NOTENAME_MODULE ? await import(path.resolve(process.env.EAR_COACH_NOTENAME_MODULE)) : await import("../src/utils/noteName.ts");
+  const nameCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/note-name/cases.json"), "utf8"));
+  for (const c of nameCases.titles) {
+    const file = nameMod.noteFileName(c.title, c.videoId);
+    assert.equal(file, c.expectFile, `note name: ${c.name}`);
+    const title = nameMod.safeNoteTitle(c.title);
+    assert.ok(Array.from(title).length <= nameCases.maxCodePoints, `note name 길이: ${c.name}`);
+    assert.ok(!/[\\/:*?"<>|\u0000-\u001f]/.test(title), `note name 금지 글자 없음: ${c.name}`);
+    assert.ok(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(title), `note name 반쪽 서로게이트 없음: ${c.name}`);
+    assert.ok(!title.startsWith(".") && title.trim() === title && title.length > 0, `note name 앞 점·끝 빈칸 없음: ${c.name}`);
+    assert.equal(nameMod.videoIdFromNoteName(file), c.videoId, `note name ID 되읽기: ${c.name}`);
+  }
+  for (const c of nameCases.ids) assert.equal(nameMod.videoIdFromNoteName(c.file), c.expect, `note id: ${c.name}`);
+  log(`  -> PASS: ${nameCases.titles.length} title cases, ${nameCases.ids.length} id cases.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");
