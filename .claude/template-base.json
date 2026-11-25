@@ -1,16 +1,18 @@
 {
-  "incubator": "146d15c",
+  "incubator": "8f49679",
   "files": {
     ".claude/harness/gate.mjs": "c408ed5211fc89b1c3176e833ef2272a40f6b39b77f0ac390d4c7a20c71f92d6",
     ".claude/harness/lib.mjs": "b774f4e124a413b86fbc91c445d49deaaca40be035dac552d77683e77c2e481f",
     ".claude/harness/log.mjs": "0400bbde4492396f70dc113d31db8606fa0eaab9cadf0575daefb82690f227e1",
-    ".claude/harness/run-detached.mjs": "608c498d37644c791846a6d1ea3ed0eca6bc9d015b20535c2ab98601cda1e125",
+    ".claude/harness/run-detached.mjs": "7c2121110555eba915850bb393b9397dee0932afa0c4c680bd5c61abe16513c4",
     ".claude/harness/status.mjs": "35836825e65f41952619c5a57f8d9ed9d70b0282a09bc358f05d309dd9cbd334",
     ".claude/harness/verify.mjs": "c14efd81008ec5839efd646b83c99b7fa89b7cc84ab267f94865f41e0ca8779b",
     ".claude/commands/interview.md": "3bbce16c1aa29ed1c185164b313ec2d5646afe36f7633700fd88ad6703812351",
-    ".claude/commands/night-run.md": "4413bc4c7e9343d22e20e4218d4e5ff05236fad4ffc44f79568184e57c6ff3d1",
+    ".claude/commands/night-run.md": "54481481be19b970f7217117cc58917ac0613e5532f850269554fe8987574e36",
     ".claude/commands/spec-new.md": "3508a1856e2c0da9256278f22778c1d940edd9a7dec8c71c83d424a597dacf83",
     ".claude/commands/spec-run.md": "8323ab65b40618239c17fe1decf1396506489c002f307e74d5f6eb9ea84402ac",
-    "CLAUDE.md (1장~)": "7caa71f25a7437149186a7d5af98cfe21354a8c5c48d787512c2dc359af4d58d"
+    "CLAUDE.md (1장~)": "7caa71f25a7437149186a7d5af98cfe21354a8c5c48d787512c2dc359af4d58d",
+    ".claude/harness/pair.mjs": "f7325dbf05dec1cdf4a872eabd0bfc2f0d54ff405197b743716b33e07e8cb4db",
+    ".claude/commands/spec-pair.md": "0efdb28ee3bb00cc60279571276394342b1ad9788a8c0d396d59576e67d5eed4"
   }
 }

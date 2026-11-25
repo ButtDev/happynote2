@@ -15,6 +15,7 @@ description: 야간 작업 한 건을 끝까지 한다 (harness.json night.enabl
 ## 2. 하기
 
 - 간이 변경은 main에 바로. 그보다 크면 `night/<ID>` 브랜치·worktree(`.scratch/wt/<ID>`)에서 SPEC(「야간 자가 확정」) → 검증 → main을 merge해 회귀 재통과 → **fast-forward로만** main에 합침. 열린 `night/*`는 `night.maxNightBranches`(기본 2)까지.
+- 구현·검토 짝(`/spec-pair`)은 쓰지 않는다(창을 띄우고 기다리므로 사람이 없으면 막힐 수 있다).
 - ⏳는 승인하지 않는다. 사람에게 물을 결정은 하지 않고 백로그·보고에 남긴다. 콘텐츠를 바꾸지 않는다.
 - 같은 후보가 두 번 실패하면 백로그 「## 보류」로 옮긴다.
 

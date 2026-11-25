@@ -3,6 +3,7 @@
 // 사용: node .claude/harness/run-detached.mjs start <name> -- <명령…>
 //       node .claude/harness/run-detached.mjs status <name>
 //       node .claude/harness/run-detached.mjs stop <name>   — 프로세스 그룹째 끈다
+//       node .claude/harness/run-detached.mjs wait <name> [초]  — 끝나거나 초(기본 540)가 지날 때까지 기다린 뒤 status
 import { spawn } from "node:child_process";
 import { mkdirSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -13,8 +14,8 @@ const dir = join(root, ".scratch", "detached");
 const [sub, name] = process.argv.slice(2);
 const quote = (s) => `'${String(s).replace(/'/g, `'\\''`)}'`;
 
-if (!name || !/^[A-Za-z0-9._-]+$/.test(name) || !["start", "status", "stop"].includes(sub)) {
-  console.log(JSON.stringify({ ok: false, error: "사용: start <name> -- <명령…> | status <name> | stop <name>" }));
+if (!name || !/^[A-Za-z0-9._-]+$/.test(name) || !["start", "status", "stop", "wait"].includes(sub)) {
+  console.log(JSON.stringify({ ok: false, error: "사용: start <name> -- <명령…> | status <name> | stop <name> | wait <name> [초]" }));
   process.exit(1);
 }
 const log = join(dir, name + ".log"), done = join(dir, name + ".done"), pidf = join(dir, name + ".pid"), stopped = join(dir, name + ".stopped");
@@ -47,6 +48,15 @@ if (sub === "start") {
   writeFileSync(stopped, new Date().toISOString());
   console.log(JSON.stringify({ ok: true, name, state: "stopped" }));
 } else {
+  if (sub === "wait") {
+    const rest = process.argv.slice(4);
+    const ri = rest.indexOf("--root");
+    if (ri >= 0) rest.splice(ri, 2);
+    const sec = rest.length ? Number(rest[0]) : 540;
+    const until = Date.now() + (sec >= 0 ? sec : 540) * 1000;
+    const nap = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+    while (!existsSync(done) && !existsSync(stopped) && Date.now() < until) nap(Math.min(500, Math.max(1, until - Date.now())));
+  }
   let state = "missing", exit = null;
   if (existsSync(done)) { state = "done"; exit = exitOf(); }
   else if (existsSync(stopped)) state = "stopped";
