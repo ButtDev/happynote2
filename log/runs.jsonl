@@ -176,3 +176,4 @@
 {"ts":"2026-11-25T17:02:46.772Z","kind":"night-simple","task":"MEMORY.md diet","files":["MEMORY.md","memory/modules.md","memory/backlog.md"],"evidence":"31 lines moved verbatim + 9 kept = 40; memory 3657/20480; verify regression ok"}
 {"ts":"2026-11-25T17:44:52.783Z","spec":"SPEC_060","mode":"night","result":"DONE","verify":"regression ok (ui 1회 flaky)"}
 {"ts":"2026-11-25T18:13:39.077Z","kind":"night-simple","task":"ui flaky — fail trace","files":["tests/ui/runUiCheck.mjs"],"evidence":"crash mutant(landscape click timeout) → CRASH line + fail json/png; empty css → FAIL 55건 + fail json; 4 repeat runs 4/4 ok (no repro); verify regression ok"}
+{"ts":"2026-11-25T18:35:22.315Z","id":"night-release-meta","kind":"simple","what":"Test 39 release metadata: manifest/package/package-lock version 같음·x.y.z·id·release 3파일","evidence":"Test 39 PASS(1.0.65 4곳), 변이 3개 FAIL(lock 1.0.64, v접두사, id), verify --set regression ok"}

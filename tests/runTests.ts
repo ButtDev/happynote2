@@ -1655,6 +1655,30 @@ async function runAllTests() {
   log(`  -> PASS: ${nameCases.titles.length} title cases, ${nameCases.ids.length} id cases.`);
   log("");
 
+  log("[Test 39] Release metadata — 세 파일 version 같음·태그 형식·플러그인 id (data-driven)");
+  //     EAR_COACH_RELEASE_ROOT로 검사 대상 폴더를 바꿀 수 있다(변이 시험용).
+  const relRoot = path.resolve(process.env.EAR_COACH_RELEASE_ROOT ?? ".");
+  const relRules = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/release/rules.json"), "utf8"));
+  const relJson = (f: string) => JSON.parse(fs.readFileSync(path.join(relRoot, f), "utf8"));
+  const relVersions = relRules.versionFields.map((v: { file: string; path: string[] }) => {
+    let cur: any = relJson(v.file);
+    for (const k of v.path) cur = cur?.[k];
+    return { where: `${v.file}:${v.path.map((k) => k || "\"\"").join(".")}`, value: cur };
+  });
+  const relVersion = relVersions[0].value;
+  assert.match(String(relVersion), new RegExp(relRules.versionPattern), `release version 형식(태그와 같아야 해 v 없이): ${relVersion}`);
+  for (const v of relVersions) assert.equal(v.value, relVersion, `release version 어긋남: ${v.where}=${v.value}, manifest=${relVersion}`);
+  const relManifest = relJson("manifest.json");
+  assert.equal(relManifest.id, relRules.pluginId, "manifest id = 볼트 플러그인 폴더 이름");
+  for (const k of relRules.manifestRequired) assert.ok(typeof relManifest[k] === "string" && relManifest[k].length > 0, `manifest ${k} 있음`);
+  const relWorkflow = fs.readFileSync(path.join(relRoot, relRules.workflow), "utf8");
+  for (const f of relRules.releaseFiles) {
+    assert.ok(relWorkflow.includes(f), `release.yml이 ${f}를 올림`);
+    assert.ok(fs.existsSync(path.join(relRoot, f)), `${f} 있음`);
+  }
+  log(`  -> PASS: version ${relVersion} in ${relVersions.length} places, id ${relManifest.id}, ${relRules.releaseFiles.length} release files.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");

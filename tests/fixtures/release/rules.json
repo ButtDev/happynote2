@@ -1,0 +1,14 @@
+{
+  "_why": "BRAT 배포(CLAUDE.md 0장)는 manifest.json·package.json·package-lock.json version을 함께 올리고 같은 이름 태그를 push한다. release.yml은 태그 = manifest version(v 없이)만 본다 — 나머지가 어긋나도 릴리스는 나가므로 여기서 잡는다.",
+  "pluginId": "obsidian-ear-coach",
+  "versionPattern": "^\\d+\\.\\d+\\.\\d+$",
+  "versionFields": [
+    { "file": "manifest.json", "path": ["version"] },
+    { "file": "package.json", "path": ["version"] },
+    { "file": "package-lock.json", "path": ["version"] },
+    { "file": "package-lock.json", "path": ["packages", "", "version"] }
+  ],
+  "manifestRequired": ["id", "name", "version", "minAppVersion", "description", "author"],
+  "releaseFiles": ["main.js", "manifest.json", "styles.css"],
+  "workflow": ".github/workflows/release.yml"
+}
