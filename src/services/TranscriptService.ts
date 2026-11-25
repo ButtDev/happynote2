@@ -1,6 +1,11 @@
 import { send as requestUrl } from "../features/network"; // SPEC_041: 시간 제한·재시도
 import type { RawTranscriptCue } from "../types/transcript";
-import { parseCaptionPayload } from "./captionPayload.ts";
+import {
+  captionCandidateUrls,
+  extractInitialPlayerResponse,
+  orderCaptionTracks,
+  parseCaptionPayload,
+} from "./captionPayload.ts";
 import { KnownFailure } from "./notices.ts";
 import { isMobileApp, requireDesktopModule } from "../utils/platform.ts";
 
@@ -88,31 +93,13 @@ export class TranscriptService {
       }
       foundAnyTracklist = true;
 
-      // Sort tracks: manual preferred lang -> auto preferred lang -> any English -> others
-      const sortedTracks = [...tracklist].sort((a, b) => {
-        const aLang = (a.languageCode || "").toLowerCase();
-        const bLang = (b.languageCode || "").toLowerCase();
-        const aPref = aLang.startsWith(preferredLang.toLowerCase());
-        const bPref = bLang.startsWith(preferredLang.toLowerCase());
-        const aManual = a.kind !== "asr";
-        const bManual = b.kind !== "asr";
-
-        if (aPref && !bPref) return -1;
-        if (!aPref && bPref) return 1;
-        if (aManual && !bManual) return -1;
-        if (!aManual && bManual) return 1;
-        return 0;
-      });
+      // Sort tracks: preferred lang -> manual before auto (captionPayload.orderCaptionTracks)
+      const sortedTracks = orderCaptionTracks(tracklist, preferredLang);
 
       for (const track of sortedTracks) {
         if (!track.baseUrl) continue;
 
-        const candidateUrls: string[] = [
-          track.baseUrl,
-          track.baseUrl.includes("fmt=") ? track.baseUrl : `${track.baseUrl}&fmt=json3`,
-          track.baseUrl.includes("fmt=") ? track.baseUrl : `${track.baseUrl}&fmt=srv1`,
-          track.baseUrl.includes("fmt=") ? track.baseUrl : `${track.baseUrl}&fmt=vtt`,
-        ];
+        const candidateUrls = captionCandidateUrls(track.baseUrl);
 
         for (const targetUrl of candidateUrls) {
           try {
@@ -191,52 +178,7 @@ export class TranscriptService {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
     });
-    return this.extractInitialPlayerResponse(pageResp.text);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private extractInitialPlayerResponse(html: string): any | null {
-    const marker = "ytInitialPlayerResponse = ";
-    const startIdx = html.indexOf(marker);
-    if (startIdx === -1) return null;
-
-    const jsonStart = html.indexOf("{", startIdx);
-    if (jsonStart === -1) return null;
-
-    let depth = 0;
-    let inString = false;
-    let escaped = false;
-
-    for (let i = jsonStart; i < html.length; i++) {
-      const ch = html[i];
-      if (inString) {
-        if (escaped) {
-          escaped = false;
-        } else if (ch === "\\") {
-          escaped = true;
-        } else if (ch === '"') {
-          inString = false;
-        }
-        continue;
-      }
-
-      if (ch === '"') {
-        inString = true;
-      } else if (ch === "{") {
-        depth++;
-      } else if (ch === "}") {
-        depth--;
-        if (depth === 0) {
-          const rawJson = html.slice(jsonStart, i + 1);
-          try {
-            return JSON.parse(rawJson);
-          } catch {
-            return null;
-          }
-        }
-      }
-    }
-    return null;
+    return extractInitialPlayerResponse(pageResp.text);
   }
 
   public parseTrackPayload(rawText: string): RawTranscriptCue[] {

@@ -1679,6 +1679,26 @@ async function runAllTests() {
   log(`  -> PASS: version ${relVersion} in ${relVersions.length} places, id ${relManifest.id}, ${relRules.releaseFiles.length} release files.`);
   log("");
 
+  log("[Test 40] Caption tracks — 트랙 순서·후보 주소·player response 꺼내기 (data-driven)");
+  const ctMod = process.env.EAR_COACH_CAPTION_MODULE ? await import(path.resolve(process.env.EAR_COACH_CAPTION_MODULE)) : captionPayloadSrc;
+  const ctCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/caption-tracks/cases.json"), "utf8"));
+  for (const c of ctCases.order) {
+    const got = ctMod.orderCaptionTracks(c.tracks, c.preferredLang).map((t: { id: string }) => t.id);
+    assert.deepEqual(got, c.expect, `orderCaptionTracks: ${c.name}`);
+    assert.equal(c.tracks.length, got.length, `orderCaptionTracks 개수 유지: ${c.name}`);
+  }
+  for (const c of ctCases.urls) {
+    const got: string[] = ctMod.captionCandidateUrls(c.baseUrl);
+    assert.deepEqual(got, c.expect, `captionCandidateUrls: ${c.name}`);
+    assert.equal(new Set(got).size, got.length, `captionCandidateUrls 중복 없음: ${c.name}`);
+    assert.equal(got[0], c.baseUrl, `captionCandidateUrls 원래 주소 먼저: ${c.name}`);
+  }
+  for (const c of ctCases.playerResponse) {
+    assert.deepEqual(ctMod.extractInitialPlayerResponse(c.html), c.expect, `extractInitialPlayerResponse: ${c.name}`);
+  }
+  log(`  -> PASS: ${ctCases.order.length} order, ${ctCases.urls.length} url, ${ctCases.playerResponse.length} player-response cases.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");

@@ -1,0 +1,168 @@
+{
+  "order": [
+    {
+      "name": "선호 언어 → 수동 → 자동, 다른 언어는 뒤",
+      "preferredLang": "en",
+      "tracks": [
+        {
+          "id": "ko-asr",
+          "languageCode": "ko",
+          "kind": "asr"
+        },
+        {
+          "id": "en-asr",
+          "languageCode": "en",
+          "kind": "asr"
+        },
+        {
+          "id": "ko-man",
+          "languageCode": "ko"
+        },
+        {
+          "id": "en-man",
+          "languageCode": "en"
+        }
+      ],
+      "expect": [
+        "en-man",
+        "en-asr",
+        "ko-man",
+        "ko-asr"
+      ]
+    },
+    {
+      "name": "지역 코드(en-US)도 선호 언어, 대소문자 무시",
+      "preferredLang": "EN",
+      "tracks": [
+        {
+          "id": "de-man",
+          "languageCode": "de"
+        },
+        {
+          "id": "enUS-asr",
+          "languageCode": "en-US",
+          "kind": "asr"
+        }
+      ],
+      "expect": [
+        "enUS-asr",
+        "de-man"
+      ]
+    },
+    {
+      "name": "같은 순위는 유튜브 순서 유지",
+      "preferredLang": "en",
+      "tracks": [
+        {
+          "id": "en-a",
+          "languageCode": "en"
+        },
+        {
+          "id": "en-b",
+          "languageCode": "en-GB"
+        },
+        {
+          "id": "fr",
+          "languageCode": "fr"
+        },
+        {
+          "id": "es",
+          "languageCode": "es"
+        }
+      ],
+      "expect": [
+        "en-a",
+        "en-b",
+        "fr",
+        "es"
+      ]
+    },
+    {
+      "name": "languageCode 없는 트랙은 다른 언어 취급",
+      "preferredLang": "en",
+      "tracks": [
+        {
+          "id": "none"
+        },
+        {
+          "id": "en-asr",
+          "languageCode": "en",
+          "kind": "asr"
+        }
+      ],
+      "expect": [
+        "en-asr",
+        "none"
+      ]
+    }
+  ],
+  "urls": [
+    {
+      "name": "fmt 없으면 원래 주소 + json3·srv1·vtt",
+      "baseUrl": "https://www.youtube.com/api/timedtext?v=abc&lang=en",
+      "expect": [
+        "https://www.youtube.com/api/timedtext?v=abc&lang=en",
+        "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=json3",
+        "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=srv1",
+        "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=vtt"
+      ]
+    },
+    {
+      "name": "fmt 있으면 그 주소 하나만(같은 주소 되풀이 안 함)",
+      "baseUrl": "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=srv3",
+      "expect": [
+        "https://www.youtube.com/api/timedtext?v=abc&lang=en&fmt=srv3"
+      ]
+    }
+  ],
+  "playerResponse": [
+    {
+      "name": "보통 watch 페이지",
+      "html": "<script>var ytInitialPlayerResponse = {\"videoDetails\":{\"videoId\":\"abc\"},\"captions\":{\"n\":1}};var meta = {};</script>",
+      "expect": {
+        "videoDetails": {
+          "videoId": "abc"
+        },
+        "captions": {
+          "n": 1
+        }
+      }
+    },
+    {
+      "name": "문자열 속 중괄호·따옴표 이스케이프",
+      "html": "ytInitialPlayerResponse = {\"title\":\"a } b { \\\"q\\\" \\\\\",\"x\":{\"y\":[1,2]}}; trailing }",
+      "expect": {
+        "title": "a } b { \"q\" \\",
+        "x": {
+          "y": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "이스케이프된 따옴표 뒤 닫는 중괄호(문자열 안)",
+      "html": "ytInitialPlayerResponse = {\"t\":\"say \\\"}\\\" ok\",\"n\":2};",
+      "expect": {
+        "t": "say \"}\" ok",
+        "n": 2
+      }
+    },
+    {
+      "name": "표시 없음",
+      "html": "<html>no player here</html>",
+      "expect": null
+    },
+    {
+      "name": "중간에 잘림",
+      "html": "ytInitialPlayerResponse = {\"a\":{\"b\":1}",
+      "expect": null
+    },
+    {
+      "name": "JSON 아님",
+      "html": "ytInitialPlayerResponse = {a:1};",
+      "expect": null
+    }
+  ]
+}

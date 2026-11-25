@@ -152,3 +152,74 @@ function decodeHtmlEntities(str: string): string {
       String.fromCharCode(parseInt(hex, 16))
     );
 }
+
+/** Caption track entry from a YouTube player response (only the fields we read). */
+export interface CaptionTrackLike {
+  baseUrl?: string;
+  languageCode?: string;
+  kind?: string;
+}
+
+/**
+ * Order caption tracks: preferred language first, then manual (non-asr) before auto.
+ * Stable — tracks that tie keep YouTube's order.
+ */
+export function orderCaptionTracks<T extends CaptionTrackLike>(tracks: T[], preferredLang: string): T[] {
+  const pref = preferredLang.toLowerCase();
+  return [...tracks].sort((a, b) => {
+    const aPref = (a.languageCode || "").toLowerCase().startsWith(pref);
+    const bPref = (b.languageCode || "").toLowerCase().startsWith(pref);
+    const aManual = a.kind !== "asr";
+    const bManual = b.kind !== "asr";
+    if (aPref && !bPref) return -1;
+    if (!aPref && bPref) return 1;
+    if (aManual && !bManual) return -1;
+    if (!aManual && bManual) return 1;
+    return 0;
+  });
+}
+
+/** Caption URLs to try for one track: as given, then json3 / srv1 / vtt when no fmt= is set. */
+export function captionCandidateUrls(baseUrl: string): string[] {
+  if (baseUrl.includes("fmt=")) return [baseUrl];
+  return [baseUrl, `${baseUrl}&fmt=json3`, `${baseUrl}&fmt=srv1`, `${baseUrl}&fmt=vtt`];
+}
+
+/**
+ * Pull `ytInitialPlayerResponse = {...}` out of a watch page by brace matching
+ * (strings and escapes respected). null when missing or not valid JSON.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function extractInitialPlayerResponse(html: string): any | null {
+  const marker = "ytInitialPlayerResponse = ";
+  const startIdx = html.indexOf(marker);
+  if (startIdx === -1) return null;
+  const jsonStart = html.indexOf("{", startIdx);
+  if (jsonStart === -1) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = jsonStart; i < html.length; i++) {
+    const ch = html[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        try {
+          return JSON.parse(html.slice(jsonStart, i + 1));
+        } catch {
+          return null;
+        }
+      }
+    }
+  }
+  return null;
+}
