@@ -1699,6 +1699,26 @@ async function runAllTests() {
   log(`  -> PASS: ${ctCases.order.length} order, ${ctCases.urls.length} url, ${ctCases.playerResponse.length} player-response cases.`);
   log("");
 
+  log("[Test 41] Note markdown — 세션 블록 바꾸기가 사람이 쓴 글을 지우지 않음 (data-driven)");
+  const nmMod = process.env.EAR_COACH_NOTEMD_MODULE ? await import(path.resolve(process.env.EAR_COACH_NOTEMD_MODULE)) : await import("../src/services/noteMarkdown.ts");
+  const nmCases = JSON.parse(fs.readFileSync(path.resolve("tests/fixtures/note-markdown/cases.json"), "utf8"));
+  const nmBlocks = (md: string) => md.split(nmMod.SESSION_CODEBLOCK_START).length - 1;
+  const nmBuilt: string = nmMod.buildNoteMarkdown(nmCases.session);
+  for (const t of nmCases.build.mustContain) assert.ok(nmBuilt.includes(t), `note build 포함: ${t}`);
+  assert.deepEqual(nmMod.extractSessionJson(nmBuilt), nmCases.build.pointer, "note build 포인터");
+  assert.equal(nmMod.replaceSessionBlock(nmBuilt, nmCases.session), nmBuilt, "note build 뒤 바꾸기는 그대로");
+  for (const c of nmCases.replace) {
+    const out: string = nmMod.replaceSessionBlock(c.markdown, nmCases.session);
+    for (const t of c.mustContain) assert.ok(out.includes(t), `note replace 포함(${c.name}): ${t}`);
+    for (const t of c.mustNotContain) assert.ok(!out.includes(t), `note replace 없음(${c.name}): ${t}`);
+    assert.equal(nmBlocks(out), 1, `note replace 블록 하나(${c.name})`);
+    assert.deepEqual(nmMod.extractSessionJson(out), nmCases.build.pointer, `note replace 포인터(${c.name})`);
+    assert.equal(nmMod.replaceSessionBlock(out, nmCases.session), out, `note replace 두 번 해도 같음(${c.name})`);
+  }
+  for (const c of nmCases.extract) assert.deepEqual(nmMod.extractSessionJson(c.markdown), c.expect, `note extract: ${c.name}`);
+  log(`  -> PASS: build, ${nmCases.replace.length} replace, ${nmCases.extract.length} extract cases.`);
+  log("");
+
   log("==============================================================");
   log("ALL TESTS PASSED SUCCESSFULLY!");
   log("==============================================================");

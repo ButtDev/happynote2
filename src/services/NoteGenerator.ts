@@ -7,17 +7,7 @@ import {
 import { formatSecondsToTimestamp } from "../utils/youtubeUrlParser";
 import type { TranscriptWorkerManager } from "../workers/WorkerPoolManager";
 import { noteFileName, videoIdFromNoteName } from "../utils/noteName";
-
-const SESSION_CODEBLOCK_START = "```ear-coach-session";
-const SESSION_CODEBLOCK_END = "```";
-
-export interface SidecarSessionPointer {
-  storage: "sidecar";
-  videoId: string;
-  title: string;
-  segmentCount: number;
-  pinnedCount: number;
-}
+import { buildNoteMarkdown, extractSessionJson, replaceSessionBlock } from "./noteMarkdown";
 
 /**
  * Generates and updates Obsidian Markdown notes for YouTube listening sessions.
@@ -162,7 +152,7 @@ export class NoteGenerator {
 
     if (targetFile) {
       const currentContent = await this.app.vault.read(targetFile);
-      const updatedContent = this.replaceSessionPayloadInMarkdown(currentContent, session);
+      const updatedContent = replaceSessionBlock(currentContent, session);
       if (updatedContent !== currentContent) {
         await this.app.vault.modify(targetFile, updatedContent);
       }
@@ -170,7 +160,7 @@ export class NoteGenerator {
     }
 
     const filePath = this.getNoteFilePath(session.title, session.videoId);
-    const markdown = this.buildFullMarkdown(session);
+    const markdown = buildNoteMarkdown(session);
     return await this.app.vault.create(filePath, markdown);
   }
 
@@ -240,19 +230,7 @@ export class NoteGenerator {
   }
 
   public extractSessionFromMarkdown(markdown: string): ListeningSessionData | null {
-    const startIdx = markdown.indexOf(SESSION_CODEBLOCK_START);
-    if (startIdx === -1) return null;
-
-    const jsonStart = startIdx + SESSION_CODEBLOCK_START.length;
-    const endIdx = markdown.indexOf(SESSION_CODEBLOCK_END, jsonStart);
-    if (endIdx === -1) return null;
-
-    const rawJson = markdown.slice(jsonStart, endIdx).trim();
-    try {
-      return JSON.parse(rawJson) as ListeningSessionData;
-    } catch {
-      return null;
-    }
+    return extractSessionJson(markdown) as ListeningSessionData | null;
   }
 
   /**
@@ -276,93 +254,5 @@ export class NoteGenerator {
     ].join("\n");
 
     await this.app.vault.modify(file, content + calloutLines);
-  }
-
-  private buildSidecarPointer(session: ListeningSessionData): SidecarSessionPointer {
-    return {
-      storage: "sidecar",
-      videoId: session.videoId,
-      title: session.title,
-      segmentCount: session.segments.length,
-      pinnedCount: session.segments.filter((s) => s.isPinned).length,
-    };
-  }
-
-  private buildFullMarkdown(session: ListeningSessionData): string {
-    const pinnedCount = session.segments.filter((s) => s.isPinned).length;
-    const speedSpikeCount = session.segments.filter((s) => s.isSpeedSpike).length;
-
-    const pinnedSummary = session.segments
-      .filter((s) => s.isPinned)
-      .map(
-        (s) =>
-          `- 📌 **[${formatSecondsToTimestamp(s.start)}]** — ||${s.text}|| *(소리 힌트: ${s.analysis?.phoneticKr || "분석 중"})*`
-      )
-      .join("\n");
-
-    return [
-      "---",
-      `video_id: "${session.videoId}"`,
-      `video_url: "${session.videoUrl}"`,
-      `channel: "${(session.channelName || "YouTube").replace(/"/g, '\\"')}"`,
-      `agy_conversation_id: "${session.agyConversationId || ""}"`,
-      `pinned_count: ${pinnedCount}`,
-      `speed_spike_count: ${speedSpikeCount}`,
-      `created_at: "${session.createdAt}"`,
-      `updated_at: "${session.updatedAt}"`,
-      "tags:",
-      "  - ear-coach",
-      "  - english-listening",
-      "---",
-      "",
-      `# 🎧 ${session.title}`,
-      "",
-      `> [!info] **Obsidian Ear-Coach 워크스페이스 안내**`,
-      `> 좌측 목록에서 이 노트를 선택하거나 명령어 팔레트에서 **\`Ear-Coach: 현재 노트 리스닝 코치 열기\`**를 실행하면 **A-B 문장 무한 루프 + 3단계 블라인드 언락커 + 1:1 \`agy\` 사운드 닥터**를 인터랙티브하게 사용할 수 있습니다.`,
-      "",
-      "## 📌 집중 분석 핀(Unclear Spots) 요약",
-      pinnedSummary || "- 아직 고정된 집중 분석 핀이 없습니다. 안 들리는 구간에서 `📌 핀` 버튼을 눌러보세요!",
-      "",
-      "## 🎛️ 인터랙티브 리스닝 세션 데이터",
-      SESSION_CODEBLOCK_START,
-      JSON.stringify(this.buildSidecarPointer(session)),
-      SESSION_CODEBLOCK_END,
-      "",
-      "## 📝 나의 1:1 `agy` 사운드 해부 기록",
-      "",
-    ].join("\n");
-  }
-
-  private replaceSessionPayloadInMarkdown(
-    markdown: string,
-    session: ListeningSessionData
-  ): string {
-    const startIdx = markdown.indexOf(SESSION_CODEBLOCK_START);
-    if (startIdx === -1) {
-      return this.buildFullMarkdown(session);
-    }
-
-    const jsonStart = startIdx + SESSION_CODEBLOCK_START.length;
-    const endIdx = markdown.indexOf(SESSION_CODEBLOCK_END, jsonStart);
-    if (endIdx === -1) {
-      return this.buildFullMarkdown(session);
-    }
-
-    const before = markdown.slice(0, startIdx);
-    const after = markdown.slice(endIdx + SESSION_CODEBLOCK_END.length);
-
-    const updatedFrontmatterBefore = before
-      .replace(/agy_conversation_id:\s*"[^"]*"/, `agy_conversation_id: "${session.agyConversationId || ""}"`)
-      .replace(/updated_at:\s*"[^"]*"/, `updated_at: "${session.updatedAt}"`);
-
-    return [
-      updatedFrontmatterBefore,
-      SESSION_CODEBLOCK_START,
-      "\n",
-      JSON.stringify(this.buildSidecarPointer(session)),
-      "\n",
-      SESSION_CODEBLOCK_END,
-      after,
-    ].join("");
   }
 }

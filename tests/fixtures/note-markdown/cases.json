@@ -1,0 +1,59 @@
+{
+  "session": {
+    "videoId": "abcDEF12345",
+    "videoUrl": "https://www.youtube.com/watch?v=abcDEF12345",
+    "title": "Fast English",
+    "channelName": "Say \"Hi\"",
+    "createdAt": "2026-11-20T00:00:00.000Z",
+    "updatedAt": "2026-11-26T01:02:03.000Z",
+    "agyConversationId": "conv-9",
+    "pinnedTimestamps": [3],
+    "segments": [
+      { "id": "s1", "start": 3, "end": 5, "text": "gonna go", "isPinned": true, "isSpeedSpike": true, "analysis": { "phoneticKr": "거너 고" } },
+      { "id": "s2", "start": 65, "end": 67, "text": "what do you", "isPinned": false, "isSpeedSpike": true },
+      { "id": "s3", "start": 70, "end": 72, "text": "see you", "isPinned": true }
+    ]
+  },
+  "build": {
+    "mustContain": ["video_id: \"abcDEF12345\"", "channel: \"Say \\\"Hi\\\"\"", "pinned_count: 2", "speed_spike_count: 2", "- 📌 **[00:03]** — ||gonna go|| *(소리 힌트: 거너 고)*", "- 📌 **[01:10]** — ||see you|| *(소리 힌트: 분석 중)*", "## 📝 나의 1:1 `agy` 사운드 해부 기록"],
+    "pointer": { "storage": "sidecar", "videoId": "abcDEF12345", "title": "Fast English", "segmentCount": 3, "pinnedCount": 2 }
+  },
+  "replace": [
+    {
+      "name": "보통 노트 — 블록만 바뀌고 사람 기록·frontmatter 갱신",
+      "markdown": "---\nvideo_id: \"abcDEF12345\"\nagy_conversation_id: \"\"\npinned_count: 0\nspeed_spike_count: 0\nupdated_at: \"2026-01-01T00:00:00.000Z\"\n---\n\n# 🎧 Fast English\n\n## 🎛️ 인터랙티브 리스닝 세션 데이터\n```ear-coach-session\n{\"storage\":\"sidecar\",\"videoId\":\"abcDEF12345\",\"title\":\"Fast English\",\"segmentCount\":1,\"pinnedCount\":0}\n```\n\n## 📝 나의 1:1 `agy` 사운드 해부 기록\n\n> [!tip]+ 내 메모 — 이건 지우면 안 됨\n",
+      "mustContain": ["> [!tip]+ 내 메모 — 이건 지우면 안 됨", "agy_conversation_id: \"conv-9\"", "pinned_count: 2", "speed_spike_count: 2", "updated_at: \"2026-11-26T01:02:03.000Z\"", "# 🎧 Fast English"],
+      "mustNotContain": ["2026-01-01T00:00:00.000Z", "\"segmentCount\":1,"]
+    },
+    {
+      "name": "세션 블록을 사람이 지운 노트 — 덮어쓰지 않고 끝에 붙임",
+      "markdown": "---\nvideo_id: \"abcDEF12345\"\nupdated_at: \"2026-01-01T00:00:00.000Z\"\n---\n\n# 내가 고친 제목\n\n오늘 배운 것: gonna = going to\n\n\n",
+      "mustContain": ["# 내가 고친 제목", "오늘 배운 것: gonna = going to", "updated_at: \"2026-11-26T01:02:03.000Z\"", "## 🎛️ 인터랙티브 리스닝 세션 데이터"],
+      "mustNotContain": ["Obsidian Ear-Coach 워크스페이스 안내", "2026-01-01T00:00:00.000Z"]
+    },
+    {
+      "name": "닫는 ``` 가 없는 노트 — 블록 머리·JSON 줄만 바꾸고 뒤 글 유지",
+      "markdown": "# 제목\n```ear-coach-session\n{\"storage\":\"sidecar\",\"segmentCount\":1}\n\n## 📝 기록\n내 답 — 남아야 함\n",
+      "mustContain": ["# 제목", "## 📝 기록", "내 답 — 남아야 함"],
+      "mustNotContain": ["\"segmentCount\":1}"]
+    },
+    {
+      "name": "본문에 frontmatter 같은 글 — 본문은 안 바뀜",
+      "markdown": "---\nupdated_at: \"2026-01-01T00:00:00.000Z\"\n---\n\n예시 줄:\nupdated_at: \"본문이라 그대로\"\npinned_count: 77\n\n```ear-coach-session\n{}\n```\n",
+      "mustContain": ["updated_at: \"본문이라 그대로\"", "pinned_count: 77", "updated_at: \"2026-11-26T01:02:03.000Z\""],
+      "mustNotContain": ["2026-01-01T00:00:00.000Z"]
+    },
+    {
+      "name": "빈 노트 — 새 틀",
+      "markdown": "",
+      "mustContain": ["Obsidian Ear-Coach 워크스페이스 안내", "pinned_count: 2"],
+      "mustNotContain": []
+    }
+  ],
+  "extract": [
+    { "name": "포인터", "markdown": "x\n```ear-coach-session\n{\"storage\":\"sidecar\",\"videoId\":\"v\"}\n```\ny", "expect": { "storage": "sidecar", "videoId": "v" } },
+    { "name": "블록 없음", "markdown": "# 그냥 노트", "expect": null },
+    { "name": "닫힘 없음", "markdown": "```ear-coach-session\n{\"a\":1}", "expect": null },
+    { "name": "깨진 JSON", "markdown": "```ear-coach-session\n{a:1}\n```", "expect": null }
+  ]
+}
