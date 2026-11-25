@@ -171,3 +171,4 @@
 {"ts":"2026-11-25T13:29:47.924Z","cmd":"/spec-run","spec":"SPEC_056","iteration":1,"status":"DONE","evidence":"Test 27 PASS 25 scenarios+16 unreachable texts; 변이 2건(분류 끔·추가 재시도 끔) Test 27 FAIL; verify regression ok(harness·build·test·ui); review-1 반영(실행 기록·백로그 detail 항목)"}
 {"ts":"2026-11-25T15:04:32.826Z","spec":"SPEC_057","mode":"night","result":"DONE","evidence":"Test15 +4 stopDetail, Test24 +4 describe PASS; mutants diag_nodetail/ai-nodetail FAIL; regression ok"}
 {"ts":"2026-11-25T15:35:49.306Z","spec":"SPEC_058","mode":"night","result":"DONE","evidence":"EarCoachView 895->730, tsc 0, verify regression ok, ui report == baseline"}
+{"ts":"2026-11-25T16:01:29.098Z","id":"night-startup-measure","kind":"night-improve","result":"no-change","evidence":"Chromium cpu x6, 6회 중앙값: main.js 23.3ms vs 사전 뺀 번들 15.4ms (차 ~8ms < 100ms 기준); parseCmudictLite 30000낱말 12.5ms(Mac, 첫 사용 시 1회, 이미 지연)","decision":"지연 로딩으로 바꾸지 않음 · 이득 8ms뿐 · 대안: 사전을 별도 파일로 vault에서 읽기"}
