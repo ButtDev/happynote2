@@ -175,3 +175,4 @@
 {"ts":"2026-11-25T16:48:28.907Z","spec":"SPEC_059","mode":"night","result":"DONE","evidence":"verify regression ok; desktop checks 12/12; mutants 3 fail desktop only"}
 {"ts":"2026-11-25T17:02:46.772Z","kind":"night-simple","task":"MEMORY.md diet","files":["MEMORY.md","memory/modules.md","memory/backlog.md"],"evidence":"31 lines moved verbatim + 9 kept = 40; memory 3657/20480; verify regression ok"}
 {"ts":"2026-11-25T17:44:52.783Z","spec":"SPEC_060","mode":"night","result":"DONE","verify":"regression ok (ui 1회 flaky)"}
+{"ts":"2026-11-25T18:13:39.077Z","kind":"night-simple","task":"ui flaky — fail trace","files":["tests/ui/runUiCheck.mjs"],"evidence":"crash mutant(landscape click timeout) → CRASH line + fail json/png; empty css → FAIL 55건 + fail json; 4 repeat runs 4/4 ok (no repro); verify regression ok"}

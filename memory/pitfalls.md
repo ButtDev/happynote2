@@ -17,3 +17,4 @@
 - 매달린 약속(never-resolving promise)만 남으면 node 시험이 exit 0으로 조용히 끝남 → 매달릴 수 있는 시험엔 감시 타이머(SPEC_041 Test 27). macOS엔 `timeout` 명령 없음.
 - `run-detached.mjs status`는 `"state":"running"|"done"` — `"running":false`로 기다리면 영원히 돎.
 - Playwright 기본 headless shell은 설치 안 됨 → `chromium.launch({channel:"chrome",headless:true})`로 띄운다(runUiCheck와 같게).
+- 화면 검사(ui)가 실패하면 `.scratch/ui/fail-<시각>.json`(뷰포트·오류·stack, 충돌 땐 png)을 본다 — report.json은 다음 성공 실행이 덮어씀. 뷰포트별 긴 한 줄 JSON 로그 때문에 verify 꼬리 5줄엔 원인이 잘 안 보였음.

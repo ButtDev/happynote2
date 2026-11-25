@@ -338,7 +338,30 @@ function evaluateExpect(vp, m, nums) {
 const report = { generatedAt: new Date().toISOString(), failOnOverlap, viewports: [] };
 const errors = [];
 
+// 실패 흔적: 가끔 나는 실패를 다시 볼 수 있게 .scratch/ui/fail-<시각>.json(+ 그때 화면)을 남긴다.
+// 성공한 다음 실행이 report.json을 덮어써도 이 파일은 남는다. 마지막 줄은 verify 꼬리(5줄)에 보이도록 한 줄 요약.
+const failStamp = () => new Date().toISOString().replace(/[:.]/g, "-");
+const current = { vp: null, page: null };
+function writeFailTrace(kind, extra) {
+  const base = path.join(outDir, `fail-${failStamp()}`);
+  const trace = { kind, at: new Date().toISOString(), viewport: current.vp, errors, ...extra, report };
+  fs.writeFileSync(`${base}.json`, JSON.stringify(trace, null, 2) + "\n");
+  return base;
+}
+process.on("uncaughtException", async (err) => {
+  let base = "";
+  try {
+    base = writeFailTrace("exception", { message: String(err?.message ?? err), stack: String(err?.stack ?? "") });
+    if (current.page) await current.page.screenshot({ path: `${base}.png`, timeout: 5000 }).catch(() => {});
+  } catch {}
+  const first = String(err?.message ?? err).split("\n")[0];
+  console.log(`ui-check: CRASH at ${current.vp ?? "(setup)"}: ${first}${base ? ` (trace ${path.relative(root, base)}.json)` : ""}`);
+  process.exit(1);
+});
+
 for (const vp of cases.viewports) {
+  current.vp = vp.name;
+  current.page = null;
   const context = await browser.newContext({
     viewport: { width: vp.width, height: vp.height },
     isMobile: !vp.desktop,
@@ -346,6 +369,7 @@ for (const vp of cases.viewports) {
     deviceScaleFactor: 1,
   });
   const page = await context.newPage();
+  current.page = page;
   // 네트워크 차단: 유튜브 iframe은 같은 크기의 자리표시 문서로, 나머지는 막는다.
   await page.route("**/*", (route) => {
     const url = route.request().url();
@@ -1844,7 +1868,10 @@ for (const v of report.viewports) {
   );
 }
 if (errors.length) {
+  current.vp = null;
+  const base = writeFailTrace("checks", {});
   console.log("ui-check: FAIL\n" + errors.map((e) => "  - " + e).join("\n"));
+  console.log(`ui-check: FAIL ${errors.length}건 (trace ${path.relative(root, base)}.json)`);
   process.exit(1);
 }
 console.log(`ui-check: ok (report ${path.relative(root, path.join(outDir, "report.json"))})`);
