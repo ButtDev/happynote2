@@ -47,8 +47,27 @@
       "title": "영어 듣기 연습 — 원어민이 빠르게 말할 때 소리가 어떻게 바뀌는지 하나하나 짚어 보는 아주 긴 강의 영상의 제목입니다 정말로 길어요",
       "videoId": "abcDEF12345",
       "expectFile": "영어 듣기 연습 — 원어민이 빠르게 말할 때 소리가 어떻게 바뀌는지 하나하나 짚어 보는 아주 긴 강의 영상의 제목입니다 정말로 [abcDEF12345].md"
+    },
+    {
+      "name": "링크 글자 [ ] # 는 빈칸 (SPEC_061)",
+      "title": "Song [Official Video] #shorts",
+      "videoId": "abcDEF12345",
+      "expectFile": "Song Official Video shorts [abcDEF12345].md"
+    },
+    {
+      "name": "제목 속 # 는 빈칸 (SPEC_061)",
+      "title": "C# in 100 Seconds",
+      "videoId": "abcDEF12345",
+      "expectFile": "C in 100 Seconds [abcDEF12345].md"
+    },
+    {
+      "name": "제목 속 ^ 는 빈칸 (SPEC_061)",
+      "title": "Top 10 ^_^",
+      "videoId": "abcDEF12345",
+      "expectFile": "Top 10 _ [abcDEF12345].md"
     }
   ],
+  "linkBreakingInTitle": "[#^\\[\\]|]",
   "ids": [
     {
       "name": "앱이 만든 이름",

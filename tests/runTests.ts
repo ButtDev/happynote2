@@ -1650,6 +1650,8 @@ async function runAllTests() {
     assert.ok(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(title), `note name 반쪽 서로게이트 없음: ${c.name}`);
     assert.ok(!title.startsWith(".") && title.trim() === title && title.length > 0, `note name 앞 점·끝 빈칸 없음: ${c.name}`);
     assert.equal(nameMod.videoIdFromNoteName(file), c.videoId, `note name ID 되읽기: ${c.name}`);
+    const titlePart = file.slice(0, file.length - ` [${c.videoId}].md`.length);
+    assert.ok(!new RegExp(nameCases.linkBreakingInTitle).test(titlePart), `note name 링크 글자(# ^ [ ] |) 없음: ${c.name}`);
   }
   for (const c of nameCases.ids) assert.equal(nameMod.videoIdFromNoteName(c.file), c.expect, `note id: ${c.name}`);
   log(`  -> PASS: ${nameCases.titles.length} title cases, ${nameCases.ids.length} id cases.`);

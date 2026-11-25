@@ -1,8 +1,8 @@
 ---
 id: SPEC_061
 title: 새 노트 이름에서 링크를 깨는 글자 `# ^ [ ]` 빼기
-status: READY
-iterations: 0
+status: DONE
+iterations: 1
 max_iterations: 3
 depends_on: []
 parent: SPEC_060
@@ -28,13 +28,14 @@ Obsidian 위키 링크 `[[…]]`는 이름 속 `#`(제목 링크)·`^`(블록 �
 이미 있는 노트 이름 바꾸기, 노트 본문 제목(`# 🎧 <제목>`) 바꾸기, 폴더 이름.
 
 ## 5. 완료 조건
-1. [ ] Test 38: 3장 예 3개가 기대 이름과 같고, 불변식에 「`# ^ [ ] |`가 제목 부분(끝 ` [id].md` 앞)에 없음」 추가, 기존 사례 전부 통과 [자동: Test 38]
-2. [ ] 옛 이름 `Song [Official] [dQw4w9WgXcQ].md` ID 되읽기 그대로 [자동: Test 38 id 사례]
-3. [ ] 변이: `#`만 남기기 → Test 38 실패 [자동]
-4. [ ] 회귀 통과 [자동: `verify.mjs --set regression`]
+1. [x] Test 38: 3장 예 3개가 기대 이름과 같고, 불변식에 「`# ^ [ ] |`가 제목 부분(끝 ` [id].md` 앞)에 없음」 추가, 기존 사례 전부 통과 [자동: Test 38]
+2. [x] 옛 이름 `Song [Official] [dQw4w9WgXcQ].md` ID 되읽기 그대로 [자동: Test 38 id 사례]
+3. [x] 변이: `#`만 남기기 → Test 38 실패 [자동]
+4. [x] 회귀 통과 [자동: `verify.mjs --set regression`]
 
 ## 8. 가결정
 - 빼는 글자를 빈칸으로(지우지 않고) · `C#Sharp`→`C Sharp`처럼 낱말이 붙지 않게 · 대안: 지우기
 - ⏳ 없음 · 이름 규칙만 바뀌고 실기기에서 볼 것은 SPEC_062 확인 때 같이 보임 · 대안: 별도 확인
 
 ## 실행 기록
+- 2026-11-26 회차 1: DONE — 1 ✅ Test 38 `PASS: 11 title cases, 4 id cases`(3장 예 3개 cases.json 추가, 불변식 `linkBreakingInTitle` `[#^\[\]|]`를 제목 부분에 검사 tests/runTests.ts:1653-1654, 금지 글자 src/utils/noteName.ts:17) · 2 ✅ id 사례 「제목 속 대괄호보다 끝의 ID」 통과(같은 출력) · 3 ✅ 변이 `#` 남김(EAR_COACH_NOTENAME_MODULE=.scratch/mut061/noteName.ts) → exit 1 `AssertionError: note name: 링크 글자 [ ] # 는 빈칸 (SPEC_061)` · 4 ✅ `verify.mjs --set regression` harness·build·test·ui 모두 ok exit 0

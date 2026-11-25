@@ -6,6 +6,7 @@ export const NOTE_TITLE_FALLBACK = "YouTube";
 /**
  * 영상 제목 → 파일 이름에 쓸 제목.
  * - 파일 시스템 금지 글자 `\ / : * ? " < > |`와 제어 문자는 빈칸으로
+ * - 위키 링크를 깨는 `# ^ [ ]`도 빈칸으로(SPEC_061, 낱말이 붙지 않게 지우지 않음)
  * - 70 코드 포인트까지(이모지 반쪽을 남기지 않음)
  * - 앞의 점(숨은 파일이 되어 Obsidian 목록에서 사라짐)과 끝의 점·빈칸을 뺌
  * - 남는 게 없으면 "YouTube"
@@ -13,7 +14,7 @@ export const NOTE_TITLE_FALLBACK = "YouTube";
 export function safeNoteTitle(title: string): string {
   const cleaned = String(title ?? "")
     // eslint-disable-next-line no-control-regex
-    .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g, " ")
+    .replace(/[\\/:*?"<>|#^[\]\u0000-\u001f\u007f]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   const cut = Array.from(cleaned).slice(0, NOTE_TITLE_MAX).join("");

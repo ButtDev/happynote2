@@ -182,3 +182,4 @@
 {"ts":"2026-11-25T21:06:35.376Z","id":"night-note-markdown","kind":"simple","summary":"노트 마크다운 순수 함수 분리(noteMarkdown.ts), 세션 블록 없는/닫힘 없는 노트 덮어쓰기 방지, frontmatter 갱신을 frontmatter 안으로 한정 + pinned/speed 개수 갱신","evidence":"Test 41 PASS, 변이 3 FAIL, verify regression ok","decision":"고른 것: 블록 없으면 끝에 붙임 · 이유: 사람 글 보존 · 대안: 지금처럼 덮어쓰기"}
 {"ts":"2026-11-25T21:10:26.282Z","cmd":"/spec-new","spec":"SPEC_061","result":"READY","questions":0}
 {"ts":"2026-11-25T21:10:26.325Z","cmd":"/spec-new","spec":"SPEC_062","result":"READY","questions":0}
+{"ts":"2026-11-25T21:12:55.607Z","cmd":"/spec-run","spec":"SPEC_061","iteration":1,"status":"DONE","evidence":"Test 38 11 title/4 id PASS, 변이 # 남김 실패, regression 4/4 ok"}
