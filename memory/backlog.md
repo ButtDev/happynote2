@@ -1,8 +1,10 @@
 # 백로그
 
 ## 대기
+- 화면 검사(ui) 가끔 실패 — 11-26 SPEC_060 머지 뒤 4번 중 1번 `ui exit=1`(출력 못 남김, 바로 다시 돌리면 ok). verify가 ui 실패 출력을 `.scratch/`에 남기게 하거나 같은 실패를 다시 만들어 원인(시각 기다림?) 찾기.
 
 ## 끝남
+- SPEC_060 노트 파일 이름 다듬기 — DONE 2026-11-26(야간)
 - 2026-11-26 [야간] MEMORY.md 다이어트 → 19.9KB→3.7KB. 「주의」 모듈 위치 31줄을 `memory/modules.md`로 옮김(삭제 없음), MEMORY엔 지도 안내·지킬 것 요약·strip-types 함정 3줄.
 - 2026-11-26 [야간] 데스크톱 안 깨짐 화면 검사 → SPEC_059 DONE. `cases.json`에 `desktop` 뷰(1280×800, isMobile:false, 뷰포트별 셀렉터), expect `listLeft`·`noPageErrors`. 기준선에서 고칠 것 없음(12/12 ok).
 - 2026-11-26 [야간] 시작 시간·번들 크기 재기 → 바꾸지 않음. main.js 714KB 중 사전 486KB. Chromium CPU 6배 느리게: 번들 읽기 중앙값 23.3ms(사전 뺀 번들 15.4ms) → 사전 몫 ~8ms ≪ 기준 100ms. 사전 파싱은 이미 처음 쓸 때 한 번(`getCmudict`), Mac 12ms. 측정 스크립트는 `.scratch/startup/`.
