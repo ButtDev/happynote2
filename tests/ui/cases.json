@@ -211,6 +211,29 @@
         "shareMenu": "tests/fixtures/share/menu-dom.json",
         "longList": { "cards": 440, "maxLoadMs": 400, "maxScrollStepMs": 50, "maxLongTaskMs": 100, "maxFollowMs": 2500, "maxDomCards": 40 }
       }
+    },
+    {
+      "name": "desktop",
+      "width": 1280,
+      "height": 800,
+      "desktop": true,
+      "selectors": {
+        "root": ".ear-coach-side-by-side-container",
+        "video": ".ear-coach-video-box",
+        "controls": [".ear-coach-player-controls"],
+        "list": ".ear-coach-transcript-list-wrapper",
+        "segmentCard": ".ear-coach-segment-list > *",
+        "toolbar": ".ear-coach-toolbar"
+      },
+      "expect": {
+        "noPageErrors": true,
+        "maxOverlapVideoControlsPx2": 0,
+        "maxOverlayOnVideoPx2": 0,
+        "insideViewport": ["video", "controls", "toolbar", "list"],
+        "minCards": 3,
+        "layout": "listLeft",
+        "noOverflowX": [".ear-coach-toolbar", ".ear-coach-player-controls"]
+      }
     }
   ],
   "selectors": {

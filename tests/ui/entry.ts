@@ -26,12 +26,16 @@ declare global {
   interface Window {
     __uiReady?: boolean;
     __uiError?: string;
+    __uiDesktop?: boolean;
   }
 }
 
 async function main(): Promise<void> {
-  document.body.classList.add("is-mobile");
-  setPlatformMobileOverrideForTest(true);
+  // 데스크톱 화면 검사: 러너가 addInitScript로 __uiDesktop을 켠다(모바일 꾸밈 없이 데스크톱 배치)
+  const desktop = window.__uiDesktop === true;
+  if (desktop) document.querySelector(".mobile-navbar")?.remove();
+  else document.body.classList.add("is-mobile");
+  setPlatformMobileOverrideForTest(!desktop);
 
   const settings = { ...DEFAULT_EAR_COACH_SETTINGS };
   (window as any).__earCoachSettings = settings; // SPEC_011: 저장 값 확인용

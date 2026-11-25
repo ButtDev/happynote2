@@ -89,8 +89,15 @@ function evaluateExpect(vp, m, nums) {
     // rect는 Math.round 값이라 소수 좌표 반올림으로 1px 넘칠 수 있음 → 1px 허용
     add(`inside:${key}`, r && r.x >= -1 && r.y >= -1 && right(r) <= vp.width + 1 && bottom(r) <= vp.height + 1 && r.w > 0 && r.h > 0, JSON.stringify(r));
   }
+  // 페이지 오류·콘솔 오류 0(막은 네트워크의 「Failed to load resource」는 뺌)
+  if (e.noPageErrors) add("noPageErrors", m.pageErrors.length === 0 && m.consoleErrors.length === 0, JSON.stringify({ pageErrors: m.pageErrors, consoleErrors: m.consoleErrors }));
   if (e.minCards !== undefined) add("minCards", m.cardCount >= e.minCards, `${m.cardCount} >= ${e.minCards}`);
   const v = m.video, l = m.list, t = m.toolbar;
+  // 데스크톱: 왼쪽 목록·툴바, 오른쪽 영상(EarCoachView.renderDesktopWorkspace)
+  if (e.layout === "listLeft") {
+    add("listLeft:list", v && l && right(l) <= v.x, `list.right=${l && right(l)} video.x=${v && v.x}`);
+    add("listLeft:toolbar", v && t && right(t) <= v.x, `toolbar.right=${t && right(t)} video.x=${v && v.x}`);
+  }
   if (e.layout === "stacked")
     add("stacked", v && l && bottom(v) <= l.y, `video.bottom=${v && bottom(v)} list.y=${l && l.y}`);
   if (e.layout === "sideBySide") {
@@ -334,8 +341,8 @@ const errors = [];
 for (const vp of cases.viewports) {
   const context = await browser.newContext({
     viewport: { width: vp.width, height: vp.height },
-    isMobile: true,
-    hasTouch: true,
+    isMobile: !vp.desktop,
+    hasTouch: !vp.desktop,
     deviceScaleFactor: 1,
   });
   const page = await context.newPage();
@@ -350,6 +357,12 @@ for (const vp of cases.viewports) {
   });
   const pageErrors = [];
   page.on("pageerror", (e) => pageErrors.push(String(e)));
+  const consoleErrors = [];
+  page.on("console", (msg) => {
+    if (msg.type() === "error" && !msg.text().startsWith("Failed to load resource")) consoleErrors.push(msg.text());
+  });
+  if (vp.desktop) await page.addInitScript(() => { window.__uiDesktop = true; });
+  const selectors = vp.selectors ?? cases.selectors;
 
   await page.goto(pathToFileURL(htmlPath).href);
   try {
@@ -477,7 +490,7 @@ for (const vp of cases.viewports) {
     const playerEl = videoEl?.querySelector(':scope > [id^="ear-coach-player-"]');
     const player = playerEl ? rectOf(playerEl) : null;
     return { video, controls, controlRects, list, toolbar, root: rootRect, cardCount, overlays, missing, visibility, extraRects, overflowX, activeShift, heights, radii, rowSlack, player, cardPitch };
-  }, cases.selectors ? { selectors: { ...cases.selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}), __rowSlack: vp.expect?.rowSlack?.selector ?? null }, overlayExclude: cases.overlayExclude ?? [] } : {});
+  }, selectors ? { selectors: { ...selectors, __hidden: vp.expect?.hidden ?? [], __visible: vp.expect?.visible ?? [], __extra: Object.keys(vp.expect?.maxHeight ?? {}), __noOverflowX: vp.expect?.noOverflowX ?? [], __sameHeight: vp.expect?.sameHeight ?? [], __minRadius: Object.keys(vp.expect?.minRadius ?? {}), __rowSlack: vp.expect?.rowSlack?.selector ?? null }, overlayExclude: cases.overlayExclude ?? [] } : {});
 
   // SPEC_009: YT 버튼을 누르면 플레이어를 다시 만들고 자르기를 푼다, 다시 누르면 원래대로.
   m.overlayToggle = null;
@@ -1792,6 +1805,8 @@ for (const vp of cases.viewports) {
     }
   }
 
+  m.pageErrors = pageErrors;
+  m.consoleErrors = consoleErrors;
   for (const sel of m.missing) errors.push(`${vp.name}: selector not found ${sel}`);
   for (const key of ["video", "controls"]) {
     const r = m[key];
