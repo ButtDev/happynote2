@@ -173,3 +173,4 @@
 {"ts":"2026-11-25T15:35:49.306Z","spec":"SPEC_058","mode":"night","result":"DONE","evidence":"EarCoachView 895->730, tsc 0, verify regression ok, ui report == baseline"}
 {"ts":"2026-11-25T16:01:29.098Z","id":"night-startup-measure","kind":"night-improve","result":"no-change","evidence":"Chromium cpu x6, 6회 중앙값: main.js 23.3ms vs 사전 뺀 번들 15.4ms (차 ~8ms < 100ms 기준); parseCmudictLite 30000낱말 12.5ms(Mac, 첫 사용 시 1회, 이미 지연)","decision":"지연 로딩으로 바꾸지 않음 · 이득 8ms뿐 · 대안: 사전을 별도 파일로 vault에서 읽기"}
 {"ts":"2026-11-25T16:48:28.907Z","spec":"SPEC_059","mode":"night","result":"DONE","evidence":"verify regression ok; desktop checks 12/12; mutants 3 fail desktop only"}
+{"ts":"2026-11-25T17:02:46.772Z","kind":"night-simple","task":"MEMORY.md diet","files":["MEMORY.md","memory/modules.md","memory/backlog.md"],"evidence":"31 lines moved verbatim + 9 kept = 40; memory 3657/20480; verify regression ok"}
