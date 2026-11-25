@@ -147,10 +147,15 @@ function decodeHtmlEntities(str: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
-      String.fromCharCode(parseInt(hex, 16))
-    );
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (m, dec) => codePoint(m, parseInt(dec, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, hex) => codePoint(m, parseInt(hex, 16)));
+}
+
+/** 이모지처럼 0xFFFF 위 글자도 한 글자로(fromCharCode는 반쪽만 냄). 없는 코드면 원문 그대로. */
+function codePoint(original: string, n: number): string {
+  if (n === 0xa0) return " ";
+  return Number.isFinite(n) && n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : original;
 }
 
 /** Caption track entry from a YouTube player response (only the fields we read). */

@@ -73,6 +73,36 @@
      "words": null
     }
    ]
+  },
+  {
+   "name": "entities: emoji code points (dec·hex) whole, &nbsp; → space",
+   "payload": "<?xml version=\"1.0\" encoding=\"utf-8\" ?><timedtext format=\"3\"><body>\n<p t=\"1000\" d=\"2000\">&#127925; la&nbsp;la &#x1F3B5; Tom &amp; Jerry</p>\n</body></timedtext>",
+   "expect": [
+    {
+     "text": "🎵 la la 🎵 Tom & Jerry",
+     "words": null
+    }
+   ]
+  },
+  {
+   "name": "entities: srv1 double-escaped &amp;#39; still becomes apostrophe",
+   "payload": "<?xml version=\"1.0\" encoding=\"utf-8\" ?><transcript><text start=\"1.5\" dur=\"2\">I&amp;#39;m &amp;quot;fine&amp;quot;</text></transcript>",
+   "expect": [
+    {
+     "text": "I'm \"fine\"",
+     "words": null
+    }
+   ]
+  },
+  {
+   "name": "entities: unknown/out-of-range code kept as written",
+   "payload": "{\"events\":[{\"tStartMs\":0,\"dDurationMs\":1000,\"segs\":[{\"utf8\":\"x &#99999999; y\"}]}]}",
+   "expect": [
+    {
+     "text": "x &#99999999; y",
+     "words": null
+    }
+   ]
   }
  ],
  "fixtures": [
