@@ -169,3 +169,4 @@
 {"ts":"2026-11-24T22:10:32.055Z","spec":"SPEC_055","iteration":1,"result":"IMPLEMENTED","note":"약점 대시보드 숨은 주석 기록, Test 37, 회귀 ok, BRAT 1.0.65; night 브랜치 5개 정리, test_result.txt gitignore"}
 {"ts":"2026-11-25T13:25:59.633Z","cmd":"/spec-new","spec":"SPEC_056","result":"READY","questions":0}
 {"ts":"2026-11-25T13:29:47.924Z","cmd":"/spec-run","spec":"SPEC_056","iteration":1,"status":"DONE","evidence":"Test 27 PASS 25 scenarios+16 unreachable texts; 변이 2건(분류 끔·추가 재시도 끔) Test 27 FAIL; verify regression ok(harness·build·test·ui); review-1 반영(실행 기록·백로그 detail 항목)"}
+{"ts":"2026-11-25T15:04:32.826Z","spec":"SPEC_057","mode":"night","result":"DONE","evidence":"Test15 +4 stopDetail, Test24 +4 describe PASS; mutants diag_nodetail/ai-nodetail FAIL; regression ok"}
