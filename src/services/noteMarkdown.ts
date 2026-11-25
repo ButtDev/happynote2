@@ -5,6 +5,7 @@
  * - 노트에 세션 블록이 없거나 닫는 ``` 가 없어도 사람이 쓴 글(사운드 해부 기록 등)을 지우지 않는다.
  *   전에는 이때 노트 전체를 새 틀로 덮어써 사람이 쓴 글이 사라졌다.
  * - frontmatter 값 바꾸기는 맨 앞 frontmatter 안에서만 한다(본문 글은 건드리지 않음).
+ * - 저장 때마다 「📌 핀 요약」 절 안만 지금 핀으로 바꾼다(SPEC_062). 절 밖 사람 글은 그대로.
  */
 import type { ListeningSessionData } from "../types/transcript.ts";
 import { formatSecondsToTimestamp } from "../utils/youtubeUrlParser.ts";
@@ -35,17 +36,37 @@ function sessionBlock(session: ListeningSessionData): string {
   return [SESSION_CODEBLOCK_START, JSON.stringify(buildSidecarPointer(session)), SESSION_CODEBLOCK_END].join("\n");
 }
 
-export function buildNoteMarkdown(session: ListeningSessionData): string {
-  const pinnedCount = session.segments.filter((s) => s.isPinned).length;
-  const speedSpikeCount = session.segments.filter((s) => s.isSpeedSpike).length;
+export const PIN_SUMMARY_HEADING = "## 📌 집중 분석 핀(Unclear Spots) 요약";
 
-  const pinnedSummary = session.segments
+/** 핀 요약 절 안의 글(핀 줄들, 핀이 없으면 안내 한 줄). 노트 만들기와 저장 때 갱신이 같은 글을 쓴다. */
+export function buildPinSummary(session: ListeningSessionData): string {
+  const lines = session.segments
     .filter((s) => s.isPinned)
     .map(
       (s) =>
         `- 📌 **[${formatSecondsToTimestamp(s.start)}]** — ||${s.text}|| *(소리 힌트: ${s.analysis?.phoneticKr || "분석 중"})*`
     )
     .join("\n");
+  return lines || "- 아직 고정된 집중 분석 핀이 없습니다. 안 들리는 구간에서 `📌 핀` 버튼을 눌러보세요!";
+}
+
+/**
+ * 핀 요약 절(제목 줄 다음 ~ 다음 `## ` 줄 또는 세션 블록 머리 바로 앞)을 지금 요약 + 빈 줄 하나로 바꾼다.
+ * 제목 줄이 없으면 그대로(새로 넣지 않음), 두 개 이상이면 첫 번째만. 절 밖 글은 건드리지 않는다.
+ */
+export function refreshPinSummary(markdown: string, session: ListeningSessionData): string {
+  const lines = markdown.split("\n");
+  const h = lines.findIndex((l) => l.replace(/\r$/, "") === PIN_SUMMARY_HEADING);
+  if (h === -1) return markdown;
+  let end = h + 1;
+  while (end < lines.length && !lines[end].startsWith("## ") && !lines[end].startsWith(SESSION_CODEBLOCK_START)) end++;
+  const body = [...buildPinSummary(session).split("\n"), ""];
+  return [...lines.slice(0, h + 1), ...body, ...lines.slice(end)].join("\n");
+}
+
+export function buildNoteMarkdown(session: ListeningSessionData): string {
+  const pinnedCount = session.segments.filter((s) => s.isPinned).length;
+  const speedSpikeCount = session.segments.filter((s) => s.isSpeedSpike).length;
 
   return [
     "---",
@@ -67,8 +88,8 @@ export function buildNoteMarkdown(session: ListeningSessionData): string {
     `> [!info] **Obsidian Ear-Coach 워크스페이스 안내**`,
     `> 좌측 목록에서 이 노트를 선택하거나 명령어 팔레트에서 **\`Ear-Coach: 현재 노트 리스닝 코치 열기\`**를 실행하면 **A-B 문장 무한 루프 + 3단계 블라인드 언락커 + 1:1 \`agy\` 사운드 닥터**를 인터랙티브하게 사용할 수 있습니다.`,
     "",
-    "## 📌 집중 분석 핀(Unclear Spots) 요약",
-    pinnedSummary || "- 아직 고정된 집중 분석 핀이 없습니다. 안 들리는 구간에서 `📌 핀` 버튼을 눌러보세요!",
+    PIN_SUMMARY_HEADING,
+    buildPinSummary(session),
     "",
     SESSION_SECTION_HEADING,
     sessionBlock(session),
@@ -98,6 +119,10 @@ function refreshFrontmatter(markdown: string, session: ListeningSessionData): st
  */
 export function replaceSessionBlock(markdown: string, session: ListeningSessionData): string {
   if (markdown.trim() === "") return buildNoteMarkdown(session);
+  return refreshPinSummary(replaceBlockOnly(markdown, session), session);
+}
+
+function replaceBlockOnly(markdown: string, session: ListeningSessionData): string {
   const startIdx = markdown.indexOf(SESSION_CODEBLOCK_START);
   if (startIdx === -1) {
     const body = refreshFrontmatter(markdown, session).replace(/\s*$/, "");

@@ -183,3 +183,4 @@
 {"ts":"2026-11-25T21:10:26.282Z","cmd":"/spec-new","spec":"SPEC_061","result":"READY","questions":0}
 {"ts":"2026-11-25T21:10:26.325Z","cmd":"/spec-new","spec":"SPEC_062","result":"READY","questions":0}
 {"ts":"2026-11-25T21:12:55.607Z","cmd":"/spec-run","spec":"SPEC_061","iteration":1,"status":"DONE","evidence":"Test 38 11 title/4 id PASS, 변이 # 남김 실패, regression 4/4 ok"}
+{"ts":"2026-11-25T21:17:30.114Z","cmd":"/spec-run","spec":"SPEC_062","iteration":1,"status":"IMPLEMENTED","evidence":"Test 41 pin-summary 3케이스 PASS, 변이 3개 모두 Test 41 실패, regression ok; ⏳6 실기기"}

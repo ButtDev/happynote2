@@ -1718,7 +1718,28 @@ async function runAllTests() {
     assert.equal(nmMod.replaceSessionBlock(out, nmCases.session), out, `note replace 두 번 해도 같음(${c.name})`);
   }
   for (const c of nmCases.extract) assert.deepEqual(nmMod.extractSessionJson(c.markdown), c.expect, `note extract: ${c.name}`);
-  log(`  -> PASS: build, ${nmCases.replace.length} replace, ${nmCases.extract.length} extract cases.`);
+  // 핀 요약 절 밖 글(frontmatter·세션 블록 제외) — 절 정의를 러너가 따로 구현해 대조한다(SPEC_062).
+  const nmOutside = (md: string) => {
+    const lines = md.replace(/^---\n[\s\S]*?\n---\n/, "").replace(/```ear-coach-session[\s\S]*?```/, "```ear-coach-session```").split("\n");
+    const h = lines.indexOf("## 📌 집중 분석 핀(Unclear Spots) 요약");
+    if (h === -1) return lines.join("\n");
+    let e = h + 1;
+    while (e < lines.length && !lines[e].startsWith("## ") && !lines[e].startsWith("```ear-coach-session")) e++;
+    return [...lines.slice(0, h + 1), ...lines.slice(e)].join("\n");
+  };
+  for (const c of nmCases.pinSummary) {
+    let md: string = c.markdown;
+    for (const [i, st] of c.steps.entries()) {
+      const out: string = nmMod.replaceSessionBlock(md, nmCases[st.session]);
+      const tag = `${c.name} #${i + 1}`;
+      for (const t of st.mustContain) assert.ok(out.includes(t), `note pin 포함(${tag}): ${t}`);
+      for (const t of st.mustNotContain) assert.ok(!out.includes(t), `note pin 없음(${tag}): ${t}`);
+      assert.equal(nmOutside(out), nmOutside(md), `note pin 요약 절 밖 글 그대로(${tag})`);
+      assert.equal(nmMod.replaceSessionBlock(out, nmCases[st.session]), out, `note pin 두 번 해도 같음(${tag})`);
+      md = out;
+    }
+  }
+  log(`  -> PASS: build, ${nmCases.replace.length} replace, ${nmCases.extract.length} extract, ${nmCases.pinSummary.length} pin-summary cases.`);
   log("");
 
   log("==============================================================");
