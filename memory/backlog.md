@@ -1,10 +1,10 @@
 # 백로그
 
 ## 대기
-- [야간] 데스크톱 안 깨짐 화면 검사: 0장 규칙 「데스크톱 동작을 깨지 않는다」를 지키는 자동 근거가 없음. `runUiCheck`에 isMobile:false 넓은 뷰(1280×800) 한 장 — 뷰가 열리고, 콘솔 오류 0, 영상·목록 겹침 0. 기준선만 세우고 고칠 게 나오면 백로그에.
 - [야간] MEMORY.md 다이어트: 19.9KB/20KB. 「주의」의 모듈 위치 줄(SPEC_0xx: 파일·시험·변이 이름)을 `memory/modules.md`로 옮기고 MEMORY엔 「모듈 지도는 memory/modules.md」 한 줄만. 내용 삭제 없음.
 
 ## 끝남
+- 2026-11-26 [야간] 데스크톱 안 깨짐 화면 검사 → SPEC_059 DONE. `cases.json`에 `desktop` 뷰(1280×800, isMobile:false, 뷰포트별 셀렉터), expect `listLeft`·`noPageErrors`. 기준선에서 고칠 것 없음(12/12 ok).
 - 2026-11-26 [야간] 시작 시간·번들 크기 재기 → 바꾸지 않음. main.js 714KB 중 사전 486KB. Chromium CPU 6배 느리게: 번들 읽기 중앙값 23.3ms(사전 뺀 번들 15.4ms) → 사전 몫 ~8ms ≪ 기준 100ms. 사전 파싱은 이미 처음 쓸 때 한 번(`getCmudict`), Mac 12ms. 측정 스크립트는 `.scratch/startup/`.
 - 2026-11-26 [야간] EarCoachView 덜어내기 → SPEC_058 DONE(895→730줄, 막대 두 개를 `src/ui/paneResizers.ts`로).
 - [야간] 진단에 원래 오류 글 → SPEC_057 DONE (11-26): 진단 줄에 `HttpFailure.detail` 괄호로, AI는 `aiStopDiagnostic`. 알림 글 그대로
